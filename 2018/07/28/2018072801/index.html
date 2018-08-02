@@ -1,1 +1,971 @@
-<!DOCTYPE html><html class="theme-next pisces use-motion" lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><script src="/lib/pace/pace.min.js?v=1.0.2"></script><link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4"><link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222"><meta name="keywords" content="hexo,git,"><meta name="description" content="在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题 五、浏览博客效果打开Git终端，在blog目录下执行以下命令  $ hexo s #等价于hexo server  若执行成功，会输出  记住就算换行也要补一个空格  六、配置GitHub 测试终端是否存在SSH key $ ls -al ~/.ssh     结果如图则表示没有配置S"><meta name="keywords" content="hexo,git"><meta property="og:type" content="article"><meta property="og:title" content="Hexo+GitHub搭建个人博客 (二) 部署项目"><meta property="og:url" content="http://LAILAIWA.github.io/2018/07/28/2018072801/index.html"><meta property="og:site_name" content="沂水博客"><meta property="og:description" content="在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题 五、浏览博客效果打开Git终端，在blog目录下执行以下命令  $ hexo s #等价于hexo server  若执行成功，会输出  记住就算换行也要补一个空格  六、配置GitHub 测试终端是否存在SSH key $ ls -al ~/.ssh     结果如图则表示没有配置S"><meta property="og:locale" content="zh-Hans"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/7.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/8.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/9.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/10.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/11.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/12.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/13.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/14.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/15.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/16.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/17.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/18.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/19.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/20.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/21.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/22.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/23.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/24.png"><meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/25.png"><meta property="og:updated_time" content="2018-07-28T02:31:07.275Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Hexo+GitHub搭建个人博客 (二) 部署项目"><meta name="twitter:description" content="在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题 五、浏览博客效果打开Git终端，在blog目录下执行以下命令  $ hexo s #等价于hexo server  若执行成功，会输出  记住就算换行也要补一个空格  六、配置GitHub 测试终端是否存在SSH key $ ls -al ~/.ssh     结果如图则表示没有配置S"><meta name="twitter:image" content="http://lailaiwa.github.io/images/markdown/2018072801/7.png"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Pisces",version:"5.1.4",sidebar:{position:"right",display:"post",offset:12,b2t:!1,scrollpercent:!1,onmobile:!1},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://LAILAIWA.github.io/2018/07/28/2018072801/"><title>Hexo+GitHub搭建个人博客 (二) 部署项目 | 沂水博客</title></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-right page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">沂水博客</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">编程和心历记录</p></div><div class="site-nav-toggle"> <button><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br> 标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br> 归档</a></li></ul></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://LAILAIWA.github.io/2018/07/28/2018072801/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="沂水"><meta itemprop="description" content=""><meta itemprop="image" content="/images/riho_yoshioka1.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="沂水博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Hexo+GitHub搭建个人博客 (二) 部署项目</h1><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-28T09:50:42+08:00">2018-07-28</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术文档/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a></span></span><div class="post-wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">字数统计&#58;</span> <span title="字数统计">887</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">4</span></div></div></header><div class="post-body" itemprop="articleBody"><p><em>在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题</em></p><h1 id="五、浏览博客效果"><a href="#五、浏览博客效果" class="headerlink" title="五、浏览博客效果"></a><strong>五、浏览博客效果</strong></h1><p>打开Git终端，在blog目录下执行以下命令</p><blockquote><p>$ hexo s #等价于hexo server</p></blockquote><p>若执行成功，会输出</p><p><img src="/images/markdown/2018072801/7.png" alt=""></p><p>记住就算换行也要补一个空格</p><hr><h1 id="六、配置GitHub"><a href="#六、配置GitHub" class="headerlink" title="六、配置GitHub"></a><strong>六、配置GitHub</strong></h1><ol><li>测试终端是否存在SSH key<blockquote><p>$ ls -al ~/.ssh</p></blockquote></li></ol><p><img src="/images/markdown/2018072801/8.png" alt=""></p><p>结果如图则表示没有配置SSH key，若配置key可跳过下个步骤</p><ol start="2"><li>生成SSH key<blockquote><p>$ ssh-keygen -t rsa -b 4096 -C “<a href="mailto:XXXX@XX.com" target="_blank" rel="noopener">XXXX@XX.com</a>” 注意大小写</p></blockquote></li></ol><p><img src="/images/markdown/2018072801/9.png" alt=""></p><ol start="3"><li>添加SSH key到ssh-agent中<blockquote><p>$ eval “$(ssh-agent -s)”</p></blockquote></li></ol><blockquote><p>$ ssh-add ~/.ssh/id-rsa</p></blockquote><p><img src="/images/markdown/2018072801/10.png" alt=""></p><ol start="4"><li>复制SSH key到本地</li></ol><p>pbcopy命令</p><blockquote><p>$ pbcopy &lt; ~/.ssh/id_rsa.pub</p></blockquote><p>若不支持pbcopy命令，使用cat命令读取到终端，再复制key</p><blockquote><p>$ cat &lt; ~/.ssh/id_rsa.pub</p></blockquote><p><img src="/images/markdown/2018072801/11.png" alt=""></p><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCz5dShvsj2rB6FS42kwSR5H+UXMVHgrUIuAkWfRyAM45PxGGEifax84N7oSIct9OIb6OcYAAb7I<span class="regexp">/t9U6kQDIB830xjQ/</span>lp+LzW6XMDGBVBsGh8TUKkPvshErOJPSShMAPIFwSroNyW4+VYh9<span class="regexp">/c/</span>JiNbNUXy2grfmwkgPKAYURD5xhQ2ZpvpikB0X<span class="regexp">/rz8M8VBNeedUj9ZW9hv3RV89R50776PzkmbXMgB39B4bnfUjx2M0dji+Ic+Tud1XoXflYrdwQz7HC2apHHG8gx2NOi8Y/</span>K7+mFGVodSfKinoMGTHvppKieCeveNtzxo<span class="regexp">/1YwFSm63nkFBixe7VHOoLuY+3Rfjp7GVxRQMmg32pu+JW3lBX2e0ebXsWDqVNPBTF9DwAKrTvrkMsEjwiOEYjWlqTgK7ozsaSkGIIoWRglviu6Drqu7JtVb7EfvGdzRo3AnNJ2DeRo7ipRKaTRw8+cJa+Npfuh6u0yQHv8tgxfuVM3j7yUwG3OOlcsY4mVLU7nXcKXBp7uOTOMBH0Kjig6D3tLEDOqI8cpxERXnJw9QbuCvLFaYHjlSCzIIvixJ0xoizMCiyJFXS4yWVYeqGggcrqrdIIz1H9n0MGSbyxCMFxVhHP1jvrxounoyyfgvOHmc1UFOaeKUPFiv8UiGZxKeclQpdDtA9F05PKao1U/</span>jikaYsWmw== <span class="string">'linyishui168@outlook.com'</span></span><br></pre></td></tr></table></figure><ol start="5"><li>将复制的SSH key添加到GitHub中</li><li>执行命令测试是否添加成功<blockquote><p>$ ssh -T <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a></p></blockquote></li></ol><p><img src="/images/markdown/2018072801/12.png" alt=""></p><ol start="7"><li>创建一个Repository托管博客</li></ol><p><img src="/images/markdown/2018072801/13.png" alt=""></p><hr><h1 id="七、配置Hexo部署到GitHub"><a href="#七、配置Hexo部署到GitHub" class="headerlink" title="七、配置Hexo部署到GitHub"></a><strong>七、配置Hexo部署到GitHub</strong></h1><p>Hexo提供了hexo-deployer-git组件方便部署到GitHub</p><ol><li><p>配置Deploy插件-根目录_config.yml 文件</p><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta"># Deployment</span></span><br><span class="line"><span class="symbol">deploy:</span></span><br><span class="line"><span class="symbol">  type:</span> git                                                    <span class="meta"># 设置发布类型，如git</span></span><br><span class="line"><span class="symbol">  repository:</span> git@github.com:LAILAIWA/LAILAIWA.github.io.git   <span class="meta"># 设置repository对应的链接</span></span><br><span class="line"><span class="symbol">  branch:</span> master                                               <span class="meta"># 设置提交到的分支</span></span><br><span class="line"><span class="symbol">  message:</span> Site update <span class="class">at </span>&#123;&#123; now(<span class="string">"YYYY-MM-DD HH:mm:ss"</span>) &#125;&#125;     <span class="meta"># 设置我们提交的信息</span></span><br></pre></td></tr></table></figure></li><li><p>发布</p></li></ol><p>执行命令生成博客的静态页面</p><blockquote><p>$ hexo g # 等价于hexo generate</p></blockquote><p>执行命令将静态页面上传到GitHub</p><blockquote><p>$ hexo d # 等价于hexo deploy</p></blockquote><p>打开浏览器访问LAILAIWA.github.io访问部署的博客，每次添加新的博客，重复执行前两个命令即可<br>删除命令，删除已生成的静态页面</p><blockquote><p>$ hexo clean</p></blockquote><p>执行命令1，出现BUG，发现没在项目路径下执行</p><p><img src="/images/markdown/2018072801/14.png" alt=""></p><p>更换路径，又有BUG，尝试删除链接中的空格，解决</p><p><img src="/images/markdown/2018072801/15.png" alt=""></p><p><img src="/images/markdown/2018072801/16.png" alt=""></p><p>执行命令2，又有BUG</p><p><img src="/images/markdown/2018072801/17.png" alt=""></p><p>应该是插件未部署成功，执行命令</p><blockquote><p>npm install hexo-deployer-git –save</p></blockquote><p><img src="/images/markdown/2018072801/18.png" alt=""></p><p>又又又出现BUG，应该是Git未登陆</p><p><img src="/images/markdown/2018072801/19.png" alt=""></p><p>可以用命令全局登陆</p><blockquote><p>git config –global user.email “<a href="mailto:linyishui168@outlook.com" target="_blank" rel="noopener">linyishui168@outlook.com</a>”</p></blockquote><blockquote><p>git config –global user.name “LAILAIWA”</p></blockquote><p>或改项目的配置文件只为当前项目登陆，在项目目录.git文件夹<br>[user]<br>或在.git文件夹下执行命令</p><blockquote><p>git config user.name = “xxx”</p></blockquote><p>又又又有BUG出现</p><p><img src="/images/markdown/2018072801/20.png" alt=""></p><p>猜测可能是文件太大，调整一下</p><blockquote><p>git config –global http.postBuffer 524288000<br>BUG提示变化</p></blockquote><p><img src="/images/markdown/2018072801/21.png" alt=""></p><p>不太明白，又部署了一下，结果成功了…黑人问号脸???</p><p><img src="/images/markdown/2018072801/22.png" alt=""></p><p>部署成功，尝试访问一下</p><p><img src="/images/markdown/2018072801/23.png" alt=""></p><p>访问成功，但字符编码错误，样式也没加载成功，明天解决一下</p><p>记事本保存时编码格式选UTF-8<br>一直会出现连接不上Repository情况，可是SSH是配置好的阿？<br>尝试通过修改hosts的方法解决这个问题，在站长之家找个最快的地址，但不太靠谱，都PING不通，在网上找到一个地址还可以</p><blockquote><p>192.30.255.112 github.com</p></blockquote><p>解决部署问题<br>但样式还是没加载出来</p><p><img src="/images/markdown/2018072801/24.png" alt=""></p><p>发现项目好像忘建子目录了，尝试修改配置文件，将子目录删除<br></p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">url:</span> <span class="string">http:</span><span class="comment">//yishui.github.io/blog</span></span><br><span class="line"><span class="string">root:</span> <span class="regexp">/blog/</span></span><br></pre></td></tr></table></figure><p></p><p>修改为<br></p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">url:</span> <span class="string">http:</span><span class="comment">//yishui.github.io</span></span><br><span class="line"><span class="string">root:</span> /</span><br></pre></td></tr></table></figure><p></p><p>终于成功了，汗，有些丢人</p><p><img src="/images/markdown/2018072801/25.png" alt=""></p><p>接下来把默认的主题换个好看点的</p></div><div> ﻿<div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div></div></div><footer class="post-footer"><div class="post-tags"> <a href="/tags/hexo/" rel="tag"># hexo</a> <a href="/tags/git/" rel="tag"># git</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2018/07/27/2018072701/" rel="next" title="Hexo+GitHub搭建个人博客 (一) 环境搭建"><i class="fa fa-chevron-left"></i> Hexo+GitHub搭建个人博客 (一) 环境搭建</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"> <a href="/2018/07/28/2018072802/" rel="prev" title="Hexo+GitHub搭建个人博客 (三) 配置nexT主题">Hexo+GitHub搭建个人博客 (三) 配置nexT主题<i class="fa fa-chevron-right"></i></a></div></div></footer></div></article><div class="post-spread"></div></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap"> 文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap"> 站点概览</li></ul><section class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/images/riho_yoshioka1.jpg" alt="沂水"><p class="site-author-name" itemprop="name">沂水</p><p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">7</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">2</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">6</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/LAILAIWA" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://instagram.com/linyishui618" target="_blank" title="Instagram"><i class="fa fa-fw fa-instagram"></i> Instagram</a></span><span class="links-of-author-item"><a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo.com"></i> Weibo</a></span></div></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#五、浏览博客效果"><span class="nav-number">1.</span> <span class="nav-text">五、浏览博客效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、配置GitHub"><span class="nav-number">2.</span> <span class="nav-text">六、配置GitHub</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、配置Hexo部署到GitHub"><span class="nav-number">3.</span> <span class="nav-text">七、配置Hexo部署到GitHub</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"> ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><div class="copyright">&copy; <span itemprop="copyrightYear">2018</span><span class="with-love"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">沂水</span></div><div class="powered-by"><i class="fa fa-user-md"></i> <span id="busuanzi_container_site_uv">本站访客数:<span id="busuanzi_value_site_uv"></span></span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({tagMode:!0,model:{jsonPath:"/live2dw/assets/shizuku.model.json"},display:{position:"right",width:150,height:300},mobile:{show:!1},log:!1,pluginJsPath:"lib/",pluginModelPath:"assets/",pluginRootPath:"live2dw/"})</script></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script><script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script></body></html>
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="hexo,git," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题 五、浏览博客效果打开Git终端，在blog目录下执行以下命令  $ hexo s #等价于hexo server  若执行成功，会输出  记住就算换行也要补一个空格  六、配置GitHub 测试终端是否存在SSH key $ ls -al ~/.ssh     结果如图则表示没有配置S">
+<meta name="keywords" content="hexo,git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo+GitHub搭建个人博客 (二) 部署项目">
+<meta property="og:url" content="http://LAILAIWA.github.io/2018/07/28/2018072801/index.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题 五、浏览博客效果打开Git终端，在blog目录下执行以下命令  $ hexo s #等价于hexo server  若执行成功，会输出  记住就算换行也要补一个空格  六、配置GitHub 测试终端是否存在SSH key $ ls -al ~/.ssh     结果如图则表示没有配置S">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/7.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/8.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/9.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/10.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/11.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/12.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/13.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/14.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/15.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/16.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/17.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/18.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/19.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/20.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/21.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/22.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/23.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/24.png">
+<meta property="og:image" content="http://lailaiwa.github.io/images/markdown/2018072801/25.png">
+<meta property="og:updated_time" content="2018-07-28T02:31:07.275Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo+GitHub搭建个人博客 (二) 部署项目">
+<meta name="twitter:description" content="在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题 五、浏览博客效果打开Git终端，在blog目录下执行以下命令  $ hexo s #等价于hexo server  若执行成功，会输出  记住就算换行也要补一个空格  六、配置GitHub 测试终端是否存在SSH key $ ls -al ~/.ssh     结果如图则表示没有配置S">
+<meta name="twitter:image" content="http://lailaiwa.github.io/images/markdown/2018072801/7.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://LAILAIWA.github.io/2018/07/28/2018072801/"/>
+
+
+
+
+
+  <title>Hexo+GitHub搭建个人博客 (二) 部署项目 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://LAILAIWA.github.io/2018/07/28/2018072801/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hexo+GitHub搭建个人博客 (二) 部署项目</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-28T09:50:42+08:00">
+                2018-07-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  887
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><em>在部署的过程中出现了很多问题，所以我尽量把这些BUG和解决方法也记录下来，希望吸取经验在以后的编程上避免这些问题</em></p>
+<h1 id="五、浏览博客效果"><a href="#五、浏览博客效果" class="headerlink" title="五、浏览博客效果"></a><strong>五、浏览博客效果</strong></h1><p>打开Git终端，在blog目录下执行以下命令</p>
+<blockquote>
+<p>$ hexo s #等价于hexo server</p>
+</blockquote>
+<p>若执行成功，会输出</p>
+<p><img src="/images/markdown/2018072801/7.png" alt=""></p>
+<p>记住就算换行也要补一个空格</p>
+<hr>
+<h1 id="六、配置GitHub"><a href="#六、配置GitHub" class="headerlink" title="六、配置GitHub"></a><strong>六、配置GitHub</strong></h1><ol>
+<li>测试终端是否存在SSH key<blockquote>
+<p>$ ls -al ~/.ssh</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="/images/markdown/2018072801/8.png" alt=""></p>
+<p>结果如图则表示没有配置SSH key，若配置key可跳过下个步骤</p>
+<ol start="2">
+<li>生成SSH key<blockquote>
+<p>$ ssh-keygen -t rsa -b 4096 -C “<a href="mailto:XXXX@XX.com" target="_blank" rel="noopener">XXXX@XX.com</a>” 注意大小写</p>
+</blockquote>
+</li>
+</ol>
+<p><img src="/images/markdown/2018072801/9.png" alt=""></p>
+<ol start="3">
+<li>添加SSH key到ssh-agent中<blockquote>
+<p>$ eval “$(ssh-agent -s)”</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>$ ssh-add ~/.ssh/id-rsa</p>
+</blockquote>
+<p><img src="/images/markdown/2018072801/10.png" alt=""></p>
+<ol start="4">
+<li>复制SSH key到本地</li>
+</ol>
+<p>pbcopy命令</p>
+<blockquote>
+<p>$ pbcopy &lt; ~/.ssh/id_rsa.pub</p>
+</blockquote>
+<p>若不支持pbcopy命令，使用cat命令读取到终端，再复制key</p>
+<blockquote>
+<p>$ cat &lt; ~/.ssh/id_rsa.pub</p>
+</blockquote>
+<p><img src="/images/markdown/2018072801/11.png" alt=""></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCz5dShvsj2rB6FS42kwSR5H+UXMVHgrUIuAkWfRyAM45PxGGEifax84N7oSIct9OIb6OcYAAb7I<span class="regexp">/t9U6kQDIB830xjQ/</span>lp+LzW6XMDGBVBsGh8TUKkPvshErOJPSShMAPIFwSroNyW4+VYh9<span class="regexp">/c/</span>JiNbNUXy2grfmwkgPKAYURD5xhQ2ZpvpikB0X<span class="regexp">/rz8M8VBNeedUj9ZW9hv3RV89R50776PzkmbXMgB39B4bnfUjx2M0dji+Ic+Tud1XoXflYrdwQz7HC2apHHG8gx2NOi8Y/</span>K7+mFGVodSfKinoMGTHvppKieCeveNtzxo<span class="regexp">/1YwFSm63nkFBixe7VHOoLuY+3Rfjp7GVxRQMmg32pu+JW3lBX2e0ebXsWDqVNPBTF9DwAKrTvrkMsEjwiOEYjWlqTgK7ozsaSkGIIoWRglviu6Drqu7JtVb7EfvGdzRo3AnNJ2DeRo7ipRKaTRw8+cJa+Npfuh6u0yQHv8tgxfuVM3j7yUwG3OOlcsY4mVLU7nXcKXBp7uOTOMBH0Kjig6D3tLEDOqI8cpxERXnJw9QbuCvLFaYHjlSCzIIvixJ0xoizMCiyJFXS4yWVYeqGggcrqrdIIz1H9n0MGSbyxCMFxVhHP1jvrxounoyyfgvOHmc1UFOaeKUPFiv8UiGZxKeclQpdDtA9F05PKao1U/</span>jikaYsWmw== <span class="string">'linyishui168@outlook.com'</span></span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>将复制的SSH key添加到GitHub中</li>
+<li>执行命令测试是否添加成功<blockquote>
+<p>$ ssh -T <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a></p>
+</blockquote>
+</li>
+</ol>
+<p><img src="/images/markdown/2018072801/12.png" alt=""></p>
+<ol start="7">
+<li>创建一个Repository托管博客</li>
+</ol>
+<p><img src="/images/markdown/2018072801/13.png" alt=""></p>
+<hr>
+<h1 id="七、配置Hexo部署到GitHub"><a href="#七、配置Hexo部署到GitHub" class="headerlink" title="七、配置Hexo部署到GitHub"></a><strong>七、配置Hexo部署到GitHub</strong></h1><p>Hexo提供了hexo-deployer-git组件方便部署到GitHub</p>
+<ol>
+<li><p>配置Deploy插件-根目录_config.yml 文件</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta"># Deployment</span></span><br><span class="line"><span class="symbol">deploy:</span></span><br><span class="line"><span class="symbol">  type:</span> git                                                    <span class="meta"># 设置发布类型，如git</span></span><br><span class="line"><span class="symbol">  repository:</span> git@github.com:LAILAIWA/LAILAIWA.github.io.git   <span class="meta"># 设置repository对应的链接</span></span><br><span class="line"><span class="symbol">  branch:</span> master                                               <span class="meta"># 设置提交到的分支</span></span><br><span class="line"><span class="symbol">  message:</span> Site update <span class="class">at </span>&#123;&#123; now(<span class="string">"YYYY-MM-DD HH:mm:ss"</span>) &#125;&#125;     <span class="meta"># 设置我们提交的信息</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>发布</p>
+</li>
+</ol>
+<p>执行命令生成博客的静态页面</p>
+<blockquote>
+<p>$ hexo g # 等价于hexo generate</p>
+</blockquote>
+<p>执行命令将静态页面上传到GitHub</p>
+<blockquote>
+<p>$ hexo d # 等价于hexo deploy</p>
+</blockquote>
+<p>打开浏览器访问LAILAIWA.github.io访问部署的博客，每次添加新的博客，重复执行前两个命令即可<br>删除命令，删除已生成的静态页面</p>
+<blockquote>
+<p>$ hexo clean</p>
+</blockquote>
+<p>执行命令1，出现BUG，发现没在项目路径下执行</p>
+<p><img src="/images/markdown/2018072801/14.png" alt=""></p>
+<p>更换路径，又有BUG，尝试删除链接中的空格，解决</p>
+<p><img src="/images/markdown/2018072801/15.png" alt=""></p>
+<p><img src="/images/markdown/2018072801/16.png" alt=""></p>
+<p>执行命令2，又有BUG</p>
+<p><img src="/images/markdown/2018072801/17.png" alt=""></p>
+<p>应该是插件未部署成功，执行命令</p>
+<blockquote>
+<p>npm install hexo-deployer-git –save</p>
+</blockquote>
+<p><img src="/images/markdown/2018072801/18.png" alt=""></p>
+<p>又又又出现BUG，应该是Git未登陆</p>
+<p><img src="/images/markdown/2018072801/19.png" alt=""></p>
+<p>可以用命令全局登陆</p>
+<blockquote>
+<p>git config –global user.email “<a href="mailto:linyishui168@outlook.com" target="_blank" rel="noopener">linyishui168@outlook.com</a>”</p>
+</blockquote>
+<blockquote>
+<p>git config –global user.name “LAILAIWA”</p>
+</blockquote>
+<p>或改项目的配置文件只为当前项目登陆，在项目目录.git文件夹<br>[user]<br>或在.git文件夹下执行命令</p>
+<blockquote>
+<p>git config user.name = “xxx”</p>
+</blockquote>
+<p>又又又有BUG出现</p>
+<p><img src="/images/markdown/2018072801/20.png" alt=""></p>
+<p>猜测可能是文件太大，调整一下</p>
+<blockquote>
+<p>git config –global http.postBuffer 524288000<br>BUG提示变化</p>
+</blockquote>
+<p><img src="/images/markdown/2018072801/21.png" alt=""></p>
+<p>不太明白，又部署了一下，结果成功了…黑人问号脸???</p>
+<p><img src="/images/markdown/2018072801/22.png" alt=""></p>
+<p>部署成功，尝试访问一下</p>
+<p><img src="/images/markdown/2018072801/23.png" alt=""></p>
+<p>访问成功，但字符编码错误，样式也没加载成功，明天解决一下</p>
+<p>记事本保存时编码格式选UTF-8<br>一直会出现连接不上Repository情况，可是SSH是配置好的阿？<br>尝试通过修改hosts的方法解决这个问题，在站长之家找个最快的地址，但不太靠谱，都PING不通，在网上找到一个地址还可以</p>
+<blockquote>
+<p>192.30.255.112    github.com</p>
+</blockquote>
+<p>解决部署问题<br>但样式还是没加载出来</p>
+<p><img src="/images/markdown/2018072801/24.png" alt=""></p>
+<p>发现项目好像忘建子目录了，尝试修改配置文件，将子目录删除<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">url:</span> <span class="string">http:</span><span class="comment">//yishui.github.io/blog</span></span><br><span class="line"><span class="string">root:</span> <span class="regexp">/blog/</span></span><br></pre></td></tr></table></figure></p>
+<p>修改为<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">url:</span> <span class="string">http:</span><span class="comment">//yishui.github.io</span></span><br><span class="line"><span class="string">root:</span> /</span><br></pre></td></tr></table></figure></p>
+<p>终于成功了，汗，有些丢人</p>
+<p><img src="/images/markdown/2018072801/25.png" alt=""></p>
+<p>接下来把默认的主题换个好看点的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hexo/" rel="tag"># hexo</a>
+          
+            <a href="/tags/git/" rel="tag"># git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/27/2018072701/" rel="next" title="Hexo+GitHub搭建个人博客 (一) 环境搭建">
+                <i class="fa fa-chevron-left"></i> Hexo+GitHub搭建个人博客 (一) 环境搭建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/28/2018072802/" rel="prev" title="Hexo+GitHub搭建个人博客 (三) 配置nexT主题">
+                Hexo+GitHub搭建个人博客 (三) 配置nexT主题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#五、浏览博客效果"><span class="nav-number">1.</span> <span class="nav-text">五、浏览博客效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、配置GitHub"><span class="nav-number">2.</span> <span class="nav-text">六、配置GitHub</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、配置Hexo部署到GitHub"><span class="nav-number">3.</span> <span class="nav-text">七、配置Hexo部署到GitHub</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

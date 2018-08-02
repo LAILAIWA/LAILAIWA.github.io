@@ -1,3 +1,1131 @@
-<!DOCTYPE html><html class="theme-next pisces use-motion" lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#222"><script src="/lib/pace/pace.min.js?v=1.0.2"></script><link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4"><link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222"><meta name="keywords" content="java,"><meta name="description" content="什么是Java的字节码？  程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上   Java允许整形溢出并返回错误值，Java为什么不自动检查溢出  之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long   double值初始化为无穷大  DOUBLE.POSITIVE_IN"><meta name="keywords" content="java"><meta property="og:type" content="article"><meta property="og:title" content="Java知识点总结 (一)"><meta property="og:url" content="http://LAILAIWA.github.io/2018/08/02/2018080201/index.html"><meta property="og:site_name" content="沂水博客"><meta property="og:description" content="什么是Java的字节码？  程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上   Java允许整形溢出并返回错误值，Java为什么不自动检查溢出  之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long   double值初始化为无穷大  DOUBLE.POSITIVE_IN"><meta property="og:locale" content="zh-Hans"><meta property="og:updated_time" content="2018-08-02T07:20:07.676Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Java知识点总结 (一)"><meta name="twitter:description" content="什么是Java的字节码？  程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上   Java允许整形溢出并返回错误值，Java为什么不自动检查溢出  之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long   double值初始化为无穷大  DOUBLE.POSITIVE_IN"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Pisces",version:"5.1.4",sidebar:{position:"right",display:"post",offset:12,b2t:!1,scrollpercent:!1,onmobile:!1},fancybox:!0,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://LAILAIWA.github.io/2018/08/02/2018080201/"><title>Java知识点总结 (一) | 沂水博客</title></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><div class="container sidebar-position-right page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">沂水博客</span><span class="logo-line-after"><i></i></span></a></div><p class="site-subtitle">编程和心历记录</p></div><div class="site-nav-toggle"> <button><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br> 首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br> 标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br> 归档</a></li></ul></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="http://LAILAIWA.github.io/2018/08/02/2018080201/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="沂水"><meta itemprop="description" content=""><meta itemprop="image" content="/images/riho_yoshioka1.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="沂水博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Java知识点总结 (一)</h1><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-02T10:07:53+08:00">2018-08-02</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/技术文档/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a></span></span><div class="post-wordcount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">字数统计&#58;</span> <span title="字数统计">4,812</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">17</span></div></div></header><div class="post-body" itemprop="articleBody"><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=543988578&auto=1&height=66"></iframe><ol><li><p>什么是Java的字节码？</p><blockquote><p>程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上</p></blockquote></li><li><p>Java允许整形溢出并返回错误值，Java为什么不自动检查溢出</p><blockquote><p>之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long</p></blockquote></li><li><p>double值初始化为无穷大</p><blockquote><p>DOUBLE.POSITIVE_INFINITY DOUBLE.NEGATIVE_INFINITY</p></blockquote></li><li><p>不同数据类型值相互比较？</p><blockquote><p>需要先进行类型转换，Java一般会在比较前自动转换</p></blockquote></li><li><p>1/0和1.0/0.0值分别是？</p><blockquote><p>除以零异常，无穷大</p></blockquote></li><li><p>负数的除法和求余</p><blockquote><p>除法会向零取整，求余则基于(a/b)*b + a%b = a，所以当a为14，b为-3，余数为2</p></blockquote></li><li><p>&amp;,|,^与&amp;&amp;,||</p><blockquote><p>&amp;,|,^为整数位逻辑操作，如10|6 = 1010|110=1110=14，10^6=1100=12<br>后者是短路求值逻辑判断，从左向右一旦整个表达式已知则停止求值</p></blockquote></li><li><p>for循环和while循环的区别</p><blockquote><p>主要是递增变量，while循环递增变量循环结束还是可以使用的，for循环则不行</p></blockquote></li><li><p>为什么数组起始索引是0不是1？</p><blockquote><p>源于机器语言，获取数组某元素的地址需要数组的起始地址加上元素的索引，若起始为1则每次都要减一</p></blockquote></li><li><p>Java中一个静态方法可以将另一个静态方法作为参数吗？</p><blockquote><p>不可以，虽然很多语言都可以</p></blockquote></li><li><p>Java中的e表示10的次方，如2.0e-6为2.0*10^(-6)</p></li><li><p>Java中的抽象数据类型ADT</p><blockquote><p>所有对象的三大特性：状态，标识，行为。</p><ul><li>状态：即数据类型中的值</li><li>标识：即内存中的位置</li><li>行为：即数据类型的操作</li></ul><p>Java对象用引用类型来区别于原始数据类型，可以认为引用就是内存地址。</p></blockquote></li><li><p>静态方法与非静态方法</p><blockquote><p>静态方法的主要作用是实现函数，方便在不创建对象的情况下调用方法和变量</p><p>Static方法不能调用非静态方法，反之则可以。</p><ul><li><strong>static方法</strong>：不依赖于对象，所以没有this，因此不能访问非静态变量和方法，因为它们的调用要依赖于具体的对象。</li><li><strong>static变量</strong>：静态变量被所有对象共享，内存中只能有一个，仅在类加载时被初始化。static不允许修饰局部变量，局部就说明方法的生命周期决定变量的存活时期，static修饰的变量会扩充到整个类，有语法冲突</li><li><strong>static代码块</strong>：静态代码块来优化程序性能，类初次加载时会执行一次静态代码块，可以将一些只需要初始化的操作和数据放在静态代码块中。</li></ul><p>父类静态代变量-&gt;父类静态代码块-&gt;子类静态变量-&gt;子类静态代码块-&gt;父类非静态变量（父类实例成员变量）-&gt;父类构造函数-&gt;子类非静态变量（子类实例成员变量）-&gt;子类构造函数</p></blockquote></li><li><p>赋值与复制，副本</p><blockquote><p>赋值语句给对象传递的是同个内存位置的引用，即起别名。</p><p>对于原始数据类型则是拷贝值，生成副本。</p><p>而引用类型则复制的是引用，仍是同一对象。</p></blockquote></li><li><p>参数传递</p><blockquote><p>按值传递：将参数值的副本传递给方法。方法无法改变调用端变量的值，原始数据类型正期望如此。</p><p>引用类型传递：每次传递的都是对象的引用</p></blockquote></li><li><p>数组</p><blockquote><p>Java中所有非原始数据类型都是对象，所以字符串String，数组都是对象。</p></blockquote></li><li><p>字符串</p><blockquote><p>String和数组类似，但二者有区别，数组通过内置语法访问每个字符，而字符串为索引访问，为字符串操作准备了很多实例方法。</p><p><strong>为什么不用字符数组替代String？</strong></p><ul><li>为了让代码简洁清晰，String是更高级别的封装，有面向对象的思想</li></ul></blockquote></li><li><p>重载和重写</p><blockquote><ul><li><strong>重载overloading</strong>：<br>同一类中，体现多态性，相同名字的方法，参数个数或类型不同，返回值可同或不同，但不能以返回值区别，访问修饰可以不同，异常也可以不同。<br>对于继承，访问权限也会影响重载，父类private时子类认为是新建了方法。</li><li><strong>重写overrite</strong>：<br>不同类中，受限于父方法的访问修饰类型，如默认default时只能被同包内的子类重写，protected能被不同包子类重写<br>参数列表要相同，返回类型也要相同<br>访问修饰符要大于父类方法，<br>不能抛出新的或更广泛的异常检查</li></ul></blockquote></li><li><p>维护多个实现</p><blockquote><p>同一份API的多个实现可能会有维护和命名问题，而且常常需要维护多个版本，通常采用前缀命名约定来应付这种问题，但当系统庞大时，这样不算十分理想，当API维护后还需要修改用例代码，当与泛型和迭代器一起使用会有问题。</p></blockquote></li><li><p>四大特性的优点</p><blockquote><ul><li><strong>抽象：</strong><br>以前是觉得抽象类意义不大，但看过一些言论后，感觉还是有其存在意义，</li></ul></blockquote></li></ol><blockquote><ul><li><strong>封装：</strong></li></ul><ol><li>隐藏信息和内部实现细节，提高安全性</li><li>实现了分工，需要时调用</li><li>降低代码耦合度，促进代码复用，API不变却可以更新实现，提升软件质量</li></ol></blockquote><blockquote><ul><li><strong>继承：</strong><pre><code>1.实现代码复用
-</code></pre></li></ul></blockquote><blockquote><ul><li><strong>多态：</strong><pre><code>1.代码上对封装和继承的体现，如父类引用不同子类表现不同的行为，同样的方法名重载后有不同的实现。
-</code></pre></li></ul></blockquote><ol start="21"><li><p>抽象类和接口</p><blockquote><ul><li><strong>接口继承</strong> implements 继承接口使我们能操作实现该接口的任意类型对象</li><li><strong>子类继承</strong> extends</li></ul><p>(破坏封装，与前者优劣未有定论)</p></blockquote></li><li><p>原始数据类型和封装类型</p><blockquote><p>Java中封装的引用类型称为封装类型，在需要的时候Java自动将原始数据类型转换为封装类型，如int和String拼接时，int自动转为Integer并调用toString方法</p></blockquote></li><li><p>对象的等价性</p><blockquote><p>== 对于原始数据类型比较的是值，对于非原始数据类型则判断引用或者说标识是否相同，但封装类型有特例，如Integer若值为-128到127则存入常量池比较的是值。</p><p>要调用equals方法，自定义数据类型时需要重载equals方法<br>要求：</p><ol><li>自反性：x.equals(x)=true</li><li>对称性：y.equals(x)=true 则 x.equals(y)=true</li><li>传递性：x.equals(y)=true，y.equals(z)=true 则 x.equals(z)=true</li><li>一致性：值未更改时x.equals(y)=true恒定</li><li>非空性：x.equals(null)=false恒定</li></ol></blockquote></li><li><p>Java内存管理，垃圾回收</p><blockquote><p>原始数据类型在编译阶段就可获取内存所需信息，而对象失去调用后成为孤儿，C和C++由程序员来释放孤儿内存，Java则有GC垃圾回收，不允许修改引用</p><p>避免一些GC无法识别到的孤儿—对象游离，只需要将其赋值null</p></blockquote></li><li><p>final</p><blockquote><p>保证不可变性，再次赋值会报编译错误，如String和数组的区别，String是不可变的，数组可变，这类设计取决于我们对他们的期望。</p><p>这点也是StringBuilder和Vector等存在的目的之一。</p><p>但final有个缺点，它限制的是赋值语句，所以final只能限制于原始数据类型，当修饰引用类型的变量时，它将永远指向同一个对象，但对象的值仍是可变的。如final一个int[]，仍可以修改元素</p><p>final修饰类，类无法被继承，成员方法都会隐式的指定为final方法</p><p>final 修饰方法，使用这种方法的原因：</p><ol><li>锁定方法，防止被修改，private会隐式的指定为final方法，所以一般用来锁定被子类继承的方法。</li><li>提高效率，早期会将final方法转为内嵌调用，新版本不需要如此优化</li></ol><p>final修饰变量时，封装类型和String加final修饰时会被当作编译常量</p><p>final和static的区别：对于成员变量，static表示只保留一份副本，final表示变量不可变，final对于不同的对象可能就不同，static则是一定相同的</p></blockquote></li><li><p>Stirng，StringBuilder，StringBuffer</p></li></ol><p><em>参考博客：<a href="https://www.cnblogs.com/su-feng/p/6659064.html" target="_blank" rel="noopener">https://www.cnblogs.com/su-feng/p/6659064.html</a></em></p><p>区别主要是在两个方面，即<strong>运行速度</strong>和<strong>线程安全</strong>这两方面。</p><blockquote><p>运行速度快慢为：StringBuilder &gt; StringBuffer &gt; String</p></blockquote><blockquote><p>String最慢的原因：</p><p>&nbsp;&nbsp;String为字符串常量，而StringBuilder和StringBuffer均为字符串变量，即String对象一旦创建之后该对象是不可更改的，隐式final，但后两者的对象是变量，是可以更改的。<br></p><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> <span class="built_in">str</span>=<span class="string">"abc"</span>;</span><br><span class="line">System.out.<span class="built_in">println</span>(<span class="built_in">str</span>);</span><br><span class="line"><span class="built_in">str</span>=<span class="built_in">str</span>+<span class="string">"de"</span>;</span><br><span class="line">System.out.<span class="built_in">println</span>(<span class="built_in">str</span>);</span><br></pre></td></tr></table></figure><p></p></blockquote><blockquote><p>&nbsp;&nbsp;如果运行这段代码会发现先输出“abc”，然后又输出“abcde”，好像是str这个对象被更改了，其实，这只是一种假象罢了，JVM对于这几行代码是这样处理的，首先创建一个String对象str，并把“abc”赋值给str，然后在第三行中，其实JVM又创建了一个新的对象也名为str，然后再把原来的str的值和“de”加起来再赋值给新的str，而原来的str就会被JVM的垃圾回收机制（GC）给回收掉了，所以，str实际上并没有被更改，也就是前面说的String对象一旦创建之后就不可更改了。所以，Java中对String对象进行的操作实际上是一个不断创建新的对象并且将旧的对象回收的一个过程，所以执行速度很慢。</p><p>&nbsp;&nbsp;而StringBuilder和StringBuffer的对象是变量，对变量进行操作就是直接对该对象进行更改，而不进行创建和回收的操作，所以速度要比String快很多。</p></blockquote><blockquote><p>在线程安全上，StringBuilder是线程不安全的，而StringBuffer是线程安全的<br>如果一个StringBuffer对象在字符串缓冲区被多个线程使用时，StringBuffer中很多方法可以带有synchronized关键字，所以可以保证线程是安全的，但StringBuilder的方法则没有该关键字，所以不能保证线程安全，有可能会出现一些错误的操作。所以如果要进行的操作是多线程的，那么就要使用StringBuffer，但是在单线程的情况下，还是建议使用速度比较快的StringBuilder。</p></blockquote><blockquote><p>总结一下:</p><ul><li><strong>String</strong>：适用于少量的字符串操作的情况</li><li><strong>StringBuilder</strong>：适用于单线程下在字符缓冲区进行大量操作的情况</li><li><strong>StringBuffer</strong>：适用多线程下在字符缓冲区进行大量操作的情况</li></ul></blockquote><ol start="27"><li>异常错误和断言<blockquote><p>断言是一条需要在程序的某处确认为true的布尔表达式，当值为false程序会中止并报告出错信息，只用来测试。</p></blockquote></li></ol><p><em>参考博客：<a href="https://blog.csdn.net/lan12334321234/article/details/70049446/" target="_blank" rel="noopener">https://blog.csdn.net/lan12334321234/article/details/70049446/</a></em></p><blockquote><p>Exception Error</p><p>java异常分为两种：<strong>运行时异常</strong>（RuntimeException）和<strong>非运行时异常</strong>（CheckedException）也叫<strong>检查式异常</strong>。</p><ol><li>运行时异常是不需要捕获的，程序员可以不去处理，当异常出现时，虚拟机会处理。常见的运行时异常有空指针异常</li></ol><p>常见的5中运行时异常：</p><ul><li>ClassCastException(类转换异常)</li><li>IndexOutOfBoundsException(数组越界)</li><li>NullPointerException(空指针)</li><li>ArrayStoreException(数据存储异常，操作数组时类型不一致)</li><li>还有IO操作的BufferOverflowException异常</li></ul><ol start="2"><li>非运行时异常就必须得捕获了，否则编译不过去，java编译器要求程序员必须对这种异常进行catch,Java认为Checked异常都是可以被处理（修复）的异常，所以Java程序必须显式处理Checked异常。</li></ol><p>常见的非运行异常有io异常和sql异常：IOException、FileNotFoundExcetion 和SQLException</p></blockquote><blockquote><p>finally是异常处理工作的一部分，表示总是执行。一般finally写的代码语句就是流的关闭。也就是做了一项清理，工作清理工作对于我们来说是必不可少的，因为如果一些消耗资源的操作，比如IO,JDBC。如果我们用完以后没有及时正确的关闭，那后果会很严重，这意味着内存泄露。</p></blockquote><blockquote><p>异常处理中的throws和throw的区别：</p><ol><li>throws出现在方法的声明中，表示该方法可能会抛出的异常，允许throws后面跟着多个异常类型</li><li>throw出现在方法体中，用于抛出异常。当方法在执行过程中遇到异常情况时，将异常信息封装为异常对象，然后throw。</li></ol></blockquote><ol start="28"><li><p>Java中的引用和指针</p><blockquote><p>指针可以看作机器地址，Java创建引用只能通过new，改变引用只能通过赋值，所以Java的引用叫安全指针</p></blockquote></li><li><p>变量</p><blockquote><ul><li><strong>成员变量</strong>：作用范围是整个类，相当于C语言中的全局变量，定义在方法体和语句块之外，一般定义在类的声明之下;成员变量包括：实例变量、类变量(又叫静态变量)和常量。</li><li><strong>局部变量</strong>：作用范围在它定义的方法体或者语句块内部，出了这个范围就无效了。</li><li><strong>实例变量</strong>：不用static修饰的成员变量，随对象的创建而创建，每个对象都有自己的独有的实例变量，属于对象私有;调用要实例化对象，用对象名.实例变量名才可以调用，如：Demo demo = new Demo(); int YouAge = demo.age;(当然，一般都会将成员变量设为private，通过属性方法调用)。</li><li><strong>静态变量</strong>：有时叫全局变量，和实例变量区别就是不和对象关联。用static修饰的成员变量，又叫类变量，一个类里只有一份，属于对象共有，调用是一般用类名.静态变量名就可以调用，或者用对象名.静态变量名也可以调用，调用的都是同一个变量，如:Demo.height。</li></ul></blockquote></li><li><p>泛型和迭代</p><blockquote><ul><li><p><strong>泛型</strong>&lt;&gt;，参数化类型，象征性的占位符，没有泛型，我们需要为所有数据类型定义不同的API。</p></li><li><p><strong>迭代</strong>，foreach语句通过迭代遍历或处理集合中的每个元素，需要集合数据类型需要实现iterable接口，添加iterator方法并返回一个Iterator迭代器对象，迭代器对象包含hasNext和next方法</p></li></ul></blockquote></li><li><p>自动装箱和自动拆箱</p><blockquote><p>类型化参数必须实例化为引用类型，所以Java对于原始数据类型和封装类型进行了自动转换。</p><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt; <span class="built_in">list</span> = <span class="literal">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="built_in">list</span>.add(<span class="number">11</span>); <span class="comment">//自动装箱 int-&gt;Integer</span></span><br><span class="line">int i = <span class="built_in">list</span>.get(<span class="number">0</span>); <span class="comment">//自动拆箱 Integer-&gt;int</span></span><br></pre></td></tr></table></figure></blockquote></li><li><p>内部类</p><blockquote><ul><li><strong>成员内部类</strong>，定义于另一个类的内部，可以任意访问外部类的属性和方法，如果同名默认内部类成员，外部类访问内部类需要先实例对象，内部类访问权限和属性一样有四种</li><li><strong>局部内部类</strong>，定义于方法或作用域内部，访问权限只限于该方法或作用域，类似局部变量不能有访问修饰以及静态修饰</li><li><strong>匿名内部类</strong>，new ClassName(){@override……},实现父类或接口的同时产生一个实例对象，当然要先存在该父类或接口，同样不能用访问修饰以及静态修饰。唯一没有构造器的内部类，所以一般只用来做接口回调，不需要增加方法，只重写或实现继承的方法</li><li><strong>静态内部类</strong>，定义于另一个类内部但多了static修饰，所以不依赖外部类，也不能使用外部类非static成员。</li></ul></blockquote></li></ol><blockquote><p><strong>成员内部类如何无条件引用外部类成员？与静态内部类区别？</strong></p><p>成员内部类会单独编译为一个字节码文件，编译器会为成员内部类添加指向外部类对象的引用，即使内部类是无参构造器，编译仍默认加外部类对象的引用，所以也知道成员内部类会依赖于外部类对象。</p><p>静态内部类区别于成员内部类，不依赖外部类对象，可以直接创建内部类对象，且不包含外部类引用的。</p></blockquote><blockquote><p><strong>为什么局部内部类和匿名内部类只能访问局部final变量？</strong></p><p>如一个方法调用线程TheadA，方法内有局部变量a，那么方法执行完毕，a生命周期就结束了，但此时线程A还可能在执行，此时无法访问a怎么办？Java编译器会默认在局部或匿名内部类的常量池增加一个相同的值嵌入执行字节码，如此匿名内部类只是使用的副本，而非方法中的变量a，当然a有可能是不确定值的参数，编译时无法确定值，所以会通过构造器传参的方式来对副本初始化赋值。因此可以明白，如果局部变量改变的话会导致数据不一致，所以Java直接限制只能访问final局部变量。</p></blockquote><blockquote><p>内部类使用场景和优点：</p><ol><li>内部类独立继承接口，而不用管外部类如何，所以是Java解决多继承的方案</li><li>方便将关系紧密的类结合，并对外界隐藏</li><li>方便编写事件驱动</li><li>方便编写线程代码<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">           <span class="comment">// 初始化Bean1</span></span><br><span class="line">           (<span class="number">1</span>)</span><br><span class="line">           bean1.I++;</span><br><span class="line">           <span class="comment">// 初始化Bean2</span></span><br><span class="line">           (<span class="number">2</span>)</span><br><span class="line">           bean2.J++;</span><br><span class="line">           <span class="comment">//初始化Bean3</span></span><br><span class="line">           (<span class="number">3</span>)</span><br><span class="line">           bean3.k++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Bean1</span>&#123;</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">int</span> I = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Bean2</span>&#123;</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">int</span> J = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bean</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Bean3</span>&#123;</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li></ol></blockquote><blockquote><ol><li><p>Test test = new Test();<br>Test.Bean1 bean1 = test. new Bean1();</p></li><li><p>Test.Bean2 bean2 = new Test.Bean2();</p></li><li><p>Bean bean = new Bean();<br>Bean.Bean3 = bean.new Bean3();</p></li></ol></blockquote><ol start="33"><li>字符串和子字符串<blockquote><p>计算内存消耗时可以知道：原始数据类型占用字节：char-2字节，int-4字节，double/long-8字节，而对象需要16字节的对象开销，引用即机器地址一般为8字节。所以一个String字符串内存开销：对象开销16+char数组引用8+偏移量int4+字符串长度int4+散列值int4+填充字节+4 + char数组24+2N = 40+24+2N=64+2N</p><p>创建子字符串时，如substring(3,6) 会创建一个新String对象，但其和原字符串共用一个char数组，所以其内存开销为常数：40</p></blockquote></li></ol></div><div> ﻿<div><div style="text-align:center;color:#ccc;font-size:14px">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div></div></div><footer class="post-footer"><div class="post-tags"> <a href="/tags/java/" rel="tag"># java</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2018/07/30/2018073001/" rel="next" title="算法复习 (一) 排序"><i class="fa fa-chevron-left"></i> 算法复习 (一) 排序</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"></div></div></footer></div></article><div class="post-spread"></div></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><section class="site-overview-wrap sidebar-panel sidebar-panel-active"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/images/riho_yoshioka1.jpg" alt="沂水"><p class="site-author-name" itemprop="name">沂水</p><p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">7</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">2</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">6</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/LAILAIWA" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span><span class="links-of-author-item"><a href="https://instagram.com/linyishui618" target="_blank" title="Instagram"><i class="fa fa-fw fa-instagram"></i> Instagram</a></span><span class="links-of-author-item"><a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo.com"></i> Weibo</a></span></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"> ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><div class="copyright">&copy; <span itemprop="copyrightYear">2018</span><span class="with-love"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">沂水</span></div><div class="powered-by"><i class="fa fa-user-md"></i> <span id="busuanzi_container_site_uv">本站访客数:<span id="busuanzi_value_site_uv"></span></span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div><script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({tagMode:!0,model:{jsonPath:"/live2dw/assets/shizuku.model.json"},display:{position:"right",width:150,height:300},mobile:{show:!1},log:!1,pluginJsPath:"lib/",pluginModelPath:"assets/",pluginRootPath:"live2dw/"})</script></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script><script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script></body></html>
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是Java的字节码？  程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上   Java允许整形溢出并返回错误值，Java为什么不自动检查溢出  之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long   double值初始化为无穷大  DOUBLE.POSITIVE_IN">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java知识点总结 (一)">
+<meta property="og:url" content="http://LAILAIWA.github.io/2018/08/02/2018080201/index.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="什么是Java的字节码？  程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上   Java允许整形溢出并返回错误值，Java为什么不自动检查溢出  之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long   double值初始化为无穷大  DOUBLE.POSITIVE_IN">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-02T07:20:07.676Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java知识点总结 (一)">
+<meta name="twitter:description" content="什么是Java的字节码？  程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上   Java允许整形溢出并返回错误值，Java为什么不自动检查溢出  之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long   double值初始化为无穷大  DOUBLE.POSITIVE_IN">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://LAILAIWA.github.io/2018/08/02/2018080201/"/>
+
+
+
+
+
+  <title>Java知识点总结 (一) | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://LAILAIWA.github.io/2018/08/02/2018080201/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java知识点总结 (一)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-02T10:07:53+08:00">
+                2018-08-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,812
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=543988578&auto=1&height=66"></iframe>
+
+<ol>
+<li><p>什么是Java的字节码？</p>
+<blockquote>
+<p>程序的低级表示，能运行在java虚拟机，程序抽象为字节码能保证代码运行于各种设备之上</p>
+</blockquote>
+</li>
+<li><p>Java允许整形溢出并返回错误值，Java为什么不自动检查溢出</p>
+<blockquote>
+<p>之所以成为原始数据类型就是缺乏溢出检查，避免此类问题只要在合适的场景使用合适的数据类型，小于10位十进制的整型用int，大于则用long</p>
+</blockquote>
+</li>
+<li><p>double值初始化为无穷大</p>
+<blockquote>
+<p>DOUBLE.POSITIVE_INFINITY DOUBLE.NEGATIVE_INFINITY</p>
+</blockquote>
+</li>
+<li><p>不同数据类型值相互比较？</p>
+<blockquote>
+<p>需要先进行类型转换，Java一般会在比较前自动转换</p>
+</blockquote>
+</li>
+<li><p>1/0和1.0/0.0值分别是？</p>
+<blockquote>
+<p>除以零异常，无穷大</p>
+</blockquote>
+</li>
+<li><p>负数的除法和求余</p>
+<blockquote>
+<p>除法会向零取整，求余则基于(a/b)*b + a%b = a，所以当a为14，b为-3，余数为2</p>
+</blockquote>
+</li>
+<li><p>&amp;,|,^与&amp;&amp;,||</p>
+<blockquote>
+<p>&amp;,|,^为整数位逻辑操作，如10|6 = 1010|110=1110=14，10^6=1100=12<br>后者是短路求值逻辑判断，从左向右一旦整个表达式已知则停止求值</p>
+</blockquote>
+</li>
+<li><p>for循环和while循环的区别</p>
+<blockquote>
+<p>主要是递增变量，while循环递增变量循环结束还是可以使用的，for循环则不行</p>
+</blockquote>
+</li>
+<li><p>为什么数组起始索引是0不是1？</p>
+<blockquote>
+<p>源于机器语言，获取数组某元素的地址需要数组的起始地址加上元素的索引，若起始为1则每次都要减一</p>
+</blockquote>
+</li>
+<li><p>Java中一个静态方法可以将另一个静态方法作为参数吗？</p>
+<blockquote>
+<p>不可以，虽然很多语言都可以</p>
+</blockquote>
+</li>
+<li><p>Java中的e表示10的次方，如2.0e-6为2.0*10^(-6)</p>
+</li>
+<li><p>Java中的抽象数据类型ADT</p>
+<blockquote>
+<p>所有对象的三大特性：状态，标识，行为。</p>
+<ul>
+<li>状态：即数据类型中的值</li>
+<li>标识：即内存中的位置</li>
+<li>行为：即数据类型的操作</li>
+</ul>
+<p>Java对象用引用类型来区别于原始数据类型，可以认为引用就是内存地址。</p>
+</blockquote>
+</li>
+<li><p>静态方法与非静态方法</p>
+<blockquote>
+<p>静态方法的主要作用是实现函数，方便在不创建对象的情况下调用方法和变量</p>
+<p>Static方法不能调用非静态方法，反之则可以。</p>
+<ul>
+<li><strong>static方法</strong>：不依赖于对象，所以没有this，因此不能访问非静态变量和方法，因为它们的调用要依赖于具体的对象。</li>
+<li><strong>static变量</strong>：静态变量被所有对象共享，内存中只能有一个，仅在类加载时被初始化。static不允许修饰局部变量，局部就说明方法的生命周期决定变量的存活时期，static修饰的变量会扩充到整个类，有语法冲突</li>
+<li><strong>static代码块</strong>：静态代码块来优化程序性能，类初次加载时会执行一次静态代码块，可以将一些只需要初始化的操作和数据放在静态代码块中。</li>
+</ul>
+<p>父类静态代变量-&gt;父类静态代码块-&gt;子类静态变量-&gt;子类静态代码块-&gt;父类非静态变量（父类实例成员变量）-&gt;父类构造函数-&gt;子类非静态变量（子类实例成员变量）-&gt;子类构造函数</p>
+</blockquote>
+</li>
+<li><p>赋值与复制，副本</p>
+<blockquote>
+<p>赋值语句给对象传递的是同个内存位置的引用，即起别名。</p>
+<p>对于原始数据类型则是拷贝值，生成副本。</p>
+<p>而引用类型则复制的是引用，仍是同一对象。</p>
+</blockquote>
+</li>
+<li><p>参数传递</p>
+<blockquote>
+<p>按值传递：将参数值的副本传递给方法。方法无法改变调用端变量的值，原始数据类型正期望如此。</p>
+<p>引用类型传递：每次传递的都是对象的引用</p>
+</blockquote>
+</li>
+<li><p>数组</p>
+<blockquote>
+<p>Java中所有非原始数据类型都是对象，所以字符串String，数组都是对象。</p>
+</blockquote>
+</li>
+<li><p>字符串</p>
+<blockquote>
+<p>String和数组类似，但二者有区别，数组通过内置语法访问每个字符，而字符串为索引访问，为字符串操作准备了很多实例方法。</p>
+<p><strong>为什么不用字符数组替代String？</strong></p>
+<ul>
+<li>为了让代码简洁清晰，String是更高级别的封装，有面向对象的思想</li>
+</ul>
+</blockquote>
+</li>
+<li><p>重载和重写</p>
+<blockquote>
+<ul>
+<li><strong>重载overloading</strong>：<br>同一类中，体现多态性，相同名字的方法，参数个数或类型不同，返回值可同或不同，但不能以返回值区别，访问修饰可以不同，异常也可以不同。<br>对于继承，访问权限也会影响重载，父类private时子类认为是新建了方法。</li>
+<li><strong>重写overrite</strong>：<br>不同类中，受限于父方法的访问修饰类型，如默认default时只能被同包内的子类重写，protected能被不同包子类重写<br>参数列表要相同，返回类型也要相同<br>访问修饰符要大于父类方法，<br>不能抛出新的或更广泛的异常检查</li>
+</ul>
+</blockquote>
+</li>
+<li><p>维护多个实现</p>
+<blockquote>
+<p>同一份API的多个实现可能会有维护和命名问题，而且常常需要维护多个版本，通常采用前缀命名约定来应付这种问题，但当系统庞大时，这样不算十分理想，当API维护后还需要修改用例代码，当与泛型和迭代器一起使用会有问题。</p>
+</blockquote>
+</li>
+<li><p>四大特性的优点</p>
+<blockquote>
+<ul>
+<li><strong>抽象：</strong><br>以前是觉得抽象类意义不大，但看过一些言论后，感觉还是有其存在意义，</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li><strong>封装：</strong></li>
+</ul>
+<ol>
+<li>隐藏信息和内部实现细节，提高安全性</li>
+<li>实现了分工，需要时调用</li>
+<li>降低代码耦合度，促进代码复用，API不变却可以更新实现，提升软件质量</li>
+</ol>
+</blockquote>
+<blockquote>
+<ul>
+<li><strong>继承：</strong><pre><code>1.实现代码复用
+</code></pre></li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li><strong>多态：</strong><pre><code>1.代码上对封装和继承的体现，如父类引用不同子类表现不同的行为，同样的方法名重载后有不同的实现。
+</code></pre></li>
+</ul>
+</blockquote>
+<ol start="21">
+<li><p>抽象类和接口</p>
+<blockquote>
+<ul>
+<li><strong>接口继承</strong> implements 继承接口使我们能操作实现该接口的任意类型对象</li>
+<li><strong>子类继承</strong> extends</li>
+</ul>
+<p>(破坏封装，与前者优劣未有定论) </p>
+</blockquote>
+</li>
+<li><p>原始数据类型和封装类型</p>
+<blockquote>
+<p>Java中封装的引用类型称为封装类型，在需要的时候Java自动将原始数据类型转换为封装类型，如int和String拼接时，int自动转为Integer并调用toString方法</p>
+</blockquote>
+</li>
+<li><p>对象的等价性</p>
+<blockquote>
+<p>== 对于原始数据类型比较的是值，对于非原始数据类型则判断引用或者说标识是否相同，但封装类型有特例，如Integer若值为-128到127则存入常量池比较的是值。</p>
+<p>要调用equals方法，自定义数据类型时需要重载equals方法<br>要求：</p>
+<ol>
+<li>自反性：x.equals(x)=true</li>
+<li>对称性：y.equals(x)=true 则 x.equals(y)=true</li>
+<li>传递性：x.equals(y)=true，y.equals(z)=true 则 x.equals(z)=true</li>
+<li>一致性：值未更改时x.equals(y)=true恒定</li>
+<li>非空性：x.equals(null)=false恒定</li>
+</ol>
+</blockquote>
+</li>
+<li><p>Java内存管理，垃圾回收</p>
+<blockquote>
+<p>原始数据类型在编译阶段就可获取内存所需信息，而对象失去调用后成为孤儿，C和C++由程序员来释放孤儿内存，Java则有GC垃圾回收，不允许修改引用</p>
+<p>避免一些GC无法识别到的孤儿—对象游离，只需要将其赋值null</p>
+</blockquote>
+</li>
+<li><p>final</p>
+<blockquote>
+<p>保证不可变性，再次赋值会报编译错误，如String和数组的区别，String是不可变的，数组可变，这类设计取决于我们对他们的期望。</p>
+<p>这点也是StringBuilder和Vector等存在的目的之一。</p>
+<p>但final有个缺点，它限制的是赋值语句，所以final只能限制于原始数据类型，当修饰引用类型的变量时，它将永远指向同一个对象，但对象的值仍是可变的。如final一个int[]，仍可以修改元素</p>
+<p>final修饰类，类无法被继承，成员方法都会隐式的指定为final方法</p>
+<p>final 修饰方法，使用这种方法的原因：</p>
+<ol>
+<li>锁定方法，防止被修改，private会隐式的指定为final方法，所以一般用来锁定被子类继承的方法。</li>
+<li>提高效率，早期会将final方法转为内嵌调用，新版本不需要如此优化</li>
+</ol>
+<p>final修饰变量时，封装类型和String加final修饰时会被当作编译常量</p>
+<p>final和static的区别：对于成员变量，static表示只保留一份副本，final表示变量不可变，final对于不同的对象可能就不同，static则是一定相同的</p>
+</blockquote>
+</li>
+<li><p>Stirng，StringBuilder，StringBuffer</p>
+</li>
+</ol>
+<p><em>参考博客：<a href="https://www.cnblogs.com/su-feng/p/6659064.html" target="_blank" rel="noopener">https://www.cnblogs.com/su-feng/p/6659064.html</a></em></p>
+<p>区别主要是在两个方面，即<strong>运行速度</strong>和<strong>线程安全</strong>这两方面。</p>
+<blockquote>
+<p>运行速度快慢为：StringBuilder &gt; StringBuffer &gt; String</p>
+</blockquote>
+<blockquote>
+<p>String最慢的原因：</p>
+<p>&nbsp;&nbsp;String为字符串常量，而StringBuilder和StringBuffer均为字符串变量，即String对象一旦创建之后该对象是不可更改的，隐式final，但后两者的对象是变量，是可以更改的。<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> <span class="built_in">str</span>=<span class="string">"abc"</span>;</span><br><span class="line">System.out.<span class="built_in">println</span>(<span class="built_in">str</span>);</span><br><span class="line"><span class="built_in">str</span>=<span class="built_in">str</span>+<span class="string">"de"</span>;</span><br><span class="line">System.out.<span class="built_in">println</span>(<span class="built_in">str</span>);</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>&nbsp;&nbsp;如果运行这段代码会发现先输出“abc”，然后又输出“abcde”，好像是str这个对象被更改了，其实，这只是一种假象罢了，JVM对于这几行代码是这样处理的，首先创建一个String对象str，并把“abc”赋值给str，然后在第三行中，其实JVM又创建了一个新的对象也名为str，然后再把原来的str的值和“de”加起来再赋值给新的str，而原来的str就会被JVM的垃圾回收机制（GC）给回收掉了，所以，str实际上并没有被更改，也就是前面说的String对象一旦创建之后就不可更改了。所以，Java中对String对象进行的操作实际上是一个不断创建新的对象并且将旧的对象回收的一个过程，所以执行速度很慢。</p>
+<p>&nbsp;&nbsp;而StringBuilder和StringBuffer的对象是变量，对变量进行操作就是直接对该对象进行更改，而不进行创建和回收的操作，所以速度要比String快很多。</p>
+</blockquote>
+<blockquote>
+<p>在线程安全上，StringBuilder是线程不安全的，而StringBuffer是线程安全的<br>如果一个StringBuffer对象在字符串缓冲区被多个线程使用时，StringBuffer中很多方法可以带有synchronized关键字，所以可以保证线程是安全的，但StringBuilder的方法则没有该关键字，所以不能保证线程安全，有可能会出现一些错误的操作。所以如果要进行的操作是多线程的，那么就要使用StringBuffer，但是在单线程的情况下，还是建议使用速度比较快的StringBuilder。</p>
+</blockquote>
+<blockquote>
+<p>总结一下:</p>
+<ul>
+<li><strong>String</strong>：适用于少量的字符串操作的情况</li>
+<li><strong>StringBuilder</strong>：适用于单线程下在字符缓冲区进行大量操作的情况</li>
+<li><strong>StringBuffer</strong>：适用多线程下在字符缓冲区进行大量操作的情况</li>
+</ul>
+</blockquote>
+<ol start="27">
+<li>异常错误和断言<blockquote>
+<p>断言是一条需要在程序的某处确认为true的布尔表达式，当值为false程序会中止并报告出错信息，只用来测试。</p>
+</blockquote>
+</li>
+</ol>
+<p><em>参考博客：<a href="https://blog.csdn.net/lan12334321234/article/details/70049446/" target="_blank" rel="noopener">https://blog.csdn.net/lan12334321234/article/details/70049446/</a></em></p>
+<blockquote>
+<p>Exception Error</p>
+<p>java异常分为两种：<strong>运行时异常</strong>（RuntimeException）和<strong>非运行时异常</strong>（CheckedException）也叫<strong>检查式异常</strong>。</p>
+<ol>
+<li>运行时异常是不需要捕获的，程序员可以不去处理，当异常出现时，虚拟机会处理。常见的运行时异常有空指针异常</li>
+</ol>
+<p>常见的5中运行时异常：</p>
+<ul>
+<li>ClassCastException(类转换异常) </li>
+<li>IndexOutOfBoundsException(数组越界) </li>
+<li>NullPointerException(空指针) </li>
+<li>ArrayStoreException(数据存储异常，操作数组时类型不一致) </li>
+<li>还有IO操作的BufferOverflowException异常</li>
+</ul>
+<ol start="2">
+<li>非运行时异常就必须得捕获了，否则编译不过去，java编译器要求程序员必须对这种异常进行catch,Java认为Checked异常都是可以被处理（修复）的异常，所以Java程序必须显式处理Checked异常。</li>
+</ol>
+<p>常见的非运行异常有io异常和sql异常：IOException、FileNotFoundExcetion 和SQLException</p>
+</blockquote>
+<blockquote>
+<p>finally是异常处理工作的一部分，表示总是执行。一般finally写的代码语句就是流的关闭。也就是做了一项清理，工作清理工作对于我们来说是必不可少的，因为如果一些消耗资源的操作，比如IO,JDBC。如果我们用完以后没有及时正确的关闭，那后果会很严重，这意味着内存泄露。 </p>
+</blockquote>
+<blockquote>
+<p>异常处理中的throws和throw的区别： </p>
+<ol>
+<li>throws出现在方法的声明中，表示该方法可能会抛出的异常，允许throws后面跟着多个异常类型 </li>
+<li>throw出现在方法体中，用于抛出异常。当方法在执行过程中遇到异常情况时，将异常信息封装为异常对象，然后throw。</li>
+</ol>
+</blockquote>
+<ol start="28">
+<li><p>Java中的引用和指针</p>
+<blockquote>
+<p>指针可以看作机器地址，Java创建引用只能通过new，改变引用只能通过赋值，所以Java的引用叫安全指针</p>
+</blockquote>
+</li>
+<li><p>变量</p>
+<blockquote>
+<ul>
+<li><strong>成员变量</strong>：作用范围是整个类，相当于C语言中的全局变量，定义在方法体和语句块之外，一般定义在类的声明之下;成员变量包括：实例变量、类变量(又叫静态变量)和常量。</li>
+<li><strong>局部变量</strong>：作用范围在它定义的方法体或者语句块内部，出了这个范围就无效了。</li>
+<li><strong>实例变量</strong>：不用static修饰的成员变量，随对象的创建而创建，每个对象都有自己的独有的实例变量，属于对象私有;调用要实例化对象，用对象名.实例变量名才可以调用，如：Demo demo = new Demo(); int YouAge = demo.age;(当然，一般都会将成员变量设为private，通过属性方法调用)。</li>
+<li><strong>静态变量</strong>：有时叫全局变量，和实例变量区别就是不和对象关联。用static修饰的成员变量，又叫类变量，一个类里只有一份，属于对象共有，调用是一般用类名.静态变量名就可以调用，或者用对象名.静态变量名也可以调用，调用的都是同一个变量，如:Demo.height。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>泛型和迭代</p>
+<blockquote>
+<ul>
+<li><p><strong>泛型</strong>&lt;&gt;，参数化类型，象征性的占位符，没有泛型，我们需要为所有数据类型定义不同的API。</p>
+</li>
+<li><p><strong>迭代</strong>，foreach语句通过迭代遍历或处理集合中的每个元素，需要集合数据类型需要实现iterable接口，添加iterator方法并返回一个Iterator迭代器对象，迭代器对象包含hasNext和next方法</p>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p>自动装箱和自动拆箱</p>
+<blockquote>
+<p>类型化参数必须实例化为引用类型，所以Java对于原始数据类型和封装类型进行了自动转换。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt; <span class="built_in">list</span> = <span class="literal">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="built_in">list</span>.add(<span class="number">11</span>); <span class="comment">//自动装箱 int-&gt;Integer</span></span><br><span class="line">int i = <span class="built_in">list</span>.get(<span class="number">0</span>); <span class="comment">//自动拆箱 Integer-&gt;int</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+</li>
+<li><p>内部类</p>
+<blockquote>
+<ul>
+<li><strong>成员内部类</strong>，定义于另一个类的内部，可以任意访问外部类的属性和方法，如果同名默认内部类成员，外部类访问内部类需要先实例对象，内部类访问权限和属性一样有四种</li>
+<li><strong>局部内部类</strong>，定义于方法或作用域内部，访问权限只限于该方法或作用域，类似局部变量不能有访问修饰以及静态修饰</li>
+<li><strong>匿名内部类</strong>，new ClassName(){@override……},实现父类或接口的同时产生一个实例对象，当然要先存在该父类或接口，同样不能用访问修饰以及静态修饰。唯一没有构造器的内部类，所以一般只用来做接口回调，不需要增加方法，只重写或实现继承的方法</li>
+<li><strong>静态内部类</strong>，定义于另一个类内部但多了static修饰，所以不依赖外部类，也不能使用外部类非static成员。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p><strong>成员内部类如何无条件引用外部类成员？与静态内部类区别？</strong></p>
+<p>成员内部类会单独编译为一个字节码文件，编译器会为成员内部类添加指向外部类对象的引用，即使内部类是无参构造器，编译仍默认加外部类对象的引用，所以也知道成员内部类会依赖于外部类对象。</p>
+<p>静态内部类区别于成员内部类，不依赖外部类对象，可以直接创建内部类对象，且不包含外部类引用的。</p>
+</blockquote>
+<blockquote>
+<p><strong>为什么局部内部类和匿名内部类只能访问局部final变量？</strong></p>
+<p>如一个方法调用线程TheadA，方法内有局部变量a，那么方法执行完毕，a生命周期就结束了，但此时线程A还可能在执行，此时无法访问a怎么办？Java编译器会默认在局部或匿名内部类的常量池增加一个相同的值嵌入执行字节码，如此匿名内部类只是使用的副本，而非方法中的变量a，当然a有可能是不确定值的参数，编译时无法确定值，所以会通过构造器传参的方式来对副本初始化赋值。因此可以明白，如果局部变量改变的话会导致数据不一致，所以Java直接限制只能访问final局部变量。</p>
+</blockquote>
+<blockquote>
+<p>内部类使用场景和优点：</p>
+<ol>
+<li>内部类独立继承接口，而不用管外部类如何，所以是Java解决多继承的方案</li>
+<li>方便将关系紧密的类结合，并对外界隐藏</li>
+<li>方便编写事件驱动</li>
+<li>方便编写线程代码<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">           <span class="comment">// 初始化Bean1</span></span><br><span class="line">           (<span class="number">1</span>)</span><br><span class="line">           bean1.I++;</span><br><span class="line">           <span class="comment">// 初始化Bean2</span></span><br><span class="line">           (<span class="number">2</span>)</span><br><span class="line">           bean2.J++;</span><br><span class="line">           <span class="comment">//初始化Bean3</span></span><br><span class="line">           (<span class="number">3</span>)</span><br><span class="line">           bean3.k++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Bean1</span>&#123;</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">int</span> I = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Bean2</span>&#123;</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">int</span> J = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bean</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Bean3</span>&#123;</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">int</span> k = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol>
+<li><p>Test test = new Test();<br>Test.Bean1 bean1 = test. new Bean1();</p>
+</li>
+<li><p>Test.Bean2 bean2 = new Test.Bean2();</p>
+</li>
+<li><p>Bean bean = new Bean();<br>Bean.Bean3 = bean.new Bean3();</p>
+</li>
+</ol>
+</blockquote>
+<ol start="33">
+<li>字符串和子字符串<blockquote>
+<p>计算内存消耗时可以知道：原始数据类型占用字节：char-2字节，int-4字节，double/long-8字节，而对象需要16字节的对象开销，引用即机器地址一般为8字节。所以一个String字符串内存开销：对象开销16+char数组引用8+偏移量int4+字符串长度int4+散列值int4+填充字节+4  + char数组24+2N = 40+24+2N=64+2N</p>
+<p>创建子字符串时，如substring(3,6) 会创建一个新String对象，但其和原字符串共用一个char数组，所以其内存开销为常数：40</p>
+</blockquote>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/30/2018073001/" rel="next" title="算法复习 (一) 排序">
+                <i class="fa fa-chevron-left"></i> 算法复习 (一) 排序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
