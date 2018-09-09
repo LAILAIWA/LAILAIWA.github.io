@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="transational,spring boot,bug,tomcat,sqlserver,jpa," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="var ap = new APlayer({             element: document.getElementById(&quot;aplayer-mrBBaVBh&quot;),             narrow: false,             autoplay: true,">
+<meta name="keywords" content="transational,spring boot,bug,tomcat,sqlserver,jpa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编程中所遇到的BUG解决过程(一)">
+<meta property="og:url" content="http://linyishui.top/2018090701.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="var ap = new APlayer({             element: document.getElementById(&quot;aplayer-mrBBaVBh&quot;),             narrow: false,             autoplay: true,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-09T01:19:32.119Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编程中所遇到的BUG解决过程(一)">
+<meta name="twitter:description" content="var ap = new APlayer({             element: document.getElementById(&quot;aplayer-mrBBaVBh&quot;),             narrow: false,             autoplay: true,">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2018090701.html"/>
+
+
+
+
+
+  <title>编程中所遇到的BUG解决过程(一) | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2018090701.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://pcvg28por.bkt.clouddn.com/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">编程中所遇到的BUG解决过程(一)</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-07T17:50:39+08:00">
+                2018-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/BUG解决/" itemprop="url" rel="index">
+                    <span itemprop="name">BUG解决</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,650
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        <div id="aplayer-mrBBaVBh" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+            <pre class="aplayer-lrc-content"></pre>
+        </div>
+        <script>
+          var ap = new APlayer({
+            element: document.getElementById("aplayer-mrBBaVBh"),
+            narrow: false,
+            autoplay: true,
+            showlrc: false,
+            music: {
+              title: "As If It's Your Last",
+              author: "BLACKPINK",
+              url: "http://pcvwwmd5n.bkt.clouddn.com/BLACKPINK-As%20If%20It%E2%80%99s%20Your%20Last%20%28%EB%A7%88%EC%A7%80%EB%A7%89%EC%B2%98%EB%9F%BC%29.mp3",
+              pic: "http://p1.music.126.net/2ai1bggulgGsQmgkML9Gvg==/19116109160718048.jpg",
+              lrc: ""
+            }
+          });
+          window.aplayers || (window.aplayers = []);
+          window.aplayers.push(ap);
+        </script>
+<h1 id="BUG-1-Tomcat多个SpringBoot项目部署"><a href="#BUG-1-Tomcat多个SpringBoot项目部署" class="headerlink" title="BUG[1]: Tomcat多个SpringBoot项目部署"></a><strong>BUG[1]: Tomcat多个SpringBoot项目部署</strong></h1><h2 id="日期："><a href="#日期：" class="headerlink" title="日期："></a><strong>日期：</strong></h2><blockquote>
+<p>2018/7/18</p>
+</blockquote>
+<h2 id="问题描述："><a href="#问题描述：" class="headerlink" title="问题描述："></a><strong>问题描述：</strong></h2><blockquote>
+<p>在Tomcat部署第二个项目时，发现无法访问第二个项目，查看Tomcat日志时发现报错：<br><figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Error </span>starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.</span><br><span class="line">18-Jul<span class="string">-2018</span>  14:07:59.394 </span><br><span class="line">严重 [main] org.springframework.boot.SpringApplication.reportFailure Application run failed</span><br><span class="line"> org.springframework.jmx.export.UnableToRegisterMBeanException: Unable to register MBean [HikariDataSource (HikariPool<span class="string">-2</span>)] with key 'dataSource'; nested exception is javax.management.InstanceAlreadyExistsException: com.zaxxer.hikari:name=dataSource,type=HikariDataSource</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="解决过程："><a href="#解决过程：" class="headerlink" title="解决过程："></a><strong>解决过程：</strong></h2><blockquote>
+<p>尝试在application.properties中添加spring.jmx.enabled=false</p>
+</blockquote>
+<h2 id="思考原因："><a href="#思考原因：" class="headerlink" title="思考原因："></a><strong>思考原因：</strong></h2><p>JMX，即Java Management Extensions(JMX)提供了一种监视和管理应用程序的标准机制，默认情况下，Spring Boot将创建一个mBeanServer其Bean Id为“mBeanServer”，并公开任意使用Spring JMX注释（如@ManagedResource，@ ManagedAttribute，@ ManagedOperation）的Bean。</p>
+<p>每个JMX Bean都必须具有对象名称，该名称为JMX类的一个实例class?ObjectName，必须符合JMX规范定义的语法，即对象名称必须包含域和键属性列表。</p>
+<p>在application.properties中添加spring.jmx.default-domain: test 可以将属性设置为某个值，由于域名是任意的，这可以避免两个应用程序之间的名称冲突。</p>
+<p>或者通过spring.jmx.enabled=false直接禁用JMX，或者说忽略注册失败registration failures，而不禁用JMX，在配置类@Configuration中添加</p>
+<blockquote>
+<p>@EnableMBeanExport(registration=RegistrationPolicy.IGNORE_EXISTING) </p>
+</blockquote>
+<h1 id="BUG-2-Spring轻量Task无法满足需求，改用SqlServer数据库定时任务"><a href="#BUG-2-Spring轻量Task无法满足需求，改用SqlServer数据库定时任务" class="headerlink" title="BUG[2]: Spring轻量Task无法满足需求，改用SqlServer数据库定时任务"></a><strong>BUG[2]: Spring轻量Task无法满足需求，改用SqlServer数据库定时任务</strong></h1><h2 id="日期：-1"><a href="#日期：-1" class="headerlink" title="日期："></a><strong>日期：</strong></h2><blockquote>
+<p>2018/7/23</p>
+</blockquote>
+<h2 id="问题描述：-1"><a href="#问题描述：-1" class="headerlink" title="问题描述："></a><strong>问题描述：</strong></h2><blockquote>
+<p>在设计定时器进行批次结束系列操作时，发现spring自带的轻量级quartz定时任务task不支持年份</p>
+</blockquote>
+<h2 id="解决过程：-1"><a href="#解决过程：-1" class="headerlink" title="解决过程："></a><strong>解决过程：</strong></h2><p>首先想到的解决方法：</p>
+<ol>
+<li>使用quartz</li>
+<li>改变思路，不去run一个跨长时间的定时器而是一个每天检查是否批次结束的定时器，那么轻量级的task和数据库定时任务都是可以解决的方案，因为数据库比项目会更稳定运行，所以先考虑数据库定时任务解决方案。</li>
+</ol>
+<p>配置定时作业时遇到了些问题：</p>
+<ul>
+<li>启动Sql Server代理，服务中打开Sql Server代理MSSQLSERVER</li>
+<li>在数据库属性中点选启动代理服务器账号，仍显示已禁用代理XP</li>
+</ul>
+<p>执行以下sql语句<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sp_configure <span class="string">'show advanced options'</span>, <span class="number">1</span>;</span><br><span class="line">GO</span><br><span class="line">RECONFIGURE <span class="keyword">WITH</span> <span class="keyword">OVERRIDE</span>;   --加上<span class="keyword">WITH</span> <span class="keyword">OVERRIDE</span></span><br><span class="line">GO</span><br><span class="line">sp_configure <span class="string">'Agent XPs'</span>, <span class="number">1</span>;</span><br><span class="line">GO</span><br><span class="line">RECONFIGURE <span class="keyword">WITH</span> <span class="keyword">OVERRIDE</span>     --加上<span class="keyword">WITH</span> <span class="keyword">OVERRIDE</span></span><br><span class="line">GO</span><br></pre></td></tr></table></figure></p>
+<p>新建作业<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*存储过程，进行批次结束检查，并执行对应操作*/</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> PR_BatchEndOperas</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line"> <span class="keyword">declare</span> @nowDate <span class="built_in">varchar</span>(<span class="number">10</span>),@nowTime datetime</span><br><span class="line"> <span class="comment">--赋值</span></span><br><span class="line"> <span class="keyword">set</span> @nowDate = <span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>(<span class="number">10</span>),<span class="keyword">GETDATE</span>(),<span class="number">120</span>)</span><br><span class="line"> print @nowDate </span><br><span class="line"> <span class="keyword">set</span> @nowTime = <span class="keyword">CONVERT</span>(datetime,<span class="keyword">GETDATE</span>(),<span class="number">120</span>)</span><br><span class="line"> print @nowTime </span><br><span class="line"> <span class="comment">--使用select语句赋值 </span></span><br><span class="line"> <span class="keyword">declare</span> @batchId <span class="built_in">varchar</span>(<span class="number">60</span>) </span><br><span class="line"> <span class="comment">-- +1表示截至日结束后日执行</span></span><br><span class="line"> <span class="keyword">select</span> @batchId = BID <span class="keyword">from</span> QGZX_BATCH <span class="keyword">where</span> <span class="keyword">CONVERT</span>(<span class="built_in">varchar</span>(<span class="number">10</span>),ApplySelectEnd+<span class="number">1</span>,<span class="number">120</span>) = @nowDate</span><br><span class="line"> print @batchId </span><br><span class="line"> <span class="comment">--使用update语句赋值 </span></span><br><span class="line"> <span class="keyword">if</span>(@batchId <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span>)</span><br><span class="line"> <span class="keyword">begin</span></span><br><span class="line">   <span class="comment">/*批次结束，收尾工作-岗位申请*/</span></span><br><span class="line">   <span class="keyword">update</span> QGZX_POSITION_APPLY <span class="keyword">set</span> UnitApplyStatus = <span class="string">'-3'</span>,</span><br><span class="line">                                  CenterAuditorID = <span class="string">'0'</span>,</span><br><span class="line">								  CenterAuditorName = <span class="string">'系统自动'</span>,</span><br><span class="line">						  	  	  CenterAuditTime = @nowTime,</span><br><span class="line">								  CenterAuditComment = <span class="string">'批次结束,勤工助学中心未处理，自动拒绝'</span> </span><br><span class="line">							  <span class="keyword">where</span> BID = @batchId <span class="keyword">and</span> UnitApplyStatus = <span class="string">'1'</span> </span><br><span class="line">   <span class="keyword">declare</span> @positionId <span class="built_in">varchar</span>(<span class="number">60</span>) </span><br><span class="line">   <span class="comment">--定义一个游标pid</span></span><br><span class="line">   <span class="keyword">declare</span> position_cur <span class="keyword">cursor</span> <span class="keyword">for</span>(<span class="keyword">select</span> [positionId] = PID <span class="keyword">from</span> QGZX_POSITION <span class="keyword">where</span> BID = @batchId)</span><br><span class="line">   <span class="comment">--打开游标 </span></span><br><span class="line">   <span class="keyword">open</span> position_cur </span><br><span class="line">   <span class="comment">--读取游标 </span></span><br><span class="line">   <span class="keyword">fetch</span> <span class="keyword">next</span> <span class="keyword">from</span> position_cur <span class="keyword">into</span> @positionId</span><br><span class="line">   <span class="comment">--返回被fetch语句执行的最后游标的状态</span></span><br><span class="line">   <span class="keyword">while</span> @@fetch_status=<span class="number">0</span> </span><br><span class="line">   <span class="keyword">begin</span> </span><br><span class="line">     <span class="comment">--print @positionId</span></span><br><span class="line">     print @positionId </span><br><span class="line">	 <span class="comment">/*批次结束，收尾工作-学生申请*/</span></span><br><span class="line">     <span class="keyword">update</span> QGZX_STUDENT_APPLY <span class="keyword">set</span> AuditStatus = <span class="string">'-1'</span>,</span><br><span class="line">                                   CollegeReviewerID = <span class="string">'0'</span>,</span><br><span class="line">							       CollegeReviewerName = <span class="string">'系统自动'</span>, </span><br><span class="line">					  		       CollegeReviewTime = @nowTime,</span><br><span class="line">							       CollegeReviewerComment = <span class="string">'批次结束，系部未处理，自动拒绝'</span></span><br><span class="line">                               <span class="keyword">where</span> PID = @positionId <span class="keyword">and</span> AuditStatus = <span class="string">'1'</span></span><br><span class="line">     <span class="keyword">update</span> QGZX_STUDENT_APPLY <span class="keyword">set</span> AuditStatus = <span class="string">'-4'</span>,</span><br><span class="line">                                   StuWorkReviewerID = <span class="string">'0'</span>,</span><br><span class="line">							       StuWorkReviewerName = <span class="string">'系统自动'</span>, </span><br><span class="line">							       StuWorkReviewTime = @nowTime,</span><br><span class="line">							       StuWorkReviewerComment = <span class="string">'批次结束，学工处未处理，自动拒绝'</span> </span><br><span class="line">						       <span class="keyword">where</span> PID = @positionId <span class="keyword">and</span> AuditStatus = <span class="string">'2'</span></span><br><span class="line">     <span class="keyword">update</span> QGZX_STUDENT_APPLY <span class="keyword">set</span> AuditStatus = <span class="string">'-4'</span>,</span><br><span class="line">                                   StuWorkReviewerID = <span class="string">'0'</span>,</span><br><span class="line">							       StuWorkReviewerName = <span class="string">'系统自动'</span>, </span><br><span class="line">							       StuWorkReviewTime = @nowTime,</span><br><span class="line">							       StuWorkReviewerComment = <span class="string">'批次结束，无部门调剂，自动拒绝'</span> </span><br><span class="line">						       <span class="keyword">where</span> PID = @positionId <span class="keyword">and</span> AuditStatus = <span class="string">'-2'</span></span><br><span class="line">     <span class="keyword">update</span> QGZX_STUDENT_APPLY <span class="keyword">set</span> AuditStatus = <span class="string">'-3'</span>,</span><br><span class="line">                                   DepReviewerID = <span class="string">'0'</span>,</span><br><span class="line">							       DepReviewerName = <span class="string">'系统自动'</span>, </span><br><span class="line">							       DepReviewerTime = @nowTime,</span><br><span class="line">							       DepReviewerComment = <span class="string">'批次结束，用人部门未处理，自动拒绝'</span> </span><br><span class="line">						       <span class="keyword">where</span> PID = @positionId <span class="keyword">and</span> AuditStatus = <span class="string">'3'</span></span><br><span class="line">	<span class="keyword">fetch</span> <span class="keyword">next</span> <span class="keyword">from</span> position_cur <span class="keyword">into</span> @positionId</span><br><span class="line">   <span class="keyword">end</span></span><br><span class="line">   <span class="keyword">close</span> position_cur </span><br><span class="line">   <span class="comment">--摧毁游标 </span></span><br><span class="line">   <span class="keyword">deallocate</span> position_cur</span><br><span class="line"> <span class="keyword">end</span></span><br><span class="line"><span class="keyword">END</span></span><br><span class="line">exec PR_BatchEndOperas</span><br><span class="line"><span class="comment">/*删除存储过程*/</span></span><br><span class="line"><span class="keyword">drop</span> proc PR_BatchEndOperas</span><br></pre></td></tr></table></figure></p>
+<h1 id="BUG-3-Spring-data-jpa分页BUG"><a href="#BUG-3-Spring-data-jpa分页BUG" class="headerlink" title="BUG[3]: Spring-data-jpa分页BUG"></a><strong>BUG[3]: Spring-data-jpa分页BUG</strong></h1><h2 id="日期：-2"><a href="#日期：-2" class="headerlink" title="日期："></a><strong>日期：</strong></h2><blockquote>
+<p>2018/9/6</p>
+</blockquote>
+<h2 id="问题描述：-2"><a href="#问题描述：-2" class="headerlink" title="问题描述："></a><strong>问题描述：</strong></h2><blockquote>
+<p>Spring-data-jpa处理分页时出现BUG，使用场景：多表关联汇总，原生SQL语句，用接口存储每行的数据，JPA分页每次返回一页数据</p>
+</blockquote>
+<h2 id="CODE-修改后-："><a href="#CODE-修改后-：" class="headerlink" title="CODE(修改后)："></a><strong>CODE(修改后)：</strong></h2><p>Service层<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public Page&lt;FacilitiesReportSummary&gt; searchFacilitiesReports(int schoolYear, int semester, int page, int limit)&#123;</span><br><span class="line">    <span class="keyword">List</span>&lt;<span class="keyword">Sort</span>.<span class="keyword">Order</span>&gt; <span class="keyword">list</span> = new ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">list</span>.add(new <span class="keyword">Sort</span>.<span class="keyword">Order</span>(<span class="keyword">Sort</span>.Direction.ASC,<span class="string">"classId"</span>));</span><br><span class="line">    <span class="keyword">list</span>.add(new <span class="keyword">Sort</span>.<span class="keyword">Order</span>(<span class="keyword">Sort</span>.Direction.ASC,<span class="string">"informorId"</span>));</span><br><span class="line">    <span class="keyword">list</span>.add(new <span class="keyword">Sort</span>.<span class="keyword">Order</span>(<span class="keyword">Sort</span>.Direction.ASC,<span class="string">"weekNum"</span>));</span><br><span class="line">    Pageable pageable = PageRequest.of(page-1,limit);</span><br><span class="line">    pageable.getSortOr(<span class="keyword">Sort</span>.<span class="keyword">by</span>(<span class="keyword">list</span>));</span><br><span class="line">    <span class="keyword">return</span> facilitiesReportSummaryRepository.findFacilitiesReportSummary(</span><br><span class="line">            schoolYear, semester, <span class="string">"001"</span>, pageable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Repository层<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Query(nativeQuery = true,value = "<span class="keyword">select</span> T_PJGL_INSTALLATION_PJ.*,a.isOk <span class="keyword">from</span> T_PJGL_INSTALLATION_PJ <span class="keyword">left</span> <span class="keyword">outer</span> <span class="keyword">join</span> (<span class="keyword">select</span> classId,informorId,weekNum,<span class="keyword">sum</span>(<span class="keyword">cast</span>(isOk <span class="keyword">as</span> <span class="built_in">int</span>)) <span class="keyword">as</span> isOk <span class="keyword">from</span> T_PJGL_INSTALLATION_PJ  <span class="keyword">where</span> schoolYear = :schoolYear <span class="keyword">and</span> semester = :semester <span class="keyword">group</span> <span class="keyword">by</span> classId,informorId,weekNum) a <span class="keyword">on</span> a.classId = T_PJGL_INSTALLATION_PJ.classId <span class="keyword">and</span> a.informorId = T_PJGL_INSTALLATION_PJ.informorId <span class="keyword">and</span> a.weekNum = T_PJGL_INSTALLATION_PJ.weekNum <span class="keyword">where</span> evaluateItemId = :evaluateItemId<span class="string">"</span></span><br><span class="line"><span class="string">        ,countQuery = "</span><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> T_PJGL_INSTALLATION_PJ <span class="keyword">inner</span> <span class="keyword">join</span> (<span class="keyword">select</span> classId,informorId,weekNum,<span class="keyword">sum</span>(<span class="keyword">cast</span>(isOk <span class="keyword">as</span> <span class="built_in">int</span>)) <span class="keyword">as</span> isOk <span class="keyword">from</span> T_PJGL_INSTALLATION_PJ  <span class="keyword">where</span> schoolYear = :schoolYear <span class="keyword">and</span> semester = :semester <span class="keyword">group</span> <span class="keyword">by</span> classId,informorId,weekNum) a <span class="keyword">on</span> a.classId = T_PJGL_INSTALLATION_PJ.classId <span class="keyword">and</span> a.informorId = T_PJGL_INSTALLATION_PJ.informorId <span class="keyword">and</span> a.weekNum = T_PJGL_INSTALLATION_PJ.weekNum <span class="keyword">where</span> evaluateItemId = :evaluateItemId <span class="string">")</span></span><br><span class="line"><span class="string">Page&lt;FacilitiesReportSummary&gt; findFacilitiesReportSummary(@Param("</span>schoolYear<span class="string">") int schoolYear,</span></span><br><span class="line"><span class="string">                                                          @Param("</span>semester<span class="string">") int semester,</span></span><br><span class="line"><span class="string">                                                          @Param("</span>evaluateItemId<span class="string">") String evaluateItemId,</span></span><br><span class="line"><span class="string">                                                          Pageable pageable);</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="BUG提示："><a href="#BUG提示：" class="headerlink" title="BUG提示："></a><strong>BUG提示：</strong></h2><blockquote>
+<p>SQLServerException: The column name XXX is not valid</p>
+</blockquote>
+<h2 id="解决过程：-2"><a href="#解决过程：-2" class="headerlink" title="解决过程："></a><strong>解决过程：</strong></h2><blockquote>
+<p>尝试了各种方法，翻阅官方文档，stackoverflow等论坛，都没解决问题，但查找的过程中也慢慢的缩小了BUG产生原因范围，大概猜到首先是JPA分页功能自动生成SQL和实体类间不匹配的问题，所以尝试修改返回参数皆为*，之前是实体类的属性，发现问题解决。</p>
+</blockquote>
+<h1 id="BUG-3-Spring-data-jpa分页BUG-1"><a href="#BUG-3-Spring-data-jpa分页BUG-1" class="headerlink" title="BUG[3]: Spring-data-jpa分页BUG"></a><strong>BUG[3]: Spring-data-jpa分页BUG</strong></h1><h2 id="日期：-3"><a href="#日期：-3" class="headerlink" title="日期："></a><strong>日期：</strong></h2><blockquote>
+<p>2018/9/7</p>
+</blockquote>
+<h2 id="问题描述：-3"><a href="#问题描述：-3" class="headerlink" title="问题描述："></a><strong>问题描述：</strong></h2><blockquote>
+<p>SpringBoot @Transactional 事务中自行抛出异常时不能回滚，已执行的DML操作产生了垃圾数据</p>
+</blockquote>
+<h2 id="产生原因："><a href="#产生原因：" class="headerlink" title="产生原因："></a><strong>产生原因：</strong></h2><blockquote>
+<p>上网查找错误原因，首先Spring的事务默认情况下针对Unchecked Exception即运行时异常（之前有总结异常相关知识：<a href="../2018080201.html" title="Title">Java知识点总结 (一)</a>），针对RuntimeException及其子类进行回滚，而检查式异常，包括try-catch捕获的则不会回滚，除非在catch模块中手动的调用事务回滚。</p>
+</blockquote>
+<h2 id="解决过程：-3"><a href="#解决过程：-3" class="headerlink" title="解决过程："></a><strong>解决过程：</strong></h2><ol>
+<li>可以抛出运行时异常即可解决问题</li>
+<li>可在advice中添加自定义Exception</li>
+<li>可在catch块中手动调用事务回滚</li>
+</ol>
+<p>果断用方法一，成功解决BUG</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/transational/" rel="tag"># transational</a>
+          
+            <a href="/tags/spring-boot/" rel="tag"># spring boot</a>
+          
+            <a href="/tags/bug/" rel="tag"># bug</a>
+          
+            <a href="/tags/tomcat/" rel="tag"># tomcat</a>
+          
+            <a href="/tags/sqlserver/" rel="tag"># sqlserver</a>
+          
+            <a href="/tags/jpa/" rel="tag"># jpa</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018090101.html" rel="next" title="SpringBoot多数据源和定时任务@Scheduled">
+                <i class="fa fa-chevron-left"></i> SpringBoot多数据源和定时任务@Scheduled
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="http://pcvg28por.bkt.clouddn.com/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#BUG-1-Tomcat多个SpringBoot项目部署"><span class="nav-number">1.</span> <span class="nav-text">BUG[1]: Tomcat多个SpringBoot项目部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#日期："><span class="nav-number">1.1.</span> <span class="nav-text">日期：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述："><span class="nav-number">1.2.</span> <span class="nav-text">问题描述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决过程："><span class="nav-number">1.3.</span> <span class="nav-text">解决过程：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考原因："><span class="nav-number">1.4.</span> <span class="nav-text">思考原因：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BUG-2-Spring轻量Task无法满足需求，改用SqlServer数据库定时任务"><span class="nav-number">2.</span> <span class="nav-text">BUG[2]: Spring轻量Task无法满足需求，改用SqlServer数据库定时任务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#日期：-1"><span class="nav-number">2.1.</span> <span class="nav-text">日期：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述：-1"><span class="nav-number">2.2.</span> <span class="nav-text">问题描述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决过程：-1"><span class="nav-number">2.3.</span> <span class="nav-text">解决过程：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BUG-3-Spring-data-jpa分页BUG"><span class="nav-number">3.</span> <span class="nav-text">BUG[3]: Spring-data-jpa分页BUG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#日期：-2"><span class="nav-number">3.1.</span> <span class="nav-text">日期：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述：-2"><span class="nav-number">3.2.</span> <span class="nav-text">问题描述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CODE-修改后-："><span class="nav-number">3.3.</span> <span class="nav-text">CODE(修改后)：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BUG提示："><span class="nav-number">3.4.</span> <span class="nav-text">BUG提示：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决过程：-2"><span class="nav-number">3.5.</span> <span class="nav-text">解决过程：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BUG-3-Spring-data-jpa分页BUG-1"><span class="nav-number">4.</span> <span class="nav-text">BUG[3]: Spring-data-jpa分页BUG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#日期：-3"><span class="nav-number">4.1.</span> <span class="nav-text">日期：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述：-3"><span class="nav-number">4.2.</span> <span class="nav-text">问题描述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#产生原因："><span class="nav-number">4.3.</span> <span class="nav-text">产生原因：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决过程：-3"><span class="nav-number">4.4.</span> <span class="nav-text">解决过程：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
