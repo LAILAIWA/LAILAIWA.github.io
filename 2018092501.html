@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="algorithm,search," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="查找上篇包括：顺序查找，二分查找，二叉查找树 基础定义符号表定义： 存储要查找的信息的某种数据结构，通过三种经典的数据类型可以实现高效的符号表：二叉查找树，红黑树，散列表。 特点： 键唯一，显式非空，值隐式非空（方便延时删除），可重复。 符号表的删除操作：  延时删除：将键对应的值置空，在某个时刻删除所有空值键，put( key, null)。 及时删除：立刻删除指定的键，delete(key)。">
+<meta name="keywords" content="algorithm,search">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法复习 (二) 查找-上篇">
+<meta property="og:url" content="http://linyishui.top/2018092501.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="查找上篇包括：顺序查找，二分查找，二叉查找树 基础定义符号表定义： 存储要查找的信息的某种数据结构，通过三种经典的数据类型可以实现高效的符号表：二叉查找树，红黑树，散列表。 特点： 键唯一，显式非空，值隐式非空（方便延时删除），可重复。 符号表的删除操作：  延时删除：将键对应的值置空，在某个时刻删除所有空值键，put( key, null)。 及时删除：立刻删除指定的键，delete(key)。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-25T08:16:54.575Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法复习 (二) 查找-上篇">
+<meta name="twitter:description" content="查找上篇包括：顺序查找，二分查找，二叉查找树 基础定义符号表定义： 存储要查找的信息的某种数据结构，通过三种经典的数据类型可以实现高效的符号表：二叉查找树，红黑树，散列表。 特点： 键唯一，显式非空，值隐式非空（方便延时删除），可重复。 符号表的删除操作：  延时删除：将键对应的值置空，在某个时刻删除所有空值键，put( key, null)。 及时删除：立刻删除指定的键，delete(key)。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2018092501.html"/>
+
+
+
+
+
+  <title>算法复习 (二) 查找-上篇 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2018092501.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://pcvg28por.bkt.clouddn.com/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法复习 (二) 查找-上篇</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-25T15:39:46+08:00">
+                2018-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,994
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><em>查找上篇包括：顺序查找，二分查找，二叉查找树</em></p>
+<h1 id="基础定义"><a href="#基础定义" class="headerlink" title="基础定义"></a><strong>基础定义</strong></h1><h2 id="符号表"><a href="#符号表" class="headerlink" title="符号表"></a><strong>符号表</strong></h2><p><strong>定义：</strong></p>
+<p>存储要查找的信息的某种数据结构，通过三种经典的数据类型可以实现高效的符号表：二叉查找树，红黑树，散列表。</p>
+<p><strong>特点：</strong></p>
+<p>键唯一，显式非空，值隐式非空（方便延时删除），可重复。</p>
+<p><strong>符号表的删除操作：</strong></p>
+<ul>
+<li>延时删除：将键对应的值置空，在某个时刻删除所有空值键，put( key, null)。</li>
+<li>及时删除：立刻删除指定的键，delete(key)。</li>
+</ul>
+<p>为了保证任意时刻值都不为空，一般只采用及时删除。</p>
+<h1 id="无序链表的顺序查找"><a href="#无序链表的顺序查找" class="headerlink" title="无序链表的顺序查找"></a><strong>无序链表的顺序查找</strong></h1><p>对于有N对键值的基于无序链表的符号表，未命中的查找和插入操作都需要N次比较。向一个空表中插入N个不同的键需要N^2/2次比较。</p>
+<h1 id="基于有序数组的二分查找"><a href="#基于有序数组的二分查找" class="headerlink" title="基于有序数组的二分查找"></a><strong>基于有序数组的二分查找</strong></h1><p>对于有N个键的有序数组，最多需要lgN+1次比较。<br>二分查找减少了比较的次数，但无法减少运行所需的时间。因为在键是随机排列的情况下， 构造一个基于有序数组的符号表所需要访问数组的次数是数组长度的平方级别。<br>向大小为N的有序数组插入一个新的元素在最坏的情况下需要访问2N次数组，因此向一个空表中插入N个不同的键需要访问N^2次数组。</p>
+<h1 id="两者的比较"><a href="#两者的比较" class="headerlink" title="两者的比较"></a><strong>两者的比较</strong></h1><table><br>    <tr><br>        <td rowspan="2" align="center">算法(数据结构)</td><br>        <td colspan="2" align="center">最坏情况的成本<br>(N次插入后)</td><br>        <td colspan="2" align="center">平均情况的成本<br>(N次随机插入后)</td><br>        <td rowspan="2" align="center">是否高效的支持有序性的相关操作</td><br>   </tr><br>    <tr><br>        <td align="center">查找</td><br>        <td align="center">插入</td><br>        <td align="center">查找</td><br>        <td align="center">插入</td><br>    </tr><br>    <tr><br>        <td align="center">顺序查找(无序链表)</td><br>        <td align="center">N</td><br>        <td align="center">N</td><br>        <td align="center">N/2</td><br>        <td align="center">N</td><br>        <td align="center">否</td><br>    </tr><br>    <tr><br>        <td align="center">二分查找(有序数组)</td><br>        <td align="center">lgN</td><br>        <td align="center">2N</td><br>        <td align="center">lgN</td><br>        <td align="center">N</td><br>        <td align="center">是</td><br>    </tr><br></table>
+
+<p><strong>目标：</strong><br>同时保证查找和插入操作都是对数级别的算法和数据结构</p>
+<h1 id="查找算法的优缺点"><a href="#查找算法的优缺点" class="headerlink" title="查找算法的优缺点"></a><strong>查找算法的优缺点</strong></h1><table>
+<thead>
+<tr>
+<th>使用的数据结构</th>
+<th>实现</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>链表-顺序查找</td>
+<td>SequentialSearchST</td>
+<td>适用于小型问题</td>
+<td>对于大型符号表很慢</td>
+</tr>
+<tr>
+<td>有序数组-二分查找</td>
+<td>BinarySearchST</td>
+<td>最优的查找效率和空间需求<br>能够进行有序性相关的操作</td>
+<td>插入操作很慢</td>
+</tr>
+<tr>
+<td>二叉查找树</td>
+<td>BST</td>
+<td>实现简单<br>能够进行有序性相关的操作</td>
+<td>没有性能上界的保证<br>链接需要额外的空间</td>
+</tr>
+<tr>
+<td>平衡二叉查找树</td>
+<td>RedBlackBST</td>
+<td>最优的查找和插入效率<br>能够进行有序性相关的操作</td>
+<td>链接需要额外的空间</td>
+</tr>
+<tr>
+<td>散列表</td>
+<td>SeparateChainHashST<br>LinearProbingHashST</td>
+<td>能够快速的查找和<br>插入常见类型的数据</td>
+<td>需要计算每种类型的数据的散列<br>无法进行有序性相关的操作<br>链接和空结点需要额外的空间</td>
+</tr>
+</tbody>
+</table>
+<h1 id="二分查找-BinarySearchST"><a href="#二分查找-BinarySearchST" class="headerlink" title="二分查找 BinarySearchST"></a><strong>二分查找 BinarySearchST</strong></h1><p><strong>BinarySearchST的操作的成本：</strong><br>|方法    |运行所需时间的增长数量级|<br>|——|:——:|<br>|put()|    N|<br>|get()|    logN|<br>|delete()|    N|<br>|contains()|    logN|<br>|size()|    1|<br>|min()|    1|<br>|max()|    1|<br>|floor()|    logN|<br>|ceiling()|    logN|<br>|rank()|    logN|<br>|select()|    1|<br>|deleteMin()|    N|<br>|deleteMax()|    1|</p>
+<p>二分查找的put和delete等方法有些过慢，不过相较SequentialSearchST顺序查找，BinarySearchST二分查找的比较次数(包含访问数组的次数)要少很多</p>
+<h1 id="二叉查找树-BST"><a href="#二叉查找树-BST" class="headerlink" title="二叉查找树 BST"></a><strong>二叉查找树 BST</strong></h1><h2 id="新的符号表结构："><a href="#新的符号表结构：" class="headerlink" title="新的符号表结构："></a><strong>新的符号表结构：</strong></h2><p>二叉查找树，结合了链表的插入灵活性和有序数组查找的高效性</p>
+<p><strong>结点：</strong><br>有一个父结点，两个左右子结点，一个键值对，键之间有顺序之分方便高效查找<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Node root; <span class="comment">//二叉查找树的根节点</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">class</span> <span class="title">Node</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Key key;</span><br><span class="line">    <span class="keyword">private</span> Value <span class="keyword">value</span>;</span><br><span class="line">    <span class="keyword">private</span> Node left,right;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> N; <span class="comment">//以该结点为根的子树的结点总数</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Node</span>(<span class="params">Key key,Value <span class="keyword">value</span>,<span class="keyword">int</span> N</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.key = key;</span><br><span class="line">        <span class="keyword">this</span>.<span class="keyword">value</span> = <span class="keyword">value</span>;</span><br><span class="line">        <span class="keyword">this</span>.N = N;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="二叉查找树的查找递归算法："><a href="#二叉查找树的查找递归算法：" class="headerlink" title="二叉查找树的查找递归算法："></a><strong>二叉查找树的查找递归算法：</strong></h2><p>如果树是空的，则查找未命中。<br>如果被查找的键和根结点的键相等，查找命中。<br>否则就递归的在适当的子树中继续查找，若被查找的键较小就查左子树，若较大则查右子树，若遍历结束仍未查到则未命中。</p>
+<p><strong>分析：</strong><br>使用二叉查找树算法的运行时间取决于树的形状，树的形状又取决于键被插入的先后顺序。<br>最好的情况下，含有N个结点的二叉树是完全平衡的，每条空链接和根结点的距离都是lgN。<br>最坏清空，搜索路径上有N个结点，一直在树的一边。<br>对于分析角度，二叉查找树和快速排序很像，树的根结点就是快排的第一个切分元素，左边都比它小，右边都比它大，对于所有子树都适用。<br>在由N个随机数构成的二叉查找树中，查找命中平均所需的比较次数为2lnN（约1.39lgN），插入操作和查找未命中平均所需的比较次数为2lnN（约1.39lgN）。<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">int</span> <span class="built_in">size</span>()&#123; <span class="keyword">return</span> <span class="built_in">size</span>(root); &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="built_in">int</span> <span class="built_in">size</span>(Node node)&#123;</span><br><span class="line">    <span class="keyword">if</span>(node == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> node.N;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Value <span class="built_in">get</span>(Key <span class="built_in">key</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">get</span>(root,<span class="built_in">key</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Value <span class="built_in">get</span>(Node x,Key <span class="built_in">key</span>)&#123;</span><br><span class="line">    <span class="comment">//在以x为根节点的子树中查找并返回Key所对应的值</span></span><br><span class="line">    <span class="comment">//若找不到则返回null</span></span><br><span class="line">    <span class="keyword">if</span>(x == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    <span class="built_in">int</span> cmp = <span class="built_in">key</span>.compareTo(x.<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="built_in">get</span>(x.left,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>) <span class="keyword">return</span> <span class="built_in">get</span>(x.right,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> x.value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> put(Key <span class="built_in">key</span>,Value value)&#123;</span><br><span class="line">    <span class="comment">//查找Key，找到则更新值，否则为它创建一个新的结点</span></span><br><span class="line">    root = put(root,<span class="built_in">key</span>,value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Node put(Node x,Key <span class="built_in">key</span>,Value value)&#123;</span><br><span class="line">    <span class="comment">//如果Key存在于以x为根节点的子树中则更新它的值</span></span><br><span class="line">    <span class="comment">//否则将以key和val为键值对的新结点插入到该子树中</span></span><br><span class="line">    <span class="keyword">if</span>(x == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">new</span> Node(<span class="built_in">key</span>,value,<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">int</span> cmp = <span class="built_in">key</span>.compareTo(x.<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>) x.left = put(x.left,<span class="built_in">key</span>,value);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>) x.right = put(x.right,<span class="built_in">key</span>,value);</span><br><span class="line">    <span class="keyword">else</span> x.value = value;</span><br><span class="line">    x.N = <span class="built_in">size</span>(x.left) + <span class="built_in">size</span>(x.right) + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="二叉查找树的有序性相关的方法和删除操作"><a href="#二叉查找树的有序性相关的方法和删除操作" class="headerlink" title="二叉查找树的有序性相关的方法和删除操作"></a><strong>二叉查找树的有序性相关的方法和删除操作</strong></h2><p>保持键的有序性是二叉查找树被广泛使用的一个原因。</p>
+<h3 id="1-最大键和最小键"><a href="#1-最大键和最小键" class="headerlink" title="1.最大键和最小键"></a><strong>1.最大键和最小键</strong></h3><p>若根结点左链接为空，则根结点是最小键，否则就是左子树的最小键，即递归实现。最大键就是右子树。<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Key <span class="built_in">min</span>()&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">min</span>(root).<span class="built_in">key</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Node <span class="built_in">min</span>(Node x)&#123;</span><br><span class="line">    <span class="keyword">if</span>(x.left == <span class="keyword">null</span>) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">min</span>(x.left);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Key <span class="built_in">max</span>()&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">max</span>(root).<span class="built_in">key</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Node <span class="built_in">max</span>(Node x)&#123;</span><br><span class="line">    <span class="keyword">if</span>(x.right == <span class="keyword">null</span>) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">max</span>(x.right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-向上取整和向下取整"><a href="#2-向上取整和向下取整" class="headerlink" title="2.向上取整和向下取整"></a><strong>2.向上取整和向下取整</strong></h3><p>  若给定键小于根结点的键，则floor一定在左子树中；若给定键大于根结点的键，只有当根结点右子树中存在小于等于Key的结点时，小于等于Key的最大键才出现于右子树，否则就是根结点。<br><figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public <span class="built_in">Key</span> <span class="built_in">floor</span>(<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;<span class="comment">//向下取整</span></span><br><span class="line">    Node x = <span class="built_in">floor</span>(root,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(x == <span class="built_in">null</span>) <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">    <span class="keyword">return</span> x.<span class="built_in">key</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private Node <span class="built_in">floor</span>(Node x,<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;<span class="comment">//向下取整</span></span><br><span class="line">    <span class="keyword">if</span>(x == <span class="built_in">null</span>) <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">    int cmp = <span class="built_in">key</span>.compareTo(x.<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(cmp == <span class="number">0</span>) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cmp &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="built_in">floor</span>(x.left,<span class="built_in">key</span>);</span><br><span class="line">    Node t = <span class="built_in">floor</span>(x.right,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(t != <span class="built_in">null</span>) <span class="keyword">return</span> t;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public <span class="built_in">Key</span> ceiling(<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;<span class="comment">//向上取整</span></span><br><span class="line">    Node x = ceiling(root,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(x == <span class="built_in">null</span>) <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">    <span class="keyword">return</span> x.<span class="built_in">key</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private Node ceiling(Node x,<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;<span class="comment">//向上取整</span></span><br><span class="line">    <span class="keyword">if</span>(x == <span class="built_in">null</span>) <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">    int cmp = <span class="built_in">key</span>.compareTo(x.<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(cmp == <span class="number">0</span>) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cmp &gt; <span class="number">0</span>) <span class="keyword">return</span> ceiling(x.right,<span class="built_in">key</span>);</span><br><span class="line">    Node t = ceiling(x.left,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(t != <span class="built_in">null</span>) <span class="keyword">return</span> t;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-选择操作"><a href="#3-选择操作" class="headerlink" title="3.选择操作"></a><strong>3.选择操作</strong></h3><p>假设需要寻找排名为k的键，若左子树中的结点数t大于k，继续在左子树中查找，若等于则返回根结点的键，若大于则在右子树中查找排名为k-t-1的键。<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Key <span class="title">select</span>(<span class="params"><span class="keyword">int</span> k</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">select</span>(root,k).key;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">select</span>(<span class="params">Node x,<span class="keyword">int</span> k</span>)</span>&#123;</span><br><span class="line">    <span class="comment">//返回排名为k的结点</span></span><br><span class="line">    <span class="keyword">if</span>(x == <span class="literal">null</span>) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">int</span> t = size(x.left);</span><br><span class="line">    <span class="keyword">if</span>(t &gt; k) <span class="keyword">return</span> <span class="keyword">select</span>(x.left,k);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(t &gt; k) <span class="keyword">return</span> <span class="keyword">select</span>(x.right,k-t<span class="number">-1</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-排名"><a href="#4-排名" class="headerlink" title="4.排名"></a><strong>4.排名</strong></h3><p>rank()是select()的逆方法，它会返回给定键的排名。实现方法和select()类似，给定键和根结点键相等返回左子树结点总数t，若给定键小于根结点则返回其在左子树中的排名，大于根结点则返回t+1+右子树中的排名<br><figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public int <span class="built_in">rank</span>(<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">rank</span>(<span class="built_in">key</span>,root);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private int <span class="built_in">rank</span>(<span class="built_in">Key</span> <span class="built_in">key</span>,Node x)&#123;</span><br><span class="line">    <span class="comment">//返回以x为根结点的子树中小于x.key的键的数量</span></span><br><span class="line">    <span class="keyword">if</span>(x == <span class="built_in">null</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    int cmp = <span class="built_in">key</span>.compareTo(x.<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="built_in">rank</span>(<span class="built_in">key</span>,x.left);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span> + size(x.left) + <span class="built_in">rank</span>(<span class="built_in">key</span>,x.right);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> size(x.left);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="5-删除最大键和最小键"><a href="#5-删除最大键和最小键" class="headerlink" title="5.删除最大键和最小键"></a><strong>5.删除最大键和最小键</strong></h3><p>删除操作是二叉树最难实现的部分，删除最小键需要不断深入根结点的左子树直到遇到一个空链接，然后将指向当前结点的链接指向该结点的右子树（只需要在递归调用中返回它的右链接即可）。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> void deleteMin()&#123;</span><br><span class="line">    root = deleteMin(root);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">Node</span> deleteMin(<span class="type">Node</span> x)&#123;</span><br><span class="line">    <span class="keyword">if</span>(x.<span class="keyword">left</span> == null) <span class="keyword">return</span> x.<span class="keyword">right</span>;</span><br><span class="line">    x.<span class="keyword">left</span> = deleteMin(x.<span class="keyword">left</span>);</span><br><span class="line">    x.<span class="type">N</span> = size(x.<span class="keyword">left</span>) + size(x.<span class="keyword">right</span>) + <span class="number">1</span>;<span class="comment">//?</span></span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> void deleteMax()&#123;</span><br><span class="line">    root = deleteMax(root);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">Node</span> deleteMax(<span class="type">Node</span> x)&#123;</span><br><span class="line">    <span class="keyword">if</span>(x.<span class="keyword">right</span> == null) <span class="keyword">return</span> x.<span class="keyword">left</span>;</span><br><span class="line">    x.<span class="keyword">right</span> = deleteMax(x.<span class="keyword">right</span>);</span><br><span class="line">    x.<span class="type">N</span> = size(x.<span class="keyword">left</span>) + size(x.<span class="keyword">right</span>) + <span class="number">1</span>;<span class="comment">//?</span></span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="6-删除操作"><a href="#6-删除操作" class="headerlink" title="6.删除操作"></a><strong>6.删除操作</strong></h3><p>删除一个没有或只有一个子结点的结点是上个所做操作，但删除操作通常是对有两个子结点的结点进行删除，如何处理两颗子树是一个问题。第一个方法：删除某结点x，将其后继结点填补它的位置，因为x有右子结点，所以后继结点就是右子树的最小结点，如此替换能保证树的有序性，因为x结点和其后继结点没有键关联，所以需要通过以下步骤完成替换流程：</p>
+<ul>
+<li>将指向将被删除结点的链接保存为t。</li>
+<li>将x指向它的后继结点min(t.right)。</li>
+<li>将x的右链接（原本指向一棵所有结点都大于x.key的二叉查找树）指向deleteMin(t.right)，即删除后所有结点仍大于x.key。</li>
+<li>将x的左链接设为t.left。</li>
+<li>更新链接和结点计数器。<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public void <span class="keyword">delete</span>(<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;</span><br><span class="line">    root = <span class="keyword">delete</span>(root, <span class="built_in">key</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private Node <span class="keyword">delete</span>(Node x,<span class="built_in">Key</span> <span class="built_in">key</span>)&#123;</span><br><span class="line">    <span class="keyword">if</span>(x == <span class="built_in">null</span>) <span class="keyword">return</span> <span class="built_in">null</span>;</span><br><span class="line">    int cmp = <span class="built_in">key</span>.compareTo(x.<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>) x.left = <span class="keyword">delete</span>(x.left,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>) x.right = <span class="keyword">delete</span>(x.right,<span class="built_in">key</span>);</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(x.right == <span class="built_in">null</span>) <span class="keyword">return</span> x.left;</span><br><span class="line">        <span class="keyword">if</span>(x.left == <span class="built_in">null</span>) <span class="keyword">return</span> x.right;</span><br><span class="line">        Node t = x;</span><br><span class="line">        x = min(t.right);<span class="comment">//?</span></span><br><span class="line">        x.right = deleteMin(t.right);</span><br><span class="line">        x.left = t.left;</span><br><span class="line">    &#125;</span><br><span class="line">    x.N = size(x.left) + size(x.right) + <span class="number">1</span>;<span class="comment">//?</span></span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="7-范围查找"><a href="#7-范围查找" class="headerlink" title="7.范围查找"></a><strong>7.范围查找</strong></h3><p>要返回给定范围内键的方法，需要参考中序遍历的方法，将所有落在给定范围内的键加入队列Queue中，跳过不可能含有所查找键的子树。</p>
+<p>先序遍历：<br>中序遍历：<br>后序遍历：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Iterable&lt;Key&gt; keys()&#123;</span><br><span class="line">    <span class="comment">//二叉查找树范围查找</span></span><br><span class="line">    <span class="keyword">return</span> keys(min(),max());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Iterable&lt;Key&gt; keys(Key lo,Key hi)&#123;</span><br><span class="line">    MyQueue&lt;Key&gt; <span class="built_in">queue</span> = <span class="keyword">new</span> MyQueue&lt;Key&gt;();</span><br><span class="line">    keys(root,<span class="built_in">queue</span>,lo,hi);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">queue</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">keys</span><span class="params">(Node x,MyQueue&lt;Key&gt; <span class="built_in">queue</span>,Key lo,Key hi)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(x == null) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">int</span> cmplo = lo.compareTo(x.key);</span><br><span class="line">    <span class="keyword">int</span> cmphi = hi.compareTo(x.key);</span><br><span class="line">    <span class="keyword">if</span>(cmplo &lt; <span class="number">0</span>) keys(x.left,<span class="built_in">queue</span>,lo,hi);</span><br><span class="line">    <span class="keyword">if</span>(cmplo &lt;= <span class="number">0</span> &amp;&amp; cmphi &gt;= <span class="number">0</span>) <span class="built_in">queue</span>.enqueue(x.key);</span><br><span class="line">    <span class="keyword">if</span>(cmphi &gt; <span class="number">0</span>) keys(x.right,<span class="built_in">queue</span>,lo,hi);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="8-性能分析"><a href="#8-性能分析" class="headerlink" title="8.性能分析"></a><strong>8.性能分析</strong></h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/algorithm/" rel="tag"># algorithm</a>
+          
+            <a href="/tags/search/" rel="tag"># search</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018090701.html" rel="next" title="编程中所遇到的BUG解决过程(一)">
+                <i class="fa fa-chevron-left"></i> 编程中所遇到的BUG解决过程(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="http://pcvg28por.bkt.clouddn.com/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础定义"><span class="nav-number">1.</span> <span class="nav-text">基础定义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#符号表"><span class="nav-number">1.1.</span> <span class="nav-text">符号表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#无序链表的顺序查找"><span class="nav-number">2.</span> <span class="nav-text">无序链表的顺序查找</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基于有序数组的二分查找"><span class="nav-number">3.</span> <span class="nav-text">基于有序数组的二分查找</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#两者的比较"><span class="nav-number">4.</span> <span class="nav-text">两者的比较</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查找算法的优缺点"><span class="nav-number">5.</span> <span class="nav-text">查找算法的优缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二分查找-BinarySearchST"><span class="nav-number">6.</span> <span class="nav-text">二分查找 BinarySearchST</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二叉查找树-BST"><span class="nav-number">7.</span> <span class="nav-text">二叉查找树 BST</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新的符号表结构："><span class="nav-number">7.1.</span> <span class="nav-text">新的符号表结构：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉查找树的查找递归算法："><span class="nav-number">7.2.</span> <span class="nav-text">二叉查找树的查找递归算法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二叉查找树的有序性相关的方法和删除操作"><span class="nav-number">7.3.</span> <span class="nav-text">二叉查找树的有序性相关的方法和删除操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-最大键和最小键"><span class="nav-number">7.3.1.</span> <span class="nav-text">1.最大键和最小键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-向上取整和向下取整"><span class="nav-number">7.3.2.</span> <span class="nav-text">2.向上取整和向下取整</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-选择操作"><span class="nav-number">7.3.3.</span> <span class="nav-text">3.选择操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-排名"><span class="nav-number">7.3.4.</span> <span class="nav-text">4.排名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-删除最大键和最小键"><span class="nav-number">7.3.5.</span> <span class="nav-text">5.删除最大键和最小键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-删除操作"><span class="nav-number">7.3.6.</span> <span class="nav-text">6.删除操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-范围查找"><span class="nav-number">7.3.7.</span> <span class="nav-text">7.范围查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-性能分析"><span class="nav-number">7.3.8.</span> <span class="nav-text">8.性能分析</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
