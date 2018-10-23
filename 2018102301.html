@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="poi,excel,word," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="POI编写工具类导出Excel和Word，多行标题，合并单元格，循环生成表格等">
+<meta name="keywords" content="poi,excel,word">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache-POI导出Excel和Word">
+<meta property="og:url" content="http://linyishui.top/2018102301.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="POI编写工具类导出Excel和Word，多行标题，合并单元格，循环生成表格等">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://pcvg28por.bkt.clouddn.com//share/sooyaaa___1____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg">
+<meta property="og:updated_time" content="2018-10-23T02:44:55.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Apache-POI导出Excel和Word">
+<meta name="twitter:description" content="POI编写工具类导出Excel和Word，多行标题，合并单元格，循环生成表格等">
+<meta name="twitter:image" content="http://pcvg28por.bkt.clouddn.com//share/sooyaaa___1____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2018102301.html"/>
+
+
+
+
+
+  <title>Apache-POI导出Excel和Word | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2018102301.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://pcvg28por.bkt.clouddn.com/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Apache-POI导出Excel和Word</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-23T10:21:30+08:00">
+                2018-10-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,459
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  POI编写工具类导出Excel和Word，多行标题，合并单元格，循环生成表格等
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="http://pcvg28por.bkt.clouddn.com//share/sooyaaa___1____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg" rel="gallery_cjnl4ob5i000yystmmnhn916l"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="http://pcvg28por.bkt.clouddn.com//share/sooyaaa___1____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        
+        <div id="aplayer-NefvXppc" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+            <pre class="aplayer-lrc-content"></pre>
+        </div>
+        <script>
+          var ap = new APlayer({
+            element: document.getElementById("aplayer-NefvXppc"),
+            narrow: false,
+            autoplay: true,
+            showlrc: false,
+            music: {
+              title: "生之如舟",
+              author: "Rie fu",
+              url: "http://pcvwwmd5n.bkt.clouddn.com/Rie%20fu%20-%20Life%20Is%20Like%20A%20Boat.mp3",
+              pic: "http://p1.music.126.net/S2U-jVMYiJQfXVEaZnpANg==/4420036743668385.jpg",
+              lrc: ""
+            }
+          });
+          window.aplayers || (window.aplayers = []);
+          window.aplayers.push(ap);
+        </script>
+<h1 id="POM-XML配置POI相关jar包"><a href="#POM-XML配置POI相关jar包" class="headerlink" title="POM.XML配置POI相关jar包"></a><strong>POM.XML配置POI相关jar包</strong></h1><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--poi--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        poi<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.10-beta2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>poi-ooxml<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.10-beta2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>poi-ooxml-schemas<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.10-beta2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>poi-scratchpad<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.0.2-FINAL<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="编写相关工具类"><a href="#编写相关工具类" class="headerlink" title="编写相关工具类"></a><strong>编写相关工具类</strong></h1><p>可以自己写或用别人写好的轮子。Excel一般会比较简单实现，我在熟悉POI相关编写时先找了一个不错的开源代码，强烈推荐直接使用或作为学习参照:</p>
+<blockquote>
+<p><a href="https://github.com/hyberbin/J-Excel" target="_blank" rel="noopener">https://github.com/hyberbin/J-Excel</a></p>
+</blockquote>
+<h2 id="Excel"><a href="#Excel" class="headerlink" title="Excel"></a><strong>Excel</strong></h2><p>需求:</p>
+<p><img src="http://pcvg28por.bkt.clouddn.com/201810230101.png" alt=""></p>
+<ol>
+<li><p>根据需求编写对应实体类或存储结构等(省略)。</p>
+</li>
+<li><p>控制层：</p>
+</li>
+</ol>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//导出Excel</span></span><br><span class="line">@RequestMapping(value = <span class="string">"/exportExcel"</span>)</span><br><span class="line"><span class="keyword">public</span> ResponseEntity&lt;Resource&gt; exportExcel (@ModelAttribute(<span class="string">"schoolYear"</span>) <span class="built_in">int</span> schoolYear,</span><br><span class="line">                                                   @ModelAttribute(<span class="string">"schoolTerm"</span>) <span class="built_in">int</span> semester,</span><br><span class="line">                                                   @RequestParam(<span class="string">"natualYear"</span>) <span class="keyword">String</span> natureYear,</span><br><span class="line">                                                   @RequestParam(<span class="string">"natualMonth"</span>) <span class="keyword">String</span> natureMonth)&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        logger.info(<span class="string">"/export/exportExcelForFdjx is running"</span>);</span><br><span class="line">        <span class="keyword">if</span>(natureYear.isEmpty() &amp;&amp; natureMonth.isEmpty())&#123;</span><br><span class="line">            <span class="keyword">String</span>[] strings = CommonUtil.getCurrentYearAndMonth();</span><br><span class="line">            natureYear = strings[<span class="number">0</span>];</span><br><span class="line">            natureMonth = strings[<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">String</span> fileName = schoolYear + <span class="string">"-学年-"</span>  + semester + <span class="string">"-学期-"</span>  + <span class="string">"绩效.xls"</span>;</span><br><span class="line">        ByteArrayOutputStream baos = exportService.exportExcel (schoolYear,semester,Integer.valueOf(natureYear),Integer.valueOf(natureMonth));</span><br><span class="line">        HttpHeaders headers = <span class="keyword">new</span> HttpHeaders();</span><br><span class="line">        headers.<span class="built_in">add</span>(<span class="string">"Cache-Control"</span>, <span class="string">"no-cache, no-store, must-revalidate"</span>);</span><br><span class="line">        headers.<span class="built_in">add</span>(<span class="string">"Pragma"</span>, <span class="string">"no-cache"</span>);</span><br><span class="line">        headers.<span class="built_in">add</span>(<span class="string">"Expires"</span>, <span class="string">"0"</span>);</span><br><span class="line">        headers.<span class="built_in">add</span>(<span class="string">"charset"</span>, <span class="string">"utf-8"</span>);</span><br><span class="line">        fileName = URLEncoder.encode(fileName,<span class="string">"UTF-8"</span>);</span><br><span class="line">        headers.<span class="built_in">add</span>(<span class="string">"Content-Disposition"</span>, <span class="string">"attachment;fileName=\""</span> + fileName + <span class="string">"\""</span>);</span><br><span class="line">        Resource resource = <span class="keyword">new</span> InputStreamResource(<span class="keyword">new</span> ByteArrayInputStream(baos.toByteArray()));</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.ok().headers(headers).contentType(MediaType.parseMediaType(<span class="string">"application/OCTET-STREAM"</span>)).body(resource);</span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception ex)&#123;</span><br><span class="line">        ex.printStackTrace();</span><br><span class="line">        logger.warning(ex.toString());</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.notFound().eTag(ex.toString()).build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>服务层：</li>
+</ol>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">public ByteArrayOutputStream exportExcel(</span><br><span class="line">    int schoolYear,int semester,int natureYear,int natureMonth)throws Exception&#123;</span><br><span class="line">    ByteArrayOutputStream baos;</span><br><span class="line">    //数据准备，从持久层获取数据，核算等等</span><br><span class="line"></span><br><span class="line">    //组合标题，从数据结构中取出标题数据(非固定列数)</span><br><span class="line">    String[] rowName = <span class="built_in">new</span> String[$&#123;总列数&#125;];</span><br><span class="line">    rowName[<span class="number">0</span>] = <span class="string">"序号"</span>;</span><br><span class="line">    rowName[<span class="number">1</span>] = <span class="string">"列名A"</span>;</span><br><span class="line">    rowName[<span class="number">2</span>] = <span class="string">"列名B"</span>;</span><br><span class="line">    rowName[<span class="number">3</span>] = <span class="string">"列名C"</span>;</span><br><span class="line">    <span class="keyword">for</span>(int i = <span class="number">0</span>;i &lt; theoryHours.<span class="built_in">length</span>;i++)&#123;//<span class="number">0</span>-<span class="number">7</span> <span class="number">4</span>-<span class="number">11</span> 列名<span class="number">1</span>~<span class="number">1.3</span></span><br><span class="line">        rowName[i+<span class="number">4</span>] = theoryHourParms.<span class="built_in">get</span>(i)+<span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span>+<span class="number">4</span>] = <span class="string">"0.8"</span>;</span><br><span class="line">    <span class="keyword">for</span>(int i = <span class="number">0</span>;i &lt; experimentParmList.size();i++)&#123;//<span class="number">0.6</span>~<span class="number">0.7</span></span><br><span class="line">        rowName[i+theoryHours.<span class="built_in">length</span>+<span class="number">5</span>] = experimentParmList.<span class="built_in">get</span>(i).getPositionRatio()+<span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">5</span>] = <span class="string">"列名H"</span>;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">6</span>] = <span class="string">"列名I"</span>;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">7</span>] = <span class="string">"列名J"</span>;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">8</span>] = <span class="string">"列名K"</span>;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">9</span>] = <span class="string">"列名L"</span>;</span><br><span class="line">    rowName[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">10</span>] = <span class="string">"列名M"</span>;</span><br><span class="line">    //表格数据用dataList存储</span><br><span class="line">    List&lt;Object[]&gt;  dataList = <span class="built_in">new</span> ArrayList&lt;Object[]&gt;();</span><br><span class="line">    Object[] objs = null;</span><br><span class="line">    <span class="keyword">for</span>(int i = <span class="number">0</span>; i &lt; performances.size(); i++)&#123;</span><br><span class="line">        objs = <span class="built_in">new</span> Object[rowName.<span class="built_in">length</span>];</span><br><span class="line">        FloatingPerformance object = performances.<span class="built_in">get</span>(i);</span><br><span class="line">        objs[<span class="number">0</span>] = i;</span><br><span class="line">        objs[<span class="number">1</span>] = object.getTeacherId();</span><br><span class="line">        objs[<span class="number">2</span>] = object.getTeacherName();</span><br><span class="line">        objs[<span class="number">3</span>] = object.getDepartmentName();</span><br><span class="line">        <span class="keyword">for</span>(int j = <span class="number">0</span>;j &lt; theoryHours.<span class="built_in">length</span>;j++)&#123;</span><br><span class="line">            objs[j+<span class="number">4</span>] = object.getTheoryHours().<span class="built_in">get</span>(j).getHours()+<span class="string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span>+<span class="number">4</span>] = object.getXzytHours().getHours();</span><br><span class="line">        <span class="keyword">for</span>(int j = <span class="number">0</span>;j &lt; experimentHours.<span class="built_in">length</span>;j++)&#123;</span><br><span class="line">            objs[j+theoryHours.<span class="built_in">length</span>+<span class="number">5</span>] = object.getExperimentHours().<span class="built_in">get</span>(j).getHours()+<span class="string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">5</span>] = object.getPayStandard();</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">6</span>] = object.getHoursPay();</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">7</span>] = object.getMonthAvePay();</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">8</span>] = object.getOtherSubsidy();</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">9</span>] = object.getFine();</span><br><span class="line">        objs[theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">10</span>] = object.getRealAmount();</span><br><span class="line">        dataList.add(objs);</span><br><span class="line">    &#125;</span><br><span class="line">    //生成合并单元格的标题</span><br><span class="line">    Map&lt;Integer,int[]&gt; rowMergeList = <span class="built_in">new</span> HashMap&lt;&gt;();//横向合并的集合</span><br><span class="line">    Map&lt;Integer,int[]&gt; cellMergeList = <span class="built_in">new</span> HashMap&lt;&gt;();//纵向合并的集合</span><br><span class="line">    int titleHeight = <span class="number">2</span>;</span><br><span class="line">    //第一行</span><br><span class="line">    int[] list0 = &#123;<span class="number">4</span>,theoryHours.<span class="built_in">length</span>+<span class="number">3</span>,theoryHours.<span class="built_in">length</span>+<span class="number">5</span>,theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">4</span>&#125;;</span><br><span class="line">    int[] list1 = &#123;<span class="number">5</span>,theoryHours.<span class="built_in">length</span>+<span class="number">3</span>,theoryHours.<span class="built_in">length</span>+<span class="number">5</span>,theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">4</span>&#125;;</span><br><span class="line">    int[] cell0 = &#123;<span class="number">0</span>,<span class="number">2</span>&#125;;</span><br><span class="line">    int[] cell1 = &#123;<span class="number">0</span>,<span class="number">1</span>&#125;;</span><br><span class="line">    List&lt;String[]&gt; mergeTitles = <span class="built_in">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    String[] mergeTitle0 = &#123;<span class="string">"序号"</span>,<span class="string">"列名A"</span>,<span class="string">"列名B"</span>,<span class="string">"列名C"</span>,<span class="string">"列名N "</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">"列名F"</span>,<span class="string">"列名O"</span>,<span class="string">""</span>,<span class="string">"列名H"</span>,<span class="string">"列名I"</span>,<span class="string">"列名J"</span>,<span class="string">"列名K"</span>,<span class="string">"列名L"</span>,<span class="string">"列名M"</span>&#125;;</span><br><span class="line">    String[] mergeTitle1 = &#123;<span class="string">"序号"</span>,<span class="string">"列名A"</span>,<span class="string">"列名B"</span>,<span class="string">"列名C"</span>,<span class="string">"列名D"</span>,<span class="string">"列名E"</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">""</span>,<span class="string">"列名F"</span>,<span class="string">"列名G"</span>,<span class="string">""</span>,<span class="string">"列名H"</span>,<span class="string">"列名I"</span>,<span class="string">"列名J"</span>,<span class="string">"列名K"</span>,<span class="string">"列名L"</span>,<span class="string">"列名M"</span>&#125;;</span><br><span class="line">    mergeTitles.add(mergeTitle0);</span><br><span class="line">    mergeTitles.add(mergeTitle1);</span><br><span class="line">    rowMergeList.<span class="built_in">put</span>(<span class="number">0</span>,list0);</span><br><span class="line">    rowMergeList.<span class="built_in">put</span>(<span class="number">1</span>,list1);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(<span class="number">0</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(<span class="number">1</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(<span class="number">2</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(<span class="number">3</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span>+<span class="number">4</span>,cell1);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">5</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">6</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">7</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">8</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">9</span>,cell0);</span><br><span class="line">    cellMergeList.<span class="built_in">put</span>(theoryHours.<span class="built_in">length</span> + experimentHours.<span class="built_in">length</span> + <span class="number">10</span>,cell0);</span><br><span class="line">    ExcelUtil excelUtil = <span class="built_in">new</span> ExcelUtil(<span class="string">"绩效"</span>,rowName,dataList,rowMergeList,cellMergeList,titleHeight,mergeTitles);</span><br><span class="line">    HSSFWorkbook workbook = excelUtil.export();</span><br><span class="line">    OutputStream outputStream = <span class="built_in">new</span> ByteArrayOutputStream();</span><br><span class="line">    workbook.write(outputStream);</span><br><span class="line"></span><br><span class="line">    //输出流到浏览器</span><br><span class="line">    baos = (ByteArrayOutputStream) outputStream;</span><br><span class="line">    this.<span class="built_in">close</span>(outputStream);</span><br><span class="line">    <span class="built_in">return</span> baos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>Excel工具类：<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class ExcelUtil &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span> title;<span class="comment">//导出表的标题</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">String</span>[] rowName;<span class="comment">//导出表的列名</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;<span class="keyword">Object</span>[]&gt; dataList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> Map&lt;Integer,<span class="built_in">int</span>[]&gt; rowMergeList;<span class="comment">//横向合并的集合</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;Integer,<span class="built_in">int</span>[]&gt; cellMergeList;<span class="comment">//纵向合并的集合</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;<span class="keyword">String</span>[]&gt; mergeTitles;<span class="comment">//合并后的标题</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> titleHeight;<span class="comment">//标题栏高度(除了最底层标题)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//构造方法，传入要导出的数据</span></span><br><span class="line">    <span class="keyword">public</span> ExcelUtil(<span class="keyword">String</span> title, <span class="keyword">String</span>[] rowName, List&lt;<span class="keyword">Object</span>[]&gt; dataList,</span><br><span class="line">                     Map&lt;Integer,<span class="built_in">int</span>[]&gt; rowMergeList,Map&lt;Integer,<span class="built_in">int</span>[]&gt; cellMergeList,<span class="built_in">int</span> titleHeight,List&lt;<span class="keyword">String</span>[]&gt; mergeTitles)&#123;</span><br><span class="line">        <span class="keyword">this</span>.dataList = dataList;</span><br><span class="line">        <span class="keyword">this</span>.rowName = rowName;</span><br><span class="line">        <span class="keyword">this</span>.title = title;</span><br><span class="line">        <span class="keyword">this</span>.rowMergeList = rowMergeList;</span><br><span class="line">        <span class="keyword">this</span>.cellMergeList = cellMergeList;</span><br><span class="line">        <span class="keyword">this</span>.titleHeight = titleHeight;</span><br><span class="line">        <span class="keyword">this</span>.mergeTitles = mergeTitles;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 导出数据</span></span><br><span class="line"><span class="comment">     * */</span></span><br><span class="line">    <span class="keyword">public</span> HSSFWorkbook export() <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        HSSFWorkbook workbook = <span class="keyword">new</span> HSSFWorkbook();<span class="comment">//创建工作簿</span></span><br><span class="line">        HSSFSheet sheet = workbook.createSheet(title);<span class="comment">//创建工作表</span></span><br><span class="line">        HSSFRow rowTitle = sheet.createRow(<span class="number">0</span>);<span class="comment">//表格标题行</span></span><br><span class="line">        HSSFCell cellTitle = rowTitle.createCell(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//sheet样式定义</span></span><br><span class="line">        HSSFCellStyle columnTopStyle = <span class="keyword">this</span>.getColumnTopStyle(workbook);<span class="comment">//获取列头样式对象</span></span><br><span class="line">        HSSFCellStyle style = <span class="keyword">this</span>.getStyle(workbook);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//生成表格大标题</span></span><br><span class="line">        sheet.addMergedRegion(<span class="keyword">new</span> CellRangeAddress(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, (rowName.length<span class="number">-1</span>)));</span><br><span class="line">        cellTitle.setCellStyle(columnTopStyle);</span><br><span class="line">        cellTitle.setCellValue(title);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//生成合并的多层标题</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">int</span> n = <span class="number">0</span>;n &lt; titleHeight;n++)&#123;</span><br><span class="line">            HSSFRow rowDetailTitle = sheet.createRow( n+<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="built_in">int</span> m=<span class="number">0</span>;m&lt;rowName.length;m++)&#123;</span><br><span class="line">                HSSFCell cellDetailTitle = rowDetailTitle.createCell(m);                <span class="comment">//创建列头对应个数的单元格</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 定义所需列数</span></span><br><span class="line">        <span class="built_in">int</span> columnNum = rowName.length;</span><br><span class="line">        HSSFRow rowRowName = sheet.createRow(<span class="number">2</span> + titleHeight);<span class="comment">// 在索引2的位置创建行(最顶端的行开始的第二行)</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将列头设置到sheet的单元格中</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">int</span> n=<span class="number">0</span>;n&lt;columnNum;n++)&#123;</span><br><span class="line">            HSSFCell  cellRowName = rowRowName.createCell(n);                <span class="comment">//创建列头对应个数的单元格</span></span><br><span class="line">            cellRowName.setCellType(HSSFCell.CELL_TYPE_STRING);                <span class="comment">//设置列头单元格的数据类型</span></span><br><span class="line">            HSSFRichTextString <span class="built_in">text</span> = <span class="keyword">new</span> HSSFRichTextString(rowName[n]);</span><br><span class="line">            cellRowName.setCellValue(<span class="built_in">text</span>);                                    <span class="comment">//设置列头单元格的值</span></span><br><span class="line">            cellRowName.setCellStyle(columnTopStyle);                        <span class="comment">//设置列头单元格样式</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//开始合并标题</span></span><br><span class="line">        <span class="keyword">if</span>(rowMergeList.entrySet().<span class="built_in">size</span>() &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(Map.Entry&lt;Integer,<span class="built_in">int</span>[]&gt; entry : rowMergeList.entrySet())&#123;</span><br><span class="line">                <span class="keyword">for</span>(<span class="built_in">int</span> i = <span class="number">0</span>;i &lt; entry.getValue().length;i+=<span class="number">2</span>)</span><br><span class="line">                    sheet.addMergedRegion(<span class="keyword">new</span> CellRangeAddress(entry.getKey()+<span class="number">2</span>,entry.getKey()+<span class="number">2</span>, entry.getValue()[i], entry.getValue()[i+<span class="number">1</span>]));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(cellMergeList.entrySet().<span class="built_in">size</span>() &gt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">for</span> (Map.Entry&lt;Integer,<span class="built_in">int</span>[]&gt; entry : cellMergeList.entrySet())</span><br><span class="line">                sheet.addMergedRegion(<span class="keyword">new</span> CellRangeAddress(</span><br><span class="line">                        entry.getValue()[<span class="number">0</span>]+<span class="number">2</span>,entry.getValue()[<span class="number">1</span>]+<span class="number">2</span>, entry.getKey(), entry.getKey()));</span><br><span class="line">        <span class="comment">//将合并后标题写入</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">int</span> i = <span class="number">0</span>;i &lt; mergeTitles.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            HSSFRow row = sheet.getRow(<span class="number">2</span>+i);</span><br><span class="line">            <span class="keyword">for</span>(<span class="built_in">int</span> j = <span class="number">0</span>;j &lt; mergeTitles.<span class="built_in">get</span>(i).length;j++)&#123;</span><br><span class="line">                HSSFCell cellRowName = row.getCell(j);</span><br><span class="line">                cellRowName.setCellType(HSSFCell.CELL_TYPE_STRING);                <span class="comment">//设置列头单元格的数据类型</span></span><br><span class="line">                HSSFRichTextString <span class="built_in">text</span> = <span class="keyword">new</span> HSSFRichTextString(mergeTitles.<span class="built_in">get</span>(i)[j]);</span><br><span class="line">                cellRowName.setCellValue(<span class="built_in">text</span>);                                    <span class="comment">//设置列头单元格的值</span></span><br><span class="line">                cellRowName.setCellStyle(columnTopStyle);                        <span class="comment">//设置列头单元格样式</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将查询出的数据设置到sheet对应的单元格中</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="built_in">int</span> i = <span class="number">0</span>;i &lt; dataList.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">Object</span>[] obj = dataList.<span class="built_in">get</span>(i);<span class="comment">//遍历每个对象</span></span><br><span class="line">            HSSFRow row = sheet.createRow(i + <span class="number">3</span> + titleHeight);<span class="comment">//创建所需的行数</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="built_in">int</span> j = <span class="number">0</span>; j &lt; obj.length; j++)&#123;</span><br><span class="line">                HSSFCell cell = <span class="keyword">null</span>;   <span class="comment">//设置单元格的数据类型</span></span><br><span class="line">                <span class="keyword">if</span>(j == <span class="number">0</span>)&#123;</span><br><span class="line">                    cell = row.createCell(j,HSSFCell.CELL_TYPE_NUMERIC);</span><br><span class="line">                    cell.setCellValue(i+<span class="number">1</span>);</span><br><span class="line">                &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                    cell = row.createCell(j,HSSFCell.CELL_TYPE_STRING);</span><br><span class="line">                    <span class="keyword">if</span>(!<span class="string">""</span>.equals(obj[j]) &amp;&amp; obj[j] != <span class="keyword">null</span>)&#123;</span><br><span class="line">                        cell.setCellValue(obj[j].toString());                        <span class="comment">//设置单元格的值</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                cell.setCellStyle(style);                                    <span class="comment">//设置单元格样式</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//让列宽随着导出的列长自动适应</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> colNum = <span class="number">0</span>; colNum &lt; columnNum; colNum++) &#123;</span><br><span class="line">            <span class="built_in">int</span> columnWidth = sheet.getColumnWidth(colNum) / <span class="number">256</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> rowNum = <span class="number">0</span>; rowNum &lt; sheet.getLastRowNum(); rowNum++) &#123;</span><br><span class="line">                HSSFRow currentRow;</span><br><span class="line">                <span class="comment">//当前行未被使用过</span></span><br><span class="line">                <span class="keyword">if</span> (sheet.getRow(rowNum) == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    currentRow = sheet.createRow(rowNum);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    currentRow = sheet.getRow(rowNum);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (currentRow.getCell(colNum) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    HSSFCell currentCell = currentRow.getCell(colNum);</span><br><span class="line">                    <span class="keyword">if</span> (currentCell.getCellType() == HSSFCell.CELL_TYPE_STRING) &#123;</span><br><span class="line">                        <span class="built_in">int</span> length = currentCell.getRichStringCellValue() != <span class="keyword">null</span>?currentCell.getStringCellValue().getBytes().length:columnWidth;</span><br><span class="line">                        <span class="keyword">if</span> (columnWidth &lt; length) &#123;</span><br><span class="line">                            columnWidth = length;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(colNum == <span class="number">0</span>)&#123;</span><br><span class="line">                sheet.setColumnWidth(colNum, (columnWidth<span class="number">-2</span>) * <span class="number">256</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                sheet.setColumnWidth(colNum, (columnWidth+<span class="number">4</span>) * <span class="number">256</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> workbook;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 列头单元格样式</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> HSSFCellStyle getColumnTopStyle(HSSFWorkbook workbook) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 设置字体</span></span><br><span class="line">        HSSFFont font = workbook.<span class="built_in">createFont</span>();</span><br><span class="line">        <span class="comment">//设置字体大小</span></span><br><span class="line">        font.setFontHeightInPoints((<span class="keyword">short</span>)<span class="number">11</span>);</span><br><span class="line">        <span class="comment">//字体加粗</span></span><br><span class="line">        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);</span><br><span class="line">        <span class="comment">//设置字体名字</span></span><br><span class="line">        font.setFontName(<span class="string">"Courier New"</span>);</span><br><span class="line">        <span class="comment">//设置样式;</span></span><br><span class="line">        HSSFCellStyle style = workbook.createCellStyle();</span><br><span class="line">        <span class="comment">//设置底边框;</span></span><br><span class="line">        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置底边框颜色;</span></span><br><span class="line">        style.setBottomBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//设置左边框;</span></span><br><span class="line">        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置左边框颜色;</span></span><br><span class="line">        style.setLeftBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//设置右边框;</span></span><br><span class="line">        style.setBorderRight(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置右边框颜色;</span></span><br><span class="line">        style.setRightBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//设置顶边框;</span></span><br><span class="line">        style.setBorderTop(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置顶边框颜色;</span></span><br><span class="line">        style.setTopBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//在样式用应用设置的字体;</span></span><br><span class="line">        style.setFont(font);</span><br><span class="line">        <span class="comment">//设置自动换行;</span></span><br><span class="line">        style.setWrapText(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">//设置水平对齐的样式为居中对齐;</span></span><br><span class="line">        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);</span><br><span class="line">        <span class="comment">//设置垂直对齐的样式为居中对齐;</span></span><br><span class="line">        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);</span><br><span class="line">        <span class="keyword">return</span> style;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 列数据信息单元格样式</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> HSSFCellStyle getStyle(HSSFWorkbook workbook) &#123;</span><br><span class="line">        <span class="comment">// 设置字体</span></span><br><span class="line">        HSSFFont font = workbook.<span class="built_in">createFont</span>();</span><br><span class="line">        <span class="comment">//设置字体大小</span></span><br><span class="line">        <span class="comment">//font.setFontHeightInPoints((short)10);</span></span><br><span class="line">        <span class="comment">//字体加粗</span></span><br><span class="line">        <span class="comment">//font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);</span></span><br><span class="line">        <span class="comment">//设置字体名字</span></span><br><span class="line">        font.setFontName(<span class="string">"Courier New"</span>);</span><br><span class="line">        <span class="comment">//设置样式;</span></span><br><span class="line">        HSSFCellStyle style = workbook.createCellStyle();</span><br><span class="line">        <span class="comment">//设置底边框;</span></span><br><span class="line">        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置底边框颜色;</span></span><br><span class="line">        style.setBottomBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//设置左边框;</span></span><br><span class="line">        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置左边框颜色;</span></span><br><span class="line">        style.setLeftBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//设置右边框;</span></span><br><span class="line">        style.setBorderRight(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置右边框颜色;</span></span><br><span class="line">        style.setRightBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//设置顶边框;</span></span><br><span class="line">        style.setBorderTop(HSSFCellStyle.BORDER_THIN);</span><br><span class="line">        <span class="comment">//设置顶边框颜色;</span></span><br><span class="line">        style.setTopBorderColor(HSSFColor.BLACK.index);</span><br><span class="line">        <span class="comment">//在样式用应用设置的字体;</span></span><br><span class="line">        style.setFont(font);</span><br><span class="line">        <span class="comment">//设置自动换行;</span></span><br><span class="line">        style.setWrapText(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">//设置水平对齐的样式为居中对齐;</span></span><br><span class="line">        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);</span><br><span class="line">        <span class="comment">//设置垂直对齐的样式为居中对齐;</span></span><br><span class="line">        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> style;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Word"><a href="#Word" class="headerlink" title="Word"></a><strong>Word</strong></h2><p>需求:</p>
+<p><img src="http://pcvg28por.bkt.clouddn.com/201810230102.png" alt=""></p>
+<p>通过 <a href="https://github.com/hyberbin/J-Excel" target="_blank" rel="noopener">https://github.com/hyberbin/J-Excel</a> 的开源工具代码来实现</p>
+<ol>
+<li><p>编写实体类和控制层，和Excel导出大体相同。</p>
+</li>
+<li><p>服务层</p>
+</li>
+</ol>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//导出数据</span></span><br><span class="line"><span class="keyword">public</span> OutputStream exportProgressTable(<span class="keyword">String</span> mainCourseClassId,<span class="keyword">String</span> classId,<span class="keyword">String</span> courseId)throws Exception&#123;</span><br><span class="line">    logger.info(<span class="string">"初始化导出工具"</span>);</span><br><span class="line">    <span class="comment">//初始化导出工具</span></span><br><span class="line">    WordUtil wordUtil = <span class="keyword">new</span> WordUtil(WORD_TEMPLATE);</span><br><span class="line">    wordUtil.init();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//数据准备</span></span><br><span class="line">    ClassInfo classInfo = courseClassInfoRepository.findClassInfoById(classId);</span><br><span class="line">    List&lt;BigDecimal&gt; courseClassIds = courseClassInfoRepository.findAllCourseClassForClass(classId,courseId);</span><br><span class="line">    List&lt;<span class="keyword">String</span>&gt; courseClassIdStrings = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="built_in">for</span>(BigDecimal bigDecimal : courseClassIds)</span><br><span class="line">        courseClassIdStrings.add(bigDecimal.toString());</span><br><span class="line">    <span class="comment">/******1.标题数据******/</span></span><br><span class="line">    ProgressInfo progressInfo = progressInfoRepository.findByMainCourseClassId(mainCourseClassId);</span><br><span class="line">    List&lt;Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;&gt; mapListTable = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    Map&lt;<span class="keyword">String</span>,Object&gt; mapHeader = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="built_in">if</span>(progressInfo != null)&#123;</span><br><span class="line">        logger.info(<span class="string">"表头数据非空"</span>);</span><br><span class="line">        <span class="comment">/******2. 头表数据******/</span></span><br><span class="line">        mapHeader = progressInfo.toMap();</span><br><span class="line">        mapHeader.<span class="built_in">put</span>(<span class="string">"className"</span>,classInfo.getClassName());</span><br><span class="line">        mapHeader.<span class="built_in">put</span>(<span class="string">"major"</span>,classInfo.getMajor());</span><br><span class="line">        mapHeader.<span class="built_in">put</span>(<span class="string">"grade"</span>,classInfo.getGrade());</span><br><span class="line">        mapHeader.<span class="built_in">remove</span>(<span class="string">"experimentDiv"</span>);</span><br><span class="line">        mapHeader.<span class="built_in">put</span>(<span class="string">"experimentDiv"</span>,</span><br><span class="line">                (Integer.<span class="built_in">parseInt</span>(progressInfo.getExperimentNumPerClass()) / Integer.<span class="built_in">parseInt</span>(progressInfo.getExperimentNumPerGroup())) + <span class="string">""</span>);</span><br><span class="line">        <span class="comment">/******3.  表格：进度表******/</span></span><br><span class="line">        List&lt;ProgressItem&gt; items = progressItemRepository.findAllByProgressInfoIdAndCourseClassIdIn(</span><br><span class="line">                progressInfo.getProgressInfoId(),courseClassIdStrings);</span><br><span class="line">        <span class="built_in">if</span>(items.<span class="built_in">size</span>() &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            logger.info(<span class="string">"表内非空"</span>);</span><br><span class="line">            mapListTable = loopToOneTableRowString(items,<span class="string">"planDate"</span>);</span><br><span class="line">            <span class="comment">//处理节次,星期几，课时，教师</span></span><br><span class="line">            <span class="built_in">for</span>(Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt; <span class="built_in">map</span> : mapListTable)&#123;</span><br><span class="line">                <span class="comment">//节次</span></span><br><span class="line">                <span class="keyword">String</span> classJc = <span class="keyword">String</span>.valueOf(<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"beginJc"</span>)) + <span class="string">"-"</span> + <span class="keyword">String</span>.valueOf(<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"endJc"</span>)) + <span class="string">"节"</span>;</span><br><span class="line">                <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"classJc"</span>,classJc);</span><br><span class="line">                <span class="comment">//星期几</span></span><br><span class="line">                <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"weekDayS"</span>,CommonUtil.weekDayToZNString(<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"weekDay"</span>)));</span><br><span class="line">                <span class="built_in">if</span>(<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"isTheory"</span>).equals(IS_THEORY))&#123;<span class="comment">//理论课</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"tTeachHours"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"teachHours"</span>));<span class="comment">//理论课时</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"eTeachHours"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">""</span>));<span class="comment">//实验课时</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"jTeachHours"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">""</span>));<span class="comment">//见习课时</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"tTeachTeacherNames"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"teachTeacherNames"</span>));<span class="comment">//任课教师</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"eTeachTeacherNames"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">""</span>));<span class="comment">//实验教师</span></span><br><span class="line">                &#125;<span class="built_in">else</span> <span class="built_in">if</span>(<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"isTheory"</span>).equals(IS_EXPERIMENT))&#123;<span class="comment">//实验课</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"tTeachHours"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">""</span>));<span class="comment">//理论课时</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"eTeachHours"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"teachHours"</span>));<span class="comment">//实验课时</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"jTeachHours"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">""</span>));<span class="comment">//见习课时</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"tTeachTeacherNames"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">""</span>));<span class="comment">//任课教师</span></span><br><span class="line">                    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"eTeachTeacherNames"</span>,<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"teachTeacherNames"</span>));<span class="comment">//实验教师</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    wordUtil.<span class="keyword">export</span>(mapHeader);</span><br><span class="line">    wordUtil.<span class="keyword">export</span>(mapHeader,<span class="number">0</span>);</span><br><span class="line">    wordUtil.<span class="keyword">export</span>(mapListTable,<span class="number">1</span>);</span><br><span class="line">    logger.info(<span class="string">"生成Word"</span>);</span><br><span class="line">    <span class="built_in">return</span>  wordUtil.generate();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取数组数据，截断时间</span></span><br><span class="line"><span class="comment"> * @param list</span></span><br><span class="line"><span class="comment"> * @param fieldName</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> List&lt;Map&lt;<span class="keyword">String</span>, Object&gt;&gt; loopToOneTableRow(List list,<span class="keyword">String</span> fieldName)&#123;</span><br><span class="line">    List&lt;Map&lt;<span class="keyword">String</span>, Object&gt;&gt; mapListTable = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    mapListTable = getMapListFromListPO(list);</span><br><span class="line">    <span class="comment">//截断时间</span></span><br><span class="line">    <span class="built_in">for</span>(Map&lt;<span class="keyword">String</span>, Object&gt; <span class="built_in">map</span> : mapListTable)&#123;</span><br><span class="line">        <span class="comment">//时间</span></span><br><span class="line">        <span class="keyword">String</span> dateString = CommonUtil.TimestampToDateString(Timestamp.valueOf(<span class="keyword">String</span>.valueOf(<span class="built_in">map</span>.<span class="built_in">get</span>(fieldName))));</span><br><span class="line">        <span class="built_in">map</span>.<span class="built_in">put</span>(fieldName,dateString);<span class="comment">//替换之前的数据</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">return</span> mapListTable;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> List&lt;Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;&gt; loopToOneTableRowString(List list,<span class="keyword">String</span> fieldName)&#123;</span><br><span class="line">    List&lt;Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;&gt; mapListTable = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    mapListTable = getMapListStringFromListPO(list);</span><br><span class="line">    <span class="comment">//截断时间</span></span><br><span class="line">    <span class="built_in">for</span>(Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt; <span class="built_in">map</span> : mapListTable)&#123;</span><br><span class="line">        <span class="comment">//时间</span></span><br><span class="line">        <span class="keyword">String</span> dateString = CommonUtil.TimestampToDateString(Timestamp.valueOf(<span class="keyword">String</span>.valueOf(<span class="built_in">map</span>.<span class="built_in">get</span>(fieldName))));</span><br><span class="line">        <span class="built_in">map</span>.<span class="built_in">put</span>(fieldName,dateString);<span class="comment">//替换之前的数据</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">return</span> mapListTable;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将PO数组转换为HashMap存储的键值对</span></span><br><span class="line"><span class="comment"> * @param list</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> List&lt;Map&lt;<span class="keyword">String</span>, Object&gt;&gt; getMapListFromListPO(List list)&#123;</span><br><span class="line">    <span class="comment">//获取PO属性列名</span></span><br><span class="line">    <span class="keyword">String</span>[] filedNames = getFiledName(list.<span class="built_in">get</span>(<span class="number">0</span>));</span><br><span class="line">    <span class="comment">//将数组中每个PO属性列存储到HashMap中</span></span><br><span class="line">    List&lt;Map&lt;<span class="keyword">String</span>, Object&gt;&gt; mapList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="built_in">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; list.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">        Map&lt;<span class="keyword">String</span>, Object&gt; mapTemp = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="built_in">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; filedNames.length;j++)&#123;</span><br><span class="line">            mapTemp.<span class="built_in">put</span>(filedNames[j],getFieldStringValueByName(filedNames[j],list.<span class="built_in">get</span>(i)));</span><br><span class="line">        &#125;</span><br><span class="line">        mapList.add(mapTemp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">return</span> mapList;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将PO数组转换为HashMap存储的键值对</span></span><br><span class="line"><span class="comment"> * @param list</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> List&lt;Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;&gt; getMapListStringFromListPO(List list)&#123;</span><br><span class="line">    <span class="comment">//获取PO属性列名</span></span><br><span class="line">    <span class="keyword">String</span>[] filedNames = getFiledName(list.<span class="built_in">get</span>(<span class="number">0</span>));</span><br><span class="line">    <span class="comment">//将数组中每个PO属性列存储到HashMap中</span></span><br><span class="line">    List&lt;Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;&gt; mapList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="built_in">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; list.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">        Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt; mapTemp = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="built_in">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>;j &lt; filedNames.length;j++)&#123;</span><br><span class="line">            mapTemp.<span class="built_in">put</span>(filedNames[j],getFieldStringValueByName(filedNames[j],list.<span class="built_in">get</span>(i)));</span><br><span class="line">        &#125;</span><br><span class="line">        mapList.add(mapTemp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">return</span> mapList;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取属性名数组</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">String</span>[] getFiledName(Object o)&#123;</span><br><span class="line">    Field[] fields=o.getClass().getDeclaredFields();</span><br><span class="line">    <span class="keyword">String</span>[] fieldNames=<span class="keyword">new</span> <span class="keyword">String</span>[fields.length];</span><br><span class="line">    <span class="built_in">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;fields.length;i++)&#123;</span><br><span class="line">        fieldNames[i]=fields[i].getName();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">return</span> fieldNames;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据属性名获取属性值</span></span><br><span class="line"><span class="comment"> * */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">String</span> getFieldStringValueByName(<span class="keyword">String</span> fieldName, Object o) &#123;</span><br><span class="line">    <span class="built_in">try</span> &#123;</span><br><span class="line">        <span class="keyword">String</span> firstLetter = fieldName.substring(<span class="number">0</span>, <span class="number">1</span>).toUpperCase();</span><br><span class="line">        <span class="keyword">String</span> getter = <span class="string">"get"</span> + firstLetter + fieldName.substring(<span class="number">1</span>);</span><br><span class="line">        Method method = o.getClass().getMethod(getter, <span class="keyword">new</span> Class[] &#123;&#125;);</span><br><span class="line">        Object value = method.invoke(o, <span class="keyword">new</span> Object[] &#123;&#125;);</span><br><span class="line">        <span class="built_in">return</span> <span class="keyword">String</span>.valueOf(value);</span><br><span class="line">    &#125; <span class="built_in">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        <span class="built_in">return</span> null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/poi/" rel="tag"># poi</a>
+          
+            <a href="/tags/excel/" rel="tag"># excel</a>
+          
+            <a href="/tags/word/" rel="tag"># word</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018092501.html" rel="next" title="算法复习 (二) 查找-上篇">
+                <i class="fa fa-chevron-left"></i> 算法复习 (二) 查找-上篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="http://pcvg28por.bkt.clouddn.com/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#POM-XML配置POI相关jar包"><span class="nav-number">1.</span> <span class="nav-text">POM.XML配置POI相关jar包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编写相关工具类"><span class="nav-number">2.</span> <span class="nav-text">编写相关工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Excel"><span class="nav-number">2.1.</span> <span class="nav-text">Excel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Word"><span class="nav-number">2.2.</span> <span class="nav-text">Word</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
