@@ -86,19 +86,19 @@
 
 
 
-<meta name="description" content="SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。">
+<meta name="description" content="SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。2018/10/23补充：多数据源适配分页的配置">
 <meta name="keywords" content="spring boot">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SpringBoot多数据源和定时任务@Scheduled">
 <meta property="og:url" content="http://linyishui.top/2018090101.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。">
+<meta property="og:description" content="SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。2018/10/23补充：多数据源适配分页的配置">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://pcvg28por.bkt.clouddn.com/201809010101.png">
-<meta property="og:updated_time" content="2018-09-26T01:54:34.514Z">
+<meta property="og:updated_time" content="2018-10-23T03:13:16.418Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SpringBoot多数据源和定时任务@Scheduled">
-<meta name="twitter:description" content="SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。">
+<meta name="twitter:description" content="SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。2018/10/23补充：多数据源适配分页的配置">
 <meta name="twitter:image" content="http://pcvg28por.bkt.clouddn.com/201809010101.png">
 
 
@@ -338,7 +338,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,518
+                  2,657
                 </span>
               
 
@@ -362,7 +362,7 @@
 
           
               <div class="post-description">
-                  SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。
+                  SpringBoot配置多数据源(Oracle,SqlServer)，设置定时任务刷新数据。2018/10/23补充：多数据源适配分页的配置
               </div>
           
 
@@ -380,12 +380,12 @@
 
       
         
-        <div id="aplayer-krsNSFyv" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-rMlSdJDI" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-krsNSFyv"),
+            element: document.getElementById("aplayer-rMlSdJDI"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -422,6 +422,11 @@
 <li>根据服务需求编写实体类，以及对应的Service，Oracle数据库主要是查询服务，SqlServer则是更新服务，要注意更新服务声明事务时要加value参数，否则会报告异常<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span>(value = <span class="string">"transactionManagerTest2"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">(……)</span></span>&#123;</span><br><span class="line">                 ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a><strong>补充</strong></h2><p> Jpa对Oracle查询分页时(Page+Pageable)失效，生成的SQL查询不是Oracle支持的分页查询语句。</p>
+<p> 对比SqlServer生成select top，Oracle不支持TOP通常用order by和rownum来代替。</p>
+<p> 所以需要配置Oracle对应的hibernate.dialect，要为不同的数据源配置不同的hibernate.dialect。</p>
+<p>修改配置：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Map&lt;<span class="keyword">String</span>,<span class="keyword">String</span>&gt; getVendorProperties()&#123;</span><br><span class="line">    jpaProperties.setDatabase(Database.ORACLE);</span><br><span class="line">    Map&lt;<span class="keyword">String</span>,<span class="keyword">String</span>&gt; <span class="built_in">map</span> = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"hibernate.dialect"</span>,<span class="string">"org.hibernate.dialect.Oracle10gDialect"</span>);</span><br><span class="line">    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"hibernate.hbm2ddl.auto"</span>,<span class="string">"none"</span>);</span><br><span class="line">    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"hibernate.show.sql"</span>, <span class="string">"true"</span>);</span><br><span class="line">    <span class="built_in">map</span>.<span class="built_in">put</span>(<span class="string">"hibernate.physical_naming_strategy"</span>,<span class="string">"org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"</span>);</span><br><span class="line">    jpaProperties.setProperties(<span class="built_in">map</span>);</span><br><span class="line">    <span class="built_in">return</span> jpaProperties.getProperties();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="三、定时任务"><a href="#三、定时任务" class="headerlink" title="三、定时任务"></a><strong>三、定时任务</strong></h1><ol>
 <li><p>在Application类加@EnableScheduling注释</p>
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@SpringBootApplication</span></span><br><span class="line"><span class="variable">@EnableScheduling</span></span><br><span class="line"><span class="variable">@ServletComponentScan</span></span><br><span class="line">public class ReportrefreshApplication extends SpringBootServletInitializer &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 实现SpringBootServletInitializer可以让spring-boot项目在web容器中运行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="variable">@Override</span></span><br><span class="line">    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) &#123;</span><br><span class="line">        <span class="selector-tag">builder</span><span class="selector-class">.sources</span>(this.getClass());</span><br><span class="line">        <span class="selector-tag">return</span> <span class="selector-tag">super</span><span class="selector-class">.configure</span>(builder);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="selector-tag">public</span> <span class="selector-tag">static</span> <span class="selector-tag">void</span> <span class="selector-tag">main</span>(String[] args) &#123;</span><br><span class="line">        <span class="selector-tag">SpringApplication</span><span class="selector-class">.run</span>(ReportrefreshApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -649,7 +654,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、项目配置"><span class="nav-number">1.</span> <span class="nav-text">一、项目配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、多数据源"><span class="nav-number">2.</span> <span class="nav-text">二、多数据源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、定时任务"><span class="nav-number">3.</span> <span class="nav-text">三、定时任务</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、项目配置"><span class="nav-number">1.</span> <span class="nav-text">一、项目配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、多数据源"><span class="nav-number">2.</span> <span class="nav-text">二、多数据源</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">2.1.</span> <span class="nav-text">补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、定时任务"><span class="nav-number">3.</span> <span class="nav-text">三、定时任务</span></a></li></ol></div>
             
 
           </div>
