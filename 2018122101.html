@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="spring boot,spring,spring MVC," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="涉及内容：Spring的由来和到Spring Boot发展">
+<meta name="keywords" content="spring boot,spring,spring MVC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring系框架发展简介&lt;转&gt;">
+<meta property="og:url" content="http://linyishui.top/2018122101.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="涉及内容：Spring的由来和到Spring Boot发展">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BnXX_R-jvIq___.jpg">
+<meta property="og:updated_time" content="2018-12-21T10:21:55.566Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring系框架发展简介&lt;转&gt;">
+<meta name="twitter:description" content="涉及内容：Spring的由来和到Spring Boot发展">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BnXX_R-jvIq___.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2018122101.html"/>
+
+
+
+
+
+  <title>Spring系框架发展简介<转> | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2018122101.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring系框架发展简介<转></h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-21T17:23:35+08:00">
+                2018-12-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  8,631
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  涉及内容：Spring的由来和到Spring Boot发展
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BnXX_R-jvIq___.jpg" rel="gallery_cjpxvyn5k0023kctme13wila6"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BnXX_R-jvIq___.jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        <p><em>转自博客：</em></p>
+<blockquote>
+<p>徐刘根-Java后端技术：<a href="https://mp.weixin.qq.com/s?__biz=MzI1NDQ3MjQxNA==&amp;mid=2247484890&amp;idx=1&amp;sn=b0d0f5013021b86441e1abd37c6724e7&amp;chksm=e9c5fc6bdeb2757d00d3fa86119b794079059a7da309f809ef194272f30be5632d9b905b37f6&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzI1NDQ3MjQxNA==&amp;mid=2247484890&amp;idx=1&amp;sn=b0d0f5013021b86441e1abd37c6724e7&amp;chksm=e9c5fc6bdeb2757d00d3fa86119b794079059a7da309f809ef194272f30be5632d9b905b37f6&amp;scene=21#wechat_redirect</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://blog.csdn.net/xlgen157387" target="_blank" rel="noopener">https://blog.csdn.net/xlgen157387</a></p>
+</blockquote>
+<p><em>因博客主未标明不可转载，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<h1 id="为什么要有Spring"><a href="#为什么要有Spring" class="headerlink" title="为什么要有Spring?"></a><strong>为什么要有Spring?</strong></h1><h2 id="一、Web发展简史"><a href="#一、Web发展简史" class="headerlink" title="一、Web发展简史"></a><strong>一、Web发展简史</strong></h2><p>&emsp;&emsp;老一辈的软件开发人员一般经历了从Model1到Model2，然后到后来的三层模型，最后到现在的Spring Boot。如果从Model1到Model2说起到我们现在使用的Spring Boot为整个时间轴的话，大致可以分为4个阶段：</p>
+<ol>
+<li>初级阶段：使用Model1/Model2/三层模模型进行开发；</li>
+<li>中级阶段：使用EJB进行分布式应用开发，忍受重量级框架带来的种种麻烦；</li>
+<li>高级阶段：使用Spring春天带给我们的美好，但是还要忍受很多繁琐的配置；</li>
+<li>骨灰级阶段：使用Spring Boot，畅享“预定大于配置”带给我们的种种乐趣！</li>
+</ol>
+<h2 id="二、Web发展初级阶段"><a href="#二、Web发展初级阶段" class="headerlink" title="二、Web发展初级阶段"></a><strong>二、Web发展初级阶段</strong></h2><h3 id="1、Model1开发模式"><a href="#1、Model1开发模式" class="headerlink" title="1、Model1开发模式"></a><strong>1、Model1开发模式</strong></h3><p>&emsp;&emsp;Model1的开发模式是：JSP+JavaBean的模式，它的核心是Jsp页面，在这个页面中，Jsp页面负责整合页面和JavaBean（业务逻辑），而且渲染页面，它的基本流程如下：<br><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122101.png" alt=""></p>
+<p>&emsp;&emsp;相信很多小伙伴在刚学习Web的时候，肯定使用到了Model1开发模式，也就是我们的业务代码、持久化代码直接写在Jsp页面里边，使用Jsp直接处理Web浏览器的请求，并使用JavaBean处理业务逻辑。</p>
+<p>&emsp;&emsp;利用我们现在熟悉的MVC模型的思想去看，虽然编写代码十分容易，但Jsp混淆了MVC模型中的视图层和控制层，高度耦合的结果是Jsp代码十分复杂，后期维护困难！</p>
+<h3 id="2、Model2开发模式"><a href="#2、Model2开发模式" class="headerlink" title="2、Model2开发模式"></a><strong>2、Model2开发模式</strong></h3><p>&emsp;&emsp;Model1虽然在一定程度上解耦了，但JSP依旧即要负责页面控制，又要负责逻辑处理，职责不单一！此时Model2应运而生，使得各个部分各司其职，Model2是基于MVC模式的。</p>
+<p>&emsp;&emsp;Model2的开发模式是：Jsp+Servlet+JavaBean的模式，它和Model1不同的是，增加了Servlet，将调用页面数据，调用业务逻辑等工作放到了Servlet中处理，从而减轻了Jsp的工作负担！它的基本流程如下：<br><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122102.png" alt=""></p>
+<p>&emsp;&emsp;Model2开发模式将Servlet的概念引入架构体系中，使用它来分配视图层Jsp的显示页面，同时调用模型层的JavaBean来控制业务逻辑。</p>
+<h3 id="3、Model1和Model2的区别"><a href="#3、Model1和Model2的区别" class="headerlink" title="3、Model1和Model2的区别"></a><strong>3、Model1和Model2的区别</strong></h3><p>&emsp;&emsp;Model1：简单，适合小型项目的开发，但是Jsp的职责过于繁重，职责分工不明确。在后期的维护工作中，必将为此付出代价！</p>
+<p>&emsp;&emsp;Model2：相对于Model1来说，职责分工更为明确，在Model1的基础上，抽取了Servlet层，体现了一个分层的思想，适合大型的项目开发！（当时的评判标准是适合大型项目开发的，现在看起来已经过时了！）</p>
+<p>&emsp;&emsp;Model2看起来已经尽善尽美了，尽管如此，他还不能称之为一个比较完善的MVC设计模式！</p>
+<h3 id="4、Model1和Model2与三层的对比"><a href="#4、Model1和Model2与三层的对比" class="headerlink" title="4、Model1和Model2与三层的对比"></a><strong>4、Model1和Model2与三层的对比</strong></h3><p>在Model2中，我们将Servlet抽取出单独的一层，和Jsp协作完成用户数据交互的工作，也就是表示层。那么作为三层结构来说，又做了什么样的改进呢？三层则是在此基础上，将JavaBean再一次进行分割：业务逻辑、数据持久化，三层如下：<br>（1）表示层，JSP/Servlet；<br>（2）业务逻辑层：业务规则；<br>（3）持久化层：主要包装持久化的逻辑 ；<br><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122103.png" alt=""></p>
+<p>各个的耦合性如下图：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122104.png" alt=""></p>
+<p>Model1、Model2、三层是在解耦的基础上一步步进化而来，通过解耦我们可以进行进一步的抽象，以应对现实需求的变动。</p>
+<h2 id="三、Web发展中级阶段、高级阶段和骨灰级阶段"><a href="#三、Web发展中级阶段、高级阶段和骨灰级阶段" class="headerlink" title="三、Web发展中级阶段、高级阶段和骨灰级阶段"></a><strong>三、Web发展中级阶段、高级阶段和骨灰级阶段</strong></h2><p>这一小节似乎有点应付，对于中级阶段，因为我没有用过EJB，在这里不敢妄加评论，以免误导大家。但是相信每一位接触过Spring的小伙伴，都应该知道Rod Johnson在2002年编写的《Expert One-to-One J2EE Design and Development》一书，Rod 在本书中对J2EE正统框架臃肿、低效、脱离现实的种种学院派做法提出了质疑，并以此书为指导思想，编写了interface21框架，也就是后来的Spring。</p>
+<p>对于高级阶段和骨灰级阶段是我们后期一系列文章的重点，本篇只作为一个阶段划分，不做过多的解释，因此让我们重新回到Web发展的初级阶段。<br>对EJB有兴趣的可以参考文章：<a href="http://www.uml.org.cn/j2ee/2009112011.asp" target="_blank" rel="noopener">http://www.uml.org.cn/j2ee/2009112011.asp</a></p>
+<h2 id="四、Web发展初级阶段存在的问题"><a href="#四、Web发展初级阶段存在的问题" class="headerlink" title="四、Web发展初级阶段存在的问题"></a><strong>四、Web发展初级阶段存在的问题</strong></h2><p>经历过初级阶段的小伙伴肯定看得懂下边的一个项目结构，一个简单的MVC三层结构，使用JSP+Servlet+MySQL+JDBC技术，面向接口编程：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122105.png" alt=""></p>
+<h3 id="1、面向接口编程的实例化对象"><a href="#1、面向接口编程的实例化对象" class="headerlink" title="1、面向接口编程的实例化对象"></a><strong>1、面向接口编程的实例化对象</strong></h3><p>以用户管理模块为例，有一个UserDao接口，有一个接口的实现类UserDaoImpl，如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122106.png" alt=""></p>
+<p>由于是面向接口编程，因此我们在每次使用UserDao的时候，都要进行实例化一次，实例化代码如下：<br>UserDao userDao = new UserDaoImpl();<br>我们在每次使用UserDao的时候都需要进行实例化，当然不仅仅有UserDao需要进行实例化，还有很多需要进行实例化的，举例如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122107.png" alt=""></p>
+<p>可以看出，每一个方法中都需要进行实例化我们需要用到的接口的实现类，这就会存在大量的实例化对象，并且他们的生命周期可能就是从方法的调用开始到方法的调用结束为止，加大了GC回收的压力！</p>
+<h3 id="2、使用单例模式的一次改进"><a href="#2、使用单例模式的一次改进" class="headerlink" title="2、使用单例模式的一次改进"></a><strong>2、使用单例模式的一次改进</strong></h3><p>了解设计模式的可能会想到使用单例模式的方式来解决这个问题，以此来避免大量重复的创建对象，但是我们还要考虑到众多的这种对象的创建都需要改成单例模式的话，是一个耗时耗力的操作。<br>对于这个系统来说，如果都把这种面向接口的对象实现类转换为单例模式的方式的话，大概也要写十几个或者上百个这种单例模式代码，而对于一个单例模式的写法来说，往往是模板式的代码，以静态内部类的方式实现代理模式如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122108.png" alt=""></p>
+<p>可以看出，这种方式有两个问题：<br>（1）业务代码与单例模式的模板代码放在一个类里，耦合性较高；<br>（2）大量重复的单例模式的模板代码；<br>从上述可以看出，使用的单例模式虽然从性能上有所提高，但是却加重了我们的开发成本。因此只会小规模的使用，例如我们操作JDBC的Utils对象等。</p>
+<h3 id="3、我们开发中遇到的痛点"><a href="#3、我们开发中遇到的痛点" class="headerlink" title="3、我们开发中遇到的痛点"></a><strong>3、我们开发中遇到的痛点</strong></h3><p>从上述代码的演进过程我们可以看得出来，我们即需要一个单例的对象来避免系统中大量重复对象的创建和销毁，又不想因为使用单例模式造成大量重复无用的模板代码和代码的耦合！</p>
+<h3 id="4、我们还能怎么做"><a href="#4、我们还能怎么做" class="headerlink" title="4、我们还能怎么做"></a><strong>4、我们还能怎么做</strong></h3><p>作为学院派的书生来说，我们可能会联想到“数据库连接池”,我们在获取数据库连接的时候会从这个池子中拿到一个连接的，假设这个数据库连接池很特殊，有且只能有N个数据库连接，并且每一个连接对象都不同（假设），那么这个不就相当于每一个连接都是单例的了吗？既可以避免大量对象的创建，也可以实现不会出现大量重复性的模板代码。<br>因此，这里应该有一个大胆的想法，我们是否可以建立一个池子，将我们的接口实现类对象放入到这个池子中，我们在使用的时候直接从这个池子里边取就行了！</p>
+<h3 id="5、这个池子"><a href="#5、这个池子" class="headerlink" title="5、这个池子"></a><strong>5、这个池子</strong></h3><p>如果我们要创建这个池子，首先要确定需要把哪些对象放进这个池子，通过怎样的方式放进去，放进去之后如何进行管理，如何进行获取，池子中的每一个对象的生命周期是怎么样的等等这些东西都是我们需要考虑到的！</p>
+<h3 id="6、恭喜你"><a href="#6、恭喜你" class="headerlink" title="6、恭喜你"></a><strong>6、恭喜你</strong></h3><p>如果你已经了解了上述Web演进的过程，以及我们想要创建的这个池子，那么恭喜你！你已经打开了Spring核心原理的大门了！<br>上述我们想要创建的池子其实就是Spring容器的雏形，将接口实现类的对象放进池子进行管理的过程其实也是Spring IOC依赖注入、控制反转的雏形！<br>Spring的依赖注入/控制反转就是从我们的配置文件或注解中的得到我们需要进行注入到Spring容器的实现类的信息，Spring IOC通过这些配置信息创建一个个单利的对象并放入Spring容器中，Spring容器可以看做是一个集合保存着我们的这些对象。</p>
+<h3 id="7、小总结"><a href="#7、小总结" class="headerlink" title="7、小总结"></a><strong>7、小总结</strong></h3><p>上文中主要从一个切入点探讨了一下为什么有Spring，以及介绍了一下Spring IOC和Spring容器的基本雏形概念，当然还可以从其他方面进行切入。这里没有进一步探讨AOP的概念，对于新入门的小伙伴来说，这个确实有必要讨论一下，也决定在后续文章中由浅入深的探讨一下，而对于老手来说，其实我上边写的基本上是浪费大家时间的！</p>
+<h1 id="为什么要有Spring-AOP？"><a href="#为什么要有Spring-AOP？" class="headerlink" title="为什么要有Spring AOP？"></a><strong>为什么要有Spring AOP？</strong></h1><p>上一篇只介绍了为什么会有Spring IOC（控制反转/依赖注入）以及Spring IOC的雏形。我们知道Spring的两个核心知识点是：IOC和AOP。因此，这一篇还是以Web开发演进过程为线索继续探讨一下为什么会有Spring AOP？等介绍完这两个核心的知识点之后，才会进一步展开对Spring核心原理的探讨！</p>
+<h2 id="一、Web开发演进到一定阶段的痛点"><a href="#一、Web开发演进到一定阶段的痛点" class="headerlink" title="一、Web开发演进到一定阶段的痛点"></a><strong>一、Web开发演进到一定阶段的痛点</strong></h2><p>我们在初学习Java Web的时候，应该都经历了以下的阶段：<br>（1）一个主函数main中包含了所有的方法；<br>（2）将主函数中的方法进行拆分封装，抽取为一个个的方法；<br>（3）按照每一个方法不同的功能分为一个个的类；<br>（4）有了MVC模型之后，我们按照MVC的思想将我们的代码拆分为三层，每层负责不同的功能，进行分门别类的管理；<br>很多程序的功能还可以通过继承关系而得到重用，进一步提高了开发效率。再后来，又出现了各种各样的设计模式，使设计程序功能变得得心应手。<br>在面向对象的大环境下，我们可以很好地组织代码，通过继承、封装和多态的思想去设计一个个比较让人满意的类，但是我们慢慢的发现，我们的代码中逐渐多了很多重复性的代码，有人可能会想到，把这些重复性的代码抽取出来不就好了吗？是这样的，我们看一下这种思路的一个实例：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122109.png" alt=""></p>
+<p>可以看到，上述代码功能上确实可以实现，但是我们的业务代码已经被这些非核心的代码所混淆，并且占据了大量的空间！显然这种显示的调用过程成为了我们开发过程中的一个痛点，如何将类似这种的非核心的代码剥离出去成为一个迫切需要解决的问题！<br>不仅如此，假设我们要控制每一个方法的访问权限，只允许一部分用户进行访问，在不考虑过滤器的情况下，我们是不是需要在每一个方法开始的时候判断用户是否具有该权限，如果有的话就可以进行访问，如果没有的话，就不允许进行访问！<br>诸如此类，还有数据库事务的控制，数据库连接的创建和关闭等等，这些都充斥这大量重复性的模板代码！一个很现实的问题，假如有一天，业务需求不需要进行日志记录了，那岂不是我们需要把以前写的代码，全部删掉！想想都是一件很可怕的事情！</p>
+<h2 id="二、使用设计模式进行一次改进"><a href="#二、使用设计模式进行一次改进" class="headerlink" title="二、使用设计模式进行一次改进"></a><strong>二、使用设计模式进行一次改进</strong></h2><p>如果你对设计模式玩的比较熟的话，这个时候你可能会想到使用JDK动态代理设计模式（动态代理设计模式可以在原有的方法前后添加判断、选择或其他逻辑）对上述代码进行改进，（关于什么是JDK动态代理，这里不再详细赘述，有不懂的的可以查阅相关资料具体了解一下！）修改后的代码如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122110.png" alt=""></p>
+<p> 上述为代理类，红色框中圈出的表示以前业务中的模板代码，这里直接输出表示方法执行的过程，以前的UserServiceImpl修改为如下（直接用输出的方式表示方法执行了）：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122111.png" alt=""></p>
+<p>测试代码如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122112.png" alt=""></p>
+<p>上述的执行结果可以看出，每次调用一个方法的时候前后都会调用我们期望的代码，实现了我们期望的标准！<br>通过JDK动态代理的方式，让我们彻底的解放出来了！</p>
+<h2 id="三、撕开披在AOP身上的一层薄纱"><a href="#三、撕开披在AOP身上的一层薄纱" class="headerlink" title="三、撕开披在AOP身上的一层薄纱"></a><strong>三、撕开披在AOP身上的一层薄纱</strong></h2><p>上述过程中，我们看到在动态代理的invoke方法里边，我们相当于在原有方法的调用前后“植入”了我们的通用日志记录代码，如果你看到这一层的话，那么恭喜你！你已经领悟到了AOP思想最核心的东西了！<br>上述抽取公共代码其实就是AOP中横切的过程，代理对象中在方法调用前后“植入”自己写的通用日志记录代码其实就是AOP中织入的过程！这个织入的代码也就是横切逻辑，织入代码的过程其实就是在原有的方法前后增强 原方法的过程！总的来说，我们想解决我们开发中的痛点，然后就出现了一种技术，这种技术手段就是AOP。<br>AOP书面表述如下：<br>AOP（Aspect Oriented Programming）意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP是OOP的延续，是软件开发中的一个热点，也是Spring框架中的一个重要内容（Spring核心之一），是函数式编程的一种衍生范型。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122113.png" alt=""></p>
+<h2 id="四、AOP与Spring-AOP的关系"><a href="#四、AOP与Spring-AOP的关系" class="headerlink" title="四、AOP与Spring AOP的关系"></a><strong>四、AOP与Spring AOP的关系</strong></h2><p>AOP是一种思想，不同的厂商或企业可能有不同的实现方式，为了更好的应用AOP技术，技术专家们成立了AOP联盟来探讨AOP的标准化，AOP联盟定义的AOP体系结构把与AOP相关的概念大致分为由高到低、从使用到实现的三层关系，AOP联盟定义的AOP体系结构如下图：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122114.png" alt=""></p>
+<p>在AOP联盟定义的AOP体系结构下有很多的实现者，例如：AspectJ、AspectWerkz、JBoss AOP、Spring AOP等。Spring AOP就是在此标准下产生的，这里不再深入Spring AOP的其他概念，这些概念会在后期探讨。</p>
+<h2 id="五、其他问题"><a href="#五、其他问题" class="headerlink" title="五、其他问题"></a><strong>五、其他问题</strong></h2><p>上述通过动态代理的方式实现了简单的AOP，但是值得注意的是，我们的代理目标对象必须实现一个接口，要是一个接口的实现类，这是因为再生成Proxy对象的时候这个方法需要一个目标对象的接口：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122115.png" alt=""></p>
+<p>显然，有些特殊的场景使用JDK动态代理技术的话，已经不能够满足我们的场景了，又遇到痛点了！凡事不劳我们操心的Spring框架已经替我们想到了，既然你有这种需求，我就使用一种技术帮你实现就行了，Spring在这里使用CGLib动态代理的方式实现了我们的这种诉求。<br>CGLib采用底层的字节码技术，可以为一个类创建子类，在子类中采用方法拦截的技术拦截所有父类方法的调用并顺势的织入横切逻辑。<br>看到这里，我们会想以后会不会还有CGLib解决不了得问题啊？我们已经很清楚的知道了对于Spring AOP来说，使用到了JDK动态代理技术和CGLib动态代理技术，这两种方式已经实现了我们绝大多数的场景，如果还有不能满足的需求，迫切需要解决的痛点，我相信Spring还会采用相应的技术来满足这些场景。</p>
+<h2 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a><strong>六、总结</strong></h2><p>上述的过程，大致从一个侧面探讨了一下我们为什么需要AOP，AOP与Spring AOP的关系以及Spring AOP两种实现的方式（JDK动态代理和CGLib动态代理）。<br>Spring不尝试提供最为完善的AOP实现，它更侧重于提供一种和Spring IOC容器整个的AOP实现，用于解决实际的问题，在Spring中无缝的整合了Spring AOP、Spring IOC和AspectJ。<br>当然，Spring AOP的内容不仅仅有这些！例如：我们在使用Spring AOP的时候只是简单的配置了一下（通过XML或注解进行配置），没有像ProxyDemo测试类中的那样，还需要我们手动的调用ProxyFactory 来创建代理对象，然后调用我们的目标方法，其实Spring AOP在内部已经帮我们把这些事情做好了，具体的原理后期会继续探讨。另外，Spring如何整合Spring IOC和AOP的，这一点也会在后期探讨。<br>最后补充一下！动态代理或者设计模式重要吗？很重要！Spring AOP用到了动态代理，Spring事务管理用到了动态代理，MyBatis数据库连接池用到了动态代理，MyBatis创建Mapper用到了动态代理等等，你说重要不！要想踏进这些高层框架原理的大门，设计模式首先是我们的第一段台阶！</p>
+<h1 id="Spring历史版本变迁和如今的生态帝国"><a href="#Spring历史版本变迁和如今的生态帝国" class="headerlink" title="Spring历史版本变迁和如今的生态帝国"></a><strong>Spring历史版本变迁和如今的生态帝国</strong></h1><p>前两篇从Web开发史的角度介绍了我们在开发的时候遇到的一个个坑，然后一步步衍生出Spring Ioc和Spring AOP的概念雏形。Spring从2004年第一个正式版1.0 Final Released发展至今，俨然已经成为了一个生态帝国（开局只有一把枪，装备全靠打！），目前也已经迭代到5.0，拥有诸多的子项目，基本可以解决绝大多数场景的应用！<br>而在进一步学习Spring的核心原理之前，有必要和大家一起梳理一下Spring历史版本的变迁，知晓一下每一个版本新增了哪些东西，解决了哪些我们开发中的问题，以便我们更清楚的理解这个生态帝国是如何一步一发展壮大的！</p>
+<h2 id="一、Spring历史版本变迁"><a href="#一、Spring历史版本变迁" class="headerlink" title="一、Spring历史版本变迁"></a><strong>一、Spring历史版本变迁</strong></h2><p>1、Spring 1.x<br>大概在2004年3月24日这一天，Spring Framework 1.0 final正式出现在我们的视野中，源码项目结构如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122116.png" alt=""></p>
+<p>引用依赖如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122117.png" alt=""></p>
+<p>Spring 1.0当时只包含一个完整的项目，他把所有的功能都集中在一个项目中，其中包含了核心的Ioc、AOP，同时也包含了其他的诸多功能，例如：JDBC、Mail、ORM、事务、定时任务、Spring MVC等。<br>由于Spring超前的眼光和博大的精神，在第一个版本的时候已经支持了很多第三方的框架，例如：Hibernate、ibatis、模板引擎等。<br>尽管如此，此时的Spring除了最核心的Ioc和AOP之外，其他的模块犹如我们现在众多的开源项目一样，大多是对第三方框架的简单封装！我也相信很多个人或企业也基本都维护了一套类似这种的框架供项目开发使用。<br>此时的Spring还很懵懂，只支持基于XML的配置！关于更多关于Spring 1.0 的信息可以参考：<br><a href="https://spring.io/blog/2004/03/24/spring-framework-1-0-final-released" target="_blank" rel="noopener">https://spring.io/blog/2004/03/24/spring-framework-1-0-final-released</a><br>2、Spring 2.x<br>Spring 2.x的源码项目结构如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122118.png" alt=""></p>
+<p>引用依赖如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122119.png" alt=""></p>
+<p>通过上图中和1.0版本的对比，我们首先可以很直观的感受到Spring做了哪些改变。<br>Spring 2.x增加对注解的支持，支持了基于注解的配置。</p>
+<p>3、Spring 3.x<br>Spring在GitHub托管的代码，最早的版本只能看到Spring v3.1.0.M2（<a href="https://github.com/spring-projects/spring-framework），源码结构如下：" target="_blank" rel="noopener">https://github.com/spring-projects/spring-framework），源码结构如下：</a></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122120.png" alt=""></p>
+<p>Spring 3.x支持了基于Java类的配置。<br>4、Spring 4.x</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122121.png" alt=""></p>
+<p>（1）Spring 4.x新特性：<br>Spring 4.x全面支持Java 8.0，支持Lambda表达式的使用，提供了对@Scheduled和@PropertySource重复注解的支持，提供了空指针终结者Optional，对核心容器进行增加：支持泛型的依赖注入、Map的依赖注入、Lazy延迟依赖的注入、List注入、Condition条件注解注入、对CGLib动态代理类进行了增强。<br>Spring 4.x还支持了基于Groovy DSL的配置，提高Bean配置的灵活性。<br>Spring 4.x开始，Spring MVC基于Servlet 3.0 开发，并且为了方便Restful开发，引入了新的RestController注解器注解，同时还增加了一个AsyncRestTemplate支持Rest客户端的异步无阻塞请求。<br>（2）简单的思维导图如下:</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122122.png" alt=""></p>
+<p>5、Spring 5.x</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122123.png" alt=""></p>
+<p>Spring 5.x主要新特性：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122124.png" alt=""></p>
+<p>6、小结<br>Spring 1.x、Spring 2.x、Spring 3.x由于版本比较久，而我从开始就是从Spring 4.0 开始用的，所以更多关于以前版本的信息这里解释的不是很全，上述的源码截图只是作为一种直观地感受，希望能感受到Spring版本的变迁过程。</p>
+<h2 id="二、Spring如今的生态帝国"><a href="#二、Spring如今的生态帝国" class="headerlink" title="二、Spring如今的生态帝国"></a><strong>二、Spring如今的生态帝国</strong></h2><p>Spring从最初的一城一池，发展到如今已经发展为一个生态帝国，旗下拥有诸多的子项目，从最基本的Spring Ioc/AOP使用，到安全管理，再到大数据，Spring已经逐渐的渗入到各个领域。目前，几乎所有JavaWeb相关的开发都可以在Spring中找到合适的方案，为了在开发的时候，防止重造轮子，下边梳理一下Spring的各个子项目，做到心中有数：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122125.png" alt=""></p>
+<p>参考文章：<br>1、《精通Spring 4.x企业应用开发实战》</p>
+<h1 id="三条路线告诉你如何掌握Spring-IoC容器的核心原理"><a href="#三条路线告诉你如何掌握Spring-IoC容器的核心原理" class="headerlink" title="三条路线告诉你如何掌握Spring IoC容器的核心原理"></a><strong>三条路线告诉你如何掌握Spring IoC容器的核心原理</strong></h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a><strong>一、前言</strong></h2><p>前三篇已经从历史的角度和大家一起探讨了为什么会有Spring，Spring的两个核心概念：IoC和AOP的雏形，Spring的历史变迁和如今的生态帝国。本节的主要目的就是通过一个切入点带大家一起学习一下Spring IoC的核心原理，正如从历史的角度出发讲述为什么会有Spring一样，希望通过这个切入点能让你轻松的掌握住Spring IoC的核心原理。<br>本篇文章假设你已经可以熟练的使用Spring了，因此对于某一个细节如何实现的不会在进行详细的阐述！</p>
+<h2 id="二、IoC和DI的基本概念"><a href="#二、IoC和DI的基本概念" class="headerlink" title="二、IoC和DI的基本概念"></a><strong>二、IoC和DI的基本概念</strong></h2><p>IoC（控制反转，英文含义：Inverse of Control）是Spring容器的内核，AOP、事务等功能都是建立在此基础上的。从字面意思上可以把IoC拆分为两层含义：控制和反转。控制可以理解为是接口实现类的选择权，反转可以理解为这个选择权交给第三方进行管理；总的来说就是某一接口具体实现类的选择控制权从调用类中移除，转交给第三方进行决定，即由Spring容器通过Bean配置来进行控制，这样的话应用程序本身就不用负责依赖对象的创建和维护，而由Spring容器进行管理。<br>尽管我们现在对IoC的基本概念都已经熟读与心了，但是在老一辈的时候，IoC的概念还不是很容易被人理解。在那个年代，业界的一位大佬，软件界泰斗级的人物Martin Fowler提出了DI（Dependency Injection，依赖注入）的概念，来代替IoC。<br>依赖注入的概念和控制反转的概念从本质上是一样的，只是从不同的侧面描述了这个功能。依赖注入的概念描述的是让调用类对某一接口实现类的依赖关系有第三方容器或其他东西注入，以此来移除对某一接口实现类的依赖。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122126.jpg" alt=""></p>
+<p>时至今日，我们常说的IoC/DI的时候也是把依赖注入和控制反转作为同一个概念来进行阐述的！</p>
+<h2 id="三、从哪里入手IoC容器？"><a href="#三、从哪里入手IoC容器？" class="headerlink" title="三、从哪里入手IoC容器？"></a><strong>三、从哪里入手IoC容器？</strong></h2><p>我曾尝试过很多次，想踏进Spring原理的大门，但是一次次都被毫无头绪的开端而打退！后来逐渐翻阅一些书籍逐渐形成了那么一点点思路，接下来主要按着我的思路探讨一下Ioc容器的基本原理。<br>正如我们学习骑自行车一样，开始的时候都是先看别人如何骑的，然后自己才能慢慢的学会（当然发明自行车的人是天才）。学习Spring原理也是一样，只有掌握了基本的Spring的使用，才有可能踏进Spring原理的大门。因此，这里我们从如何使用开始哪？<br>1、首先看一下项目结构</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122127.png" alt=""></p>
+<p>继承关系：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122128.png" alt=""></p>
+<p>bean的配置：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122129.jpg" alt=""></p>
+<p>Main代码如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122130.jpg" alt=""></p>
+<p>2、相信每一个学习Spring的小伙伴都是从上述的方式学起的，上图中最显眼的两个类就是红色圈圈出的，也设置我们在最开始使用到的，使用UML工具显示最基本的类图关系：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122131.jpg" alt=""></p>
+<p>庞大的一个继承和实现体系！看到这里大致上也就是我要说的第二条路线了（下文会详细介绍）！这条路线向我们展示了从Spring最接近用开发人员使用的ClassPathXmlApplicationContext、FileSystemXmlApplicationContext类到Spring的顶层接口之间层层的继承和实现关系。<br>看到这里我们似乎还是毫无头绪，这就需要我们借鉴前人的经验了，这个经验就是如何正确的理解BeanFactory和ApplicationContext之间的关系。</p>
+<h2 id="四、BeanFactory和ApplicationContext之间的关系"><a href="#四、BeanFactory和ApplicationContext之间的关系" class="headerlink" title="四、BeanFactory和ApplicationContext之间的关系"></a><strong>四、BeanFactory和ApplicationContext之间的关系</strong></h2><p>我们都知道Spring是通过配置文件、注解、Java类等方式描述Bean与Bean之间的依赖关系，利用Java的反射功能实例化Bean并建立Bean与Bean之间的依赖关系；<br>这些底层的工作正是由Spring IoC容器完成的，除此之外Spring IoC容器还提供了Bean实例缓存、生命周期管理、时间发布等高级服务。<br>而这里要说的BeanFactory和ApplicationContext都作为Spring IoC容器的形态存在，只不过有些许区别而已，简单的来说：（1）BeanFactory接口的实现类是一个简单容器系列，该系列的容器只实现了容器最基本的功能；（2）ApplicationContext接口的实现类是一个高级容器系列，该系列的容器在简单容器的基础上增加了很多面向框架的特性，对应用环境做了很多适配，同时添加了很多面向应用的功能，例如：国际化支持和框架事件体系结构等。<br>通常情况下，我们习惯称BeanFactory为Ioc容器，而称ApplicationContext为应用上下文，有时候我们还直接称ApplicationContext为Spring容器。<br>至此，我应该可以引出我要说的前两条路线：第一条路线是基于BeanFactory的简单容器系列；第二天路线是基于ApplicationContext的高级容器系列；</p>
+<h2 id="五、第一条路线：基于BeanFactory的简单容器系列"><a href="#五、第一条路线：基于BeanFactory的简单容器系列" class="headerlink" title="五、第一条路线：基于BeanFactory的简单容器系列"></a><strong>五、第一条路线：基于BeanFactory的简单容器系列</strong></h2><p>既然BeanFactory的实现类也是一个容器，那么我们就应该可以使用它来注入我们的Bean和获取我们的Bean，如何使用哪？请看代码：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122132.jpg" alt=""></p>
+<p>（1）创建IoC配置文件的抽象资源，这个抽象资源包含了BeanDefinition的定义信息（也就是我们在bean.xml文件中配置的一个bean的数据结构）；<br>（2）创建一个BeanFactory，这里使用的是DefaultListableBeanFactory；<br>（3）创建一个载入BeanDefinition的读取器，这里使用的是XmlBeanDefinitionReader来载入XML形式的BeanDefinition，通过一个回调配置给BeanFactory；<br>（4）从定义好的资源位置读入配置信息，具体的解析过程由XmlBeanDefinitionReader来完成。<br>上述的过程，完成了整个载入和注册Bean的定义之后，我们所需要的IoC容器就建立起来了，这个时候我们就可以直接使用IoC容器了。<br>上述代码中使用了DefaultListableBeanFactory 这个BeanFactory默认实现的容器完成了Bean的注入和获取操作，查看其继承和实现关系如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122133.jpg" alt=""></p>
+<p>BeanFactory位于接口类结构的顶端，它主要定义了IoC容器中应该具有的基本特性，主要接口定义如下，根据名称就可以看出是什么作用，这里不再一一解释：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122134.jpg" alt=""></p>
+<p>面对如此多的接口或类，我们应该如何理解哪？举个栗子，就像一辆汽车一样，BeanFactory中定义了这辆汽车应该具有的基本功能，通过层层的接口继承和实现为这个基本的汽车架构定制了很多特性，比如：可以座几个人，是否可以倒车等，一直到最后才形成了一辆基本可以正常使用的汽车，但到这一步还是一个比较粗糙的产品或者半成品。（可以使用，但对于普通用户不会直接使用）<br>而关于这些接口或类的介绍，由于篇幅有限，这里不再一一介绍，主要给大家提供一种思路，如何顺藤摸瓜，掌握第一条理解Spring IoC容器的路线。<br>总的来说，BeanFactory是Spring框架的基础设置，面向的是Spring本身，下文中讲述的第二条路线其中也是使用到了上述代码中的过程，我们在实际的开发中很少会直接使用基于BeanFactory的简单容器系列。</p>
+<h2 id="六、第二条路线：基于ApplicationContext的高级容器系列"><a href="#六、第二条路线：基于ApplicationContext的高级容器系列" class="headerlink" title="六、第二条路线：基于ApplicationContext的高级容器系列"></a><strong>六、第二条路线：基于ApplicationContext的高级容器系列</strong></h2><p>相对于第一条路线中的汽车半成品来说，第二个路线下的产品才真正算是一辆可以开的出去的汽车，在基于ApplicationContext的高级容器系列下为汽车新增了很多特性，比如：加了电子档位、加了倒车雷达、全景天窗、全液晶显示器什么的，一直到最后才形成了一辆可以使用的汽车（可以使用，普通用户也可以直接使用）。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122135.jpg" alt=""></p>
+<p>从上图中可以看出来，相对于BeanFactory来说ApplicationContext增加了很多新特性，例如MessageSource接口、ApplicationEventPublisher接口等，所以说ApplicationContext是一个高级形态意义上的IoC容器。<br>ApplicationContext的主要实现类是ClassPathXmlApplicationContext、FileSystemXmlApplicationContext，前者是通过从类路径加载配置文件，后者模式从文件系统中装载配置。</p>
+<h2 id="七、第三条路线：基于WebApplicationContext的Web容器系列"><a href="#七、第三条路线：基于WebApplicationContext的Web容器系列" class="headerlink" title="七、第三条路线：基于WebApplicationContext的Web容器系列"></a><strong>七、第三条路线：基于WebApplicationContext的Web容器系列</strong></h2><p>从上边的介绍我们应该已经看出来了，不管是第一条路线还是第二条路线都是基于Java应用的，而我们使用最多的是JavaWeb应用，这也是接下来要说的第三条路线：基于WebApplicationContext的Web容器系列。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122136.jpg" alt=""></p>
+<p>WebApplicationContext是专门为Web应用准备的，由于Web应用比一般的Java应用拥有更多的特性，因此WebApplicationContext扩展了ApplicationContext。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20181221/2018122137.jpg" alt=""></p>
+<p>我们在配置Spring集成Spring MVC的时候基本都会使用上述的方式配置Spring容器，ContextLoaderListener通过Web容器上下文参数contextConfigLocation获取Spring配置文件的位置。如果只是使用Xml配置的Bean的话，会使用WebApplicationContext的实现类XmlWebApplicationContext。</p>
+<h2 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a><strong>八、总结</strong></h2><p>本文的目的并不是详细的阐述Spring IoC容器的核心原理，这是因为市面上已经有很多书讲述Spring IoC容器的核心原理的，并且简单的一篇文章很难说清楚这么多的内容，这里主要是是希望通过将Spring IoC容器的核心原理内容进行划分，整理为3条基本路线，这样的话逐步击破，才能使自己不会被庞大的代码结构体系所吓到！<br>纸上得来终觉浅，绝知此事要躬行！<br>对于Spring IoC容器的核心原理远不止这些，但是基本都是在这三条主线上进行穿插，其他没有提到的如：容器初始化，配置文件解析过程、Bean的解析和注册等，希望大家在在进行学习的时候注意到！<br>如果想进一步学习Spring原理的，这里推荐两本书籍《Spring技术内幕-深入解析Spring架构与设计原理》和《精通Spring 4.x 企业应用开发实战》，前者可能有点久，版本不是最新的，但是书中Spring IoC容器和AOP的讲解还是很有参考价值的，后者应该算是市面上一本讲解还算透彻的书籍，值得阅读！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring-boot/" rel="tag"># spring boot</a>
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+            <a href="/tags/spring-MVC/" rel="tag"># spring MVC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018121802.html" rel="next" title="Tomcat系统架构">
+                <i class="fa fa-chevron-left"></i> Tomcat系统架构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要有Spring"><span class="nav-number">1.</span> <span class="nav-text">为什么要有Spring?</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Web发展简史"><span class="nav-number">1.1.</span> <span class="nav-text">一、Web发展简史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Web发展初级阶段"><span class="nav-number">1.2.</span> <span class="nav-text">二、Web发展初级阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、Model1开发模式"><span class="nav-number">1.2.1.</span> <span class="nav-text">1、Model1开发模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Model2开发模式"><span class="nav-number">1.2.2.</span> <span class="nav-text">2、Model2开发模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、Model1和Model2的区别"><span class="nav-number">1.2.3.</span> <span class="nav-text">3、Model1和Model2的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、Model1和Model2与三层的对比"><span class="nav-number">1.2.4.</span> <span class="nav-text">4、Model1和Model2与三层的对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、Web发展中级阶段、高级阶段和骨灰级阶段"><span class="nav-number">1.3.</span> <span class="nav-text">三、Web发展中级阶段、高级阶段和骨灰级阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、Web发展初级阶段存在的问题"><span class="nav-number">1.4.</span> <span class="nav-text">四、Web发展初级阶段存在的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、面向接口编程的实例化对象"><span class="nav-number">1.4.1.</span> <span class="nav-text">1、面向接口编程的实例化对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、使用单例模式的一次改进"><span class="nav-number">1.4.2.</span> <span class="nav-text">2、使用单例模式的一次改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、我们开发中遇到的痛点"><span class="nav-number">1.4.3.</span> <span class="nav-text">3、我们开发中遇到的痛点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、我们还能怎么做"><span class="nav-number">1.4.4.</span> <span class="nav-text">4、我们还能怎么做</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、这个池子"><span class="nav-number">1.4.5.</span> <span class="nav-text">5、这个池子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、恭喜你"><span class="nav-number">1.4.6.</span> <span class="nav-text">6、恭喜你</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7、小总结"><span class="nav-number">1.4.7.</span> <span class="nav-text">7、小总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要有Spring-AOP？"><span class="nav-number">2.</span> <span class="nav-text">为什么要有Spring AOP？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Web开发演进到一定阶段的痛点"><span class="nav-number">2.1.</span> <span class="nav-text">一、Web开发演进到一定阶段的痛点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、使用设计模式进行一次改进"><span class="nav-number">2.2.</span> <span class="nav-text">二、使用设计模式进行一次改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、撕开披在AOP身上的一层薄纱"><span class="nav-number">2.3.</span> <span class="nav-text">三、撕开披在AOP身上的一层薄纱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、AOP与Spring-AOP的关系"><span class="nav-number">2.4.</span> <span class="nav-text">四、AOP与Spring AOP的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、其他问题"><span class="nav-number">2.5.</span> <span class="nav-text">五、其他问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、总结"><span class="nav-number">2.6.</span> <span class="nav-text">六、总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring历史版本变迁和如今的生态帝国"><span class="nav-number">3.</span> <span class="nav-text">Spring历史版本变迁和如今的生态帝国</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Spring历史版本变迁"><span class="nav-number">3.1.</span> <span class="nav-text">一、Spring历史版本变迁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Spring如今的生态帝国"><span class="nav-number">3.2.</span> <span class="nav-text">二、Spring如今的生态帝国</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三条路线告诉你如何掌握Spring-IoC容器的核心原理"><span class="nav-number">4.</span> <span class="nav-text">三条路线告诉你如何掌握Spring IoC容器的核心原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、前言"><span class="nav-number">4.1.</span> <span class="nav-text">一、前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、IoC和DI的基本概念"><span class="nav-number">4.2.</span> <span class="nav-text">二、IoC和DI的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、从哪里入手IoC容器？"><span class="nav-number">4.3.</span> <span class="nav-text">三、从哪里入手IoC容器？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、BeanFactory和ApplicationContext之间的关系"><span class="nav-number">4.4.</span> <span class="nav-text">四、BeanFactory和ApplicationContext之间的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、第一条路线：基于BeanFactory的简单容器系列"><span class="nav-number">4.5.</span> <span class="nav-text">五、第一条路线：基于BeanFactory的简单容器系列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、第二条路线：基于ApplicationContext的高级容器系列"><span class="nav-number">4.6.</span> <span class="nav-text">六、第二条路线：基于ApplicationContext的高级容器系列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七、第三条路线：基于WebApplicationContext的Web容器系列"><span class="nav-number">4.7.</span> <span class="nav-text">七、第三条路线：基于WebApplicationContext的Web容器系列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八、总结"><span class="nav-number">4.8.</span> <span class="nav-text">八、总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
