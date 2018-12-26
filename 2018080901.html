@@ -95,7 +95,7 @@
 <meta property="og:description" content="为某次考试设计进行自动排考算法，为考试课程分配考场，监考教师等资源，在规则限定下实现较为合理的排考结果。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/nala_cat____utm_source=ig_share_sheet&igshid=1l14.jpg">
-<meta property="og:updated_time" content="2018-12-04T05:24:47.694Z">
+<meta property="og:updated_time" content="2018-12-26T03:44:35.097Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="算法设计——自动排考算法">
 <meta name="twitter:description" content="为某次考试设计进行自动排考算法，为考试课程分配考场，监考教师等资源，在规则限定下实现较为合理的排考结果。">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,784
+                  3,408
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  6
+                  12
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/nala_cat____utm_source=ig_share_sheet&igshid=1l14.jpg" rel="gallery_cjq3h33ko000iz8tmqmtzj60e"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/nala_cat____utm_source=ig_share_sheet&igshid=1l14.jpg" rel="gallery_cjq4nh7vn0004rctmk04ou0pj"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/nala_cat____utm_source=ig_share_sheet&igshid=1l14.jpg" itemprop="contentUrl"/>
               </a>
@@ -416,12 +416,12 @@
 
       
         
-        <div id="aplayer-pKmOzgLh" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-UTSFIpzA" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-pKmOzgLh"),
+            element: document.getElementById("aplayer-UTSFIpzA"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -453,7 +453,7 @@
 <li>优先把和考试人数最接近的考场分配，考场只接受容纳人数38以上的可使用教室，机考除外。</li>
 <li>只排公共课，和课时大于32的专业课</li>
 </ol>
-<h2 id="算法设计："><a href="#算法设计：" class="headerlink" title="算法设计："></a><strong>算法设计：</strong></h2><blockquote>
+<h2 id="早期算法设计："><a href="#早期算法设计：" class="headerlink" title="早期算法设计："></a><strong>早期算法设计：</strong></h2><blockquote>
 <p>我的思路是：<br>首先应该考虑资源的紧张程度，首先考场资源一般是固定的，那么为了保证如同步考试要同时间考试、班级的分布均匀等排考要求，降低排考难度，可以增加考试场次从而变相的扩充资源，不过最终效果需要不断的测试调整，来获取一个比较合适的资源安排方案。<br>所以假定考场资源是充沛的，就可以优先考虑排考的均匀性了。<br>首先是取几个对象的数据：考试课程、考场、考试场次。</p>
 </blockquote>
 <ul>
@@ -462,7 +462,7 @@
 <li><p>2.&nbsp;&nbsp;考场：根据楼栋，容纳量降序排序取出所有的可用考场。</p>
 </li>
 <li>3.&nbsp;&nbsp;考试课程：先依据同步考试字段分组，每个组保证原子性，按课程类型排序，然后根据班级均匀分布，即批次性，首先每个组一个班级至多出现一次，那么就保证每隔一个批次一个班级出现一次，对于批次内的考试课程，首先按每组的最大考试课程的考试人数降序排序，组内按考试人数降序排序。</li>
-<li>4.&nbsp;&nbsp;取出系部已排考的考试，用一个二维数组存储资源排考情况，横纵轴分布表示：[场次,考场]，将已排考的考试放入资源数组。</li>
+<li>4.&nbsp;&nbsp;取出已排考的考试，用一个二维数组存储资源排考情况，横纵轴分布表示：[场次,考场]，将已排考的考试放入资源数组。</li>
 <li>5.&nbsp;&nbsp;当考试周为两周，将考试场次从后一周截取。</li>
 <li>6.&nbsp;&nbsp;最外层循环条件：考试课程数组大小大于0，保证所有课程排考，记录失败次数，超过设定值则认为资源不足，排考失败，避免死循环。</li>
 <li>6.1&nbsp;&nbsp;循环遍历场次和考场，为考试课程分配合适的考场资源。</li>
@@ -481,13 +481,80 @@
 <li>根据考场的监考人数安排监考老师</li>
 <li>主考教师在其主考时间不安排监考</li>
 </ol>
-<h2 id="算法设计：-1"><a href="#算法设计：-1" class="headerlink" title="算法设计："></a><strong>算法设计：</strong></h2><ol>
+<h2 id="算法设计："><a href="#算法设计：" class="headerlink" title="算法设计："></a><strong>算法设计：</strong></h2><ol>
 <li>从数据库取出监考教师，按照监考次数升序，部门编号升序排序，以便未排考的先安排。</li>
 <li>从数据库取出系部自排后每个教师的监考次数，以便控制每个教师监考次数平等。</li>
 <li>遍历考试数组，取每个考试分配的考场，为考场分配足够的教师。</li>
 <li>为考场分配教师时，设定一个游标指向当前下标，首先要考虑此教师此时是否需要担任同场次进行的其他考试的主考教师，若需要则不能分配其作监考教师。</li>
 <li>为考场分配教师时，其次要考虑此时间段该教师是否请假，若请假则不分配该教师。</li>
 <li>不分配的教师从教师数组拿出放入尾部，避免重复拿出，上述都未过滤的教师分配其作监考教师，游标右移，考场需要教师数减一。</li>
+</ol>
+<hr>
+<h2 id="补充需求："><a href="#补充需求：" class="headerlink" title="补充需求："></a><strong>补充需求：</strong></h2><p>&nbsp;&nbsp;客户的教学数据非常杂乱，比如英语类课程，开设课程后，每学期开设教学班可以随意和行政班关联，导致同一课程开设教学班时出现了多种普遍存在的类型：</p>
+<ul>
+<li>类型1：教学班A=行政班a，教学班B=行政班b</li>
+<li>类型2：教学班A=行政班a+行政班b</li>
+<li>类型3：教学班A=行政班a，教学班B=行政班b，教学班C = 行政班a+行政班b</li>
+<li>类型4：教学班A=行政班a+行政班b+……，教学班B=行政班a+行政班b+……，……</li>
+<li>类型5：教学班A=行政班a+行政班b+行政班c，教学班B=行政班c+行政班d+行政班e，教学班C = 行政班e+行政班f+行政班g，……</li>
+</ul>
+<p>&nbsp;&nbsp;类型1是正常按行政班上课</p>
+<p>&nbsp;&nbsp;类型2则是正常合班上课</p>
+<p>&nbsp;&nbsp;类型3是合班上理论，分班上实验</p>
+<p>&nbsp;&nbsp;类型4则是行政班打乱任意选课</p>
+<p>&nbsp;&nbsp;类型5则是因为教学班人数上限所以客户分班时将中间的班级如c班拆成两部分放入A和B班。 </p>
+<p>&nbsp;&nbsp;比较困难的是客户并没有计算机思维，所以这些抽象出的类型并没有加入到数据库设计中，人为的发散性使用方式导致最终开班出现多类型情况。</p>
+<p>&nbsp;&nbsp;所以根据这种情况在排考时有些类型不能考虑行政班时间冲突的问题。</p>
+<p>&nbsp;&nbsp;类似的情况还有：明明有考核方式属性，却不维护。明明有课程分类，也不维护。所以拿到的数据只是最基础的课程，教学班等信息。如何判断参与排考的考试科目需要大量的数据检索，初步认定参与自动排考的课程为理论学时大于32，非英语类科目平均每班选课人数大于10，不是体育类课程，任课教师不是校外教师，且不在过滤集合中的所有科目。</p>
+<p><strong>新增需求：</strong></p>
+<ol>
+<li>政治类和英语类分别在第一天上午和下午考完，测试发现教室资源并不够用，所以将半天限制扩大为一天。</li>
+<li>行政班拆在不同考场考试时，主考教师不安排监考</li>
+</ol>
+<h2 id="初版编程实现的算法设计："><a href="#初版编程实现的算法设计：" class="headerlink" title="初版编程实现的算法设计："></a><strong>初版编程实现的算法设计：</strong></h2><p><strong>一．数据准备</strong></p>
+<ol>
+<li>从数据库分别读入：考试科目，考场(&gt;=30，按容纳量降序排序)，考试场次，教学班关联行政班，已分配考试数据。</li>
+<li>抽离出英语集合，政治集合，其他集合。取英语大类时《英语》最后取出分配小教室。</li>
+<li>分别整理三个集合放入存储结构[有序哈希Map&lt;String,List<courseclass>&gt;-key是同步考试代码]中，该结构把同步考试的课程班隔离。</courseclass></li>
+</ol>
+<p><strong>二．循环排考</strong></p>
+<ol start="4">
+<li>开始排考政治集合，从场次0开始，即周一上午，需要检查行政班是否该场次已排考ifCheckClass。</li>
+<li>遍历Map中的所有同步课程班集合Map&lt;String,List<courseclass>&gt;，直到所有科目排考完毕，声明场次游标等于开始场次。</courseclass></li>
+<li>遍历List<courseclass>之前，若同步考试代码被禁止在当前场次排考，则循环后移场次游标，记录圈循环次数。</courseclass></li>
+<li>若未被禁止在该场次排考，则预估一下本时间段剩余可用考场是否可以放下当前List<courseclass>所有学生。</courseclass></li>
+<li>若不够坐下就循环后移场次游标，记录圈循环次数。</li>
+<li>若够坐，则开始遍历当前同步课程班集合List<courseclass>，直到所有同步考试科目排考完毕，若循环次数超过上限都无法排下当前集合，则抛出异常-排考失败。</courseclass></li>
+<li>循环遍历考场，若考场此场次未被占用，判断CourseClass考试人数是否可全部坐下，若可以即顺利排考，若不可以则进行拆班，依次取出一个行政班，直到剩余人数可以放入考场。记录取出的行政班为CourseClass剩余需排考，在后续的考场中放置。</li>
+<li>若循环结束也未找到合适考场就直接跳出遍历，若找到了合适考场，则根据ifCheckClass为真则要先检查CourseClass行政班是否已在该场次排考，若已排考则禁止所有同步考试代码集合在此场次排考。</li>
+<li>判断是否可以合班，若下个CourseClass同课程且能一起放下，就一起放入当前考场。</li>
+<li>生成考试数据，记录当前场次考场已被占用，若List<courseclass>。</courseclass></li>
+</ol>
+<p><strong>三．循环结束</strong></p>
+<ol start="14">
+<li>开始排考英语集合，从场次1开始，即周一下午，不需要检查行政班是否该场次已排考ifCheckClass。</li>
+<li>循环排考。</li>
+<li>开始排考其它集合，从场次2开始，即周二下午，需要检查行政班是否该场次已排考ifCheckClass。</li>
+<li>循环排考。</li>
+<li>将排好的考试数据写入数据库中。</li>
+</ol>
+<p><strong>四．安排教师监考</strong></p>
+<ol>
+<li>获取已排好的所有考试数据集合，获取所有监考教师，游标指向教师集合下标0。</li>
+<li>遍历考试集合。</li>
+<li>判断是否已安排监考教师，若未安排则获取考场还需监考教师数目，循环直到还需监考教师数目为0。</li>
+<li>取出游标所指教师，查询此教师是否在此时间段是某门考试科目的主考教师：</li>
+</ol>
+<ul>
+<li>若是则将其后移到教师集合中本轮未处理中间位置；</li>
+<li>若不是主考教师，则继续查询此教师是否在此时间段已担任监考教师：</li>
+<li>&nbsp;&nbsp;若已担任则将其后移到教师集合中本轮未处理中间位置；</li>
+<li>&nbsp;&nbsp;若未担任则判断其请假信息，判断是否有空监考：</li>
+<li>&nbsp;&nbsp;&nbsp;&nbsp;若没空监考则将其后移到教师集合中本轮未处理中间位置；</li>
+<li>&nbsp;&nbsp;&nbsp;&nbsp;若有空则安排此教师监考，生成监考数据，还需监考教师数目减一，游标右移。</li>
+</ul>
+<ol start="5">
+<li>考试集合循环结束，将排好的监考安排数据写入数据库，更新本学期考试参数为已自动排考，排考结束。</li>
 </ol>
 
       
@@ -707,7 +774,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#自动排考算法设计："><span class="nav-number">1.</span> <span class="nav-text">自动排考算法设计：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#排考要求："><span class="nav-number">1.1.</span> <span class="nav-text">排考要求：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法设计："><span class="nav-number">1.2.</span> <span class="nav-text">算法设计：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监考老师排考要求："><span class="nav-number">1.3.</span> <span class="nav-text">监考老师排考要求：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法设计：-1"><span class="nav-number">1.4.</span> <span class="nav-text">算法设计：</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#自动排考算法设计："><span class="nav-number">1.</span> <span class="nav-text">自动排考算法设计：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#排考要求："><span class="nav-number">1.1.</span> <span class="nav-text">排考要求：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#早期算法设计："><span class="nav-number">1.2.</span> <span class="nav-text">早期算法设计：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监考老师排考要求："><span class="nav-number">1.3.</span> <span class="nav-text">监考老师排考要求：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法设计："><span class="nav-number">1.4.</span> <span class="nav-text">算法设计：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充需求："><span class="nav-number">1.5.</span> <span class="nav-text">补充需求：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初版编程实现的算法设计："><span class="nav-number">1.6.</span> <span class="nav-text">初版编程实现的算法设计：</span></a></li></ol></li></ol></div>
             
 
           </div>
