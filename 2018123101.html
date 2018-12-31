@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,hash," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="涉及内容：equals()，hashCode()，HashSet等">
+<meta name="keywords" content="java,hash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="equals和hashCode异同">
+<meta property="og:url" content="http://linyishui.top/2018123101.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="涉及内容：equals()，hashCode()，HashSet等">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source%3Dig_share_sheet%26igshid(1).jpg">
+<meta property="og:updated_time" content="2018-12-31T03:25:59.231Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="equals和hashCode异同">
+<meta name="twitter:description" content="涉及内容：equals()，hashCode()，HashSet等">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source%3Dig_share_sheet%26igshid(1).jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2018123101.html"/>
+
+
+
+
+
+  <title>equals和hashCode异同 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2018123101.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">equals和hashCode异同</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-31T11:13:50+08:00">
+                2018-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,212
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  涉及内容：equals()，hashCode()，HashSet等
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source%3Dig_share_sheet%26igshid(1).jpg" rel="gallery_cjqbri0hd0024m0tmztkigf1c"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source%3Dig_share_sheet%26igshid(1).jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        
+        <div id="aplayer-QkFbjYCV" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+            <pre class="aplayer-lrc-content"></pre>
+        </div>
+        <script>
+          var ap = new APlayer({
+            element: document.getElementById("aplayer-QkFbjYCV"),
+            narrow: false,
+            autoplay: true,
+            showlrc: false,
+            music: {
+              title: "Blank Space Style",
+              author: "Louisa Wendorff / Devin Dawson",
+              url: "https://music-1258215793.cos.ap-shanghai.myqcloud.com/Louisa%20Wendorff%2CDevin%20Dawson%20-%20Blank%20Space%20%20Style%20(feat.%20Devin%20Dawson).mp3",
+              pic: "http://p2.music.126.net/5ONE0UevyDVPQxIsh-bOng==/7864806673676718.jpg",
+              lrc: ""
+            }
+          });
+          window.aplayers || (window.aplayers = []);
+          window.aplayers.push(ap);
+        </script>
+<p><em>参考博客：</em></p>
+<blockquote>
+<p><a href="https://www.cnblogs.com/skywang12345/p/3324958.html" target="_blank" rel="noopener">https://www.cnblogs.com/skywang12345/p/3324958.html</a></p>
+</blockquote>
+<p><em>因博客主未标明不可转载，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<h1 id="equals-和hashcode"><a href="#equals-和hashcode" class="headerlink" title="equals()和hashcode()"></a><strong>equals()和hashcode()</strong></h1><h2 id="首先看一下源代码"><a href="#首先看一下源代码" class="headerlink" title="首先看一下源代码"></a><strong>首先看一下源代码</strong></h2><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Returns a hash code value <span class="keyword">for</span> <span class="keyword">the</span> object. This method <span class="keyword">is</span></span><br><span class="line"> * supported <span class="keyword">for</span> <span class="keyword">the</span> benefit <span class="keyword">of</span> hash tables such <span class="keyword">as</span> those provided <span class="keyword">by</span></span><br><span class="line"> * &#123;@link java.util.HashMap&#125;.</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * The general contract <span class="keyword">of</span> &#123;@code hashCode&#125; <span class="keyword">is</span>:</span><br><span class="line"> * &lt;ul&gt;</span><br><span class="line"> * &lt;li&gt;Whenever <span class="keyword">it</span> <span class="keyword">is</span> invoked <span class="keyword">on</span> <span class="keyword">the</span> same object more than once during</span><br><span class="line"> *     an execution <span class="keyword">of</span> a Java <span class="built_in">application</span>, <span class="keyword">the</span> &#123;@code hashCode&#125; method</span><br><span class="line"> *     must consistently <span class="literal">return</span> <span class="keyword">the</span> same <span class="built_in">integer</span>, provided no information</span><br><span class="line"> *     used <span class="keyword">in</span> &#123;@code <span class="keyword">equals</span>&#125; comparisons <span class="keyword">on</span> <span class="keyword">the</span> object <span class="keyword">is</span> modified.</span><br><span class="line"> *     This <span class="built_in">integer</span> need <span class="keyword">not</span> remain consistent <span class="keyword">from</span> one execution <span class="keyword">of</span> an</span><br><span class="line"> *     <span class="built_in">application</span> <span class="keyword">to</span> another execution <span class="keyword">of</span> <span class="keyword">the</span> same <span class="built_in">application</span>.</span><br><span class="line"> * &lt;li&gt;If two objects are <span class="keyword">equal</span> according <span class="keyword">to</span> <span class="keyword">the</span> &#123;@code <span class="keyword">equals</span>(Object)&#125;</span><br><span class="line"> *     method, <span class="keyword">then</span> calling <span class="keyword">the</span> &#123;@code hashCode&#125; method <span class="keyword">on</span> each <span class="keyword">of</span></span><br><span class="line"> *     <span class="keyword">the</span> two objects must produce <span class="keyword">the</span> same <span class="built_in">integer</span> <span class="literal">result</span>.</span><br><span class="line"> * &lt;li&gt;It <span class="keyword">is</span> &lt;em&gt;<span class="keyword">not</span>&lt;/em&gt; required <span class="keyword">that</span> <span class="keyword">if</span> two objects are unequal</span><br><span class="line"> *     according <span class="keyword">to</span> <span class="keyword">the</span> &#123;@link java.lang.Object<span class="comment">#equals(java.lang.Object)&#125;</span></span><br><span class="line"> *     method, <span class="keyword">then</span> calling <span class="keyword">the</span> &#123;@code hashCode&#125; method <span class="keyword">on</span> each <span class="keyword">of</span> <span class="keyword">the</span></span><br><span class="line"> *     two objects must produce distinct <span class="built_in">integer</span> results.  However, <span class="keyword">the</span></span><br><span class="line"> *     programmer should be aware <span class="keyword">that</span> producing distinct <span class="built_in">integer</span> results</span><br><span class="line"> *     <span class="keyword">for</span> unequal objects may improve <span class="keyword">the</span> performance <span class="keyword">of</span> hash tables.</span><br><span class="line"> * &lt;/ul&gt;</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * As much <span class="keyword">as</span> <span class="keyword">is</span> reasonably practical, <span class="keyword">the</span> hashCode method defined</span><br><span class="line"> * <span class="keyword">by</span> <span class="built_in">class</span> &#123;@code Object&#125; <span class="keyword">does</span> <span class="literal">return</span> distinct integers <span class="keyword">for</span></span><br><span class="line"> * distinct objects. (The hashCode may <span class="keyword">or</span> may <span class="keyword">not</span> be implemented</span><br><span class="line"> * <span class="keyword">as</span> <span class="keyword">some</span> function <span class="keyword">of</span> an object's memory address <span class="keyword">at</span> <span class="keyword">some</span> point</span><br><span class="line"> * <span class="keyword">in</span> <span class="built_in">time</span>.)</span><br><span class="line"> *</span><br><span class="line"> * @<span class="literal">return</span>  a hash code value <span class="keyword">for</span> this object.</span><br><span class="line"> * @see     java.lang.Object<span class="comment">#equals(java.lang.Object)</span></span><br><span class="line"> * @see     java.lang.System<span class="comment">#identityHashCode</span></span><br><span class="line"> */</span><br><span class="line">@HotSpotIntrinsicCandidate</span><br><span class="line">public native int hashCode();</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Indicates whether <span class="keyword">some</span> other object <span class="keyword">is</span> <span class="string">"equal to"</span> this one.</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * The &#123;@code <span class="keyword">equals</span>&#125; method implements an equivalence relation</span><br><span class="line"> * <span class="keyword">on</span> non-null object references:</span><br><span class="line"> * &lt;ul&gt;</span><br><span class="line"> * &lt;li&gt;It <span class="keyword">is</span> &lt;i&gt;reflexive&lt;/i&gt;: <span class="keyword">for</span> any non-null <span class="keyword">reference</span> value</span><br><span class="line"> *     &#123;@code x&#125;, &#123;@code x.<span class="keyword">equals</span>(x)&#125; should <span class="literal">return</span></span><br><span class="line"> *     &#123;@code <span class="literal">true</span>&#125;.</span><br><span class="line"> * &lt;li&gt;It <span class="keyword">is</span> &lt;i&gt;symmetric&lt;/i&gt;: <span class="keyword">for</span> any non-null <span class="keyword">reference</span> values</span><br><span class="line"> *     &#123;@code x&#125; <span class="keyword">and</span> &#123;@code y&#125;, &#123;@code x.<span class="keyword">equals</span>(y)&#125;</span><br><span class="line"> *     should <span class="literal">return</span> &#123;@code <span class="literal">true</span>&#125; <span class="keyword">if</span> <span class="keyword">and</span> only <span class="keyword">if</span></span><br><span class="line"> *     &#123;@code y.<span class="keyword">equals</span>(x)&#125; returns &#123;@code <span class="literal">true</span>&#125;.</span><br><span class="line"> * &lt;li&gt;It <span class="keyword">is</span> &lt;i&gt;transitive&lt;/i&gt;: <span class="keyword">for</span> any non-null <span class="keyword">reference</span> values</span><br><span class="line"> *     &#123;@code x&#125;, &#123;@code y&#125;, <span class="keyword">and</span> &#123;@code z&#125;, <span class="keyword">if</span></span><br><span class="line"> *     &#123;@code x.<span class="keyword">equals</span>(y)&#125; returns &#123;@code <span class="literal">true</span>&#125; <span class="keyword">and</span></span><br><span class="line"> *     &#123;@code y.<span class="keyword">equals</span>(z)&#125; returns &#123;@code <span class="literal">true</span>&#125;, <span class="keyword">then</span></span><br><span class="line"> *     &#123;@code x.<span class="keyword">equals</span>(z)&#125; should <span class="literal">return</span> &#123;@code <span class="literal">true</span>&#125;.</span><br><span class="line"> * &lt;li&gt;It <span class="keyword">is</span> &lt;i&gt;consistent&lt;/i&gt;: <span class="keyword">for</span> any non-null <span class="keyword">reference</span> values</span><br><span class="line"> *     &#123;@code x&#125; <span class="keyword">and</span> &#123;@code y&#125;, multiple invocations <span class="keyword">of</span></span><br><span class="line"> *     &#123;@code x.<span class="keyword">equals</span>(y)&#125; consistently <span class="literal">return</span> &#123;@code <span class="literal">true</span>&#125;</span><br><span class="line"> *     <span class="keyword">or</span> consistently <span class="literal">return</span> &#123;@code <span class="literal">false</span>&#125;, provided no</span><br><span class="line"> *     information used <span class="keyword">in</span> &#123;@code <span class="keyword">equals</span>&#125; comparisons <span class="keyword">on</span> <span class="keyword">the</span></span><br><span class="line"> *     objects <span class="keyword">is</span> modified.</span><br><span class="line"> * &lt;li&gt;For any non-null <span class="keyword">reference</span> value &#123;@code x&#125;,</span><br><span class="line"> *     &#123;@code x.<span class="keyword">equals</span>(null)&#125; should <span class="literal">return</span> &#123;@code <span class="literal">false</span>&#125;.</span><br><span class="line"> * &lt;/ul&gt;</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * The &#123;@code <span class="keyword">equals</span>&#125; method <span class="keyword">for</span> <span class="built_in">class</span> &#123;@code Object&#125; implements</span><br><span class="line"> * <span class="keyword">the</span> most discriminating possible equivalence relation <span class="keyword">on</span> objects;</span><br><span class="line"> * <span class="keyword">that</span> <span class="keyword">is</span>, <span class="keyword">for</span> any non-null <span class="keyword">reference</span> values &#123;@code x&#125; <span class="keyword">and</span></span><br><span class="line"> * &#123;@code y&#125;, this method returns &#123;@code <span class="literal">true</span>&#125; <span class="keyword">if</span> <span class="keyword">and</span> only</span><br><span class="line"> * <span class="keyword">if</span> &#123;@code x&#125; <span class="keyword">and</span> &#123;@code y&#125; refer <span class="keyword">to</span> <span class="keyword">the</span> same object</span><br><span class="line"> * (&#123;@code x == y&#125; has <span class="keyword">the</span> value &#123;@code <span class="literal">true</span>&#125;).</span><br><span class="line"> * &lt;p&gt;</span><br><span class="line"> * Note <span class="keyword">that</span> <span class="keyword">it</span> <span class="keyword">is</span> generally necessary <span class="keyword">to</span> override <span class="keyword">the</span> &#123;@code hashCode&#125;</span><br><span class="line"> * method whenever this method <span class="keyword">is</span> overridden, so <span class="keyword">as</span> <span class="keyword">to</span> maintain <span class="keyword">the</span></span><br><span class="line"> * general contract <span class="keyword">for</span> <span class="keyword">the</span> &#123;@code hashCode&#125; method, which states</span><br><span class="line"> * <span class="keyword">that</span> <span class="keyword">equal</span> objects must have <span class="keyword">equal</span> hash codes.</span><br><span class="line"> *</span><br><span class="line"> * @param   obj   <span class="keyword">the</span> <span class="keyword">reference</span> object <span class="keyword">with</span> which <span class="keyword">to</span> compare.</span><br><span class="line"> * @<span class="literal">return</span>  &#123;@code <span class="literal">true</span>&#125; <span class="keyword">if</span> this object <span class="keyword">is</span> <span class="keyword">the</span> same <span class="keyword">as</span> <span class="keyword">the</span> obj</span><br><span class="line"> *          argument; &#123;@code <span class="literal">false</span>&#125; otherwise.</span><br><span class="line"> * @see     <span class="comment">#hashCode()</span></span><br><span class="line"> * @see     java.util.HashMap</span><br><span class="line"> */</span><br><span class="line">public <span class="built_in">boolean</span> <span class="keyword">equals</span>(Object obj) &#123;</span><br><span class="line"><span class="built_in">    return</span> (this == obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;hashcode()返回对象的哈希码值，符合一致性，无论多少次调用执行此方法都会返回相同整型结果，但hashcode()只用在散列表等类中。</p>
+<p>&emsp;&emsp;若两个对象相等，即equals(Object)返回真，分别调用hashcode()必须返回相同整型结果，若两个对象不相等，则hashcode()返回不同的整型结果。</p>
+<p>&emsp;&emsp;equals()符合反射性，对称性，及物性，一致性。</p>
+<h2 id="默认的equals-与-有什么异同"><a href="#默认的equals-与-有什么异同" class="headerlink" title="默认的equals()与==有什么异同?"></a><strong>默认的equals()与==有什么异同?</strong></h2><p>&emsp;&emsp;== 比较对象的引用地址是否相同，即是否为同一对象。</p>
+<p>&emsp;&emsp;equals() 在没有被重写时等价于==，重写后根据覆盖的方法来判断是否相等。</p>
+<h2 id="那么equals-与hashcode-有什么异同"><a href="#那么equals-与hashcode-有什么异同" class="headerlink" title="那么equals()与hashcode()有什么异同?"></a><strong>那么equals()与hashcode()有什么异同?</strong></h2><p>&emsp;&emsp;<strong>首先对于不创建散列表的类，二者完全不同</strong></p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Student</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span>(<span class="params">String id, String name</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span>(<span class="params">String id</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span>(<span class="params">String name</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="function"><span class="keyword">public</span> boolean <span class="title">equals</span>(<span class="params">Object obj</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(obj == <span class="literal">null</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span> == obj)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span>.getClass() != obj.getClass())</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        Student student = (Student) obj;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.name.<span class="keyword">equals</span>(student.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)</span>&#123;</span><br><span class="line">        Student s1 = <span class="keyword">new</span> Student(<span class="string">"001"</span>,<span class="string">"张三"</span>);</span><br><span class="line">        Student s2 = <span class="keyword">new</span> Student(<span class="string">"001"</span>,<span class="string">"张三"</span>);</span><br><span class="line">        Student s3 = <span class="keyword">new</span> Student(<span class="string">"002"</span>,<span class="string">"张三"</span>);</span><br><span class="line">        Student s4 = <span class="keyword">new</span> Student(<span class="string">"003"</span>,<span class="string">"李四"</span>);</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s1.equals(s2): "</span> + s1.<span class="keyword">equals</span>(s2));</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s1.equals(s3): "</span> + s1.<span class="keyword">equals</span>(s3));</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s1.equals(s4): "</span> + s1.<span class="keyword">equals</span>(s4));</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s1.hashCode(): "</span> + s1.hashCode());</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s2.hashCode(): "</span> + s2.hashCode());</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s3.hashCode(): "</span> + s3.hashCode());</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"s4.hashCode(): "</span> + s4.hashCode());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;结果：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">s1</span>.equals(<span class="built_in">s2</span>): true</span><br><span class="line"><span class="built_in">s1</span>.equals(<span class="built_in">s3</span>): true</span><br><span class="line"><span class="built_in">s1</span>.equals(<span class="built_in">s4</span>): false</span><br><span class="line"><span class="built_in">s1</span>.hashCode(): <span class="number">2088051243</span></span><br><span class="line"><span class="built_in">s2</span>.hashCode(): <span class="number">1277181601</span></span><br><span class="line"><span class="built_in">s3</span>.hashCode(): <span class="number">41903949</span></span><br><span class="line"><span class="built_in">s4</span>.hashCode(): <span class="number">488970385</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<strong>对于会创建类对应的散列表的对象呢？</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        Student <span class="built_in">s1</span> = new Student(<span class="string">"001"</span>,<span class="string">"张三"</span>)<span class="comment">;</span></span><br><span class="line">        Student <span class="built_in">s2</span> = new Student(<span class="string">"001"</span>,<span class="string">"张三"</span>)<span class="comment">;</span></span><br><span class="line">        Student <span class="built_in">s3</span> = new Student(<span class="string">"002"</span>,<span class="string">"张三"</span>)<span class="comment">;</span></span><br><span class="line">        Student <span class="built_in">s4</span> = new Student(<span class="string">"003"</span>,<span class="string">"李四"</span>)<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s1.equals(s2): "</span> + <span class="built_in">s1</span>.equals(<span class="built_in">s2</span>))<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s1.equals(s3): "</span> + <span class="built_in">s1</span>.equals(<span class="built_in">s3</span>))<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s1.equals(s4): "</span> + <span class="built_in">s1</span>.equals(<span class="built_in">s4</span>))<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s1: "</span> + <span class="built_in">s1</span>.toString() + <span class="string">"s1.hashCode(): "</span> + <span class="built_in">s1</span>.hashCode())<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s2: "</span> + <span class="built_in">s2</span>.toString() + <span class="string">"s2.hashCode(): "</span> + <span class="built_in">s2</span>.hashCode())<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s3: "</span> + <span class="built_in">s3</span>.toString() + <span class="string">"s3.hashCode(): "</span> + <span class="built_in">s3</span>.hashCode())<span class="comment">;</span></span><br><span class="line">        System.out.println(<span class="string">"s4: "</span> + <span class="built_in">s4</span>.toString() + <span class="string">"s4.hashCode(): "</span> + <span class="built_in">s4</span>.hashCode())<span class="comment">;</span></span><br><span class="line"></span><br><span class="line">        HashSet set = new HashSet()<span class="comment">;</span></span><br><span class="line">        set.<span class="keyword">add(s1);</span></span><br><span class="line"><span class="keyword"> </span>       set.<span class="keyword">add(s2);</span></span><br><span class="line"><span class="keyword"> </span>       set.<span class="keyword">add(s3);</span></span><br><span class="line"><span class="keyword"> </span>       set.<span class="keyword">add(s4);</span></span><br><span class="line"><span class="keyword"> </span>       System.out.println(<span class="string">"HashSet: "</span> + set.toString())<span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;结果：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">s1.<span class="keyword">equals</span>(s2): <span class="literal">true</span></span><br><span class="line">s1.<span class="keyword">equals</span>(s3): <span class="literal">true</span></span><br><span class="line">s1.<span class="keyword">equals</span>(s4): <span class="literal">false</span></span><br><span class="line">s1: <span class="keyword">equals</span>.Student@<span class="number">7</span>c75222bs1.hashCode(): <span class="number">2088051243</span></span><br><span class="line">s2: <span class="keyword">equals</span>.Student@<span class="number">7</span>a0ac6e3s2.hashCode(): <span class="number">2047526627</span></span><br><span class="line">s3: <span class="keyword">equals</span>.Student@<span class="number">71</span>be98f5s3.hashCode(): <span class="number">1908316405</span></span><br><span class="line">s4: <span class="keyword">equals</span>.Student@<span class="number">6</span>fadae5ds4.hashCode(): <span class="number">1873653341</span></span><br><span class="line">HashSet: [<span class="keyword">equals</span>.Student@<span class="number">6</span>fadae5d, <span class="keyword">equals</span>.Student@<span class="number">7</span>a0ac6e3, <span class="keyword">equals</span>.Student@<span class="number">71</span>be98f5, <span class="keyword">equals</span>.Student@<span class="number">7</span>c75222b]</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;只重写了抽象类的equals()，可以看到在Set中出现了重复元素，说明对于Set集合判断元素相等还需要哈希值相等，所以需要重写hashCode()</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.name.toUpperCase().hashCode();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;结果：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">s1.equals(s2): <span class="literal">true</span></span><br><span class="line">s1.equals(s3): <span class="literal">true</span></span><br><span class="line">s1.equals(s4): <span class="literal">false</span></span><br><span class="line"><span class="string">s1:</span> equals.Student<span class="meta">@bd</span>2e9s1.hashCode(): <span class="number">774889</span></span><br><span class="line"><span class="string">s2:</span> equals.Student<span class="meta">@bd</span>2e9s2.hashCode(): <span class="number">774889</span></span><br><span class="line"><span class="string">s3:</span> equals.Student<span class="meta">@bd</span>2e9s3.hashCode(): <span class="number">774889</span></span><br><span class="line"><span class="string">s4:</span> equals.Student<span class="meta">@cd</span>94ds4.hashCode(): <span class="number">842061</span></span><br><span class="line"><span class="string">HashSet:</span> [equals.Student<span class="meta">@cd</span>94d, equals.Student<span class="meta">@bd</span>2e9]</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;总结：对于哈希类，若两个对象相等，即equals()为真，则hashCode()一定相等，反之则不一定，因为hash公式不同的实现可能会导致不同的对象算出哈希值也相等，对于测试代码，因为实现的equals只比较name是否等值，而hashcode只比较name值对应的哈希码是否相等，所以两者应该是同步的。</p>
+<p>&emsp;&emsp;对于HashSet为了优化速度，可以利用上述总结，判断元素是否重复时，先比较哈希值，当哈希值不同肯定不重复，哈希值相同再用equals()比较是否是相同元素，当equals()为false存入相同位置，所以每个哈希表中元素应该是由链式结构存储。</p>
+<p>源代码：</p>
+<figure class="highlight golo"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Adds the specified element to this <span class="keyword">set</span> <span class="keyword">if</span> it is not already present.</span><br><span class="line"> * More formally, adds the specified element &#123;<span class="meta">@code</span> e&#125; to this <span class="keyword">set</span> <span class="keyword">if</span></span><br><span class="line"> * this <span class="keyword">set</span> contains no element &#123;<span class="meta">@code</span> e2&#125; such that</span><br><span class="line"> * &#123;<span class="meta">@code</span> Objects.equals(e, e2)&#125;.</span><br><span class="line"> * If this <span class="keyword">set</span> already contains the element, the call leaves the <span class="keyword">set</span></span><br><span class="line"> * unchanged and returns &#123;<span class="meta">@code</span> <span class="literal">false</span>&#125;.</span><br><span class="line"> *</span><br><span class="line"> * <span class="meta">@param</span> e element to be added to this <span class="keyword">set</span></span><br><span class="line"> * <span class="meta">@return</span> &#123;<span class="meta">@code</span> <span class="literal">true</span>&#125; <span class="keyword">if</span> this <span class="keyword">set</span> did not already contain the specified</span><br><span class="line"> * element</span><br><span class="line"> */</span><br><span class="line">public boolean add(E e) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">map</span>.put(e, PRESENT)==<span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Associates the specified value <span class="keyword">with</span> the specified key <span class="keyword">in</span> this <span class="keyword">map</span>.</span><br><span class="line"> * If the <span class="keyword">map</span> previously contained a mapping <span class="keyword">for</span> the key, the old</span><br><span class="line"> * value is replaced.</span><br><span class="line"> *</span><br><span class="line"> * <span class="meta">@param</span> key key <span class="keyword">with</span> which the specified value is to be associated</span><br><span class="line"> * <span class="meta">@param</span> value value to be associated <span class="keyword">with</span> the specified key</span><br><span class="line"> * <span class="meta">@return</span> the previous value associated <span class="keyword">with</span> &#123;<span class="meta">@code</span> key&#125;, or</span><br><span class="line"> *         &#123;<span class="meta">@code</span> <span class="literal">null</span>&#125; <span class="keyword">if</span> there was no mapping <span class="keyword">for</span> &#123;<span class="meta">@code</span> key&#125;.</span><br><span class="line"> *         (A &#123;<span class="meta">@code</span> <span class="literal">null</span>&#125; <span class="keyword">return</span> can also indicate that the <span class="keyword">map</span></span><br><span class="line"> *         previously associated &#123;<span class="meta">@code</span> <span class="literal">null</span>&#125; <span class="keyword">with</span> &#123;<span class="meta">@code</span> key&#125;.)</span><br><span class="line"> */</span><br><span class="line">public V put(K key, V value) &#123;</span><br><span class="line">    <span class="keyword">return</span> putVal(hash(key), key, value, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Implements Map.put and related methods.</span><br><span class="line"> *</span><br><span class="line"> * <span class="meta">@param</span> hash hash <span class="keyword">for</span> key</span><br><span class="line"> * <span class="meta">@param</span> key the key</span><br><span class="line"> * <span class="meta">@param</span> value the value to put</span><br><span class="line"> * <span class="meta">@param</span> onlyIfAbsent <span class="keyword">if</span> <span class="literal">true</span>, don't change existing value</span><br><span class="line"> * <span class="meta">@param</span> evict <span class="keyword">if</span> <span class="literal">false</span>, the table is <span class="keyword">in</span> creation mode.</span><br><span class="line"> * <span class="meta">@return</span> previous value, or <span class="literal">null</span> <span class="keyword">if</span> none</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,</span><br><span class="line">               boolean evict) &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;</span><br><span class="line">    <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">        n = (tab = resize()).length;</span><br><span class="line">    <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">        tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        Node&lt;K,V&gt; e; K k;</span><br><span class="line">        <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">            ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">            e = p;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (p instanceof TreeNode)</span><br><span class="line">            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (int binCount = <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                    p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                    <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) // <span class="number">-1</span> <span class="keyword">for</span> <span class="number">1</span>st</span><br><span class="line">                        treeifyBin(tab, hash);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                p = e;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; // existing mapping <span class="keyword">for</span> key</span><br><span class="line">            V oldValue = e.value;</span><br><span class="line">            <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                e.value = value;</span><br><span class="line">            afterNodeAccess(e);</span><br><span class="line">            <span class="keyword">return</span> oldValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ++modCount;</span><br><span class="line">    <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">        resize();</span><br><span class="line">    afterNodeInsertion(evict);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/hash/" rel="tag"># hash</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018122501.html" rel="next" title="Java字符串内存分配-字符串常量池">
+                <i class="fa fa-chevron-left"></i> Java字符串内存分配-字符串常量池
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#equals-和hashcode"><span class="nav-number">1.</span> <span class="nav-text">equals()和hashcode()</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#首先看一下源代码"><span class="nav-number">1.1.</span> <span class="nav-text">首先看一下源代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#默认的equals-与-有什么异同"><span class="nav-number">1.2.</span> <span class="nav-text">默认的equals()与==有什么异同?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#那么equals-与hashcode-有什么异同"><span class="nav-number">1.3.</span> <span class="nav-text">那么equals()与hashcode()有什么异同?</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
