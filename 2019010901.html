@@ -95,7 +95,7 @@
 <meta property="og:description" content="static,final,transient,volatile等关键字原理作用。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg">
-<meta property="og:updated_time" content="2019-01-09T08:46:28.231Z">
+<meta property="og:updated_time" content="2019-01-09T08:57:48.866Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="static,final,transient,volatile等关键字原理作用">
 <meta name="twitter:description" content="static,final,transient,volatile等关键字原理作用。">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,386
+                  4,356
                 </span>
               
 
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg" rel="gallery_cjqoxyo8n003unktmtyrpgyov"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg" rel="gallery_cjqoybbdf002qqgtms7moryss"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg" itemprop="contentUrl"/>
               </a>
@@ -416,12 +416,12 @@
 
       
         
-        <div id="aplayer-ttNpehVl" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-hLGUHMXK" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-ttNpehVl"),
+            element: document.getElementById("aplayer-hLGUHMXK"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -436,7 +436,7 @@
           window.aplayers || (window.aplayers = []);
           window.aplayers.push(ap);
         </script>
-<h1 id="static-，final，-transient，volatile等关键字原理作用"><a href="#static-，final，-transient，volatile等关键字原理作用" class="headerlink" title="static ，final， transient，volatile等关键字原理作用"></a><strong>static ，final， transient，volatile等关键字原理作用</strong></h1><p><em>部分参考博客：</em></p>
+<p><em>部分参考博客：</em></p>
 <blockquote>
 <p><a href="https://rednaxelafx.iteye.com/blog/652719" target="_blank" rel="noopener">https://rednaxelafx.iteye.com/blog/652719</a></p>
 </blockquote>
@@ -457,19 +457,36 @@
 <p><strong>静态代码块</strong></p>
 <figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static &#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="构造函数是静态方法吗？"><a href="#构造函数是静态方法吗？" class="headerlink" title="构造函数是静态方法吗？"></a><strong>构造函数是静态方法吗？</strong></h2><p><em>以下内容基于参考博客<a href="https://rednaxelafx.iteye.com/blog/652719" title="Title" target="_blank" rel="noopener">实例构造器是不是静态方法?</a>，博主RednaxelaFX写的非常详细和通俗易懂，所以我部分就是直接复述原文内容。</em></p>
-<p><strong>Java语言规范第三版中规定静态方法：</strong><br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">静态方法即类方法，在不引用对象时调用，尝试用this或super引用当前对象的或引用静态方法主体中任意函数内声明类型参数时会在编译阶段报错(An attempt <span class="keyword">to</span> <span class="keyword">reference</span> the current object <span class="keyword">using</span> the keyword this <span class="keyword">or</span> the keyword super <span class="keyword">or</span> <span class="keyword">to</span> <span class="keyword">reference</span> the <span class="keyword">type</span> parameters <span class="keyword">of</span> any surrounding declaration <span class="keyword">in</span> the body <span class="keyword">of</span> a <span class="keyword">class</span> <span class="function"><span class="keyword">method</span> <span class="title">results</span> <span class="title">in</span> <span class="title">a</span> <span class="title">compile</span>-<span class="title">time</span> <span class="title">error</span>)，静态方法不可被声明为抽象类型<span class="title">abstract</span>，</span></span><br><span class="line"><span class="function">非静态的方法即实例方法，实例方法总是依赖于对象被调用，而静态方法总不依赖于对象。</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>Java语言规范第三版中规定静态方法：</strong></p>
+<blockquote>
+<p>&emsp;&emsp;静态方法即类方法，在不引用对象时调用，尝试用this或super引用当前对象的或引用静态方法主体中任意函数内声明类型参数时会在编译阶段报错(An attempt to reference the current object using the keyword this or the keyword super or to reference the type parameters of any surrounding declaration in the body of a class method results in a compile-time error)，静态方法不可被声明为抽象类型abstract，非静态的方法即实例方法，实例方法总是依赖于对象被调用，而静态方法总不依赖于对象。</p>
+</blockquote>
 <p><strong>Java语言规范第三版中规定this：</strong></p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">    关键字this只能在实例方法的主体、实例初始化器或构造函数中使用，或者在类的实例变量的初始化器中使用。如果它出现在其他任何地方，就会出现编译时错误。</span><br><span class="line">(The keyword this may be used only <span class="keyword">in</span> the body of an<span class="built_in"> instance </span>method,<span class="built_in"> instance </span>initializer <span class="keyword">or</span> constructor, <span class="keyword">or</span> <span class="keyword">in</span> the initializer of an<span class="built_in"> instance </span>variable of a class. <span class="keyword">If</span> it appears anywhere <span class="keyword">else</span>, a compile-time <span class="builtin-name">error</span> occurs)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>&emsp;&emsp;关键字this只能在实例方法的主体、实例初始化器或构造函数中使用，或者在类的实例变量的初始化器中使用。如果它出现在其他任何地方，就会出现编译时错误。<br>(The keyword this may be used only in the body of an instance method, instance initializer or constructor, or in the initializer of an instance variable of a class. If it appears anywhere else, a compile-time error occurs)</p>
+</blockquote>
 <p>&emsp;&emsp;当被调用方法处于调用者的类中时，可以用this代替对象，静态方法中无法引用this，但构造函数中是可以引用this的，所以至少可以确定构造函数并不是静态方法。</p>
-<p><strong>Java虚拟机规范中3.6.1规定类方法和实例方法的区别：</strong><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">调用类方法时，所有参数按顺序存放在被调用方法的局部变量区中的连续区域，从局部变量<span class="number">0</span>开始；在调用实例方法时，局部变量<span class="number">0</span>用来存放该方法所属的对象实例，所有参数从局部变量<span class="number">1</span>开始存放在局部变量区中的连续区域中。区别就是实例方法存入了对象实例this。</span><br></pre></td></tr></table></figure></p>
-<p><strong>Java虚拟机规范中4.3.3规定方法描述符：</strong><br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无论是类方法还是实例方法，其方法描述符都相同，<span class="keyword">this</span>作为调用实例方法的一个隐式参数，不会反映在方法描述符中。</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java虚拟机规范中3.6.1规定类方法和实例方法的区别：</strong></p>
+<blockquote>
+<p>&emsp;&emsp;调用类方法时，所有参数按顺序存放在被调用方法的局部变量区中的连续区域，从局部变量0开始；在调用实例方法时，局部变量0用来存放该方法所属的对象实例，所有参数从局部变量1开始存放在局部变量区中的连续区域中。区别就是实例方法存入了对象实例this。</p>
+</blockquote>
+<p><strong>Java虚拟机规范中4.3.3规定方法描述符：</strong></p>
+<blockquote>
+<p>无论是类方法还是实例方法，其方法描述符都相同，this作为调用实例方法的一个隐式参数，不会反映在方法描述符中。</p>
+</blockquote>
 <p>Java中支持三种<strong>多态</strong>：</p>
 <ul>
 <li>通过虚方法override覆写的方式来实现子类型多态，</li>
 <li>通过方法重载支持的ad-hoc多态，</li>
 <li>通过泛型支持的参数化多态。一般情况多态一词多指子类型多态</li>
 </ul>
-<p><strong>Java虚拟机规范中8.4.3.3描述final方法：</strong><br><figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span>声明方法，防止子类覆盖或隐藏方法，若尝试重写或隐藏<span class="keyword">final</span>方法，或将<span class="keyword">final</span>方法声明为<span class="keyword">abstract</span>会在编译时报错，<span class="keyword">private</span>私有方法或<span class="keyword">final</span>类中的某些方法(?all methods declared immediately within a <span class="keyword">final</span> <span class="keyword">class</span>)等很像<span class="keyword">final</span>方法，因为它们都是不可覆写的。</span><br><span class="line">运行时，机器码生成器或优化器可以内联<span class="keyword">final</span>方法的主体，用方法主体内的代码代替方法的调用，内联的流程必须保留方法调用的语义。特别是若实例方法调用的目标是<span class="literal">null</span>时，即使方法是内联的也要抛出NullPointerException。编译器要保证异常被抛出在正确的位置，这样方法的实际参数可以在方法调用前按照正确的顺序来计算。</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java虚拟机规范中8.4.3.3描述final方法：</strong></p>
+<blockquote>
+<p>&emsp;&emsp;final声明方法，防止子类覆盖或隐藏方法，若尝试重写或隐藏final方法，或将final方法声明为abstract会在编译时报错，private私有方法或final类中的某些方法(?all methods declared immediately within a final class)等很像final方法，因为它们都是不可覆写的。</p>
+</blockquote>
+<blockquote>
+<p>&emsp;&emsp;运行时，机器码生成器或优化器可以内联final方法的主体，用方法主体内的代码代替方法的调用，内联的流程必须保留方法调用的语义。特别是若实例方法调用的目标是null时，即使方法是内联的也要抛出NullPointerException。编译器要保证异常被抛出在正确的位置，这样方法的实际参数可以在方法调用前按照正确的顺序来计算。</p>
+</blockquote>
 <p><strong>如下代码：</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">int</span> x, y;  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">move</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123; x += dx; y += dy; &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line">        Point[] p = <span class="keyword">new</span> Point[<span class="number">100</span>];  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length; i++) &#123;  </span><br><span class="line">            p[i] = <span class="keyword">new</span> Point();  </span><br><span class="line">            p[i].move(i, p.length-<span class="number">1</span>-i);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;内联到main函数中</p>
@@ -482,7 +499,10 @@
 <p>&emsp;&emsp;所以只要方法是final或者说它不是虚方法，就可以静态绑定。</p>
 <p><strong>Java虚拟机规范中定义了四种字节码指令处理Java程序不同种类方法的调用：</strong><br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">· invokestatic - 用于调用类（静态）方法 </span><br><span class="line">· invokespecial - 用于调用实例方法，特化于<span class="keyword">super</span>方法调用、<span class="keyword">private</span>方法调用与构造器调用 </span><br><span class="line">· invokevirtual - 用于调用一般实例方法（包括声明为<span class="keyword">final</span>但不为<span class="keyword">private</span>的实例方法） </span><br><span class="line">· invokeinterface - 用于调用接口方法</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;其中invokestatic和invokespecial调用的目标应该是可以静态绑定的，因为两类都无法进行子类型多态，invokevirtual和invokeinterface一般要运行时绑定，但JVM会在可优化时根据final或实际调用对象等尝试进行静态绑定。</p>
-<p><strong>Java语言规范中关于构造器部分内容：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造器用于创建类的实例-对象，构造器并不是类的成员，不会被继承，因此也不会被隐藏或覆盖</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java语言规范中关于构造器部分内容：</strong></p>
+<blockquote>
+<p>&emsp;&emsp;构造器用于创建类的实例-对象，构造器并不是类的成员，不会被继承，因此也不会被隐藏或覆盖</p>
+</blockquote>
 <p>&emsp;&emsp;所以实力构造器是不是静态方法呢？结果是否定的，首先构造器不是方法，然后构造器有隐式参数this，绑定对象。实例构造器无法被隐藏或覆写，所以无法多态，因此可以进行静态绑定，所以在这种情况下构造器是“静态”的，但仅限于在这里和静态方法相似了，它们有很多不同。</p>
 <p><strong>总结不同点：</strong></p>
 <ol>
@@ -493,7 +513,18 @@
 <p><strong>相同点：</strong></p>
 <p>&emsp;&emsp;都无法被覆写或隐藏，都可以静态绑定，被调用者内联。</p>
 <h2 id="对象的创造过程"><a href="#对象的创造过程" class="headerlink" title="对象的创造过程"></a><strong>对象的创造过程</strong></h2><p><strong>Java语言规范描述：</strong></p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1. </span>类的实例对象显式的通过类实例创建表达式创建&#123;15.9 new [TypeArguments] <span class="xml"><span class="php"><span class="meta">&lt;?</span>&gt;</span></span> ( [ArgumentList] ) [ClassBody]，如 new ArrayList <span class="xml"><span class="php">&lt;&gt;</span></span> ();&#125;</span><br><span class="line"></span><br><span class="line"><span class="bullet">2. </span>数组的实例对象显式的通过数组创建表达式创建&#123;15.10.1 new Type [<span class="string">Dims</span>]等，如new double[<span class="string">2</span>][<span class="symbol">2</span>][<span class="string">2</span>];&#125;</span><br><span class="line"></span><br><span class="line"><span class="bullet">3. </span>字符串连接操作符”+”&#123;15.18.1 String1 + String2，若只有一个字符串，会将另一个操作数转换为字符串，注意+是左结合的，即1+2+“a”=“3a”,反之”a12“&#125;用于非变量表达式&#123;15.28 即常量表达式&#125;中，会隐式的创建一个String类型对象</span><br><span class="line"></span><br><span class="line"><span class="bullet">4. </span>对数组初始化器表达式求值&#123;10.6  &#123;1，2，3&#125; &#125;，会隐式的创建一个新的数组对象：初始化类或接口&#123;12.4&#125;，创建类的新实例&#123;15.9&#125;，执行局部变量声明语句&#123;14.4&#125;</span><br><span class="line"></span><br><span class="line"><span class="bullet">5. </span>Boolean，Integer等基本类型的包装类型的新对象会通过装箱转换被隐式的创建。</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>类的实例对象显式的通过类实例创建表达式创建{15.9 new [TypeArguments] &lt;?&gt; ( [ArgumentList] ) [ClassBody]，如 new ArrayList &lt;&gt; ();}</p>
+</li>
+<li><p>数组的实例对象显式的通过数组创建表达式创建{15.10.1 new Type [Dims]等，如new double[2][2][2];}</p>
+</li>
+<li><p>字符串连接操作符”+”{15.18.1 String1 + String2，若只有一个字符串，会将另一个操作数转换为字符串，注意+是左结合的，即1+2+“a”=“3a”,反之”a12“}用于非变量表达式{15.28 即常量表达式}中，会隐式的创建一个String类型对象</p>
+</li>
+<li><p>对数组初始化器表达式求值{10.6  {1，2，3} }，会隐式的创建一个新的数组对象：初始化类或接口{12.4}，创建类的新实例{15.9}，执行局部变量声明语句{14.4}</p>
+</li>
+<li><p>Boolean，Integer等基本类型的包装类型的新对象会通过装箱转换被隐式的创建。</p>
+</li>
+</ol>
 <p>&emsp;&emsp;加载类(从class文件得到类，解析验证类信息等)-&gt;初始化超类-&gt;初始化类</p>
 <p>&emsp;&emsp;初始化类不会初始化其实现的接口，初始化接口也不会初始化超接口。</p>
 <p><strong>类中的加载顺序：</strong></p>
@@ -757,7 +788,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#static-，final，-transient，volatile等关键字原理作用"><span class="nav-number">1.</span> <span class="nav-text">static ，final， transient，volatile等关键字原理作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#static"><span class="nav-number">2.</span> <span class="nav-text">static</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用途"><span class="nav-number">2.1.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造函数是静态方法吗？"><span class="nav-number">2.2.</span> <span class="nav-text">构造函数是静态方法吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的创造过程"><span class="nav-number">2.3.</span> <span class="nav-text">对象的创造过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">3.</span> <span class="nav-text">final</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用途-1"><span class="nav-number">3.1.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final关键字的优点"><span class="nav-number">3.2.</span> <span class="nav-text">final关键字的优点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transient"><span class="nav-number">4.</span> <span class="nav-text">transient</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile"><span class="nav-number">5.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程的三个问题"><span class="nav-number">5.1.</span> <span class="nav-text">并发编程的三个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存模型"><span class="nav-number">5.2.</span> <span class="nav-text">Java内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile多线程"><span class="nav-number">5.3.</span> <span class="nav-text">volatile多线程</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#static"><span class="nav-number">1.</span> <span class="nav-text">static</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用途"><span class="nav-number">1.1.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造函数是静态方法吗？"><span class="nav-number">1.2.</span> <span class="nav-text">构造函数是静态方法吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的创造过程"><span class="nav-number">1.3.</span> <span class="nav-text">对象的创造过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">2.</span> <span class="nav-text">final</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用途-1"><span class="nav-number">2.1.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final关键字的优点"><span class="nav-number">2.2.</span> <span class="nav-text">final关键字的优点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transient"><span class="nav-number">3.</span> <span class="nav-text">transient</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile"><span class="nav-number">4.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程的三个问题"><span class="nav-number">4.1.</span> <span class="nav-text">并发编程的三个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存模型"><span class="nav-number">4.2.</span> <span class="nav-text">Java内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile多线程"><span class="nav-number">4.3.</span> <span class="nav-text">volatile多线程</span></a></li></ol></li></ol></div>
             
 
           </div>
