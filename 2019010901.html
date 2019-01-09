@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="static,final,transient,volatile等关键字原理作用。">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="static,final,transient,volatile等关键字原理作用">
+<meta property="og:url" content="http://linyishui.top/2019010901.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="static,final,transient,volatile等关键字原理作用。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg">
+<meta property="og:updated_time" content="2019-01-09T08:46:28.231Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="static,final,transient,volatile等关键字原理作用">
+<meta name="twitter:description" content="static,final,transient,volatile等关键字原理作用。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019010901.html"/>
+
+
+
+
+
+  <title>static,final,transient,volatile等关键字原理作用 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="\assets\css\APlayer.min.css" class="aplayer-style-marker">
+<script src="\assets\js\APlayer.min.js" class="aplayer-script-marker"></script>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019010901.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">static,final,transient,volatile等关键字原理作用</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-09T15:58:02+08:00">
+                2019-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,386
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  static,final,transient,volatile等关键字原理作用。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg" rel="gallery_cjqoxyo8n003unktmtyrpgyov"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls19.jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        
+        <div id="aplayer-ttNpehVl" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+            <pre class="aplayer-lrc-content"></pre>
+        </div>
+        <script>
+          var ap = new APlayer({
+            element: document.getElementById("aplayer-ttNpehVl"),
+            narrow: false,
+            autoplay: true,
+            showlrc: false,
+            music: {
+              title: "DARK SOULS Ⅲ",
+              author: "北村友香",
+              url: "https://music-1258215793.cos.ap-shanghai.myqcloud.com/game/%E5%8C%97%E6%9D%91%E5%8F%8B%E9%A6%99%20-%20DARK%20SOULS%20%E2%85%A2.mp3",
+              pic: "http://p1.music.126.net/XS-n1XX9g_OBLFudoQrc5w==/1396379770845098.jpg",
+              lrc: ""
+            }
+          });
+          window.aplayers || (window.aplayers = []);
+          window.aplayers.push(ap);
+        </script>
+<h1 id="static-，final，-transient，volatile等关键字原理作用"><a href="#static-，final，-transient，volatile等关键字原理作用" class="headerlink" title="static ，final， transient，volatile等关键字原理作用"></a><strong>static ，final， transient，volatile等关键字原理作用</strong></h1><p><em>部分参考博客：</em></p>
+<blockquote>
+<p><a href="https://rednaxelafx.iteye.com/blog/652719" target="_blank" rel="noopener">https://rednaxelafx.iteye.com/blog/652719</a></p>
+</blockquote>
+<blockquote>
+<p><a href="http://www.cnblogs.com/chenpi/p/6185773.html" target="_blank" rel="noopener">http://www.cnblogs.com/chenpi/p/6185773.html</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://www.cnblogs.com/dolphin0520/p/3920373.html" target="_blank" rel="noopener">https://www.cnblogs.com/dolphin0520/p/3920373.html</a></p>
+</blockquote>
+<p><em>因博客主未标明不可转载，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<h1 id="static"><a href="#static" class="headerlink" title="static"></a><strong>static</strong></h1><p>&emsp;&emsp;静态修饰，可以让方法等脱离类的约束，不用创建对象即可访问和调用，所以静态方法或变量无法用this引用。</p>
+<h2 id="用途"><a href="#用途" class="headerlink" title="用途"></a><strong>用途</strong></h2><p><strong>静态变量:</strong></p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">String</span> <span class="built_in">str</span> = <span class="string">"str"</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>静态方法</strong></p>
+<p>&emsp;&emsp;在静态方法内不能调用非静态方法和非静态成员变量，因为非静态依赖于对象，但非静态方法中可以调用静态方法和静态变量。</p>
+<p><strong>静态导包</strong></p>
+<p>&emsp;&emsp;静态导包可以导入包内的静态资源，可以直接调用静态方法等，<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="meta-keyword">import</span> static xxx.xxx.xxx;</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>静态代码块</strong></p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static &#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="构造函数是静态方法吗？"><a href="#构造函数是静态方法吗？" class="headerlink" title="构造函数是静态方法吗？"></a><strong>构造函数是静态方法吗？</strong></h2><p><em>以下内容基于参考博客<a href="https://rednaxelafx.iteye.com/blog/652719" title="Title" target="_blank" rel="noopener">实例构造器是不是静态方法?</a>，博主RednaxelaFX写的非常详细和通俗易懂，所以我部分就是直接复述原文内容。</em></p>
+<p><strong>Java语言规范第三版中规定静态方法：</strong><br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">静态方法即类方法，在不引用对象时调用，尝试用this或super引用当前对象的或引用静态方法主体中任意函数内声明类型参数时会在编译阶段报错(An attempt <span class="keyword">to</span> <span class="keyword">reference</span> the current object <span class="keyword">using</span> the keyword this <span class="keyword">or</span> the keyword super <span class="keyword">or</span> <span class="keyword">to</span> <span class="keyword">reference</span> the <span class="keyword">type</span> parameters <span class="keyword">of</span> any surrounding declaration <span class="keyword">in</span> the body <span class="keyword">of</span> a <span class="keyword">class</span> <span class="function"><span class="keyword">method</span> <span class="title">results</span> <span class="title">in</span> <span class="title">a</span> <span class="title">compile</span>-<span class="title">time</span> <span class="title">error</span>)，静态方法不可被声明为抽象类型<span class="title">abstract</span>，</span></span><br><span class="line"><span class="function">非静态的方法即实例方法，实例方法总是依赖于对象被调用，而静态方法总不依赖于对象。</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>Java语言规范第三版中规定this：</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">    关键字this只能在实例方法的主体、实例初始化器或构造函数中使用，或者在类的实例变量的初始化器中使用。如果它出现在其他任何地方，就会出现编译时错误。</span><br><span class="line">(The keyword this may be used only <span class="keyword">in</span> the body of an<span class="built_in"> instance </span>method,<span class="built_in"> instance </span>initializer <span class="keyword">or</span> constructor, <span class="keyword">or</span> <span class="keyword">in</span> the initializer of an<span class="built_in"> instance </span>variable of a class. <span class="keyword">If</span> it appears anywhere <span class="keyword">else</span>, a compile-time <span class="builtin-name">error</span> occurs)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当被调用方法处于调用者的类中时，可以用this代替对象，静态方法中无法引用this，但构造函数中是可以引用this的，所以至少可以确定构造函数并不是静态方法。</p>
+<p><strong>Java虚拟机规范中3.6.1规定类方法和实例方法的区别：</strong><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">调用类方法时，所有参数按顺序存放在被调用方法的局部变量区中的连续区域，从局部变量<span class="number">0</span>开始；在调用实例方法时，局部变量<span class="number">0</span>用来存放该方法所属的对象实例，所有参数从局部变量<span class="number">1</span>开始存放在局部变量区中的连续区域中。区别就是实例方法存入了对象实例this。</span><br></pre></td></tr></table></figure></p>
+<p><strong>Java虚拟机规范中4.3.3规定方法描述符：</strong><br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">无论是类方法还是实例方法，其方法描述符都相同，<span class="keyword">this</span>作为调用实例方法的一个隐式参数，不会反映在方法描述符中。</span><br></pre></td></tr></table></figure></p>
+<p>Java中支持三种<strong>多态</strong>：</p>
+<ul>
+<li>通过虚方法override覆写的方式来实现子类型多态，</li>
+<li>通过方法重载支持的ad-hoc多态，</li>
+<li>通过泛型支持的参数化多态。一般情况多态一词多指子类型多态</li>
+</ul>
+<p><strong>Java虚拟机规范中8.4.3.3描述final方法：</strong><br><figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span>声明方法，防止子类覆盖或隐藏方法，若尝试重写或隐藏<span class="keyword">final</span>方法，或将<span class="keyword">final</span>方法声明为<span class="keyword">abstract</span>会在编译时报错，<span class="keyword">private</span>私有方法或<span class="keyword">final</span>类中的某些方法(?all methods declared immediately within a <span class="keyword">final</span> <span class="keyword">class</span>)等很像<span class="keyword">final</span>方法，因为它们都是不可覆写的。</span><br><span class="line">运行时，机器码生成器或优化器可以内联<span class="keyword">final</span>方法的主体，用方法主体内的代码代替方法的调用，内联的流程必须保留方法调用的语义。特别是若实例方法调用的目标是<span class="literal">null</span>时，即使方法是内联的也要抛出NullPointerException。编译器要保证异常被抛出在正确的位置，这样方法的实际参数可以在方法调用前按照正确的顺序来计算。</span><br></pre></td></tr></table></figure></p>
+<p><strong>如下代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">int</span> x, y;  </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">move</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123; x += dx; y += dy; &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line">        Point[] p = <span class="keyword">new</span> Point[<span class="number">100</span>];  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length; i++) &#123;  </span><br><span class="line">            p[i] = <span class="keyword">new</span> Point();  </span><br><span class="line">            p[i].move(i, p.length-<span class="number">1</span>-i);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;内联到main函数中</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for (int i = <span class="number">0</span><span class="comment">; i &lt; p.length; i++) &#123;  </span></span><br><span class="line">    p[i] = new Point()<span class="comment">;  </span></span><br><span class="line">    Point pi = p[i]<span class="comment">;  </span></span><br><span class="line">    int <span class="keyword">j </span>= p.length-1-i<span class="comment">;  </span></span><br><span class="line">    pi.x += i<span class="comment">;  </span></span><br><span class="line">    pi.y += <span class="keyword">j; </span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>虚方法：</strong> 静态方法都非虚，final和private声明的实例方法也都非虚，其他方法都属于虚方法。</p>
+<p>&emsp;&emsp;Java中<strong>非虚方法</strong>可以通过<strong>静态绑定</strong>(static binding)来选择实际的调用目标，无法覆写所以无法多态，所以调用目标只能有一个。</p>
+<p>&emsp;&emsp;<strong>虚方法</strong>则一般要等到运行时根据调用者的具体类型来选择要调用哪个版本的方法，这个过程即<strong>运行时绑定</strong>(runtime binding)。</p>
+<p>&emsp;&emsp;<strong>final方法</strong>可以在运行时得到<strong>内联</strong>，所以所有的非虚方法在运行时都可以安全的内联，因为不会在运行时有所异动，都可以在编译阶段完成。一个优化比较激进的JVM会进一步在源码中声明为虚方法，但若运行时(类层次分析CHA)分析若只有一个调用目标时仍可以将方法内联到调用者内(方法调用是会消耗性能的，所以早期的时候应该是不建议频繁函数间调用)，目前主流的JVM都会进行此类优化，所以<strong>我们在编程时没有必要为了优化性能而特意的去将方法声明为final</strong>。</p>
+<p><strong>HotSpot VM 实现静态绑定：</strong><br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> methodOopDesc::can_be_statically_bound() <span class="keyword">const</span> &#123;  </span><br><span class="line">  <span class="keyword">if</span> (is_final_method())  <span class="keyword">return</span> <span class="literal">true</span>;  </span><br><span class="line">  <span class="keyword">return</span> vtable_index() == nonvirtual_vtable_index;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;所以只要方法是final或者说它不是虚方法，就可以静态绑定。</p>
+<p><strong>Java虚拟机规范中定义了四种字节码指令处理Java程序不同种类方法的调用：</strong><br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">· invokestatic - 用于调用类（静态）方法 </span><br><span class="line">· invokespecial - 用于调用实例方法，特化于<span class="keyword">super</span>方法调用、<span class="keyword">private</span>方法调用与构造器调用 </span><br><span class="line">· invokevirtual - 用于调用一般实例方法（包括声明为<span class="keyword">final</span>但不为<span class="keyword">private</span>的实例方法） </span><br><span class="line">· invokeinterface - 用于调用接口方法</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;其中invokestatic和invokespecial调用的目标应该是可以静态绑定的，因为两类都无法进行子类型多态，invokevirtual和invokeinterface一般要运行时绑定，但JVM会在可优化时根据final或实际调用对象等尝试进行静态绑定。</p>
+<p><strong>Java语言规范中关于构造器部分内容：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造器用于创建类的实例-对象，构造器并不是类的成员，不会被继承，因此也不会被隐藏或覆盖</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;所以实力构造器是不是静态方法呢？结果是否定的，首先构造器不是方法，然后构造器有隐式参数this，绑定对象。实例构造器无法被隐藏或覆写，所以无法多态，因此可以进行静态绑定，所以在这种情况下构造器是“静态”的，但仅限于在这里和静态方法相似了，它们有很多不同。</p>
+<p><strong>总结不同点：</strong></p>
+<ol>
+<li>构造器不是方法</li>
+<li>构造器有隐式参数this</li>
+<li>构造器只能通过new关键字被调用，而无法像方法那样被调用，这样保证了对象的创建和初始化是一体的。</li>
+</ol>
+<p><strong>相同点：</strong></p>
+<p>&emsp;&emsp;都无法被覆写或隐藏，都可以静态绑定，被调用者内联。</p>
+<h2 id="对象的创造过程"><a href="#对象的创造过程" class="headerlink" title="对象的创造过程"></a><strong>对象的创造过程</strong></h2><p><strong>Java语言规范描述：</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1. </span>类的实例对象显式的通过类实例创建表达式创建&#123;15.9 new [TypeArguments] <span class="xml"><span class="php"><span class="meta">&lt;?</span>&gt;</span></span> ( [ArgumentList] ) [ClassBody]，如 new ArrayList <span class="xml"><span class="php">&lt;&gt;</span></span> ();&#125;</span><br><span class="line"></span><br><span class="line"><span class="bullet">2. </span>数组的实例对象显式的通过数组创建表达式创建&#123;15.10.1 new Type [<span class="string">Dims</span>]等，如new double[<span class="string">2</span>][<span class="symbol">2</span>][<span class="string">2</span>];&#125;</span><br><span class="line"></span><br><span class="line"><span class="bullet">3. </span>字符串连接操作符”+”&#123;15.18.1 String1 + String2，若只有一个字符串，会将另一个操作数转换为字符串，注意+是左结合的，即1+2+“a”=“3a”,反之”a12“&#125;用于非变量表达式&#123;15.28 即常量表达式&#125;中，会隐式的创建一个String类型对象</span><br><span class="line"></span><br><span class="line"><span class="bullet">4. </span>对数组初始化器表达式求值&#123;10.6  &#123;1，2，3&#125; &#125;，会隐式的创建一个新的数组对象：初始化类或接口&#123;12.4&#125;，创建类的新实例&#123;15.9&#125;，执行局部变量声明语句&#123;14.4&#125;</span><br><span class="line"></span><br><span class="line"><span class="bullet">5. </span>Boolean，Integer等基本类型的包装类型的新对象会通过装箱转换被隐式的创建。</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;加载类(从class文件得到类，解析验证类信息等)-&gt;初始化超类-&gt;初始化类</p>
+<p>&emsp;&emsp;初始化类不会初始化其实现的接口，初始化接口也不会初始化超接口。</p>
+<p><strong>类中的加载顺序：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">Print</span> printStatic = <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"父类静态变量"</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">Print</span> printInstance = <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"父类实例变量"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"父类静态域"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">Parent</span>() &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"父类构造器"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Son</span> <span class="keyword">extends</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">Print</span> printStatic = <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"子类静态变量"</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">Print</span> printInstance = <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"子类实例变量"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"子类静态域"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">Print</span> printStatic1 = <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"子类静态变量1"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Son() &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="keyword">Print</span>(<span class="string">"子类构造器"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> void main(String[] args)&#123;</span><br><span class="line">        Son son = <span class="keyword">new</span> Son();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>输出结果：</strong></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">父类静态变量</span><br><span class="line">父类静态域</span><br><span class="line">子类静态变量</span><br><span class="line">子类静态域</span><br><span class="line">子类静态变量<span class="number">1</span></span><br><span class="line">父类实例变量</span><br><span class="line">父类构造器</span><br><span class="line">子类实例变量</span><br><span class="line">子类构造器</span><br></pre></td></tr></table></figure>
+<p><strong>类的加载顺序：</strong></p>
+<p>&emsp;&emsp;父类静态代码块和静态变量-&gt;子类静态代码块和静态变量-&gt;父类实例变量初始化-&gt;父类构造函数-&gt;子类实例变量初始化-&gt;子类构造函数，其中静态部分根据代码顺序加载</p>
+<h1 id="final"><a href="#final" class="headerlink" title="final"></a><strong>final</strong></h1><h2 id="用途-1"><a href="#用途-1" class="headerlink" title="用途"></a><strong>用途</strong></h2><p><strong>final变量：</strong></p>
+<p>&emsp;&emsp;只能被赋值一次，否则会在编译时报错。若final被赋值为对象的引用，对象可以正常因为操作而修改成员数据，只是final变量会永远指向此对象。</p>
+<p>&emsp;&emsp;<strong>常量变量</strong>是指用常量表达式初始化的或String类型的<strong>final变量</strong>。</p>
+<p>&emsp;&emsp;有三类变量<strong>被隐式的声明为final</strong>：</p>
+<ul>
+<li>接口的域</li>
+<li>带资源的try语句中的资源</li>
+<li>多重catch子句中的异常参数。单catch子句的异常参数不会被隐式声明final，但其实可以看作final。</li>
+</ul>
+<p><strong>final方法：</strong></p>
+<p>&emsp;&emsp;final声明方法，表示其不可被重写，优点是编译时静态绑定，相较运行时绑定肯定是速度快一些的。</p>
+<p><strong>final类：</strong></p>
+<p>&emsp;&emsp;final类不能有任何子类。</p>
+<h2 id="final关键字的优点"><a href="#final关键字的优点" class="headerlink" title="final关键字的优点"></a><strong>final关键字的优点</strong></h2><p>&emsp;&emsp;final关键字某些情况下可以优化性能，因为静态绑定但一些JVM会对某些情况进行优化，即使没有用final和static声明也会进行静态绑定，所以本人目前说不清此处，我的判断是没有必要因为优化性能刻意的使用final，应该是为了给与“只读“属性而去使用final。</p>
+<h1 id="transient"><a href="#transient" class="headerlink" title="transient"></a><strong>transient</strong></h1><p>&emsp;&emsp;<strong>Java对象的序列化</strong>，即将对象转化为字节序列，包含对象的数据和信息，序列化后对象可以写入数据库或文件，也可以用于网络传输，一般当我们使用缓存cache或远程调用rpc的时候，会实现Serializable接口来实现可序列化。</p>
+<p>&emsp;&emsp;<strong>transient</strong>关键字让修饰的成员变量不被序列化。</p>
+<h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a><strong>volatile</strong></h1><h2 id="并发编程的三个问题"><a href="#并发编程的三个问题" class="headerlink" title="并发编程的三个问题"></a><strong>并发编程的三个问题</strong></h2><ul>
+<li>原子性</li>
+<li>可见性</li>
+<li>有序性</li>
+</ul>
+<p>&emsp;&emsp;原子性：即一个或多个操作，要么全部执行，要么全不执行。</p>
+<p>&emsp;&emsp;可见性：多个线程访问同一个变量时，一个线程修改了此变量，其他线程也能立即看到最新的值。</p>
+<p>&emsp;&emsp;有序性：即程序执行的顺序按代码的先后顺序，JVM执行代码时可能会因为指令重排序导致执行顺序和代码顺序不一致，但JVM会保证最终结果一致，JVM会让指令依赖的上一条指令先执行，而不会在上条执行前执行依赖于其的指令。但多线程时可能会有问题，某一指令并不依赖于任何指令，但其执行顺序如果和编程者所安排的不一致，可能会导致逻辑错误，在不该执行的时候执行，不该终止的时候终止。</p>
+<h2 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a><strong>Java内存模型</strong></h2><p>&emsp;&emsp;定义了程序中变量的访问规则，所有变量都存在主存中，每个线程有自己的工作内存，线程对变量的操作都在工作内存中进行，将结果写入主存，工作内存间不能互相访问。</p>
+<p>&emsp;&emsp;Java内存模型只保证了基本读取和赋值是原子操作，实际编程中需要synchronized和Lock来实现原子性，加锁保证同一时刻只有一个线程执行代码块。</p>
+<p>&emsp;&emsp;普通变量被修改时不一定会即使更新到主存中，Java提供了volatile关键字来保证可见性，当一个变量被volatile修饰时，其值被修改会立即更新到主存中，当其他线程需要读取时，就读内存的新值。synchronized和Lock也可保证可见性，释放锁之前会把最新值写入主存。</p>
+<p>&emsp;&emsp;Java内存模型允许对指令重排序，volatile关键字可以保证“一定“的有序性，synchronized和Lock也可保证有序性，单线程就一定”有序“结果正确。Java内存模型遵照先行发生原则(happens-before)，规定了一些执行顺序的原则来保证一些有序，可查阅JVM相关内容了解。</p>
+<h2 id="volatile多线程"><a href="#volatile多线程" class="headerlink" title="volatile多线程"></a><strong>volatile多线程</strong></h2><p>&emsp;&emsp;volatile修饰的变量，线程在每次使用变量的时候，都会读取变量修改后的最新值，volatile禁止指令重排序，volatile很容易被误用，用来进行原子性操作。</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//线程1</span></span><br><span class="line">boolean <span class="built_in">stop</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">while</span>(!<span class="built_in">stop</span>)&#123;</span><br><span class="line">    doSomething();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//线程2</span></span><br><span class="line"><span class="built_in">stop</span> = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;一般情况下线程1可以正常跳出循环，但当某种情况下线程2未将stop的更新写入主存转去做其他工作，就会导致线程1无限循环。</p>
+<p>&emsp;&emsp;但若用volatile修饰stop变量，会强制使最新值立即写入主存，当线程2进行修改操作时，会使线程1变量stop的缓存无效，所以线程1再次读取stop值时要去主存中读取，所以就保证了多线程运行中线程1运行正确。</p>
+<p><strong>那么volatile保证原子性吗？</strong></p>
+<p>&emsp;&emsp;前面我们提了volatile保证了可见性和“一定“的有序性，所以volatile会保证原子性吗？</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> &#123;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">int</span> inc = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">increase</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        inc++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title">IncThread</span> <span class="title">extends</span> <span class="title">Thread</span>&#123;</span><br><span class="line">        @Override</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            System.<span class="keyword">out</span>.println(Thread.currentThread().toString() + <span class="string">" 读取"</span> + inc);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">1000</span>;j++) &#123;</span><br><span class="line">                increase();</span><br><span class="line">            &#125;</span><br><span class="line">            System.<span class="keyword">out</span>.println(Thread.currentThread().toString() + <span class="string">" 最终"</span> + inc);</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>) </span>&#123;</span><br><span class="line">        final Test test = <span class="keyword">new</span> Test();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">            IncThread thread = test.new IncThread();</span><br><span class="line">            thread.start();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(Thread.activeCount()&gt;<span class="number">1</span>)  <span class="comment">//保证前面的线程都执行完</span></span><br><span class="line">            Thread.<span class="keyword">yield</span>();</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"执行完"</span>);</span><br><span class="line">        System.<span class="keyword">out</span>.println(test.inc);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;运行结果总是小于10000,如下：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Thread[Thread<span class="number">-5</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-4</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-5</span>,<span class="number">5</span>,main] 最终<span class="number">1000</span></span><br><span class="line">Thread[Thread<span class="number">-4</span>,<span class="number">5</span>,main] 最终<span class="number">2000</span></span><br><span class="line">Thread[Thread<span class="number">-9</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-1</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-9</span>,<span class="number">5</span>,main] 最终<span class="number">4000</span></span><br><span class="line">Thread[Thread<span class="number">-1</span>,<span class="number">5</span>,main] 最终<span class="number">3559</span></span><br><span class="line">Thread[Thread<span class="number">-3</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-3</span>,<span class="number">5</span>,main] 最终<span class="number">5000</span></span><br><span class="line">Thread[Thread<span class="number">-0</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-8</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-6</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-8</span>,<span class="number">5</span>,main] 最终<span class="number">7124</span></span><br><span class="line">Thread[Thread<span class="number">-0</span>,<span class="number">5</span>,main] 最终<span class="number">6000</span></span><br><span class="line">Thread[Thread<span class="number">-2</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-7</span>,<span class="number">5</span>,main] 读取<span class="number">0</span></span><br><span class="line">Thread[Thread<span class="number">-2</span>,<span class="number">5</span>,main] 最终<span class="number">8933</span></span><br><span class="line">Thread[Thread<span class="number">-7</span>,<span class="number">5</span>,main] 最终<span class="number">9933</span></span><br><span class="line">Thread[Thread<span class="number">-6</span>,<span class="number">5</span>,main] 最终<span class="number">7933</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;之所以会这样，是因为自增操作不是原子操作，需要读取，加1，写入操作，某个时刻inc为10，线程1读取出10，但此时线程1被堵塞了，线程2读取，仍取出10，执行后写入主存11。线程1恢复执行，加1为11，写入主存。</p>
+<p>&emsp;&emsp;改写上述代码，加入synchronized或Lock或AtomicInteger都可以得到正确结果。</p>
+<p><strong>那么volatile保证有序性吗？</strong>‘</p>
+<p>&emsp;&emsp;volatile能禁止指令重排序，所以一定程度上可以保证有序性，但其禁止指令重排序指的只是对于volatile变量其前面的指令都会先执行完，其后操作等变量执行完毕后才可执行，但对于两部分的指令没有什么限制。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019010701.html" rel="next" title="一些常用简单逻辑判断和SQL(个人)">
+                <i class="fa fa-chevron-left"></i> 一些常用简单逻辑判断和SQL(个人)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#static-，final，-transient，volatile等关键字原理作用"><span class="nav-number">1.</span> <span class="nav-text">static ，final， transient，volatile等关键字原理作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#static"><span class="nav-number">2.</span> <span class="nav-text">static</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用途"><span class="nav-number">2.1.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构造函数是静态方法吗？"><span class="nav-number">2.2.</span> <span class="nav-text">构造函数是静态方法吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象的创造过程"><span class="nav-number">2.3.</span> <span class="nav-text">对象的创造过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">3.</span> <span class="nav-text">final</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用途-1"><span class="nav-number">3.1.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final关键字的优点"><span class="nav-number">3.2.</span> <span class="nav-text">final关键字的优点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transient"><span class="nav-number">4.</span> <span class="nav-text">transient</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile"><span class="nav-number">5.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程的三个问题"><span class="nav-number">5.1.</span> <span class="nav-text">并发编程的三个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存模型"><span class="nav-number">5.2.</span> <span class="nav-text">Java内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile多线程"><span class="nav-number">5.3.</span> <span class="nav-text">volatile多线程</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
