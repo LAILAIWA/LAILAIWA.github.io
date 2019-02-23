@@ -95,7 +95,7 @@
 <meta property="og:description" content="涉及内容：字符串常量池-常量池表，运行时常量池，字符串常量池">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg">
-<meta property="og:updated_time" content="2018-12-31T02:11:40.068Z">
+<meta property="og:updated_time" content="2019-02-23T03:21:44.136Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java字符串内存分配-字符串常量池">
 <meta name="twitter:description" content="涉及内容：字符串常量池-常量池表，运行时常量池，字符串常量池">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,179
+                  1,814
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  7
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg" rel="gallery_cjsfse6lr00238ktm83vnc036"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg" rel="gallery_cjsgxfko0001vpotm6eerhbg4"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg" itemprop="contentUrl"/>
               </a>
@@ -416,12 +416,12 @@
 
       
         
-        <div id="aplayer-APrrJMwZ" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-oMweXSMo" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-APrrJMwZ"),
+            element: document.getElementById("aplayer-oMweXSMo"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -436,15 +436,26 @@
           window.aplayers || (window.aplayers = []);
           window.aplayers.push(ap);
         </script>
-<p><em>参考博客：</em></p>
-<blockquote>
-<p><a href="https://blog.csdn.net/u010297957/article/details/50995869" target="_blank" rel="noopener">https://blog.csdn.net/u010297957/article/details/50995869</a><br><a href="https://www.cnblogs.com/justinli/p/4064128.html" target="_blank" rel="noopener">https://www.cnblogs.com/justinli/p/4064128.html</a></p>
-</blockquote>
-<p><em>因博客主未标明不可转载，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
-<h1 id="字符串常量池："><a href="#字符串常量池：" class="headerlink" title="字符串常量池："></a><strong>字符串常量池：</strong></h1><h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a><strong>简述</strong></h2><p><strong>1.常量池表(constant_pool table)：</strong></p>
-<p>&emsp;&emsp;存储Class文件中所有常量(包括字符串)的表，是文件中的结构化数据而不是运行时内容。</p>
+<h1 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a><strong>相关概念</strong></h1><h2 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a><strong>运行时数据区</strong></h2><ul>
+<li><p>程序计数器(Pc Registers)</p>
+</li>
+<li><p>本地方法栈(Native Method Stack)</p>
+</li>
+<li><p>堆(Heap)：引用类型即对象实例和数组，成员变量，全局共享。</p>
+</li>
+<li><p>栈(Stack)：方法帧，局部变量，基本类型，对象引用，线程私有。</p>
+</li>
+<li><p>方法区(Method Area)：字节码，常量，静态变量，共享区域。</p>
+</li>
+</ul>
+<p>&emsp;&emsp;栈区内有局部变量表，操作数栈等，因为栈是线程私有的，每个方法执行时会创建一个栈帧，每个栈帧中都有维护一个局部变量表和操作数栈。而基本类型和对象引用就在局部变量表内。</p>
+<p>&emsp;&emsp;堆分成了新生代和老年代，非堆包含永生代，永生代包含了方法区。类加载完毕，类的信息存在方法区内。和String相关的即运行时常量池和字符串常量池，前者在方法区内，后者位置在永生代内非方法区部分。</p>
+<hr width="80%" color="#EE0000" size="3">
+
+<h2 id="String相关区域"><a href="#String相关区域" class="headerlink" title="String相关区域"></a><strong>String相关区域</strong></h2><p><strong>1.常量池表(constant_pool table)：</strong></p>
+<p>&emsp;&emsp;存储Class文件中所有常量(包括字符串)的表，是文件中的结构化数据而不是运行时内容，主要存两样：字面量(Literal)和符号引用量(Symbolic References)，字面量就是类中定义的常量，而String是不可变的final修饰的，也作为字面量存储在这里。</p>
 <p><strong>2.运行时常量池(Runtime Constant pool)：</strong></p>
-<p>&emsp;&emsp;JVM运行时方法区中的某部分，属于运行时内容。其数据大部分(除了常量池中内容，还可能有动态生成加入的内容)都是由常量池表转换而来，每一个Class文件都对应一个运行时常量池。</p>
+<p>&emsp;&emsp;JVM运行时方法区中的某部分，属于运行时内容。其数据大部分(除了常量池中内容，还可能有动态生成加入的内容，不包括String)都是由常量池表转换而来，每一个Class文件都对应一个运行时常量池。</p>
 <p><strong>3.字符串常量池(String pool)：</strong></p>
 <p>&emsp;&emsp;字符串常量池和运行时常量池区别：</p>
 <ol>
@@ -457,17 +468,42 @@
 <p>&emsp;&emsp;字符串常量池涉及到一个设计模式：享元模式，即共享元素模式。</p>
 <p>&emsp;&emsp;含义是：一个系统若有多处用到了同一元素，那么应该只定义存储一份，然后让所有地方引用此元素。</p>
 <p>&emsp;&emsp;字符串String就是依照此模式设计，字符串常量池就是存储元素的地方。</p>
-<h2 id="详解"><a href="#详解" class="headerlink" title="详解"></a><strong>详解</strong></h2><h3 id="1-假设main函数中声明了如下变量："><a href="#1-假设main函数中声明了如下变量：" class="headerlink" title="1.假设main函数中声明了如下变量："></a><strong>1.假设main函数中声明了如下变量：</strong></h3><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">int a</span> = 1;</span><br><span class="line"><span class="attribute">String b</span> = <span class="string">"ori"</span>;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;1和”ori”会经过编译后存入Class文件中的constant_pool table</p>
-<p>&emsp;&emsp;当程序运行时，每个Class文件中的constant_pool table会被加载到JVM内存中的方法区内，存放在对应Class对象的Runtime Constant pool中。</p>
-<p>&emsp;&emsp;若字符串未被包含在String pool中(如何判断?用equals来比较Runtime Constant pool的字符串和String pool中某一个是否相等)，会先在堆中根据String数据创建一个String对象，然后将String数据和对象引用在哈希表中关联起来，String数据是Key，而对象引用地址是值。（注意String数据表示String pool中”ori”，String对象表示堆中对象）</p>
-<h3 id="2-创建了多少对象？"><a href="#2-创建了多少对象？" class="headerlink" title="2.创建了多少对象？"></a><strong>2.创建了多少对象？</strong></h3><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;执行过程：</p>
-<p>&emsp;&emsp;首先根据String数据去String pool中查找是否有相同字符串存在，若不存在就在String pool中创建数据，然后关键字new会在堆中新建对象，调用String构造器进行初始化，将引用地址赋值给变量s；</p>
-<p>&emsp;&emsp;若存在就在堆中新建一个对象，不会再向String pool新建数据了，直接返回对象引用。<br>所以创建了2或1个对象。</p>
-<h3 id="3-以下两者内存分配时有区别吗？"><a href="#3-以下两者内存分配时有区别吗？" class="headerlink" title="3.以下两者内存分配时有区别吗？"></a><strong>3.以下两者内存分配时有区别吗？</strong></h3><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = <span class="string">"abc"</span>;</span><br><span class="line"><span class="keyword">String</span> s2 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;Jvm编译阶段对字符串常量”abc”判断，String pool中若没有则创建一个，s1所指向的字符串引用地址指向该字符串实际内存地址，而s2调用了new指令，在运行时创建不同的对象，根据String的源代码可以清楚得知，初始化时会赋值给字符数组value其在String pool中的内存地址，所以new只是创建了一个String对象，而字符串常量数据仍在String pool中创建。</p>
-<h3 id="4-判断输出结果？"><a href="#4-判断输出结果？" class="headerlink" title="4.判断输出结果？"></a><strong>4.判断输出结果？</strong></h3><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = <span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s2</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">String <span class="built_in">s3</span> = <span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s4</span> = <span class="string">"a"</span> + <span class="string">"bc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s5</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s2</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s3</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s4</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s2</span> == <span class="built_in">s5</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s1</span>.intern())<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="过程详解"><a href="#过程详解" class="headerlink" title="过程详解"></a><strong>过程详解</strong></h1><p>&emsp;&emsp;首先，字符串赋值方式包括：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> a = <span class="string">"ori"</span>;</span><br><span class="line"><span class="keyword">String</span> b = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"ori"</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;两种方式有什么不同吗？我们带着这个疑问逐步看下去。</p>
+<p>我们在main函数中声明了如下变量：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String </span><span class="keyword">str1 </span>= <span class="string">"Hello"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;类加载时，字符串实例已被创建如Heap中，引用也创建到了String pool内。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190223/201902230101.jpg" alt=""></p>
+<p>&emsp;&emsp;创建String变量时，JVM在String pool内寻找是否有equals(“Hello”)的String，若存在就在Stack内的当前栈帧中的局部变量表内创建变量b，并将String pool内的引用复制给b。若没找到就在Heap中新建一个对象，先把引用赋值到String pool内，再复制到局部变量表。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190223/201902230102.jpg" alt=""></p>
+<p>&emsp;&emsp;定义多个同字面量字符串呢？</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String </span><span class="keyword">str2 </span>= <span class="string">"Hello"</span><span class="comment">; </span></span><br><span class="line"><span class="keyword">String </span><span class="keyword">str3 </span>= <span class="string">"Hello"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>当定义多个同值的字符串时，只会在堆内引用相同的实例。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190223/201902230103.jpg" alt=""></p>
+<p>&emsp;&emsp;另一种方式创建字符串呢？</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> str3 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"Hello"</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如果用new的方式创建对象，情况就不一样了。因为new关键字，会在Heap中新申请一块内存，虽然存储的内容相同，但地址等信息都不一样了。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190223/201902230104.jpg" alt=""></p>
+<p>&emsp;&emsp;String.intern()方法可以手动检查String pool，把新的字面值(Literal)的字符串地址赋值到String pool内。</p>
+<p>OK，有了以上的了解，就可以分析以下的几个问题了。</p>
+<hr>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a><strong>问题分析</strong></h1><p><strong>1.以下变量在内存中和运行中有什么区别？</strong></p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">int a</span> = 1;</span><br><span class="line"><span class="attribute">String b</span> = <span class="string">"ori"</span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;字面量(Literal)1和”ori”会经过编译后存入Class文件中的constant_pool table中。</p>
+<p>&emsp;&emsp;当程序运行类被加载时，Class文件中的constant_pool table会被加载到JVM内存中的方法区内，存放在对应Class对象的Runtime Constant pool中。</p>
+<p>&emsp;&emsp;也就是运行到此类时，其类信息被加载到方法区中，而constant_pool table内的大部分数据会被加载到Runtime Constant pool中，<strong>但不包括String</strong>，String会被加载到String pool内。</p>
+<p><strong>2.创建了多少对象？</strong></p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;首先根据String字面量(Literal)去String pool中查找是否有相同字符串存在(equals)，若不存在就在堆中新建对象，然后在String pool中赋值其引用，调用String构造器进行初始化，将引用地址赋值给变量s。</p>
+<p>&emsp;&emsp;若存在关键字new会在堆中新建对象，不会再向String pool新建数据了，直接返回对象引用。</p>
+<p>&emsp;&emsp;所以创建了2或1个对象。</p>
+<p><strong>3.以下两者内存分配时有区别吗？</strong></p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = <span class="string">"abc"</span>;</span><br><span class="line"><span class="keyword">String</span> s2 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Jvm编译阶段对字符串字面量(Literal)”abc”判断，String pool中若没有则创建一个，s1所指向的字符串引用地址指向该字符串实际内存地址，而s2调用了new指令，在运行时创建不同的对象，根据String的源代码可以清楚得知，初始化时会赋值给字符数组value其在String pool中的内存地址，所以new只是创建了一个String对象，而字符串常量数据仍在String pool中创建。</p>
+<p><strong>4.判断下列代码输出结果？</strong></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = <span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s2</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">String <span class="built_in">s3</span> = <span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s4</span> = <span class="string">"a"</span> + <span class="string">"bc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s5</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s2</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s3</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s4</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s2</span> == <span class="built_in">s5</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="built_in">s1</span> == <span class="built_in">s1</span>.intern())<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;结果：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="literal">false</span></span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="literal">true</span></span><br><span class="line"><span class="literal">false</span></span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;分别打印其内存地址：</p>
@@ -475,11 +511,17 @@
 <p>&emsp;&emsp;解析：</p>
 <ul>
 <li>s1引用指向String pool中”abc”，s2因为new创建新对象，只要是new在堆中创建新对象，引用肯定是不同的。</li>
+<li>s3在String pool内找到相同字符串，直接返回”abc”引用，所以是对同一String pool中字符串数据的引用，所以引用地址相同。</li>
 <li>是对同一String pool中字符串数据的引用，所以引用地址相同。</li>
-<li>是对同一String pool中字符串数据的引用，所以引用地址相同。</li>
-<li>s2引用指向String pool中”abc”，s5因为new创建新对象，只要是new在堆中创建新对象，引用肯定是不同的。</li>
+<li>因为new创建新对象，只要是new在堆中创建新对象，引用肯定是不同的。</li>
 <li>s1.intern()将String对象在运行期动态加入String pool并返回其引用，所以和s1是相同引用</li>
 </ul>
+<hr>
+<p><em>参考博客：</em></p>
+<blockquote>
+<p><a href="https://blog.csdn.net/u010297957/article/details/50995869" target="_blank" rel="noopener">https://blog.csdn.net/u010297957/article/details/50995869</a><br><a href="https://www.cnblogs.com/justinli/p/4064128.html" target="_blank" rel="noopener">https://www.cnblogs.com/justinli/p/4064128.html</a><br><a href="https://rednaxelafx.iteye.com/blog/774673" target="_blank" rel="noopener">https://rednaxelafx.iteye.com/blog/774673</a><br><a href="https://www.zhihu.com/question/29884421/answer/113785601" target="_blank" rel="noopener">https://www.zhihu.com/question/29884421/answer/113785601</a></p>
+</blockquote>
+<p><em>因博客主未标明不可转载和引用，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
       
     </div>
@@ -617,7 +659,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">36</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -700,7 +742,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串常量池："><span class="nav-number">1.</span> <span class="nav-text">字符串常量池：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简述"><span class="nav-number">1.1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详解"><span class="nav-number">1.2.</span> <span class="nav-text">详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-假设main函数中声明了如下变量："><span class="nav-number">1.2.1.</span> <span class="nav-text">1.假设main函数中声明了如下变量：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建了多少对象？"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.创建了多少对象？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-以下两者内存分配时有区别吗？"><span class="nav-number">1.2.3.</span> <span class="nav-text">3.以下两者内存分配时有区别吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-判断输出结果？"><span class="nav-number">1.2.4.</span> <span class="nav-text">4.判断输出结果？</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#相关概念"><span class="nav-number">1.</span> <span class="nav-text">相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时数据区"><span class="nav-number">1.1.</span> <span class="nav-text">运行时数据区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String相关区域"><span class="nav-number">1.2.</span> <span class="nav-text">String相关区域</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过程详解"><span class="nav-number">2.</span> <span class="nav-text">过程详解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题分析"><span class="nav-number">3.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
             
 
           </div>
