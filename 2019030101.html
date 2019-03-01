@@ -95,7 +95,7 @@
 <meta property="og:description" content="String.intern()介绍以及几个实例的测试和分析">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka____utm_source%3Dig_share_sheet%26igshid.jpg">
-<meta property="og:updated_time" content="2019-03-01T06:34:31.471Z">
+<meta property="og:updated_time" content="2019-03-01T06:42:39.114Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="String的intern方法详解">
 <meta name="twitter:description" content="String.intern()介绍以及几个实例的测试和分析">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,194
+                  1,215
                 </span>
               
 
@@ -400,7 +400,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka____utm_source%3Dig_share_sheet%26igshid.jpg" rel="gallery_cjspooy8t002tuctmvf11hg83"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka____utm_source%3Dig_share_sheet%26igshid.jpg" rel="gallery_cjsppeomd002xtktm7enqx4mi"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka____utm_source%3Dig_share_sheet%26igshid.jpg" itemprop="contentUrl"/>
               </a>
@@ -413,11 +413,10 @@
       
 
       
-        <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h1><blockquote>
-<p>public native String intern();</p>
-</blockquote>
-<p>&emsp;&emsp;intern方法返回一个常量池中的固定对象，当调用此方法时若字符串常量池以经包含了此String对象，则直接返回此对象；否则向字符串常量池中添加此对象并返回其引用。</p>
-<p>&emsp;&emsp;所以intern方法可以用来手动向字符串常量池中添加字面量。而字符串常量池其实就是一个固定大小的HashTable，当String对象创建过多时就会导致intern方法性能下降，所以可以修改常量池的size来进行扩容。</p>
+        <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h1><p>native修饰的非Java实现函数</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">native</span> <span class="function">String <span class="title">intern</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;intern方法返回一个字符串常量池中的固定对象，当调用此方法时若字符串常量池以经包含了此String对象(JDK1.7以后字符串常量池移至堆内，也就不必存储String实例了)，则直接返回此对象；否则向字符串常量池中添加此对象并返回其引用。</p>
+<p>&emsp;&emsp;所以intern方法可以用来手动向字符串常量池中添加字面量。而字符串常量池其实就是一个固定大小的HashTable，当String对象创建过多时就会导致intern方法性能下降。</p>
 <hr>
 <h1 id="编程测试"><a href="#编程测试" class="headerlink" title="编程测试"></a><strong>编程测试</strong></h1><h2 id="实例1"><a href="#实例1" class="headerlink" title="实例1"></a><strong>实例1</strong></h2><p>测试代码：</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = <span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line">String <span class="built_in">s2</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line"><span class="built_in">s2</span>.intern()<span class="comment">;</span></span><br><span class="line">String <span class="built_in">s3</span> = <span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line">printAddresses(<span class="string">"s1"</span>,<span class="built_in">s1</span>)<span class="comment">;</span></span><br><span class="line">printAddresses(<span class="string">"s2"</span>,<span class="built_in">s2</span>)<span class="comment">;</span></span><br><span class="line">printAddresses(<span class="string">"s2.intern()"</span>,<span class="built_in">s2</span>.intern())<span class="comment">;</span></span><br><span class="line">printAddresses(<span class="string">"s3"</span>,<span class="built_in">s3</span>)<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="string">"s1 == s2 : "</span> + (<span class="built_in">s1</span> == <span class="built_in">s2</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(<span class="string">"s1 == s3 : "</span> + (<span class="built_in">s1</span> == <span class="built_in">s3</span>))<span class="comment">;</span></span><br></pre></td></tr></table></figure>
