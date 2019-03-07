@@ -86,19 +86,19 @@
 
 
 
-<meta name="description" content="介绍枚举类的概念和用法，简单分析枚举的序列化和线程安全">
+<meta name="description" content="介绍各种内部类以及静态内部类">
 <meta name="keywords" content="java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内部类">
 <meta property="og:url" content="http://linyishui.top/2019030701.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="介绍枚举类的概念和用法，简单分析枚举的序列化和线程安全">
+<meta property="og:description" content="介绍各种内部类以及静态内部类">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190304_000125.jpg">
-<meta property="og:updated_time" content="2019-03-07T08:31:31.850Z">
+<meta property="og:updated_time" content="2019-03-07T09:01:53.276Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="内部类">
-<meta name="twitter:description" content="介绍枚举类的概念和用法，简单分析枚举的序列化和线程安全">
+<meta name="twitter:description" content="介绍各种内部类以及静态内部类">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190304_000125.jpg">
 
 
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  961
+                  1,088
                 </span>
               
 
@@ -380,7 +380,7 @@
 
           
               <div class="post-description">
-                  介绍枚举类的概念和用法，简单分析枚举的序列化和线程安全
+                  介绍各种内部类以及静态内部类
               </div>
           
 
@@ -400,7 +400,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190304_000125.jpg" rel="gallery_cjsydheap003ipwtm4627i4lh"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190304_000125.jpg" rel="gallery_cjsyet163003buctm5p82u4nn"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190304_000125.jpg" itemprop="contentUrl"/>
               </a>
@@ -413,13 +413,21 @@
       
 
       
-        <h1 id="成员内部类"><a href="#成员内部类" class="headerlink" title="成员内部类"></a><strong>成员内部类</strong></h1><p>&emsp;&emsp;声明直接被另一个类或接口的声明包围，成员内部类可以无条件访问外部类的所有成员属性和成员方法，因为内部类在实例化时会保留外部类对象的引用。</p>
+        <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h1><p>&emsp;&emsp;内部类即没有被显示或隐式的声明为static的<strong>嵌套类</strong>，而static修饰的类即“静态内部类”也是嵌套类，但不算内部类，可以声明static成员。</p>
+<p>&emsp;&emsp;接口的成员类隐式的声明为静态的，所以不属于内部类。除了常量变量，内部类不能声明静态成员，但可以继承。</p>
+<p>包括：</p>
+<ul>
+<li>非static成员类(声明直接被另一个类或接口的声明包围)，</li>
+<li>局部类(不是类的成员且具有名字的嵌套类)，</li>
+<li>匿名类(编译器自动从实例创建表达式中导出，不可为abstract和static隐式final的内部类)</li>
+</ul>
+<h1 id="成员内部类"><a href="#成员内部类" class="headerlink" title="成员内部类"></a><strong>成员内部类</strong></h1><p>&emsp;&emsp;成员内部类可以无条件访问外部类的所有成员属性和成员方法，因为内部类在实例化时会保留外部类对象的引用。</p>
 <p>&emsp;&emsp;若内部类中属性或方法和外部类同名则默认是内部类，并通过Outer.this.变量来访问。</p>
 <p>&emsp;&emsp;外部类若想访问内部类的成员需要先创建内部类对象。</p>
 <hr>
-<h1 id="局部内部类"><a href="#局部内部类" class="headerlink" title="局部内部类"></a><strong>局部内部类</strong></h1><p>&emsp;&emsp;定义在方法或作用域内的类，不是类的成员且具有名字的嵌套类，和成员内部类的区别就是访问权限只能在方法内或作用域内。和局部变量一样无法用public，protected，private和static等修饰符。</p>
+<h1 id="局部内部类"><a href="#局部内部类" class="headerlink" title="局部内部类"></a><strong>局部内部类</strong></h1><p>&emsp;&emsp;定义在方法或作用域内的类，和成员内部类的区别就是访问权限只能在方法内或作用域内。和局部变量一样无法用public，protected，private和static等修饰符。</p>
 <hr>
-<h1 id="匿名内部类"><a href="#匿名内部类" class="headerlink" title="匿名内部类"></a><strong>匿名内部类</strong></h1><p>&emsp;&emsp;直接通过new关键字直接构造类体，类没有名称所以叫做匿名内部类，编译器自动从实例创建表达式中导出，不可为abstract和static隐式final的内部类，通常用于构造接口的实现类。</p>
+<h1 id="匿名内部类"><a href="#匿名内部类" class="headerlink" title="匿名内部类"></a><strong>匿名内部类</strong></h1><p>&emsp;&emsp;直接通过new关键字直接构造类体，类没有名称所以叫做匿名内部类，通常用于构造接口的实现类。</p>
 <hr>
 <h1 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a><strong>静态内部类</strong></h1><p>&emsp;&emsp;static修饰的嵌套类，也就受限制于静态特性。</p>
 <hr>
@@ -445,7 +453,7 @@
 <p>《Java核心技术 卷Ⅰ》</p>
 </blockquote>
 <blockquote>
-<p>《Java语言规范》8.1 内部类</p>
+<p>《Java语言规范》8.1 内部类 8.5 成员类 14.3 局部类 15.9.5 匿名类</p>
 </blockquote>
 <p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -662,7 +670,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#成员内部类"><span class="nav-number">1.</span> <span class="nav-text">成员内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#局部内部类"><span class="nav-number">2.</span> <span class="nav-text">局部内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#匿名内部类"><span class="nav-number">3.</span> <span class="nav-text">匿名内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态内部类"><span class="nav-number">4.</span> <span class="nav-text">静态内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#成员内部类如何无条件引用外部类成员？与静态内部类区别？"><span class="nav-number">5.</span> <span class="nav-text">成员内部类如何无条件引用外部类成员？与静态内部类区别？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么局部内部类和匿名内部类只能访问局部final变量？"><span class="nav-number">6.</span> <span class="nav-text">为什么局部内部类和匿名内部类只能访问局部final变量？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内部类使用场景和优点"><span class="nav-number">7.</span> <span class="nav-text">内部类使用场景和优点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编程测试"><span class="nav-number">8.</span> <span class="nav-text">编程测试</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#成员内部类"><span class="nav-number">2.</span> <span class="nav-text">成员内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#局部内部类"><span class="nav-number">3.</span> <span class="nav-text">局部内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#匿名内部类"><span class="nav-number">4.</span> <span class="nav-text">匿名内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态内部类"><span class="nav-number">5.</span> <span class="nav-text">静态内部类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#成员内部类如何无条件引用外部类成员？与静态内部类区别？"><span class="nav-number">6.</span> <span class="nav-text">成员内部类如何无条件引用外部类成员？与静态内部类区别？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么局部内部类和匿名内部类只能访问局部final变量？"><span class="nav-number">7.</span> <span class="nav-text">为什么局部内部类和匿名内部类只能访问局部final变量？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内部类使用场景和优点"><span class="nav-number">8.</span> <span class="nav-text">内部类使用场景和优点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#编程测试"><span class="nav-number">9.</span> <span class="nav-text">编程测试</span></a></li></ol></div>
             
 
           </div>
