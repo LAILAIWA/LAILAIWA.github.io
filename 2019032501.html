@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="介绍Java中的IO和NIO">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IO和NIO">
+<meta property="og:url" content="http://linyishui.top/2019032501.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="介绍Java中的IO和NIO">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_235228.jpg">
+<meta property="og:updated_time" content="2019-03-26T08:25:36.356Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="IO和NIO">
+<meta name="twitter:description" content="介绍Java中的IO和NIO">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_235228.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019032501.html"/>
+
+
+
+
+
+  <title>IO和NIO | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019032501.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">IO和NIO</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-25T16:55:34+08:00">
+                2019-03-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,921
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  介绍Java中的IO和NIO
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_235228.jpg" rel="gallery_cjtpinbkr003rv0tm5hhkkqxa"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_235228.jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        <h1 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a><strong>内存映射</strong></h1><p>&emsp;&emsp;操作系统可以利用虚拟内存来将一个文件或文件其中一部分映射到内存中，可以像访问内存数组一样去处理文件，这比传统的文件操作要快很多。</p>
+<p>&emsp;&emsp;java.nio包提供了内存映射的办法，首先从文件中获取一个通道channel，通道就是对磁盘文件的一个抽象，可以通过通道来访问内存映射，文件加锁机制以及文件间快速数据传递等操作系统特性。Channel封装了对数据源的操作，数据源可以是文件或socket等，Channel主要用来做<strong>非阻塞式读写</strong>。</p>
+<p>&emsp;&emsp;所以Channel分为FileChannel和SocketChannel两类，SocketChannel又分为如下三类。</p>
+<ol>
+<li>ServerSocketChannel 监听端口</li>
+<li>SocketChannel TCP通信</li>
+<li>DatagramChannel UDP通信</li>
+</ol>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.nio.channels;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">FileChannel</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractInterruptibleChannel</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">SeekableByteChannel</span>, <span class="title">GatheringByteChannel</span>, <span class="title">ScatteringByteChannel</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">FileChannel</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> FileChannel open(Path path,</span><br><span class="line">                                   Set&lt;? <span class="keyword">extends</span> OpenOption&gt; options,</span><br><span class="line">                                   FileAttribute&lt;?&gt;... attrs)</span><br><span class="line">        <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">        FileSystemProvider provider = path.getFileSystem().provider();</span><br><span class="line">        <span class="function"><span class="keyword">return</span> provider.<span class="title">newFileChannel</span><span class="params">(path, options, attrs)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(&#123;<span class="string">"unchecked"</span>, <span class="string">"rawtypes"</span>&#125;) <span class="comment">// generic array construction</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileAttribute&lt;?&gt;[] NO_ATTRIBUTES = <span class="keyword">new</span> FileAttribute[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> FileChannel open(Path path, OpenOption... options)</span><br><span class="line">        <span class="keyword">throws</span> IOException</span><br><span class="line">    &#123;</span><br><span class="line">        Set&lt;OpenOption&gt; set = <span class="keyword">new</span> HashSet&lt;&gt;(options.length);</span><br><span class="line">        Collections.addAll(set, options);</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">open</span><span class="params">(path, set, NO_ATTRIBUTES)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// -- Channel operations --</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">int</span> <span class="title">read</span><span class="params">(ByteBuffer dst)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">long</span> read(ByteBuffer[] dsts, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">long</span> <span class="title">read</span><span class="params">(ByteBuffer[] dsts)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">read</span><span class="params">(dsts, <span class="number">0</span>, dsts.length)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">int</span> <span class="title">write</span><span class="params">(ByteBuffer src)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">long</span> write(ByteBuffer[] srcs, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">long</span> <span class="title">write</span><span class="params">(ByteBuffer[] srcs)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">write</span><span class="params">(srcs, <span class="number">0</span>, srcs.length)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// -- Other operations --</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">long</span> <span class="title">position</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">FileChannel <span class="title">position</span><span class="params">(<span class="keyword">long</span> newPosition)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">long</span> <span class="title">size</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">FileChannel <span class="title">truncate</span><span class="params">(<span class="keyword">long</span> size)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">void</span> <span class="title">force</span><span class="params">(<span class="keyword">boolean</span> metaData)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">long</span> transferTo(<span class="keyword">long</span> position, <span class="keyword">long</span> count,</span><br><span class="line">                                    WritableByteChannel <span class="keyword">target</span>)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">long</span> transferFrom(ReadableByteChannel src,</span><br><span class="line">                                      <span class="keyword">long</span> position, <span class="keyword">long</span> count)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">int</span> <span class="title">read</span><span class="params">(ByteBuffer dst, <span class="keyword">long</span> position)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">int</span> <span class="title">write</span><span class="params">(ByteBuffer src, <span class="keyword">long</span> position)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// -- Memory-mapped buffers --</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MapMode</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Mode for a read-only mapping.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> MapMode READ_ONLY</span><br><span class="line">            = <span class="keyword">new</span> MapMode(<span class="string">"READ_ONLY"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Mode for a read/write mapping.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> MapMode READ_WRITE</span><br><span class="line">            = <span class="keyword">new</span> MapMode(<span class="string">"READ_WRITE"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * Mode for a private (copy-on-write) mapping.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> MapMode PRIVATE</span><br><span class="line">            = <span class="keyword">new</span> MapMode(<span class="string">"PRIVATE"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">MapMode</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="function">String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> name;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> MappedByteBuffer map(MapMode mode,</span><br><span class="line">                                         <span class="keyword">long</span> position, <span class="keyword">long</span> size)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// -- Locks --</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> FileLock lock(<span class="keyword">long</span> position, <span class="keyword">long</span> size, <span class="keyword">boolean</span> shared)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function">FileLock <span class="title">lock</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">lock</span><span class="params">(<span class="number">0</span>L, Long.MAX_VALUE, <span class="keyword">false</span>)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> FileLock tryLock(<span class="keyword">long</span> position, <span class="keyword">long</span> size, <span class="keyword">boolean</span> shared)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function">FileLock <span class="title">tryLock</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">tryLock</span><span class="params">(<span class="number">0</span>L, Long.MAX_VALUE, <span class="keyword">false</span>)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">SocketChannel</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSelectableChannel</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">ByteChannel</span>, <span class="title">ScatteringByteChannel</span>, <span class="title">GatheringByteChannel</span>, <span class="title">NetworkChannel</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">SocketChannel</span><span class="params">(SelectorProvider provider)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(provider);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function">SocketChannel <span class="title">open</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SelectorProvider.provider().openSocketChannel();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> SocketChannel open(SocketAddress remote)</span><br><span class="line">        <span class="keyword">throws</span> IOException</span><br><span class="line">    &#123;</span><br><span class="line">        SocketChannel sc = open();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            sc.connect(remote);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable x) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                sc.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable suppressed) &#123;</span><br><span class="line">                x.addSuppressed(suppressed);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">throw</span> x;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">assert</span> sc.<span class="title">isConnected</span><span class="params">()</span></span>;</span><br><span class="line">        <span class="keyword">return</span> sc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">int</span> <span class="title">validOps</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (SelectionKey.OP_READ</span><br><span class="line">                | SelectionKey.OP_WRITE</span><br><span class="line">                | SelectionKey.OP_CONNECT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// -- Socket-specific operations --</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> SocketChannel bind(SocketAddress local)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> &lt;T&gt; SocketChannel setOption(SocketOption&lt;T&gt; name, T value)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">SocketChannel <span class="title">shutdownInput</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">SocketChannel <span class="title">shutdownOutput</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">Socket <span class="title">socket</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isConnected</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isConnectionPending</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">boolean</span> <span class="title">connect</span><span class="params">(SocketAddress remote)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">boolean</span> <span class="title">finishConnect</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">SocketAddress <span class="title">getRemoteAddress</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// -- ByteChannel operations --</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">int</span> <span class="title">read</span><span class="params">(ByteBuffer dst)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">long</span> read(ByteBuffer[] dsts, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">long</span> <span class="title">read</span><span class="params">(ByteBuffer[] dsts)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">read</span><span class="params">(dsts, <span class="number">0</span>, dsts.length)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">int</span> <span class="title">write</span><span class="params">(ByteBuffer src)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">long</span> write(ByteBuffer[] srcs, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span><br><span class="line">        <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">long</span> <span class="title">write</span><span class="params">(ByteBuffer[] srcs)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="title">write</span><span class="params">(srcs, <span class="number">0</span>, srcs.length)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="function">SocketAddress <span class="title">getLocalAddress</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Channel通过write()，read()方法读取和写入字节流，相较于通过Stream读取字节流其特点是封装了异步操作。</p>
+<p>&emsp;&emsp;Channel提供了Scatter/Gather功能，也叫本地矢量I/O，就是在多个缓冲区上实现一个简单的I/O操作。比如一个write操作，数据从不同缓冲区按顺序抽取即gather，通过Channel发送出去。相反read操作就是按顺序散布scatter。缓冲区自身不需要具备Scatter/Gather功能，目前大部分操作系统都支持这种本地矢量I/O。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ByteBuffer[] </span><span class="keyword">bufferArray </span>= &#123;<span class="keyword">buffer1, </span><span class="keyword">buffer2&#125;;</span></span><br><span class="line"><span class="keyword">socketChannel.write(bufferArray);</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过调用FileChannel类的map方法可以获取一个ByteBuffer缓冲区，可以指定想要映射的文件区域与映射模式。</p>
+<p>&emsp;&emsp;映射模式分为三种：</p>
+<ul>
+<li>FileChannel.MapMode.READ_ONLY 缓冲区只读，尝试写入抛出ReadOnlyBufferException异常</li>
+<li>FileChannel.MapMode.READ_WRITE 缓冲区可写，写操作会在某个时刻回写到文件中，但其它同步进行程序不一定可以立刻看到修改。</li>
+<li>FileChannel.MapMode.PRIVATE 缓冲区可写，但只在缓冲区修改，文件并不会被影响。</li>
+</ul>
+<hr>
+<h1 id="缓冲区"><a href="#缓冲区" class="headerlink" title="缓冲区"></a><strong>缓冲区</strong></h1><p>&emsp;&emsp;缓冲区Buffer是一个抽象类，其有一系列子类ByteBuffer，CharBuffer等，支持顺序和随机数据访问，StringBuffer并不属于这一系列。</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Buffer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Invariants: mark &lt;= position &lt;= limit &lt;= capacity</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mark = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> position = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> limit;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> capacity;</span><br><span class="line"></span><br><span class="line">    Buffer(<span class="keyword">int</span> mark, <span class="keyword">int</span> pos, <span class="keyword">int</span> lim, <span class="keyword">int</span> cap) &#123;       <span class="comment">// package-private</span></span><br><span class="line">        <span class="keyword">if</span> (cap &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> createCapacityException(cap);</span><br><span class="line">        <span class="keyword">this</span>.capacity = cap;</span><br><span class="line">        limit(lim);</span><br><span class="line">        position(pos);</span><br><span class="line">        <span class="keyword">if</span> (mark &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mark &gt; pos)</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"mark &gt; position: ("</span></span><br><span class="line">                                                   + mark + <span class="string">" &gt; "</span> + pos + <span class="string">")"</span>);</span><br><span class="line">            <span class="keyword">this</span>.mark = mark;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;缓冲区结构就是一个数组，其四个属性mark &lt;= position &lt;= limit &lt;= capacity，也就是0&lt;=标记&lt;=位置&lt;=界限&lt;=容量</p>
+<ol>
+<li>容量Capacity，容纳元素最大数量，不可修改。</li>
+<li>上届Limit，当前数据总数。</li>
+<li>位置Position，下一个元素位置，下次读写所在位置。</li>
+<li>标记Mark，上一次读写的位置，可用于重复一个读写操作。</li>
+</ol>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">256</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用轨迹：ByteBuffer是抽象类，继承自Buffer</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function">ByteBuffer <span class="title">allocate</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (capacity &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">throw</span> createCapacityException(capacity);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> HeapByteBuffer(capacity, capacity);<span class="comment">//返回局部内部类HeapByteBuffer</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">HeapByteBuffer(<span class="keyword">int</span> cap, <span class="keyword">int</span> lim) &#123;            <span class="comment">// package-private</span></span><br><span class="line">    <span class="keyword">super</span>(<span class="number">-1</span>, <span class="number">0</span>, lim, cap, <span class="keyword">new</span> <span class="keyword">byte</span>[cap], <span class="number">0</span>);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    hb = new byte[cap];</span></span><br><span class="line"><span class="comment">    offset = 0;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">this</span>.address = arrayBaseOffset;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ByteBuffer(<span class="keyword">int</span> mark, <span class="keyword">int</span> pos, <span class="keyword">int</span> lim, <span class="keyword">int</span> cap,   <span class="comment">// package-private</span></span><br><span class="line">             <span class="keyword">byte</span>[] hb, <span class="keyword">int</span> offset)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">super</span>(mark, pos, lim, cap);</span><br><span class="line">    <span class="keyword">this</span>.hb = hb;</span><br><span class="line">    <span class="keyword">this</span>.offset = offset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;创建一个256字节的缓冲区，初始mark = -1，pos = 0，limit = 256，capacity = 256</p>
+<p>&emsp;&emsp;缓冲区存取主要通过put()，get()方法，可以通过position()读取指定位置的元素，当新建缓冲区时，limit为总量。不断通过put()把数据放入缓冲区，直到数据耗尽或到达容量，然后可以开始读取操作，若要从头开始读取应该调整limit，filp()方法封装了这个操作。调用filp()将界限设为当前位置，即最后一个元素位置。不断调用get()将所有缓冲区数据读出后，调用clear()清空数据，来为下一次使用作准备，clear()会将pos回归0，limit回归容量大小。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Buffer flip() &#123;</span><br><span class="line">    limit = <span class="built_in">position</span>;</span><br><span class="line">    <span class="built_in">position</span> = <span class="number">0</span>;</span><br><span class="line">    mark = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Buffer <span class="built_in">clear</span>() &#123;</span><br><span class="line">    <span class="built_in">position</span> = <span class="number">0</span>;</span><br><span class="line">    limit = capacity;</span><br><span class="line">    mark = <span class="number">-1</span>;</span><br><span class="line">    <span class="built_in">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;因为涉及到修改limit，而缓冲区又根据limit限制了读写操作，所以使用时要注意limit的变化不要影响到自己的读写操作。</p>
+<p>&emsp;&emsp;调用mark记录当前位置，position会在读写操作后改变，可以通过reset()方法恢复position。</p>
+<p>&emsp;&emsp;重读可以调用rewind()或mark/reset()等方法，获取缓冲区可以通过ByteBuffer.allocate()或ByteBuffer.wrap()等方法。</p>
+<h2 id="emsp-emsp-可以使用通道-缓冲区的方式来代替随机访问文件，会提高读写性能。"><a href="#emsp-emsp-可以使用通道-缓冲区的方式来代替随机访问文件，会提高读写性能。" class="headerlink" title="&emsp;&emsp;可以使用通道+缓冲区的方式来代替随机访问文件，会提高读写性能。"></a>&emsp;&emsp;可以使用通道+缓冲区的方式来代替随机访问文件，会提高读写性能。</h2><h1 id="文件加锁机制"><a href="#文件加锁机制" class="headerlink" title="文件加锁机制"></a><strong>文件加锁机制</strong></h1><p>&emsp;&emsp;实际使用中不难避免同时多个执行的程序对文件读写的情况，所以需要某种机制来避免这类情况造成文件损坏，文件锁可以控制对文件或文件范围内字节的访问。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">try</span> &#123;</span><br><span class="line">    Path path = Paths.<span class="built_in">get</span>(<span class="string">"D:/test.txt"</span>);</span><br><span class="line">    FileChannel fc = FileChannel.<span class="built_in">open</span>(path);</span><br><span class="line">    FileLock lock1 = fc.lock();<span class="comment">//会阻塞直到获得锁</span></span><br><span class="line">    FileLock lock2 = fc.tryLock();<span class="comment">//立即返回，要么返回锁，要么返回null</span></span><br><span class="line">&#125;<span class="built_in">catch</span> (IOException ex)&#123;</span><br><span class="line">    ex.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;源码如下。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="function">FileLock <span class="title">lock</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">return</span> <span class="title">lock</span><span class="params">(<span class="number">0</span>L, Long.MAX_VALUE, <span class="keyword">false</span>)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> FileLock lock(<span class="keyword">long</span> position, <span class="keyword">long</span> size, <span class="keyword">boolean</span> shared) </span><br><span class="line">    <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="function">FileLock <span class="title">tryLock</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">return</span> <span class="title">tryLock</span><span class="params">(<span class="number">0</span>L, Long.MAX_VALUE, <span class="keyword">false</span>)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> FileLock tryLock(<span class="keyword">long</span> position, <span class="keyword">long</span> size, <span class="keyword">boolean</span> shared)</span><br><span class="line">    <span class="keyword">throws</span> IOException;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;两种调用都可以只锁定文件部分内容(假如size设定到文件尾，新增的数据是默认不加锁，可以通过Long.MAX_VALUE来锁所有字节)，share为false表示锁目的是读写，为true表示为共享锁，允许多进程读入，并阻止获取独占锁的行为。</p>
+<p>&emsp;&emsp;释放锁和释放资源一样，都可以利用try-resource方式确保释放。</p>
+<p>&emsp;&emsp;文件加锁依赖操作系统，不同操作系统会有不同的设计和限制锁机制，文件锁归虚拟机所有，所以所有在同一虚拟机上启动的多个程序不可能同时获得同一个文件的锁。</p>
+<hr>
+<h1 id="IO模型"><a href="#IO模型" class="headerlink" title="IO模型"></a><strong>IO模型</strong></h1><p>&emsp;&emsp;酱油店就是文件，酱油即所需数据。</p>
+<h2 id="完全阻塞模型"><a href="#完全阻塞模型" class="headerlink" title="完全阻塞模型"></a><strong>完全阻塞模型</strong></h2><p>&emsp;&emsp;前一个请求未释放资源，后一个请求原地等待。</p>
+<p>&emsp;&emsp;比如小明出门打酱油，结果酱油店爆满，小明只能一直站着排队等前面人打完。</p>
+<h2 id="非阻塞I-O模型"><a href="#非阻塞I-O模型" class="headerlink" title="非阻塞I/O模型"></a><strong>非阻塞I/O模型</strong></h2><p>&emsp;&emsp;当请求的I/O操作无法完成时，返回一个错误信息，进程仍然工作进行轮询直到操作完成。</p>
+<p>&emsp;&emsp;比如小明出门打酱油，结果酱油店爆满，小明一看就回家告诉妈妈人太多没买到，写了会作业，小明又接着去打酱油，直到买到酱油为止。</p>
+<h2 id="I-O多路复用模型"><a href="#I-O多路复用模型" class="headerlink" title="I/O多路复用模型"></a><strong>I/O多路复用模型</strong></h2><p>&emsp;&emsp;请求I/O操作无法完成，进程阻塞，但进程会同时检测多个资源，直到有资源可用。</p>
+<p>&emsp;&emsp;比如小明出门打酱油，结果酱油店爆满，小明就用特殊的方法同时排队等了好几家酱油店(影分身之术)，直到有一家可以了分身就告知本体，本体再完成打酱油工作。</p>
+<h2 id="信号驱动模型SIGIO"><a href="#信号驱动模型SIGIO" class="headerlink" title="信号驱动模型SIGIO"></a><strong>信号驱动模型SIGIO</strong></h2><p>&emsp;&emsp;SIGIO和I/O复用的区别就在于后者会阻塞应用程序，而前者则不会，请求I/O操作失败，返回一个信号处理器，进程继续运行，待资源释放时，进程在信号处理器处理收到信号，并通知系统可以读取数据。</p>
+<p>&emsp;&emsp;比如小明要打酱油，结果酱油店爆满，老板娘借给小明了自己的手机，然后老板娘等空闲了就打电话通知小明让他来取酱油。</p>
+<h2 id="异步I-0模型ASYNC-IO"><a href="#异步I-0模型ASYNC-IO" class="headerlink" title="异步I/0模型ASYNC IO"></a><strong>异步I/0模型ASYNC IO</strong></h2><p>&emsp;&emsp;请求I/O操作失败，进程不会阻塞，直接返回，等到数据操作结束，告知进程I/O操作已完成。</p>
+<p>&emsp;&emsp;比如小明要打酱油，结果酱油店爆满，小明告诉老板娘送货地址，老板娘把酱油送到并告知了小明。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java核心技术 卷Ⅱ》</p>
+</blockquote>
+<blockquote>
+<p><a href="https://blog.csdn.net/SkydivingWang/article/details/74917897" target="_blank" rel="noopener">https://blog.csdn.net/SkydivingWang/article/details/74917897</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019032102.html" rel="next" title="多线程，并发和同步">
+                <i class="fa fa-chevron-left"></i> 多线程，并发和同步
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存映射"><span class="nav-number">1.</span> <span class="nav-text">内存映射</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#缓冲区"><span class="nav-number">2.</span> <span class="nav-text">缓冲区</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#emsp-emsp-可以使用通道-缓冲区的方式来代替随机访问文件，会提高读写性能。"><span class="nav-number">2.1.</span> <span class="nav-text">  可以使用通道+缓冲区的方式来代替随机访问文件，会提高读写性能。</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件加锁机制"><span class="nav-number">3.</span> <span class="nav-text">文件加锁机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IO模型"><span class="nav-number">4.</span> <span class="nav-text">IO模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#完全阻塞模型"><span class="nav-number">4.1.</span> <span class="nav-text">完全阻塞模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非阻塞I-O模型"><span class="nav-number">4.2.</span> <span class="nav-text">非阻塞I/O模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I-O多路复用模型"><span class="nav-number">4.3.</span> <span class="nav-text">I/O多路复用模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信号驱动模型SIGIO"><span class="nav-number">4.4.</span> <span class="nav-text">信号驱动模型SIGIO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步I-0模型ASYNC-IO"><span class="nav-number">4.5.</span> <span class="nav-text">异步I/0模型ASYNC IO</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

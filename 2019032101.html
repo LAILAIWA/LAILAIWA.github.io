@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="介绍Java中的对象流和序列化，以及Path和Files处理文件。">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对象流和序列化">
+<meta property="og:url" content="http://linyishui.top/2019032101.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="介绍Java中的对象流和序列化，以及Path和Files处理文件。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg">
+<meta property="og:updated_time" content="2019-03-26T08:25:37.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对象流和序列化">
+<meta name="twitter:description" content="介绍Java中的对象流和序列化，以及Path和Files处理文件。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019032101.html"/>
+
+
+
+
+
+  <title>对象流和序列化 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019032101.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">对象流和序列化</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-21T14:26:01+08:00">
+                2019-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,397
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  介绍Java中的对象流和序列化，以及Path和Files处理文件。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg" rel="gallery_cjtpinbkq003ov0tmiabzdx3q"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        <h1 id="流"><a href="#流" class="headerlink" title="流"></a><strong>流</strong></h1><p>&emsp;&emsp;能够读出或写入一个字节序列的对象分别叫输入流，输出流。这些对象可以是文件，网络连接或内存块等。</p>
+<p>&emsp;&emsp;抽象类InputStream和OutputStream是I/O结构的基础。其抽象读写方法是基于字节读写，但并不方面处理Unicode格式，且读写方法执行时会阻塞，可以通过available()检查当前可读入字节数量，避免等待。</p>
+<p>&emsp;&emsp;在使用流后切记要即时的close()释放资源，前面<a href="../2019031601.html" title="Title">异常</a>文章中有介绍可以通过try-with-resource来实现无论何种情况自动释放资源，</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160102.png" alt="输入输出流的层次结构"></p>
+<p>&emsp;&emsp;Unicode格式可以使用抽象类Reader和Writer的子类。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160103.png" alt="Reader和Writer的层次结构"></p>
+<p>&emsp;&emsp;Closeable，Flushable，Readable和Appendable接口。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> InputStream <span class="keyword">implements</span> Closeable</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> OutputStream <span class="keyword">implements</span> Closeable, Flushable </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Reader <span class="keyword">implements</span> Readable, Closeable</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Writer <span class="keyword">implements</span> Appendable, Closeable, Flushable</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Closeable <span class="keyword">extends</span> AutoCloseable &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> close() <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Flushable &#123;</span><br><span class="line">    <span class="keyword">void</span> flush() <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Readable &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">read</span>(java.nio.CharBuffer cb) <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Appendable &#123;</span><br><span class="line"></span><br><span class="line">    Appendable <span class="keyword">append</span>(CharSequence csq) <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    Appendable <span class="keyword">append</span>(CharSequence csq, <span class="keyword">int</span> start, <span class="keyword">int</span> end) <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    Appendable <span class="keyword">append</span>(<span class="keyword">char</span> c) <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>Closeable接口扩展了AutoCloseable接口，所以可以使用try-with-resource语句，Closeable的close()方法限制只能抛出IOException，而AutoCloseable接口的close()方法则没有限制。InputStream，OutputStream，Reader和Writer都实现了Closeable接口。</p>
+</li>
+<li><p>Flushable的flush()方法通过写入缓冲输出到底层流来刷新当前流</p>
+</li>
+<li><p>Readable的read()方法需要CharBuffer类型参数，其表示内存中的缓冲区或内存映像的文件，可以顺序或随机的进行读写访问。</p>
+</li>
+<li><p>Appendable接口则可以添加字符或字符序列</p>
+</li>
+</ol>
+<p>&emsp;&emsp;Java分离职能来分类输入流和输出流，所以在实现某些功能时需要结合多种类型的流，Filter流的的子类用来向原生的字节流添加额外的功能，所以可以通过嵌套过滤器来添加多重功能。如下从文件中读取数字并引入缓冲区。</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataInputStream dis = <span class="keyword">new</span> <span class="type">DataInputStream</span>(<span class="keyword">new</span> <span class="type">BufferedInputStream</span>(<span class="keyword">new</span> <span class="type">FileInputStream</span>(<span class="string">"/test.txt"</span>)));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;多个流链接在一起时可以通过PushbackInputStream跟踪各个中介流，PushbackInputStream可以推回读入字节。</p>
+<p>&emsp;&emsp;DataInput和DataOutput定义了一些方法用来读写二进制格式数据</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"><span class="function"><span class="keyword">byte</span> <span class="title">readByte</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> b)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">byte</span> b[])</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;RandomAccessFile类可以在文件中的任何位置查找或写入数据，参数mode当值为”r”表示只读模式，”rws”表示更新时对数据和元数据的写磁盘操作进行同步读写，”rwd”表示更新时只对数据的写磁盘操作进行同步读写。</p>
+<p>&emsp;&emsp;ZipStream读写ZIP格式的压缩文档。</p>
+<hr>
+<h1 id="字符集"><a href="#字符集" class="headerlink" title="字符集"></a><strong>字符集</strong></h1><p>&emsp;&emsp;不同字符集对应不同的编码格式，java.nio包用Charset类统一了对字符集的转换，本地编码方式模式无法表示所有的unicode字符，当遇到不能表示的字符时会用?代替。</p>
+<p>&emsp;&emsp;通过字符集可以在字符串和字节序列之间转换。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//<span class="keyword">String </span>-&gt; 字节序列</span><br><span class="line"><span class="symbol">Charset</span> charset = Charset.forName(<span class="string">"UTF-8"</span>)<span class="comment">;</span></span><br><span class="line"><span class="keyword">String </span><span class="keyword">str </span>= <span class="string">"Hello世界"</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">ByteBuffer </span><span class="keyword">buffer </span>= charset.encode(<span class="keyword">str);</span></span><br><span class="line"><span class="keyword">byte[] </span><span class="keyword">bytes </span>= <span class="keyword">buffer.array();</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword">//字节序列 </span>-&gt; <span class="keyword">String </span></span><br><span class="line"><span class="keyword">ByteBuffer </span><span class="keyword">buffer1 </span>= <span class="keyword">ByteBuffer.wrap(bytes);</span></span><br><span class="line"><span class="keyword">CharBuffer </span>charBuffer = charset.decode(<span class="keyword">buffer1);</span></span><br><span class="line"><span class="keyword">String </span><span class="keyword">str1 </span>= charBuffer.toString()<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="对象流和序列化"><a href="#对象流和序列化" class="headerlink" title="对象流和序列化"></a><strong>对象流和序列化</strong></h1><p>&emsp;&emsp;Java支持<strong>对象序列化</strong>机制可以将任何对象写出到流中，并在之后读回。</p>
+<p>&emsp;&emsp;ObjectInputStream，ObjectOutputStream类。通过ObjectOutputStream保存对象数据，ObjectInputStream读回对象数据。</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Employee employee = <span class="keyword">new</span> <span class="type">Employee</span>(<span class="string">"张三"</span>,<span class="number">3000</span>,<span class="number">1995</span>,<span class="number">8</span>,<span class="number">1</span>);</span><br><span class="line">Manager manager = <span class="keyword">new</span> <span class="type">Manager</span>(<span class="string">"李四"</span>,<span class="number">8000</span>,<span class="number">1986</span>,<span class="number">12</span>,<span class="number">15</span>);</span><br><span class="line">oos.writeObject(employee);</span><br><span class="line">oos.writeObject(manager);</span><br><span class="line">ObjectInputStream <span class="keyword">in</span> = <span class="keyword">new</span> <span class="type">ObjectInputStream</span>(<span class="keyword">new</span> <span class="type">FileInputStream</span>(<span class="string">"test.dat"</span>));</span><br><span class="line">Employee e1 = (Employee)<span class="keyword">in</span>.readObject();</span><br><span class="line">Employee e2 = (Employee)<span class="keyword">in</span>.readObject();</span><br><span class="line">System.out.println(e1.toString());</span><br><span class="line">System.out.println(e2.toString());</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;结果如下。</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name<span class="string">[张三]</span> pay<span class="string">[3000]</span> year<span class="string">[1995]</span> month<span class="string">[8]</span> day<span class="string">[1]</span></span><br><span class="line">name<span class="string">[李四]</span> pay<span class="string">[8000]</span> year<span class="string">[1986]</span> month<span class="string">[12]</span> day<span class="string">[15]</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;writeObject()和readObject()方法只能写出对象，如果想使用基本数据类型需要实现DataInput和DataOutput定义的相对方法，对象流已经都实现了所需方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectInputStream</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">InputStream</span> <span class="keyword">implements</span> <span class="title">ObjectInput</span>, <span class="title">ObjectStreamConstants</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bin.readBoolean();</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> v = read();</span><br><span class="line">        <span class="keyword">if</span> (v &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EOFException();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (v != <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectOutputStream</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">OutputStream</span> <span class="keyword">implements</span> <span class="title">ObjectOutput</span>, <span class="title">ObjectStreamConstants</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeInt</span><span class="params">(<span class="keyword">int</span> val)</span>  <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        bout.writeInt(val);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeInt</span><span class="params">(<span class="keyword">int</span> v)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pos + <span class="number">4</span> &lt;= MAX_BLOCK_SIZE) &#123;</span><br><span class="line">            Bits.putInt(buf, pos, v);</span><br><span class="line">            pos += <span class="number">4</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dout.writeInt(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当一个对象被多个对象共享时，序列化过程是怎么样的呢？</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Employee employee = new Employee(<span class="string">"张三"</span>,<span class="number">3000</span>,<span class="number">1995</span>,<span class="number">8</span>,<span class="number">1</span>);</span><br><span class="line">Manager manager1 = new Manager(<span class="string">"李四"</span>,<span class="number">8000</span>,<span class="number">1986</span>,<span class="number">12</span>,<span class="number">15</span>);</span><br><span class="line">Manager manager2 = new Manager(<span class="string">"王五"</span>,<span class="number">7000</span>,<span class="number">1992</span>,<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">manager1.setEmployee(employee);</span><br><span class="line">manager2.setEmployee(employee);</span><br><span class="line">oos.writeObject(employee);</span><br><span class="line">oos.writeObject(manager1);</span><br><span class="line">oos.writeObject(manager2);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;每个对象都是用一个序列号保存，第一次调用时，将对象数据保存到流中，如果此对象已被保存过，只写出”与以保存序列号x对象相同”。对于流中的对象，第一次遇到其序列号时，构建对象，并使用流中的数据来初始化，再记录此序号和新对象之间的关联，当遇到”与以保存序列号x对象相同”此标记时，获取与序号关联的对象引用。</p>
+<p>&emsp;&emsp;对象序列化以特殊的文件格式来存储对象数据，通过对类的域进行排序，然后通过SHA安全散列算法得到SHA码，只取前8个字节作为类的指纹，指纹即其身份证明，可以通过对象的指纹和其所属类的指纹进行比对，当类信息改变时，指纹大概率会不同，所以当两者不同时就抛出一个异常。具体如何进行编码和排布对于当前的学习不是那么重要，只需要知道对象流输出中包含所有对象的类型和数据域，每个对象都被赋予一个序列号，相同对象的重复出现将被存储为对这个对象序列号的引用。 </p>
+<p>&emsp;&emsp;某些域是不可被序列化的或着说没有序列化的意义，Java可以通过transient关键字来标记这类域，详细可看这篇<a href="../2019010901.html" title="Title">static,final,transient,volatile等关键字原理作用</a>。</p>
+<p>&emsp;&emsp;可以通过定义readObject()和writeObject()方法来代替默认的自动序列化，除了让序列化机制来保存和恢复对象数据，类也可以自定义机制，首先需要实现Externalizable接口，并实现其定义的两个方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Externalizable</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这两个方法可以对包含超类在内的对象所有数据的存储和恢复进行管理，序列化机制在流中仅仅记录对象所属的类。在读入可外部化的类时，对象流将调用无参构造器创建一个对象，然后调用readExternal()方法。还有一点readObject()和writeObject()是私有的，只能被序列化机制调用，而readExternal()和writeExternal()是公共的。</p>
+<hr>
+<h1 id="序列化单例和类型安全的枚举"><a href="#序列化单例和类型安全的枚举" class="headerlink" title="序列化单例和类型安全的枚举"></a><strong>序列化单例和类型安全的枚举</strong></h1><p>&emsp;&emsp;<a href="../2019030501.html" title="Title">枚举类</a>这篇博客有提到序列化枚举类，当枚举类或使用单例模式进行序列化化时目标对象是唯一的，这其中隐藏着一个问题：即序列化后的对象和原对象是相等吗？</p>
+<p>&emsp;&emsp;序列化的对象是一个全新的对象，所以其它方式实现单例模式时，只要实现了Serializable接口，目标对象就不唯一了，所以需要加如readResolve()方法来避免这种情况。而使用Java中的枚举类时不会出现此问题，因为Jvm限制枚举类型及其枚举常量是唯一的，在序列化时只会将枚举对象的name属性输出到流中，反序列化时在通过Enum.valueOf()方法根据名字来查找枚举对象。同时Jvm禁止了枚举类的readObject()，writeObject()和readResolve()等方法，避免上述规范被破坏。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object readResolve() throws ObjectStreamException&#123;<span class="comment">//定义了此方法后，对象被序列化时会被调用，其返回的对象在之后会成为readObject()的返回值。</span></span><br><span class="line">    <span class="keyword">if</span>(filed == A) <span class="keyword">return</span> Demo.A;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(filed == B) <span class="keyword">return</span> Demo.B;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="克隆和序列化"><a href="#克隆和序列化" class="headerlink" title="克隆和序列化"></a><strong>克隆和序列化</strong></h1><p>&emsp;&emsp;<a href="../2018083001.html" title="Title">Java对象克隆</a>这篇博客中有谈到用序列化去实现克隆，相比重载equals()还要更为简单。只要声明对象为可序列化的，将其序列化到流中再读回，即可得到一个深拷贝的结果，但序列化的性能相比复制数据域来说是要慢很多的，所以个人觉得非深克隆的情况还是避免使用好一点。</p>
+<hr>
+<h1 id="文件"><a href="#文件" class="headerlink" title="文件"></a><strong>文件</strong></h1><p>&emsp;&emsp;学会使用Path和Files代替File</p>
+<p>&emsp;&emsp;Path表示一个目录名序列，还可以加一个文件名。</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Path</span> p = <span class="keyword">Paths</span>.get(<span class="string">"/demo"</span>,<span class="string">"test"</span>);//通过<span class="keyword">Paths</span>.get()创建<span class="keyword">Path</span>实例，可以使用绝对路径或相对路径。</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Path相关方法。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Path</span> path = <span class="type">Paths</span>.<span class="keyword">get</span>(<span class="string">"E:\\BlogUpload\\pic\\upload\\cover"</span>,<span class="string">"1"</span>);</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"文件名："</span> + path.getFileName());</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"名称元素的数量："</span> + path.getNameCount());</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"父路径："</span> + path.getParent());</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"根路径："</span> + path.getRoot());</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"是否是绝对路径："</span> + path.isAbsolute());</span><br><span class="line"><span class="comment">//startsWith()方法的参数既可以是字符串也可以是Path对象</span></span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"是否是以为给定的路径D:开始："</span> + path.<span class="built_in">startsWith</span>(<span class="string">"D:\\"</span>) );</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"该路径的字符串形式："</span> + path.<span class="built_in">toString</span>());</span><br><span class="line"></span><br><span class="line"><span class="comment">//.表示的是当前目录</span></span><br><span class="line"><span class="type">Path</span> currentDir = <span class="type">Paths</span>.<span class="keyword">get</span>(<span class="string">"."</span>);</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(currentDir.toAbsolutePath());</span><br><span class="line"><span class="type">Path</span> currentDir2 = <span class="type">Paths</span>.<span class="keyword">get</span>(<span class="string">".\\test.dat"</span>);</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"原始路径格式："</span>+currentDir2.toAbsolutePath());<span class="comment">//生成绝对路径</span></span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"执行normalize（）方法之后："</span>+currentDir2.toAbsolutePath().normalize());<span class="comment">//移除冗余的.和..部件</span></span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"执行toRealPath()方法之后："</span>+currentDir2.toRealPath());</span><br><span class="line"></span><br><span class="line"><span class="comment">//..表示父目录或者说是上一级目录：</span></span><br><span class="line"><span class="type">Path</span> currentDir3 = <span class="type">Paths</span>.<span class="keyword">get</span>(<span class="string">".."</span>);</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"原始路径格式："</span>+currentDir3.toAbsolutePath());</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"执行normalize（）方法之后："</span>+currentDir3.toAbsolutePath().normalize());</span><br><span class="line"><span class="type">System</span>.out.<span class="built_in">println</span>(<span class="string">"执行toRealPath()方法之后："</span>+currentDir3.toRealPath());</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;结果如下。</p>
+<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">文件名：1</span><br><span class="line">名称元素的数量：5</span><br><span class="line">父路径：E:<span class="symbol">\B</span>logUpload<span class="symbol">\p</span>ic<span class="symbol">\u</span>pload<span class="symbol">\c</span>over</span><br><span class="line">根路径：E:\</span><br><span class="line">是否是绝对路径：true</span><br><span class="line">是否是以为给定的路径D:开始：false</span><br><span class="line">该路径的字符串形式：E:<span class="symbol">\B</span>logUpload<span class="symbol">\p</span>ic<span class="symbol">\u</span>pload<span class="symbol">\c</span>over<span class="symbol">\1</span></span><br><span class="line"></span><br><span class="line">D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain<span class="symbol">\d</span>atastructure<span class="symbol">\.</span></span><br><span class="line">原始路径格式：D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain<span class="symbol">\d</span>atastructure<span class="symbol">\.</span><span class="symbol">\t</span>est.dat</span><br><span class="line">执行normalize（）方法之后：D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain<span class="symbol">\d</span>atastructure<span class="symbol">\t</span>est.dat</span><br><span class="line">执行toRealPath()方法之后：D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain<span class="symbol">\d</span>atastructure<span class="symbol">\t</span>est.dat</span><br><span class="line">原始路径格式：D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain<span class="symbol">\d</span>atastructure<span class="symbol">\.</span>.</span><br><span class="line">执行normalize（）方法之后：D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain</span><br><span class="line">执行toRealPath()方法之后：D:<span class="symbol">\J</span>ava<span class="symbol">\W</span>orkPlace<span class="symbol">\m</span>ain</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Path表示一个目录名序列，还可以加一个文件名。</p>
+<p>&emsp;&emsp;Path是接口，而Paths和Files就是其对应的工具类，区别于File的面向对象设计，Path和Files是面向接口设计。以下为Files提供的一些功能。</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">boolean pathExits = <span class="keyword">Files</span>.exists(path,new LinkOption[]&#123;LinkOption.NOFOLLOW_LINKS&#125;);<span class="comment">//检测时不包含符号链接文件</span></span><br><span class="line"><span class="keyword">System</span>.out.println(<span class="string">"pathExits："</span>+pathExits);</span><br><span class="line">Path target = Paths.get(<span class="string">"D:\\a.txt"</span>);</span><br><span class="line">Path newDir = <span class="keyword">Files</span>.createDirectories(path);<span class="comment">//创建文件夹,会创建所有不存在目录，createDirectory() 则在父目录不存在时抛出FileAlreadyExistsException</span></span><br><span class="line"><span class="keyword">Files</span>.delete(target);<span class="comment">//删除文件或目录</span></span><br><span class="line"><span class="keyword">Files</span>.copy(target,newDir);<span class="comment">//复制文件，把一个文件从一个地址复制到另一个位置，增加参数StandardCopyOption.REPLACE_EXISTING可以覆盖已存在的目标文件</span></span><br><span class="line"><span class="keyword">Files</span>.move(target,newDir);<span class="comment">//移动文件，就是复制并删除原文件，增加参数StandardCopyOption.REPLACE_EXISTING可以覆盖已存在的目标文件</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">Files</span>.exists(target))</span><br><span class="line">    <span class="keyword">Files</span>.createFile(target);<span class="comment">//创建文件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取文件相关属性</span></span><br><span class="line"><span class="keyword">System</span>.out.println(<span class="keyword">Files</span>.getLastModifiedTime(path));</span><br><span class="line"><span class="keyword">System</span>.out.println(<span class="keyword">Files</span>.size(path));</span><br><span class="line"><span class="keyword">System</span>.out.println(<span class="keyword">Files</span>.isSymbolicLink(path));</span><br><span class="line"><span class="keyword">System</span>.out.println(<span class="keyword">Files</span>.isDirectory(path));</span><br><span class="line"><span class="keyword">System</span>.out.println(<span class="keyword">Files</span>.readAttributes(path, <span class="string">"*"</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">//遍历单个文件夹， Files.walkFileTree()可以递归遍历目录</span></span><br><span class="line">Path dir = Paths.get(<span class="string">"D:\\Java"</span>);</span><br><span class="line">try(DirectoryStream&lt;Path&gt; stream = <span class="keyword">Files</span>.newDirectoryStream(dir))&#123;</span><br><span class="line">    <span class="keyword">for</span>(Path e : stream)&#123;</span><br><span class="line">        <span class="keyword">System</span>.out.println(e.getFileName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Files也可以通过实现的read和write方法对文件进行简洁的读写，但如果是较大的文件还是应该使用流来处理。</p>
+<p>&emsp;&emsp;Files相较File通过数组来存储目录中的所有文件，而是生成了一个Iterable对象，迭代器遍历对于声明了RandomAccessList的数组相较for循环要快。</p>
+<p>&emsp;&emsp;面向接口设计，可以有效的降低耦合度，面向对象需要涉及到对象之间的交互问题，而接口本质上是规范和约束，也就是系统设计者的理解，比较适合设计和开发分离的情况。如今的Java流行框架都提倡这种模式，在接口中定义行为，然后在业务中去实现，将实现由框架管理，即控制反转。</p>
+<p>&emsp;&emsp;但当系统业务比较简单，只是controller，service，dao之间相互调用，不存在设计和实现的分离，那么就没要再采用这种模式来增加工作量。</p>
+<p>&emsp;&emsp;更多的相关内容，我会抽时间在设计模式等相关博客中整理一下。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java核心技术 卷Ⅱ》</p>
+</blockquote>
+<blockquote>
+<p><a href="https://blog.csdn.net/qq_34337272/article/details/80349017" target="_blank" rel="noopener">https://blog.csdn.net/qq_34337272/article/details/80349017</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019031802.html" rel="next" title="Lambda表达式">
+                <i class="fa fa-chevron-left"></i> Lambda表达式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019032102.html" rel="prev" title="多线程，并发和同步">
+                多线程，并发和同步 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#流"><span class="nav-number">1.</span> <span class="nav-text">流</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符集"><span class="nav-number">2.</span> <span class="nav-text">字符集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象流和序列化"><span class="nav-number">3.</span> <span class="nav-text">对象流和序列化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#序列化单例和类型安全的枚举"><span class="nav-number">4.</span> <span class="nav-text">序列化单例和类型安全的枚举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#克隆和序列化"><span class="nav-number">5.</span> <span class="nav-text">克隆和序列化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件"><span class="nav-number">6.</span> <span class="nav-text">文件</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
