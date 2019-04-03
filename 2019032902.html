@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="锁机制">
+<meta property="og:url" content="http://linyishui.top/2019032902.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg">
+<meta property="og:updated_time" content="2019-04-02T08:52:39.385Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="锁机制">
+<meta name="twitter:description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019032902.html"/>
+
+
+
+
+
+  <title>锁机制 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019032902.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">锁机制</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-29T17:13:07+08:00">
+                2019-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,675
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          
+          
+            <div class="post-gallery-row">
+              <a class="post-gallery-img fancybox"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg" rel="gallery_cju0vr3bi005alstmsilopauy"
+                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg" itemprop="contentUrl"/>
+              </a>
+            
+          
+
+          
+          </div>
+        </div>
+      
+
+      
+        <h1 id="前文"><a href="#前文" class="headerlink" title="前文"></a><strong>前文</strong></h1><p>&emsp;&emsp;在上篇博客<a href="../2019032102.html" title="Title">线程，并发和同步</a>中通过一个银行账户的存取来表示多线程运行，但因为线程不安全，导致并发执行时总金额异常，改写测试例子中Bank.transfer()方法，增加以下锁机制。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Lock</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transfer</span>(<span class="params"><span class="keyword">int</span> <span class="keyword">from</span>, <span class="keyword">int</span> to, <span class="keyword">double</span> amount</span>) throws InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   bankLock.<span class="keyword">lock</span>();</span><br><span class="line">   <span class="keyword">try</span></span><br><span class="line">   &#123;</span><br><span class="line">      <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)</span><br><span class="line">         sufficientFunds.<span class="keyword">await</span>();</span><br><span class="line">      System.<span class="keyword">out</span>.print(Thread.currentThread());</span><br><span class="line">      accounts[<span class="keyword">from</span>] -= amount;</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" %10.2f from %d to %d"</span>, amount, <span class="keyword">from</span>, to);</span><br><span class="line">      accounts[to] += amount;</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" Total Balance: %10.2f%n"</span>, getTotalBalance());</span><br><span class="line">      sufficientFunds.signalAll();</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">finally</span></span><br><span class="line">   &#123;</span><br><span class="line">      bankLock.unlock();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getTotalBalance</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   bankLock.<span class="keyword">lock</span>();</span><br><span class="line">   <span class="keyword">try</span></span><br><span class="line">   &#123;</span><br><span class="line">      <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">double</span> a : accounts)</span><br><span class="line">         sum += a;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> sum;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">finally</span></span><br><span class="line">   &#123;</span><br><span class="line">      bankLock.unlock();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//synchronized</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> synchronized <span class="keyword">void</span> <span class="title">transfer</span>(<span class="params"><span class="keyword">int</span> <span class="keyword">from</span>, <span class="keyword">int</span> to, <span class="keyword">double</span> amount</span>) throws InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)</span><br><span class="line">      wait();</span><br><span class="line">   System.<span class="keyword">out</span>.print(Thread.currentThread());</span><br><span class="line">   accounts[<span class="keyword">from</span>] -= amount;</span><br><span class="line">   System.<span class="keyword">out</span>.printf(<span class="string">" %10.2f from %d to %d"</span>, amount, <span class="keyword">from</span>, to);</span><br><span class="line">   accounts[to] += amount;</span><br><span class="line">   System.<span class="keyword">out</span>.printf(<span class="string">" Total Balance: %10.2f%n"</span>, getTotalBalance());</span><br><span class="line">   notifyAll();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> synchronized <span class="keyword">double</span> <span class="title">getTotalBalance</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">double</span> a : accounts)</span><br><span class="line">      sum += a;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="什么是锁"><a href="#什么是锁" class="headerlink" title="什么是锁"></a><strong>什么是锁</strong></h1><p>&emsp;&emsp;要学习锁机制，可能浅学会更加容易一些，但脱离的理论和底层细节，在知识点的理解上面就会有不确定的偏差值，久而久之点和点之间矛盾越来越多，知识也没有了统一性了，所以在回顾锁的应用之前，要先学习一下Java中怎么定义和实现锁这个东西的。</p>
+<p>&emsp;&emsp;Java提供了多种锁的实现方式，如synchronized关键字，ReentrantLock类等，详细内容我会在这些博客中再整理回顾以下：<a href="../2019032701.html" title="Title">synchronized</a>，<a href="../2019040201.html" title="Title">synchronized</a>，<a href="../2019032901.html" title="Title">ReentrantLock</a></p>
+<p>&emsp;&emsp;以下只是简单的整理一些相关的基础概念。</p>
+<hr>
+<h1 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a><strong>Lock</strong></h1><p>&emsp;&emsp;当线程1被中断时，线程2因为无法获得锁而被阻塞在lock()，等待线程1执行完毕释放锁，线程2方能开始运行。通过锁机制，保证了多线程执行时操作的原子性，从而使运行时总金额能保持正确性，当然会损失掉一些性能。</p>
+<p>&emsp;&emsp;需要注意ReentrantLock锁，其锁的是对象，只有多线程调用同一对象的方法时才会阻塞，不然互不影响。</p>
+<blockquote>
+<p>锁是可重入的，线程可以重复的获得已持有的锁，所以锁会实现一个计数器来根据对lock()的嵌套调用，线程每一次调用lock()都要执行unlock()来解锁，因为这个特性，所以被某个锁保护的代码可以调用使用同一个锁的方法。</p>
+</blockquote>
+<p>&emsp;&emsp;所以调用Bank.transfer()方法时，又调用了Bank.getTotalBalance()方法，所以此时计数为2，退出时计数退为1，当transfer()也执行结束，计数退为0，线程释放锁。</p>
+<hr>
+<h1 id="条件对象"><a href="#条件对象" class="headerlink" title="条件对象"></a><strong>条件对象</strong></h1><p>&emsp;&emsp;在线程获得锁后，却需要满足某些条件才能执行时，需要引入条件对象或叫条件变量。</p>
+<p>&emsp;&emsp;在测试用例的银行实现中增加需求：转移资金需要满足当前余额大于转出额度。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (accounts[<span class="keyword">from</span>] &gt;= amount)&#123;<span class="comment">//若线程在判断通过之后，与执行之前被中断，则很有可能会导致执行时其实并不满足条件约束</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bankLock.<span class="keyword">lock</span>();</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)<span class="comment">//当账户余额不足，等待直到另外一个账户向此账户注入资金，但此线程拥有锁，就会排斥其他线程的操作，所以需要条件对象Condition。</span></span><br><span class="line">        sufficientFunds.<span class="keyword">await</span>();<span class="comment">//此线程会阻塞，并放弃锁，这时其他线程就可以对此对象进行操作了。</span></span><br><span class="line">    ...</span><br><span class="line">    sufficientFunds.signalAll();<span class="comment">//此调用激活所有因为条件而阻塞的线程，其中某个会从await()返回，获得锁并继续执行。</span></span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">     bankLock.unlock();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Condition sufficientFunds;</span><br><span class="line">sufficientFunds = bankLock.newCondition();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>调用await()阻塞的线程和等待锁阻塞的线程不同，前者进入条件的等待集合，当锁可用时，此线程不能解除阻塞，需要等到另一线程调用同个条件的signalAll()方法才行。</p>
+</blockquote>
+<p>&emsp;&emsp;那么因为条件而阻塞的线程只能寄希望于有其他线程来帮助他脱离这一情况，否则他永远都不会再运行了，这就会导致死锁。</p>
+<p>总结上述内容：</p>
+<ul>
+<li>锁用来保护代码块</li>
+<li>锁用来管理试图进入被保护区域的线程</li>
+<li>锁拥有一个或多个条件对象</li>
+<li>每个条件对象管理获得锁后还不能执行的线程</li>
+</ul>
+<hr>
+<h1 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a><strong>synchronized</strong></h1><p>&emsp;&emsp;相比Lock，synchronized是嵌入Java语言的锁机制，synchronized修饰方法时，必须有对象锁才可以调用该方法。对比Lock的条件对象，可以通过Object.wait(),notifyAll()来代替。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">sufficientFunds</span><span class="selector-class">.await</span>(); <span class="selector-tag">-</span>&gt; <span class="selector-tag">wait</span>();</span><br><span class="line"><span class="selector-tag">sufficientFunds</span><span class="selector-class">.signalAll</span>(); <span class="selector-tag">-</span>&gt; <span class="selector-tag">notifyAll</span>();</span><br><span class="line"><span class="selector-tag">sufficientFunds</span><span class="selector-class">.signal</span>(); <span class="selector-tag">-</span>&gt; <span class="selector-tag">notify</span>();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>每个对象都有一个内部锁，每个锁都有一个内部条件，锁来管理想要调用方法的线程，条件来管理调用wait()的线程。</p>
+</blockquote>
+<p>内部锁有其局限：</p>
+<ul>
+<li>不能中断一个正在试图获得锁的线程</li>
+<li>试图获取锁时不能设置超时</li>
+<li>每个锁只有一个条件，可能是不够的</li>
+</ul>
+<p>&emsp;&emsp;所以在实际使用时，Java在java.util.concurrent包中提供了不同的机制来处理所有的加锁，即阻塞队列，相关详细内容我会在<a href="../2019032701.html" title="Title">阻塞队列</a>，<a href="../2019032101.html" title="Title">对象流和序列化</a>，<a href="../2019032501.html" title="Title">IO和NIO</a>这些博客中整理。</p>
+<p>&emsp;&emsp;当程序比较简单，并且快速开发时，可以尽量使用synchronized，因为代码非常简洁，且易于实现。</p>
+<hr>
+<h1 id="同步阻塞"><a href="#同步阻塞" class="headerlink" title="同步阻塞"></a><strong>同步阻塞</strong></h1><p>&emsp;&emsp;synchronized除了修饰方法外，还可以修饰代码块，即同步阻塞。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="keyword">lock</span> = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transfer</span>(<span class="params"><span class="keyword">int</span> <span class="keyword">from</span>, <span class="keyword">int</span> to, <span class="keyword">double</span> amount</span>) throws InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   synchronized (<span class="keyword">lock</span>)&#123;</span><br><span class="line">      accounts[<span class="keyword">from</span>] -= amount;</span><br><span class="line">      System.<span class="keyword">out</span>.print(Thread.currentThread());</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" %10.2f from %d to %d"</span>, amount, <span class="keyword">from</span>, to);</span><br><span class="line">      accounts[to] += amount;</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" Total Balance: %10.2f%n"</span>, getTotalBalance());</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;线程调用方法，获得lock的锁，但一般不会这样去实现。</p>
+<hr>
+<h1 id="final"><a href="#final" class="headerlink" title="final"></a><strong>final</strong></h1><p>&emsp;&emsp;若共享域被声明为final时，也可以线程安全的读取此域，因为线程会在构造函数结束后才能访问到此域，当然如果此域存储有其他对象的引用，或者是集合，对于其内的操作无法保证线程安全。</p>
+<hr>
+<h1 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a><strong>原子操作</strong></h1><p>&emsp;&emsp;若只对变量进行赋值操作，可以将其声明为volatile</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java核心技术 卷Ⅰ》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019032901.html" rel="next" title="ReentrantLock">
+                <i class="fa fa-chevron-left"></i> ReentrantLock
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019040201.html" rel="prev" title="volatile">
+                volatile <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前文"><span class="nav-number">1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是锁"><span class="nav-number">2.</span> <span class="nav-text">什么是锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock"><span class="nav-number">3.</span> <span class="nav-text">Lock</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件对象"><span class="nav-number">4.</span> <span class="nav-text">条件对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized"><span class="nav-number">5.</span> <span class="nav-text">synchronized</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步阻塞"><span class="nav-number">6.</span> <span class="nav-text">同步阻塞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">7.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原子操作"><span class="nav-number">8.</span> <span class="nav-text">原子操作</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
