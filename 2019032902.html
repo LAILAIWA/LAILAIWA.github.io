@@ -94,12 +94,12 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg">
-<meta property="og:updated_time" content="2019-04-02T08:52:39.385Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg">
+<meta property="og:updated_time" content="2019-04-03T08:57:42.839Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="锁机制">
 <meta name="twitter:description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞">
-<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg">
 
 
 
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,675
+                  2,314
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  9
                 </span>
               
             </div>
@@ -400,9 +400,9 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg" rel="gallery_cju0vr3bi005alstmsilopauy"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg" rel="gallery_cju116jto0048qwtmg2btqkmo"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
-                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg" itemprop="contentUrl"/>
+                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg" itemprop="contentUrl"/>
               </a>
             
           
@@ -463,6 +463,11 @@
 <h1 id="final"><a href="#final" class="headerlink" title="final"></a><strong>final</strong></h1><p>&emsp;&emsp;若共享域被声明为final时，也可以线程安全的读取此域，因为线程会在构造函数结束后才能访问到此域，当然如果此域存储有其他对象的引用，或者是集合，对于其内的操作无法保证线程安全。</p>
 <hr>
 <h1 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a><strong>原子操作</strong></h1><p>&emsp;&emsp;若只对变量进行赋值操作，可以将其声明为volatile</p>
+<hr>
+<h1 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a><strong>Q&amp;A</strong></h1><blockquote>
+<p><strong>什么是阻塞队列？阻塞队列的实现原理是什么？如何使用阻塞队列来实现生产者-消费者模型？</strong></p>
+<p>&emsp;&emsp;阻塞队列（BlockingQueue）是一个支持两个附加操作的队列。<br>这两个附加的操作是：在队列为空时，获取元素的线程会等待队列变为非空。当队列满时，存储元素的线程会等待队列可用。<br>阻塞队列常用于生产者和消费者的场景，生产者是往队列里添加元素的线程，消费者是从队列里拿元素的线程。阻塞队列就是生产者存放元素的容器，而消费者也只从容器里拿元素。<br>JDK7提供了7个阻塞队列。分别是：<br>ArrayBlockingQueue ：一个由数组结构组成的有界阻塞队列。<br>LinkedBlockingQueue ：一个由链表结构组成的有界阻塞队列。<br>PriorityBlockingQueue ：一个支持优先级排序的无界阻塞队列。<br>DelayQueue：一个使用优先级队列实现的无界阻塞队列。<br>SynchronousQueue：一个不存储元素的阻塞队列。<br>LinkedTransferQueue：一个由链表结构组成的无界阻塞队列。<br>LinkedBlockingDeque：一个由链表结构组成的双向阻塞队列。<br>Java 5之前实现同步存取时，可以使用普通的一个集合，然后在使用线程的协作和线程同步可以实现生产者，消费者模式，主要的技术就是用好，wait ,notify,notifyAll,sychronized这些关键字。而在java 5之后，可以使用阻塞队列来实现，此方式大大简少了代码量，使得多线程编程更加容易，安全方面也有保障。<br>BlockingQueue接口是Queue的子接口，它的主要用途并不是作为容器，而是作为线程同步的的工具，因此他具有一个很明显的特性，当生产者线程试图向BlockingQueue放入元素时，如果队列已满，则线程被阻塞，当消费者线程试图从中取出一个元素时，如果队列为空，则该线程会被阻塞，正是因为它所具有这个特性，所以在程序中多个线程交替向BlockingQueue中放入元素，取出元素，它可以很好的控制线程之间的通信。<br>阻塞队列使用最经典的场景就是socket客户端数据的读取和解析，读取数据的线程不断将数据放入队列，然后解析线程不断从队列取数据解析。</p>
+</blockquote>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -687,7 +692,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前文"><span class="nav-number">1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是锁"><span class="nav-number">2.</span> <span class="nav-text">什么是锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock"><span class="nav-number">3.</span> <span class="nav-text">Lock</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件对象"><span class="nav-number">4.</span> <span class="nav-text">条件对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized"><span class="nav-number">5.</span> <span class="nav-text">synchronized</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步阻塞"><span class="nav-number">6.</span> <span class="nav-text">同步阻塞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">7.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原子操作"><span class="nav-number">8.</span> <span class="nav-text">原子操作</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前文"><span class="nav-number">1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是锁"><span class="nav-number">2.</span> <span class="nav-text">什么是锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock"><span class="nav-number">3.</span> <span class="nav-text">Lock</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件对象"><span class="nav-number">4.</span> <span class="nav-text">条件对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized"><span class="nav-number">5.</span> <span class="nav-text">synchronized</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步阻塞"><span class="nav-number">6.</span> <span class="nav-text">同步阻塞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">7.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原子操作"><span class="nav-number">8.</span> <span class="nav-text">原子操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q-amp-A"><span class="nav-number">9.</span> <span class="nav-text">Q&amp;A</span></a></li></ol></div>
             
 
           </div>
