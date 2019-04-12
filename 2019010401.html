@@ -95,7 +95,7 @@
 <meta property="og:description" content="涉及内容：散列表，散列函数等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/redDead1.png">
-<meta property="og:updated_time" content="2019-01-04T09:14:48.393Z">
+<meta property="og:updated_time" content="2019-04-12T07:37:32.226Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="字符串哈希算法">
 <meta name="twitter:description" content="涉及内容：散列表，散列函数等">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  897
+                  1,046
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/redDead1.png" rel="gallery_cjucf8qga0024hotmslg85lnj"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/redDead1.png" rel="gallery_cjudwfbys001vfstmcw3rkj9v"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/redDead1.png" itemprop="contentUrl"/>
               </a>
@@ -416,12 +416,12 @@
 
       
         
-        <div id="aplayer-rHmBZaKh" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-xWaKSqJO" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-rHmBZaKh"),
+            element: document.getElementById("aplayer-xWaKSqJO"),
             narrow: false,
             autoplay: true,
             showlrc: false,
@@ -439,9 +439,11 @@
 <h1 id="字符串哈希算法"><a href="#字符串哈希算法" class="headerlink" title="字符串哈希算法"></a><strong>字符串哈希算法</strong></h1><p><em>以下内容为个人整理，因为自身水平的限制，所以出现一些错误或模糊不清的地方是很正常的现象，如果有人有缘看到本篇博客或其他本人所写的博客，请尽量谅解，可以通过各种方式联系本人，欢迎交流和指教。</em></p>
 <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h2><p>&emsp;&emsp;哈希表作为一种常用的数据结构，是程序员必须要熟悉的知识模块，从最初数据结构课了解到哈希表到现在已经只剩下模糊的印象了，所以是时候重新复习一下这块的知识了。</p>
 <p>&emsp;&emsp;<strong>哈希表</strong>：通过映射函数计算一组映射的键码，将其存储到对应的集合位置，又称散列表。</p>
-<p>&emsp;&emsp;根据定义可以联想到一个问题：如果不同的Key值计算出相同的结果怎么办？</p>
+<p>&emsp;&emsp;<strong>装填因子</strong>：a = n / m，即Key数目/表长，由装填因子来决定什么时候进行再散列。</p>
+<h3 id="再散列"><a href="#再散列" class="headerlink" title="再散列"></a><strong>再散列</strong></h3><p>&emsp;&emsp;一般会在创建散列表时设置一个初始大小，表长或者Java的桶数(bucket)一般为预测元素个数的75%~150%，一般设置为素数以防止键的集聚。</p>
+<p>&emsp;&emsp;若散列表过满时，就需要再散列(rehashed)，即创建一个更大的散列表，将原有元素移到新的表中，丢弃原表，如装填因子为0.75，当集合已有元素超过75%时就会用双倍的大小进行再散列。</p>
+<p>&emsp;&emsp;根据散列表的结构可以联想到一个问题：<strong>如果不同的Key值计算出相同的结果怎么办？</strong></p>
 <p>&emsp;&emsp;这种情况叫做<strong>哈希冲突</strong>或<strong>哈希碰撞</strong>，这种冲突根据哈希表的设计是无法避免的，因为空间是有限的，为了避免冲突而增大存储空间有些得不偿失了。只能尽量去避免冲突发生，比如尽量平均分配地址，略微改变键码会使计算结果大相径庭等等。</p>
-<p>&emsp;&emsp;<strong>装填因子</strong>：a = n / m，即Key数目/表长。</p>
 <h3 id="哈希冲突的解决方法"><a href="#哈希冲突的解决方法" class="headerlink" title="哈希冲突的解决方法"></a><strong>哈希冲突的解决方法</strong></h3><h4 id="1-开放定址法"><a href="#1-开放定址法" class="headerlink" title="1.开放定址法"></a><strong>1.开放定址法</strong></h4><p>&emsp;&emsp;当遇到哈希冲突时，依照增量规则向后取地址直到有未被占用地址为止。</p>
 <p>&emsp;&emsp;实例公式：Hash(key) =  (Hash(key) + di) mod TableSize </p>
 <p>&emsp;&emsp;di表示增量序列，di不同的增长可分为：线性探测，二次探测，双散列探测。</p>
@@ -589,7 +591,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">58</span>
+                  <span class="site-state-item-count">59</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -672,7 +674,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串哈希算法"><span class="nav-number">1.</span> <span class="nav-text">字符串哈希算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希冲突的解决方法"><span class="nav-number">1.1.1.</span> <span class="nav-text">哈希冲突的解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-开放定址法"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1.开放定址法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-链地址法-拉链法"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">2.链地址法/拉链法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">1.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串哈希算法"><span class="nav-number">1.</span> <span class="nav-text">字符串哈希算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#再散列"><span class="nav-number">1.1.1.</span> <span class="nav-text">再散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希冲突的解决方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">哈希冲突的解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-开放定址法"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.开放定址法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-链地址法-拉链法"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2.链地址法/拉链法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码实现"><span class="nav-number">1.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li></ol></div>
             
 
           </div>
