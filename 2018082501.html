@@ -95,7 +95,7 @@
 <meta property="og:description" content="Spring配置事务和使用介绍">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source=ig_share_sheet&igshid(1).jpg">
-<meta property="og:updated_time" content="2018-12-04T05:59:48.067Z">
+<meta property="og:updated_time" content="2019-04-25T02:25:03.238Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring事务简介和使用">
 <meta name="twitter:description" content="Spring配置事务和使用介绍">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,893
+                  3,338
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  12
+                  13
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source=ig_share_sheet&igshid(1).jpg" rel="gallery_cjunxmwnl000p6otm7omv5myg"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source=ig_share_sheet&igshid(1).jpg" rel="gallery_cjuwcsr8a0017d0tm37htibh2"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/hirokingraphy____utm_source=ig_share_sheet&igshid(1).jpg" itemprop="contentUrl"/>
               </a>
@@ -416,14 +416,14 @@
 
       
         
-        <div id="aplayer-CVwtvVKO" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-EUxdIFfa" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-CVwtvVKO"),
+            element: document.getElementById("aplayer-EUxdIFfa"),
             narrow: false,
-            autoplay: true,
+            autoplay: false,
             showlrc: false,
             music: {
               title: "Wagon Wheel",
@@ -436,11 +436,12 @@
           window.aplayers || (window.aplayers = []);
           window.aplayers.push(ap);
         </script>
-<p><em>参考博客：</em></p>
-<blockquote>
-<p><a href="http://tech.lede.com/2017/02/06/rd/server/SpringTransactional/" target="_blank" rel="noopener">http://tech.lede.com/2017/02/06/rd/server/SpringTransactional/</a></p>
-</blockquote>
-<h1 id="一．Spring-Transactioal的配置"><a href="#一．Spring-Transactioal的配置" class="headerlink" title="一．Spring @Transactioal的配置"></a><strong>一．Spring @Transactioal的配置</strong></h1><ol>
+<h1 id="声明式事务"><a href="#声明式事务" class="headerlink" title="声明式事务"></a><strong>声明式事务</strong></h1><p>&emsp;&emsp;Spring为不同的数据访问技术提供了统一的事务机制调用API，针对不同的技术有各自的实现。</p>
+<p>数据访问技术|实现<br>|:—:|:—:|<br>JDBC|DataSourceTransactionManager<br>JPA|JpaTransactionManager<br>Hibernate|HibernateTransactionManager<br>JDO|JdoTransactionManager<br>分布式事务|JtaTransactionManager</p>
+<p>&emsp;&emsp;声明式事务，即通过注解的方式选择要使用的事务的方法，@Transactional表示此方法或此类中所有public方法都需要事务支持。</p>
+<p>&emsp;&emsp;可以在配置类上加注@EnableTransactionManagement，表示开启声明式事务的支持。</p>
+<hr>
+<h1 id="Transactional的配置"><a href="#Transactional的配置" class="headerlink" title="@Transactional的配置"></a><strong>@Transactional的配置</strong></h1><ol>
 <li><p>在spring配置文件中引入命名空间</p>
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;beans <span class="attribute">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span><br><span class="line">    xmlns:<span class="attribute">xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">    xmlns:<span class="attribute">tx</span>=<span class="string">"http://www.springframework.org/schema/tx"</span></span><br><span class="line">    xsi:<span class="attribute">schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans </span></span><br><span class="line"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-2.0.xsd</span></span><br><span class="line"><span class="string">    http://www.springframework.org/schema/tx</span></span><br><span class="line"><span class="string">    http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"</span>&gt;</span><br></pre></td></tr></table></figure>
 </li>
@@ -451,14 +452,19 @@
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">Transactional</span>(“<span class="keyword">pkgouTransactionManager</span>”)</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<h1 id="二．传播行为和隔离级别"><a href="#二．传播行为和隔离级别" class="headerlink" title="二．传播行为和隔离级别"></a><strong>二．传播行为和隔离级别</strong></h1><ol>
-<li>事务注解方式：@Transactional<ul>
+<p>&emsp;&emsp;对于Spring Boot 只需要在要支持的方法前加注解@Transactional即可</p>
+<hr>
+<h1 id="传播行为和隔离级别"><a href="#传播行为和隔离级别" class="headerlink" title="传播行为和隔离级别"></a><strong>传播行为和隔离级别</strong></h1><ol>
+<li><p>事务注解方式：@Transactional</p>
+<ul>
 <li>标注在类前：标示类中的所有方法都进行事务处理。</li>
 <li>标注在接口，方法前：标示方法要进行事务处理。</li>
 </ul>
 </li>
-<li>事务传播行为：</li>
+<li><p>事务传播行为：</p>
+</li>
 </ol>
+<p>&emsp;&emsp;Propagation定义事务的生命周期，Isolation则定义事务的隔离级别。</p>
 <table>
 <thead>
 <tr>
@@ -469,60 +475,70 @@
 <tbody>
 <tr>
 <td style="text-align:left">@Transactional(propagation=Propagation.REQUIRED)</td>
-<td style="text-align:center">如果有事务则加入事务，若没则新建一个</td>
-</tr>
-<tr>
-<td style="text-align:left">@Transactional(propagation=Propagation.NOT_SUPPORTED)</td>
-<td style="text-align:center">容器不为该方法开启事务</td>
+<td style="text-align:center">如果有事务则加入事务，若没则新建一个，异常时整个事务数据回滚</td>
 </tr>
 <tr>
 <td style="text-align:left">@Transactional(propagation=Propagation.REQUIRES_NEW)</td>
 <td style="text-align:center">无论是否存在事务，都会创建一个新的事务，旧的挂起，待新事务执行完毕，继续执行旧事务</td>
 </tr>
 <tr>
-<td style="text-align:left">@Transactional(propagation=Propagation.MANDATORY)</td>
-<td style="text-align:center">必须在一个已有的事务中执行，否则抛出异常</td>
-</tr>
-<tr>
-<td style="text-align:left">@Transactional(propagation=Propagation.NEVER)</td>
-<td style="text-align:center">必须在一个新的事务中执行，否则抛出异常</td>
+<td style="text-align:left">@Transactional(propagation=Propagation.NESTED)</td>
+<td style="text-align:center">和REQUIRES_NEW类似，但支持JDBC，不支持JPA和Hibernate</td>
 </tr>
 <tr>
 <td style="text-align:left">@Transactional(propagation=Propagation.SUPPORTS)</td>
 <td style="text-align:center">如果其他Bean调用该方法，且在其他bean中有声明事务，就使用事务，否则不用</td>
 </tr>
+<tr>
+<td style="text-align:left">@Transactional(propagation=Propagation.NOT_SUPPORTED)</td>
+<td style="text-align:center">容器不为该方法开启事务，即使有事务也会在结束阶段挂起</td>
+</tr>
+<tr>
+<td style="text-align:left">@Transactional(propagation=Propagation.NEVER)</td>
+<td style="text-align:center">强制方法不能在事务中执行，否则抛出异常</td>
+</tr>
+<tr>
+<td style="text-align:left">@Transactional(propagation=Propagation.MANDATORY)</td>
+<td style="text-align:center">强制方法必须在一个已有的事务中执行，否则抛出异常</td>
+</tr>
 </tbody>
 </table>
 <ol start="3">
-<li><p>事务超时设置</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">Transactional</span>(<span class="keyword">timeout</span>=<span class="keyword">30</span>)//默认<span class="keyword">30</span>秒</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>事务隔离级别</p>
-</li>
+<li>事务隔离级别</li>
 </ol>
 <table>
 <thead>
 <tr>
 <th style="text-align:left">事务隔离级别</th>
-<th style="text-align:center">说明</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">备注</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left">@Transactional(Isolation=READ_UNCOMMITED)</td>
-<td style="text-align:center">读取未提交数据，会出现脏读，不可重复读，基本不使用</td>
+<td style="text-align:left">A事务修改了数据但未提交，B事务可以读到修改后的数据</td>
+<td style="text-align:left">读取未提交数据，会出现脏读，不可重复读以及幻读，基本不使用</td>
 </tr>
 <tr>
 <td style="text-align:left">@Transactional(Isolation=READ_COMMITED)</td>
-<td style="text-align:center">读取已提交数据，会出现不可重复读和幻读</td>
+<td style="text-align:left">只有A事务修改记录并提交事务后，B事务才会读到更新后的数据</td>
+<td style="text-align:left">读取已提交数据，会出现不可重复读和幻读</td>
 </tr>
 <tr>
 <td style="text-align:left">@Transactional(Isolation=REPEATABLE_READ)</td>
-<td style="text-align:center">可重复读，会出现幻读</td>
+<td style="text-align:left">除了READ_COMMITED以外还会阻止当A事务读取了一条记录，B事务不允许修改此记录</td>
+<td style="text-align:left">可重复读，会出现幻读</td>
 </tr>
 <tr>
 <td style="text-align:left">@Transactional(Isolation=SERIALIZABLE)</td>
-<td style="text-align:center">串行化</td>
+<td style="text-align:left">顺序执行，但开销较大</td>
+<td style="text-align:left">串行化</td>
+</tr>
+<tr>
+<td style="text-align:left">@Transactional(Isolation=DEFAULE)</td>
+<td style="text-align:left">使用当前数据库的默认隔离级别</td>
+<td style="text-align:left">Oracle，SqlServer是READ_COMMITED，MySql是REPEATABLE_READ</td>
 </tr>
 </tbody>
 </table>
@@ -532,9 +548,14 @@
 <li>可重复读：在同一事务中多次读取数据时，能够保证所读数据一样，即后续读取不能读到另一事务已提交的更新数据。</li>
 <li>幻读：一个事务读到另一个事务已提交的insert数据</li>
 </ul>
+<ol start="4">
+<li>事务超时设置<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">Transactional</span>(<span class="keyword">timeout</span>=<span class="keyword">30</span>)//默认<span class="keyword">30</span>秒</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 <p><strong>@Transactional属性</strong></p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20180825/201808250101.png" alt=""></p>
-<h1 id="三．工作原理"><a href="#三．工作原理" class="headerlink" title="三．工作原理"></a><strong>三．工作原理</strong></h1><h2 id="显示事务，隐式事务"><a href="#显示事务，隐式事务" class="headerlink" title="显示事务，隐式事务"></a><strong>显示事务，隐式事务</strong></h2><ul>
+<hr>
+<h1 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a><strong>工作原理</strong></h1><h2 id="显示事务，隐式事务"><a href="#显示事务，隐式事务" class="headerlink" title="显示事务，隐式事务"></a><strong>显示事务，隐式事务</strong></h2><ul>
 <li><strong>隐式事务</strong>：又叫自动提交事务，是数据库隐式做的事务，如插入语句会被包装进事务，当插入失败会回滚，每条sql语句都可以看作一个事务，无法明确指定事务的开始，默认connection被打开open</li>
 <li><strong>显式事务</strong>：由自己即第三方明确指定的事务，明确指定事务的开始，需要打开connection，默认情况是closed</li>
 <li><strong>分布式事务(显式/隐式)</strong>：跨库使用同一事务</li>
@@ -553,7 +574,9 @@
 <li>也可以明确定义哪些异常抛出时不回滚事务。 </li>
 <li>还可以编程性的通过setRollbackOnly()方法来指示一个事务必须回滚，在调用完setRollbackOnly()后你所能执行的唯一操作就是回滚。</li>
 </ul>
-<h1 id="四．注意事项"><a href="#四．注意事项" class="headerlink" title="四．注意事项"></a><strong>四．注意事项</strong></h1><p>&emsp;&emsp;由于Spring事务管理是基于接口代理或动态字节码技术，通过AOP实施事务增强的。</p>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a><strong>注意事项</strong></h1><p>&emsp;&emsp;类和方法同时使用@Transactional注解，方法会覆盖类的注解，JPA中查询服务默认开启readOnly，数据修改操作则覆盖了事务默认关闭readOnly</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="variable">@Repository</span></span><br><span class="line"><span class="variable">@Transactional</span>(</span><br><span class="line">    readOnly = true</span><br><span class="line">)</span><br><span class="line">public class SimpleJpaRepository&lt;T, ID&gt; implements JpaRepository&lt;T, ID&gt;, JpaSpecificationExecutor&lt;T&gt; &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    @<span class="selector-tag">Transactional</span></span><br><span class="line">    <span class="selector-tag">public</span> <span class="selector-tag">void</span> <span class="selector-tag">deleteById</span>(ID id) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable">@Transactional</span></span><br><span class="line">    public void delete(T entity) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    public T getOne(ID id) &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public List&lt;T&gt; findAll() &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;由于Spring事务管理是基于接口代理或动态字节码技术，通过AOP实施事务增强的。</p>
 <ol>
 <li><p>对于基于接口动态代理的AOP事务增强来说，由于接口的方法是public的，这就要求实现类的实现方法必须是public的（不能是protected，private等），同时不能使用static的修饰符。所以，可以实施接口动态代理的方法只能是使用“public” 或 “public final”修饰符的方法，其它方法不可能被动态代理，相应的也就不能实施AOP增强，也即不能进行Spring事务增强。</p>
 </li>
@@ -576,7 +599,8 @@
 <li><p>@Transactional 注解标注的方法中不要出现网络调用、比较耗时的处理程序，因为，事务中数据库连接是不会释放的，如果每个事务的处理时间都非常长，那么宝贵的数据库连接资源将很快被耗尽。</p>
 </li>
 </ul>
-<h1 id="五．自我调用中的问题"><a href="#五．自我调用中的问题" class="headerlink" title="五．自我调用中的问题"></a><strong>五．自我调用中的问题</strong></h1><p>&emsp;&emsp;Spring事务使用AOP代理后的方法调用执行流程，如图所示：</p>
+<hr>
+<h1 id="自我调用中的问题"><a href="#自我调用中的问题" class="headerlink" title="自我调用中的问题"></a><strong>自我调用中的问题</strong></h1><p>&emsp;&emsp;Spring事务使用AOP代理后的方法调用执行流程，如图所示：</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20180825/201808250102.png" alt=""></p>
 <p>&emsp;&emsp;从图中可以看出，调用事务时首先调用的是AOP代理对象而不是目标对象，首先执行事务切面，事务切面内部通过TransactionInterceptor环绕增强进行事务的增强。即进入目标方法之前开启事务，退出目标方法时提交/回滚事务。</p>
 <p>&emsp;&emsp;这样在自我调用时，则会出现无法开启事务的问题，比如：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TargetService</span> </span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span></span>;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span></span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">@Service</span> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TargetServiceImpl</span> <span class="keyword">implements</span> <span class="title">TargetService</span></span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123;  </span><br><span class="line">        <span class="keyword">this</span>.b();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="meta">@Transactional</span>(propagation = Propagation.REQUIRES_NEW)  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    <span class="comment">//执行数据库操作</span></span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -590,6 +614,11 @@
 <p><strong>三、目标类实现</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TargetService</span> </span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span></span>;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span></span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">@Service</span> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TargetServiceImpl</span> <span class="keyword">implements</span> <span class="title">TargetService</span>,<span class="title">BeanSelfAware</span></span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> TargetService self;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSelf</span><span class="params">(Object proxyBean)</span> </span></span><br><span class="line"><span class="function">    </span>&#123; <span class="comment">//通过InjectBeanSelfProcessor注入自己（目标对象）的AOP代理对象  </span></span><br><span class="line">        <span class="keyword">this</span>.self = (TargetService) proxyBean;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123;  </span><br><span class="line">        self.b();  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="meta">@Transactional</span>(propagation = Propagation.REQUIRES_NEW)  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">b</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    <span class="comment">//执行数据库操作</span></span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;postProcessAfterInitialization根据目标对象是否实现BeanSelfAware标识接口，通过setSelf(bean)将代理对象（bean）注入到目标对象中，从而可以完成目标对象内部的自我调用。</p>
+<hr>
+<p><em>参考博客：</em></p>
+<blockquote>
+<p><a href="http://tech.lede.com/2017/02/06/rd/server/SpringTransactional/" target="_blank" rel="noopener">http://tech.lede.com/2017/02/06/rd/server/SpringTransactional/</a></p>
+</blockquote>
 
       
     </div>
@@ -727,7 +756,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-count">64</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -749,7 +778,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -810,7 +839,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一．Spring-Transactioal的配置"><span class="nav-number">1.</span> <span class="nav-text">一．Spring @Transactioal的配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二．传播行为和隔离级别"><span class="nav-number">2.</span> <span class="nav-text">二．传播行为和隔离级别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三．工作原理"><span class="nav-number">3.</span> <span class="nav-text">三．工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#显示事务，隐式事务"><span class="nav-number">3.1.</span> <span class="nav-text">显示事务，隐式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动提交"><span class="nav-number">3.2.</span> <span class="nav-text">自动提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务管理"><span class="nav-number">3.3.</span> <span class="nav-text">事务管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring事务回滚规则"><span class="nav-number">3.4.</span> <span class="nav-text">Spring事务回滚规则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四．注意事项"><span class="nav-number">4.</span> <span class="nav-text">四．注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五．自我调用中的问题"><span class="nav-number">5.</span> <span class="nav-text">五．自我调用中的问题</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#声明式事务"><span class="nav-number">1.</span> <span class="nav-text">声明式事务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transactional的配置"><span class="nav-number">2.</span> <span class="nav-text">@Transactional的配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#传播行为和隔离级别"><span class="nav-number">3.</span> <span class="nav-text">传播行为和隔离级别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工作原理"><span class="nav-number">4.</span> <span class="nav-text">工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#显示事务，隐式事务"><span class="nav-number">4.1.</span> <span class="nav-text">显示事务，隐式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动提交"><span class="nav-number">4.2.</span> <span class="nav-text">自动提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务管理"><span class="nav-number">4.3.</span> <span class="nav-text">事务管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring事务回滚规则"><span class="nav-number">4.4.</span> <span class="nav-text">Spring事务回滚规则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意事项"><span class="nav-number">5.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自我调用中的问题"><span class="nav-number">6.</span> <span class="nav-text">自我调用中的问题</span></a></li></ol></div>
             
 
           </div>

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="sql,database," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SQL优化以及数据库性能的优化">
+<meta name="keywords" content="sql,database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL优化以及数据库性能的优化">
+<meta property="og:url" content="http://linyishui.top/2019042401.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="SQL优化以及数据库性能的优化">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-25T07:53:49.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQL优化以及数据库性能的优化">
+<meta name="twitter:description" content="SQL优化以及数据库性能的优化">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019042401.html"/>
+
+
+
+
+
+  <title>SQL优化以及数据库性能的优化 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019042401.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQL优化以及数据库性能的优化</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-24T14:20:14+08:00">
+                2019-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,193
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  SQL优化以及数据库性能的优化
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><em>内容大部分来源于网络，部分经我工作和学习实践表示认同，其它的则并没有逐个实践确认，所以参考时请留心结合情况判断</em></p>
+<h1 id="基本SQL优化"><a href="#基本SQL优化" class="headerlink" title="基本SQL优化"></a><strong>基本SQL优化</strong></h1><ol>
+<li><strong>对常用于where和order等地方的属性列创建<a href="../2019042401.html" title="Title">索引</a>，避免全表扫描，提高查询效率。</strong></li>
+</ol>
+<p>&emsp;&emsp;以下写法可能会导致查询不走索引，而进行全表扫描，下列总结不一定准确涵盖，有时因为如索引字段重复数据太多等原因也会导致SQL不走索引，具体情况需要具体分析，且不要提前做优化，开发首先的优先级应该保证进度按时完成，尽量不要先把重心提前放到这些地方。</p>
+<p>用法|说明|代替用法<br>|:—:|:—|:—|<br>select <em>|<br>where xx != 或 &lt;&gt;  …  |无法使用索引|用 union all 来代替<br>where xx is (not) null|无法使用索引|where xx = 0(不一定都支持)<br>where xx or … |无法使用索引|用 union all 来代替<br>where xx in/not in … |无法使用索引|between，exists或join替换in，用not exists替代not in<br>where xx like … |模糊查询无法使用索引|考虑使用全文检索<br>where 使用局部变量 |无法使用索引|如：select id from t where num=@num 改为强制索引：select id from t with(index(索引名)) where num=@num<br>where 表达式运算 |无法使用索引|如：select id from t where num/2=100 应改为: select id from t where num=100</em>2<br>where 函数操作 |无法使用索引|如：select id from t where substring(name,1,3)=’abc’ 和 select id from t where datediff(day,createdate,’2005-11-30’)=0–’2005-11-30’生成的id  应改为: select id from t where name like ‘abc%’  和 select id from t where createdate&gt;=’2005-11-30’ and createdate&lt;’2005-12-1’<br>若索引字段是联合索引|只能使用索引中的第一个字段作为条件，否则不会使用索引，尽量让字段顺序和索引顺序保持一致|</p>
+<ol start="2">
+<li><strong>使用exists代替in。</strong></li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">num</span> <span class="keyword">from</span> a <span class="keyword">where</span> <span class="keyword">num</span> <span class="keyword">in</span>(<span class="keyword">select</span> <span class="keyword">num</span> <span class="keyword">from</span> b) </span><br><span class="line">替换为： </span><br><span class="line"><span class="keyword">select</span> <span class="keyword">num</span> <span class="keyword">from</span> a <span class="keyword">where</span> <span class="keyword">exists</span>(<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span> b <span class="keyword">where</span> <span class="keyword">num</span>=a.num)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;使用EXISTS时，如果连接列(id)上建立了索引，那么查询Class_B时不用查询实际的表，只需查索引就可以了。只要查到一行数据满足条件就会终止查询，不用像使用IN时一样扫描全表。在这一点上NOT EXISTS也一样。</p>
+<ol start="3">
+<li><strong>存储数字值时尽量使用数字类型的字段</strong></li>
+</ol>
+<p>&emsp;&emsp;若用字符类型来存储数字值，相比数字类型会降低查询和连接的性能，字符比较相比数字比较要慢，并一定程度上增加存储开销。</p>
+<ol start="4">
+<li><strong>尽可能的使用 varchar/nvarchar 代替 char/nchar</strong></li>
+</ol>
+<p>&emsp;&emsp;变长字段存储空间小，可以节省存储空间，其次对于查询来说，在一个相对较小的字段内搜索效率显然要高些。</p>
+<ol start="5">
+<li><strong>尽量使用表变量来代替临时表。</strong></li>
+</ol>
+<p>&emsp;&emsp;如果表变量包含大量数据，请注意索引非常有限（只有主键索引）。</p>
+<ol start="6">
+<li><strong>避免频繁创建和删除临时表，以减少系统表资源的消耗。</strong></li>
+</ol>
+<p>&emsp;&emsp;适当地使用临时表，例如，当需要重复引用大型表或常用表中的某个数据集时。但是，对于一次性事件，最好使用导出表。</p>
+<p>&emsp;&emsp;使用临时表时，如果一次性插入数据量很大，那么可以使用 select into 代替 create table，避免造成大量 log ，以提高速度；如果数据量不大，为了缓和系统表的资源，应先create table，然后insert。 </p>
+<p>&emsp;&emsp;如果使用到了临时表，在存储过程的最后务必将所有的临时表显式删除，先 truncate table ，然后 drop table ，这样可以避免系统表的较长时间锁定。 </p>
+<ol start="7">
+<li><strong>尽量避免使用游标，因为游标的效率较差。</strong></li>
+</ol>
+<p>&emsp;&emsp;使用基于游标的方法或临时表方法之前，应先寻找基于集的解决方案来解决问题，基于集的方法通常更有效。 </p>
+<p>&emsp;&emsp;与临时表一样，游标并不是不可使用。对小型数据集使用 FAST_FORWARD 游标通常要优于其他逐行处理方法，尤其是在必须引用几个表才能获得所需的数据时。在结果集中包括“合计”的例程通常要比使用游标执行的速度快。如果开发时间允许，基于游标的方法和基于集的方法都可以尝试一下，看哪一种方法的效果更好。 </p>
+<ol start="8">
+<li><strong>尽量避免使用游标，因为游标的效率较差。</strong></li>
+</ol>
+<p>&emsp;&emsp;使用基于游标的方法或临时表方法之前，应先寻找基于集的解决方案来解决问题，基于集的方法通常更有效。 </p>
+<ol start="9">
+<li><strong>减少访问数据库的次数</strong></li>
+</ol>
+<p>&emsp;&emsp;数据库在每次执行前可能会做一些默认工作，如果不影响开发进度，尽量对数据的一次访问就取出所要数据。 </p>
+<ol start="10">
+<li><strong>字段Column前加表名</strong></li>
+</ol>
+<p>&emsp;&emsp;减少因为防止歧义而进行解析所消耗的时间。</p>
+<ol start="11">
+<li><strong>用EXISTS替换DISTINCT</strong></li>
+</ol>
+<p>&emsp;&emsp;减少因为防止歧义而进行解析所消耗的时间。</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(低效): <span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> DEPT_NO,DEPT_NAME <span class="keyword">FROM</span> DEPT D , EMP <span class="built_in">E</span> <span class="keyword">WHERE</span> D.DEPT_NO = <span class="built_in">E</span>.DEPT_NO </span><br><span class="line">(高效): <span class="keyword">SELECT</span> DEPT_NO,DEPT_NAME <span class="keyword">FROM</span> DEPT D <span class="keyword">WHERE</span> <span class="keyword">EXISTS</span> ( <span class="keyword">SELECT</span> ‘X<span class="string">' FROM EMP E WHERE E.DEPT_NO = D.DEPT_NO);</span></span><br></pre></td></tr></table></figure>
+<ol start="12">
+<li><strong>Oracle中尽量用全大写</strong></li>
+</ol>
+<p>&emsp;&emsp;Oracle总是先解析SQL语句，把小写的字母转换成大写的再执行。 </p>
+<ol start="13">
+<li><strong>用&gt;=替代&gt;</strong></li>
+</ol>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">高效：<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> EMP <span class="keyword">WHERE</span> DEPTNO &gt;=<span class="number">4</span> </span><br><span class="line">低效: <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> EMP <span class="keyword">WHERE</span> DEPTNO &gt;<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;两者的区别在于，前者DBMS将直接跳到第一个DEPT等于4的记录而后者将首先定位到DEPTNO=3的记录并且向前扫描到第一个DEPT大于3的记录。</p>
+<ol start="14">
+<li><strong>优化GROUP BY</strong></li>
+</ol>
+<p>&emsp;&emsp;提高GROUP BY 语句的效率，可以通过将不需要的记录在GROUP BY 之前过滤掉。下面两个查询返回相同结果但第二个明显就快了许多。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">低效: <span class="keyword">SELECT</span> JOB , <span class="keyword">AVG</span>(SAL) <span class="keyword">FROM</span> EMP <span class="keyword">GROUP</span> JOB <span class="keyword">HAVING</span> JOB = ‘PRESIDENT<span class="string">' OR JOB = ‘MANAGER'</span> </span><br><span class="line">高效: <span class="keyword">SELECT</span> JOB , <span class="keyword">AVG</span>(SAL) <span class="keyword">FROM</span> EMP <span class="keyword">WHERE</span> JOB = ‘PRESIDENT<span class="string">' OR JOB = ‘MANAGER'</span> <span class="keyword">GROUP</span> JOB</span><br></pre></td></tr></table></figure>
+<ol start="15">
+<li><strong>避免使用耗费资源的操作</strong></li>
+</ol>
+<p>&emsp;&emsp;带有DISTINCT,UNION,MINUS,INTERSECT,ORDER BY的SQL语句会启动SQL引擎执行耗费资源的排序(SORT)功能。DISTINCT需要一次排序操作，而其他的至少需要执行两次排序。通常，带有 UNION, MINUS , INTERSECT的SQL语句都可以用其他方式重写。如果你的数据库的SORT_AREA_SIZE调配得好。使用UNION , MINUS, INTERSECT也是可以考虑的, 毕竟它们的可读性很强。</p>
+<ol start="16">
+<li><strong>子查询优化</strong></li>
+</ol>
+<p>&emsp;&emsp;子查询可以分为关联子查询（Correlated Subquery）和非关联子查询（Non-correlated Subquery）。</p>
+<ul>
+<li><strong>非关联子查询</strong>： 非关联即先执行内层查询，再执行外层查询，如下所示。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c_count, <span class="keyword">count</span>(*) <span class="keyword">AS</span> custdist</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">     <span class="keyword">SELECT</span> c_custkey, <span class="keyword">count</span>(o_orderkey) <span class="keyword">AS</span> c_count</span><br><span class="line">     <span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">     <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> ORDERS <span class="keyword">ON</span> c_custkey = o_custkey</span><br><span class="line">     <span class="keyword">AND</span> o_comment <span class="keyword">NOT</span> <span class="keyword">LIKE</span> <span class="string">'%pending%deposits%'</span></span><br><span class="line">     <span class="keyword">GROUP</span> <span class="keyword">BY</span> c_custkey</span><br><span class="line">     ) c_orders</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> c_count</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> custdist <span class="keyword">DESC</span>, c_count <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>标量子查询</strong>：输出只有一个结果值的子查询，可以作为条件或属性出现在WHERE子句或SELECT子句</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SELECT c_custkey</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">WHERE 1000000 &lt; (</span><br><span class="line">    SELECT SUM(o_totalprice)</span><br><span class="line">    <span class="keyword">FROM</span> ORDERS</span><br><span class="line">    WHERE o_custkey = c_custkey  -- Correlated!</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">SELECT o_orderkey, (</span><br><span class="line">    SELECT c_name</span><br><span class="line">    <span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">    WHERE c_custkey = o_custkey  -- Correlated!</span><br><span class="line">) AS c_name <span class="keyword">FROM</span> ORDERS</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>存在性检测子查询</strong>：特指 EXISTS 的子查询，返回一个布尔值。如果出现在 WHERE 中，这就是我们熟悉的 Semi-Join。当然，它可能出现在任何可以放布尔值的地方。</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">--Semi-Join</span><br><span class="line">SELECT c_custkey</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">WHERE c_nationkey = 86 <span class="keyword">AND</span> EXISTS(</span><br><span class="line">    SELECT * <span class="keyword">FROM</span> ORDERS</span><br><span class="line">    WHERE o_custkey = c_custkey  -- Correlated!</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>集合比较子查询</strong>：特指 IN、SOME、ANY 的查询，返回一个布尔值，常用的形式有：x = SOME(Q) （等价于 x IN Q）或 X &lt;&gt; ALL(Q)（等价于 x NOT IN Q）。同上，它可能出现在任何可以放布尔值的地方。</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT c_name</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">WHERE c_nationkey &lt;&gt; ALL (SELECT s_nationkey <span class="keyword">FROM</span> SUPPLIER)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/60380557" title="Title" target="_blank" rel="noopener">去关联化</a>，测试执行标量子查询示例1，可以发现子查询是挂在filter下的，实际执行时就会变成查询执行器调用表达式执行器，表达式执行器因为子查询再调用查询执行器，当数据比较多时很明显会对效率造成很大的影响。</p>
+</blockquote>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/53028214" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/53028214</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/54607717" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/54607717</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/60380557" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/60380557</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://www.cnblogs.com/exe19/p/5786806.html" target="_blank" rel="noopener">https://www.cnblogs.com/exe19/p/5786806.html</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/sql/" rel="tag"># sql</a>
+          
+            <a href="/tags/database/" rel="tag"># database</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019041901.html" rel="next" title="REST">
+                <i class="fa fa-chevron-left"></i> REST
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019042501.html" rel="prev" title="分库分表">
+                分库分表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本SQL优化"><span class="nav-number">1.</span> <span class="nav-text">基本SQL优化</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

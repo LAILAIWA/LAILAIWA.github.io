@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="database," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简单介绍分库分表技术，要解决的问题，相关策略，以及场景模拟。">
+<meta name="keywords" content="database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分库分表">
+<meta property="og:url" content="http://linyishui.top/2019042501.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍分库分表技术，要解决的问题，相关策略，以及场景模拟。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160119.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160120.png">
+<meta property="og:updated_time" content="2019-04-25T06:25:03.872Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分库分表">
+<meta name="twitter:description" content="简单介绍分库分表技术，要解决的问题，相关策略，以及场景模拟。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160119.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019042501.html"/>
+
+
+
+
+
+  <title>分库分表 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019042501.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">分库分表</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-25T14:19:41+08:00">
+                2019-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,926
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍分库分表技术，要解决的问题，相关策略，以及场景模拟。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><em>暂时只是阅读并整理了一下相关内容，待抽时间实践后会重构一下本博文</em></p>
+<h1 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a><strong>分库分表</strong></h1><p>&emsp;&emsp;<strong>什么是分库分表技术，为什么要分库分表？</strong></p>
+<p>&emsp;&emsp;当项目数据不断积累，达到一定程度后，即使是通过优化索引，添加从库进行读写分离等方式进行优化可能也无法解决数据库的瓶颈问题，此时需要通过切分数据库到多个不同数据库来解决单一数据库的性能问题。</p>
+<p>&emsp;&emsp;主要为<strong>垂直切分</strong>和<strong>水平切分</strong>，垂直切分就是模块划分，把同一个模块或者说联系紧密的表切分到一个server上，适合于因为表多而导致数据量大的场景；而水平切分则是把表按照某种规则(比如对ID进行散列)切分到不同的server上，适合单表数据过多导致数据量大的场景。</p>
+<p>&emsp;&emsp;实际场景中往往需要综合两种切分，将原数据库切分为可无限扩充的数据库阵列。需要注意的是若综合使用时，切分策略可能会相互影响，如引入水平切分后，表间的关联关系就会受到制约，一般只允许主表(即散列的表)和其次表之间保持关联，所以就不能简单的以功能模块来划分，而是要更加细粒度的进行垂直切分，此概念类似于领域驱动设计中的”聚合”，每个划分(shard)的主表都是一个聚合中的聚合根。为了避免过度的切分，需要考虑将业务接近，数据增长速率接近的shard合并到一个数据源中，每个shard都还是独立的，不同的是他们的散列取模即节点数量需要一致。</p>
+<h1 id="分库分表要解决的问题"><a href="#分库分表要解决的问题" class="headerlink" title="分库分表要解决的问题"></a><strong>分库分表要解决的问题</strong></h1><h2 id="1、跨节点Join的问题"><a href="#1、跨节点Join的问题" class="headerlink" title="1、跨节点Join的问题"></a><strong>1、跨节点Join的问题</strong></h2><p>&emsp;&emsp;只要是进行切分，跨节点Join的问题是不可避免的。但是良好的设计和切分却可以减少此类情况的发生。解决这一问题的普遍做法是分两次查询实现。在第一次查询的结果集中找出关联数据的id,根据这些id发起第二次请求得到关联数据。</p>
+<h2 id="2、跨节点的count-order-by-group-by以及聚合函数问题"><a href="#2、跨节点的count-order-by-group-by以及聚合函数问题" class="headerlink" title="2、跨节点的count,order by,group by以及聚合函数问题"></a><strong>2、跨节点的count,order by,group by以及聚合函数问题</strong></h2><p>&emsp;&emsp;这些是一类问题，因为它们都需要基于全部数据集合进行计算。多数的代理都不会自动处理合并工作。解决方案：与解决跨节点join问题的类似，分别在各个节点上得到结果后在应用程序端进行合并。和join不同的是每个结点的查询可以并行执行，因此很多时候它的速度要比单一大表快很多。但如果结果集很大，对应用程序内存的消耗是一个问题。</p>
+<h2 id="3、数据迁移，容量规划，扩容等问题"><a href="#3、数据迁移，容量规划，扩容等问题" class="headerlink" title="3、数据迁移，容量规划，扩容等问题"></a><strong>3、数据迁移，容量规划，扩容等问题</strong></h2><p>&emsp;&emsp;来自淘宝综合业务平台团队，它利用对2的倍数取余具有向前兼容的特性（如对4取余得1的数对2取余也是1）来分配数据，避免了行级别的数据迁移，但是依然需要进行表级别的迁移，同时对扩容规模和分表数量都有限制。总得来说，这些方案都不是十分的理想，多多少少都存在一些缺点，这也从一个侧面反映出了Sharding扩容的难度。</p>
+<h2 id="4、事务"><a href="#4、事务" class="headerlink" title="4、事务"></a><strong>4、事务</strong></h2><p>&emsp;&emsp;解决事务问题目前有两种可行的方案：分布式事务和通过应用程序与数据库共同控制实现事务。</p>
+<blockquote>
+<p>方案一：使用分布式事务 </p>
+<p>优点：交由数据库管理，简单有效</p>
+<p>缺点：性能代价高，特别是shard越来越多时</p>
+<p>方案二：由应用程序和数据库共同控制 </p>
+<p>原理：将一个跨多个数据库的分布式事务分拆成多个仅处 于单个数据库上面的小事务，并通过应用程序来总控 各个小事务。</p>
+<p>优点：性能上有优势</p>
+<p>缺点：需要应用程序在事务控制上做灵活设计。如果使用 了spring的事务管理，改动起来会面临一定的困难。</p>
+</blockquote>
+<p>&emsp;&emsp;<strong>分布式事务</strong>，参考： <a href="http://blog.csdn.net/bluishglc/article/details/7612811" target="_blank" rel="noopener">关于分布式事务、两阶段提交、一阶段提交、Best Efforts 1PC模式和事务补偿机制的研究</a></p>
+<p>&emsp;&emsp;优点：</p>
+<ul>
+<li>基于两阶段提交，最大限度地保证了跨数据库操作的“原子性”，是分布式系统下最严格的事务实现方式。</li>
+<li>实现简单，工作量小。由于多数应用服务器以及一些独立的分布式事务协调器做了大量的封装工作，使得项目中引入分布式事务的难度和工作量基本上可以忽略不计。</li>
+</ul>
+<p>&emsp;&emsp;缺点：</p>
+<ul>
+<li>系统“水平”伸缩的死敌。基于两阶段提交的分布式事务在提交事务时需要在多个节点之间进行协调,最大限度地推后了提交事务的时间点，客观上延长了事务的执行时间，这会导致事务在访问共享资源时发生冲突和死锁的概率增高，随着数据库节点的增多，这种趋势会越来越严重，从而成为系统在数据库层面上水平伸缩的”枷锁”， 这是很多Sharding系统不采用分布式事务的主要原因。</li>
+</ul>
+<p>&emsp;&emsp;<strong>基于Best Efforts 1PC模式的事务</strong>，参考spring-data-neo4j的实现。鉴于Best Efforts 1PC模式的性能优势，以及相对简单的实现方式，它被大多数的sharding框架和项目采用</p>
+<p>&emsp;&emsp;<strong>事务补偿（幂等值）</strong></p>
+<p>&emsp;&emsp;对于那些对性能要求很高，但对一致性要求并不高的系统，往往并不苛求系统的实时一致性，只要在一个允许的时间周期内达到最终一致性即可，这使得事务补偿机制成为一种可行的方案。事务补偿机制最初被提出是在“长事务”的处理中，但是对于分布式系统确保一致性也有很好的参考意义。笼统地讲，与事务在执行中发生错误后立即回滚的方式不同，事务补偿是一种事后检查并补救的措施，它只期望在一个容许时间周期内得到最终一致的结果就可以了。事务补偿的实现与系统业务紧密相关，并没有一种标准的处理方式。一些常见的实现方式有：对数据进行对帐检查;基于日志进行比对;定期同标准数据来源进行同步，等等。</p>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/24036067" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24036067</a></p>
+<p>事务支持：我们是将整个订单领域聚合体切分，维度一致，所以对聚合体的事务是支持的。</p>
+<p>复杂查询：垂直切分后，就跟join说拜拜了；水平切分后，查询的条件一定要在切分的维度内，比如查询具体某个用户下的各位订单等；禁止不带切分的维度的查询，即使中间件可以支持这种查询，可以在内存中组装，但是这种需求往往不应该在在线库查询，或者可以通过其他方法转换到切分的维度来实现。</p>
+</blockquote>
+<h2 id="5、ID问题"><a href="#5、ID问题" class="headerlink" title="5、ID问题"></a><strong>5、ID问题</strong></h2><p>&emsp;&emsp;一旦数据库被切分到多个物理结点上，我们将不能再依赖数据库自身的主键生成机制。一方面，某个分区数据库自生成的ID无法保证在全局上是唯一的；另一方面，应用程序在插入数据之前需要先获得ID,以便进行SQL路由。</p>
+<ol>
+<li>利用数据库自增ID和UUID</li>
+</ol>
+<p>&emsp;&emsp;优点：最简单。</p>
+<p>&emsp;&emsp;缺点：单点风险、单机性能瓶颈。</p>
+<blockquote>
+<p>使用UUID作主键是最简单的方案，但是缺点也是非常明显的。由于UUID非常的长，除占用大量存储空间外，最主要的问题是在索引上，在建立索引和基于索引进行查询时都存在性能问题。</p>
+</blockquote>
+<ol start="2">
+<li>结合数据库维护一个Sequence表</li>
+</ol>
+<p>&emsp;&emsp;此方案的思路也很简单，在数据库中建立一个Sequence表，表的结构类似于：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> TABLE <span class="symbol">`SEQUENCE`</span> (  </span><br><span class="line">    <span class="symbol">`table_name`</span> varchar(<span class="number">18</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,  </span><br><span class="line">    <span class="symbol">`nextid`</span> bigint(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,  </span><br><span class="line">    <span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> (<span class="symbol">`table_name`</span>)  </span><br><span class="line">) ENGINE=InnoDB</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;每当需要为某个表的新纪录生成ID时就从Sequence表中取出对应表的nextid,并将nextid的值加1后更新到数据库中以备下次使用。此方案也较简单，但缺点同样明显：由于所有插入任何都需要访问该表，该表很容易成为系统性能瓶颈，同时它也存在单点问题，一旦该表数据库失效，整个应用程序将无法工作。有人提出使用Master-Slave进行主从同步，但这也只能解决单点问题，并不能解决读写比为1:1的访问压力问题。</p>
+<ol start="3">
+<li>利用数据库集群并设置相应的步长（Flickr方案）</li>
+</ol>
+<p>&emsp;&emsp;优点：高可用、ID较简洁。</p>
+<p>&emsp;&emsp;缺点：需要单独的数据库集群。</p>
+<ol start="4">
+<li>Twitter Snowflake</li>
+</ol>
+<p>&emsp;&emsp;优点：高性能高可用、易拓展。</p>
+<p>&emsp;&emsp;缺点：需要独立的集群以及ZK。</p>
+<blockquote>
+<p><a href="http://blog.sina.com.cn/s/blog_6b7c2e660102vbi2.html" title="Title" target="_blank" rel="noopener">Twitter的分布式自增ID算法Snowflake</a></p>
+<p>在分布式系统中，需要生成全局UID的场合还是比较多的，twitter的snowflake解决了这种需求，实现也还是很简单的，除去配置信息，核心代码就是毫秒级时间41位 机器ID 10位 毫秒内序列12位。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&gt;*</span> <span class="number">10</span><span class="bullet">---0000000000</span> <span class="number">0000000000</span> <span class="number">0000000000</span> <span class="number">0000000000</span> <span class="number">0</span> <span class="meta">---</span> <span class="number">00000</span> <span class="bullet">---00000</span> <span class="bullet">---000000000000</span></span><br><span class="line"><span class="string">&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>在上面的字符串中，第一位为未使用（实际上也可作为long的符号位），接下来的41位为毫秒级时间，然后5位datacenter标识位，5位机器ID（并不算标识符，实际是为线程标识），然后12位该毫秒内的当前毫秒内的计数，加起来刚好64位，为一个Long型。</p>
+<p>这样的好处是，整体上按照时间自增排序，并且整个分布式系统内不会产生ID碰撞（由datacenter和机器ID作区分），并且效率较高，经测试，snowflake每秒能够产生26万ID左右，完全满足需要。</p>
+</blockquote>
+<ol start="5">
+<li>一大波GUID、Random算法</li>
+</ol>
+<p>&emsp;&emsp;优点：简单。</p>
+<p>&emsp;&emsp;缺点：生成ID较长，有重复几率。</p>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/24036067" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24036067</a> 博主团队采用的策略是：时间戳+用户标识码+随机数</p>
+<p>优点有：</p>
+<ul>
+<li><p>方便、成本低。</p>
+</li>
+<li><p>基本无重复的可能。</p>
+</li>
+<li><p>自带分库规则，这里的用户标识码即为用户ID的后四位，在查询的场景下，只需要订单号就可以匹配到相应的库表而无需用户ID，只取四位是希望订</p>
+</li>
+<li><p>单号尽可能的短一些，并且评估下来四位已经足够。</p>
+</li>
+<li><p>可排序，因为时间戳在最前面。</p>
+</li>
+</ul>
+<p>当然也有一些缺点，比如长度稍长，性能要比int/bigint的稍差等。</p>
+</blockquote>
+<h2 id="7、跨分片的排序分页"><a href="#7、跨分片的排序分页" class="headerlink" title="7、跨分片的排序分页"></a><strong>7、跨分片的排序分页</strong></h2><p>&emsp;&emsp;一般来讲，分页时需要按照指定字段进行排序。当排序字段就是分片字段的时候，我们通过分片规则可以比较容易定位到指定的分片，而当排序字段非分片字段的时候，情况就会变得比较复杂了。为了最终结果的准确性，我们需要在不同的分片节点中将数据进行排序并返回，并将不同分片返回的结果集进行汇总和再次排序，最后再返回给用户。如下图所示：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160119.png" alt=""></p>
+<p>&emsp;&emsp;上面图中所描述的只是最简单的一种情况（取第一页数据），看起来对性能的影响并不大。但是，如果想取出第10页数据，情况又将变得复杂很多，如下图所示：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160120.png" alt=""></p>
+<p>&emsp;&emsp;有些读者可能并不太理解，为什么不能像获取第一页数据那样简单处理（排序取出前10条再合并、排序）。其实并不难理解，因为各分片节点中的数据可能是随机的，为了排序的准确性，必须把所有分片节点的前N页数据都排序好后做合并，最后再进行整体的排序。很显然，这样的操作是比较消耗资源的，用户越往后翻页，系统性能将会越差。</p>
+<p>&emsp;&emsp;<strong>那如何解决分库情况下的分页问题呢？有以下几种办法：</strong></p>
+<p>&emsp;&emsp;如果是在前台应用提供分页，则限定用户只能看前面n页，这个限制在业务上也是合理的，一般看后面的分页意义不大（如果一定要看，可以要求用户缩小范围重新查询）。</p>
+<p>&emsp;&emsp;如果是后台批处理任务要求分批获取数据，则可以加大page size，比如每次获取5000条记录，有效减少分页数（当然离线访问一般走备库，避免冲击主库）。</p>
+<p>&emsp;&emsp;分库设计时，一般还有配套大数据平台汇总所有分库的记录，有些分页查询可以考虑走大数据平台。</p>
+<h2 id="8、分库策略"><a href="#8、分库策略" class="headerlink" title="8、分库策略"></a><strong>8、分库策略</strong></h2><h3 id="水平切分策略"><a href="#水平切分策略" class="headerlink" title="水平切分策略"></a><strong>水平切分策略</strong></h3><ol>
+<li>查询切分：通过一个中间库记录ID和分库的映射关系</li>
+</ol>
+<p>&emsp;&emsp;优点：ID和分库的映射算法可以任意修改</p>
+<p>&emsp;&emsp;缺点：需要引入额外的单点</p>
+<ol start="2">
+<li>范围切分：通过时间区间或ID区间等来划分</li>
+</ol>
+<p>&emsp;&emsp;优点：单表大小可控，天然水平扩展</p>
+<p>&emsp;&emsp;缺点：无法解决集中写入瓶颈问题</p>
+<ol start="3">
+<li>Hash切分：通过mod求余划分，推荐采用mod 2^n这种一致性Hash。</li>
+</ol>
+<p>&emsp;&emsp;比如分库分表方案为32*32，通过对ID后四位对32求余划分到32个分库中，然后把ID后四位div 32 mod 32将各分库分为32张表，总共1024张表，线上部署为8个主从集群，每个集群4个库。</p>
+<p>&emsp;&emsp;每次达到瓶颈后都可以通过修改求余策略来扩展数据集群，易于水平扩展。</p>
+<p>&emsp;&emsp;分库维度确定后，如何把记录分到各个库里呢?</p>
+<p>&emsp;&emsp;一般有两种方式：</p>
+<ul>
+<li>根据数值范围，比如用户Id为1-9999的记录分到第一个库，10000-20000的分到第二个库，以此类推。</li>
+<li>根据数值取模，比如用户Id mod n，余数为0的记录放到第一个库，余数为1的放到第二个库，以此类推。</li>
+</ul>
+<p>&emsp;&emsp;优劣比较：</p>
+<p>&emsp;&emsp;评价指标按照范围分库按照Mod分库</p>
+<p>&emsp;&emsp;库数量前期数目比较小，可以随用户/业务按需增长前期即根据mode因子确定库数量，数目一般比较大</p>
+<p>&emsp;&emsp;访问性能前期库数量小，全库查询消耗资源少，单库查询性能略差前期库数量大，全库查询消耗资源多，单库查询性能略好</p>
+<p>&emsp;&emsp;调整库数量比较容易，一般只需为新用户增加库，老库拆分也只影响单个库困难，改变mod因子导致数据在所有库之间迁移</p>
+<p>&emsp;&emsp;数据热点新旧用户购物频率有差异，有数据热点问题新旧用户均匀到分布到各个库，无热点</p>
+<p>&emsp;&emsp;实践中，为了处理简单，选择mod分库的比较多。同时二次分库时，为了数据迁移方便，一般是按倍数增加，比如初始4个库，二次分裂为8个，再16个。这样对于某个库的数据，一半数据移到新库，剩余不动，对比每次只增加一个库，所有数据都要大规模变动。</p>
+<p>&emsp;&emsp;补充下，mod分库一般每个库记录数比较均匀，但也有些数据库，存在超级Id，这些Id的记录远远超过其他Id，比如在广告场景下，某个大广告主的广告数可能占总体很大比例。如果按照广告主Id取模分库，某些库的记录数会特别多，对于这些超级Id，需要提供单独库来存储记录。</p>
+<h2 id="9、分库数量"><a href="#9、分库数量" class="headerlink" title="9、分库数量"></a><strong>9、分库数量</strong></h2><p>&emsp;&emsp;分库数量首先和单库能处理的记录数有关，一般来说，Mysql 单库超过5000万条记录，Oracle单库超过1亿条记录，DB压力就很大(当然处理能力和字段数量/访问模式/记录长度有进一步关系)。</p>
+<p>&emsp;&emsp;在满足上述前提下，如果分库数量少，达不到分散存储和减轻DB性能压力的目的；如果分库的数量多，好处是每个库记录少，单库访问性能好，但对于跨多个库的访问，应用程序需要访问多个库，如果是并发模式，要消耗宝贵的线程资源；如果是串行模式，执行时间会急剧增加。</p>
+<p>&emsp;&emsp;最后分库数量还直接影响硬件的投入，一般每个分库跑在单独物理机上，多一个库意味多一台设备。所以具体分多少个库，要综合评估，一般初次分库建议分4-8个库。</p>
+<h2 id="10、路由透明"><a href="#10、路由透明" class="headerlink" title="10、路由透明"></a><strong>10、路由透明</strong></h2><p>&emsp;&emsp;分库从某种意义上来说，意味着DB schema改变了，必然影响应用，但这种改变和业务无关，所以要尽量保证分库对应用代码透明，分库逻辑尽量在数据访问层处理。当然完全做到这一点很困难，具体哪些应该由DAL负责，哪些由应用负责，这里有一些建议：</p>
+<p>&emsp;&emsp;对于单库访问，比如查询条件指定用户Id，则该SQL只需访问特定库。此时应该由DAL层自动路由到特定库，当库二次分裂时，也只要修改mod 因子，应用代码不受影响。</p>
+<p>&emsp;&emsp;对于简单的多库查询，DAL负责汇总各个数据库返回的记录，此时仍对上层应用透明。</p>
+<h2 id="11、使用框架还是自主研发"><a href="#11、使用框架还是自主研发" class="headerlink" title="11、使用框架还是自主研发"></a><strong>11、使用框架还是自主研发</strong></h2><p>&emsp;&emsp;目前市面上的分库分表中间件相对较多，其中基于代理方式的有MySQL Proxy和Amoeba，基于Hibernate框架的是Hibernate Shards，基于jdbc的有当当sharding-jdbc，基于mybatis的类似maven插件式的有蘑菇街的蘑菇街TSharding，通过重写spring的ibatis template类是Cobar Client，这些框架各有各的优势与短板，架构师可以在深入调研之后结合项目的实际情况进行选择，但是总的来说，我个人对于框架的选择是持谨慎态度的。一方面多数框架缺乏成功案例的验证，其成熟性与稳定性值得怀疑。另一方面，一些从成功商业产品开源出框架（如阿里和淘宝的一些开源项目）是否适合你的项目是需要架构师深入调研分析的。当然，最终的选择一定是基于项目特点、团队状况、技术门槛和学习成本等综合因素考量确定的。</p>
+<h1 id="实战场景-Mycat实现分库分表"><a href="#实战场景-Mycat实现分库分表" class="headerlink" title="实战场景-Mycat实现分库分表"></a><strong>实战场景-Mycat实现分库分表</strong></h1><p>&emsp;&emsp;暂无</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p><a href="https://www.cnblogs.com/jshen/p/7682502.html" target="_blank" rel="noopener">https://www.cnblogs.com/jshen/p/7682502.html</a></p>
+</blockquote>
+<blockquote>
+<p><a href="http://www.jianshu.com/p/32b3e91aa22c" target="_blank" rel="noopener">http://www.jianshu.com/p/32b3e91aa22c</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/24036067" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/24036067</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/database/" rel="tag"># database</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019042401.html" rel="next" title="SQL优化以及数据库性能的优化">
+                <i class="fa fa-chevron-left"></i> SQL优化以及数据库性能的优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">64</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#分库分表"><span class="nav-number">1.</span> <span class="nav-text">分库分表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分库分表要解决的问题"><span class="nav-number">2.</span> <span class="nav-text">分库分表要解决的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、跨节点Join的问题"><span class="nav-number">2.1.</span> <span class="nav-text">1、跨节点Join的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、跨节点的count-order-by-group-by以及聚合函数问题"><span class="nav-number">2.2.</span> <span class="nav-text">2、跨节点的count,order by,group by以及聚合函数问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、数据迁移，容量规划，扩容等问题"><span class="nav-number">2.3.</span> <span class="nav-text">3、数据迁移，容量规划，扩容等问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、事务"><span class="nav-number">2.4.</span> <span class="nav-text">4、事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5、ID问题"><span class="nav-number">2.5.</span> <span class="nav-text">5、ID问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7、跨分片的排序分页"><span class="nav-number">2.6.</span> <span class="nav-text">7、跨分片的排序分页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8、分库策略"><span class="nav-number">2.7.</span> <span class="nav-text">8、分库策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#水平切分策略"><span class="nav-number">2.7.1.</span> <span class="nav-text">水平切分策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9、分库数量"><span class="nav-number">2.8.</span> <span class="nav-text">9、分库数量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10、路由透明"><span class="nav-number">2.9.</span> <span class="nav-text">10、路由透明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11、使用框架还是自主研发"><span class="nav-number">2.10.</span> <span class="nav-text">11、使用框架还是自主研发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实战场景-Mycat实现分库分表"><span class="nav-number">3.</span> <span class="nav-text">实战场景-Mycat实现分库分表</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":100,"height":200},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
