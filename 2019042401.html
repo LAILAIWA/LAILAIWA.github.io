@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="SQL优化以及数据库性能的优化">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-04-25T07:53:49.878Z">
+<meta property="og:updated_time" content="2019-05-09T10:35:39.067Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SQL优化以及数据库性能的优化">
 <meta name="twitter:description" content="SQL优化以及数据库性能的优化">
@@ -354,7 +354,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,193
+                  2,207
                 </span>
               
 
@@ -400,7 +400,21 @@
 <li><strong>对常用于where和order等地方的属性列创建<a href="../2019042401.html" title="Title">索引</a>，避免全表扫描，提高查询效率。</strong></li>
 </ol>
 <p>&emsp;&emsp;以下写法可能会导致查询不走索引，而进行全表扫描，下列总结不一定准确涵盖，有时因为如索引字段重复数据太多等原因也会导致SQL不走索引，具体情况需要具体分析，且不要提前做优化，开发首先的优先级应该保证进度按时完成，尽量不要先把重心提前放到这些地方。</p>
-<p>用法|说明|代替用法<br>|:—:|:—|:—|<br>select <em>|<br>where xx != 或 &lt;&gt;  …  |无法使用索引|用 union all 来代替<br>where xx is (not) null|无法使用索引|where xx = 0(不一定都支持)<br>where xx or … |无法使用索引|用 union all 来代替<br>where xx in/not in … |无法使用索引|between，exists或join替换in，用not exists替代not in<br>where xx like … |模糊查询无法使用索引|考虑使用全文检索<br>where 使用局部变量 |无法使用索引|如：select id from t where num=@num 改为强制索引：select id from t with(index(索引名)) where num=@num<br>where 表达式运算 |无法使用索引|如：select id from t where num/2=100 应改为: select id from t where num=100</em>2<br>where 函数操作 |无法使用索引|如：select id from t where substring(name,1,3)=’abc’ 和 select id from t where datediff(day,createdate,’2005-11-30’)=0–’2005-11-30’生成的id  应改为: select id from t where name like ‘abc%’  和 select id from t where createdate&gt;=’2005-11-30’ and createdate&lt;’2005-12-1’<br>若索引字段是联合索引|只能使用索引中的第一个字段作为条件，否则不会使用索引，尽量让字段顺序和索引顺序保持一致|</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">用法</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">代替用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>select <em>|无法使用索引|标明具体返回属性<br>where xx != 或 &lt;&gt;  …  |无法使用索引|用 union all 来代替<br>where xx is (not) null|无法使用索引|where xx = 0(不一定都支持)<br>where xx or … |无法使用索引|用 union all 来代替<br>where xx in/not in … |无法使用索引|between，exists或join替换in，用not exists替代not in<br>where xx like … |模糊查询无法使用索引|考虑使用全文检索<br>where 使用局部变量 |无法使用索引|如：select id from t where num=@num 改为强制索引：select id from t with(index(索引名)) where num=@num<br>where 表达式运算 |无法使用索引|如：select id from t where num/2=100 应改为: select id from t where num=100</em>2<br>where 函数操作 |无法使用索引|如：select id from t where substring(name,1,3)=’abc’ 和 select id from t where datediff(day,createdate,’2005-11-30’)=0–’2005-11-30’生成的id  应改为: select id from t where name like ‘abc%’  和 select id from t where createdate&gt;=’2005-11-30’ and createdate&lt;’2005-12-1’<br>若索引字段是联合索引|只能使用索引中的第一个字段作为条件，否则不会使用索引，尽量让字段顺序和索引顺序保持一致|</p>
 <ol start="2">
 <li><strong>使用exists代替in。</strong></li>
 </ol>
@@ -639,7 +653,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">68</span>
+                  <span class="site-state-item-count">70</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
