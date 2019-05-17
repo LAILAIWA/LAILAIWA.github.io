@@ -96,7 +96,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%80%9A%E8%BF%87%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%80%9A%E8%BF%87%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1.png">
-<meta property="og:updated_time" content="2019-05-13T03:33:07.112Z">
+<meta property="og:updated_time" content="2019-05-13T07:14:43.561Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域和内存溢出异常">
 <meta name="twitter:description" content="简单介绍Java虚拟机中的Java内存区域和内存溢出异常。">
@@ -357,7 +357,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,649
+                  3,664
                 </span>
               
 
@@ -398,12 +398,16 @@
       
 
       
-        <h1 id="一、运行时数据区域"><a href="#一、运行时数据区域" class="headerlink" title="一、运行时数据区域"></a><strong>一、运行时数据区域</strong></h1><h2 id="1-程序计数器（Program-Counter-Register）"><a href="#1-程序计数器（Program-Counter-Register）" class="headerlink" title="1. 程序计数器（Program Counter Register）"></a><strong>1. 程序计数器（Program Counter Register）</strong></h2><p>&emsp;&emsp;当前线程所执行字节码的行号指示器，字节码解释器通过改变计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等功能都需要依赖程序计数器。</p>
+        <h1 id="一、运行时数据区域"><a href="#一、运行时数据区域" class="headerlink" title="一、运行时数据区域"></a><strong>一、运行时数据区域</strong></h1><h2 id="1-程序计数器（Program-Counter-Register）"><a href="#1-程序计数器（Program-Counter-Register）" class="headerlink" title="1. 程序计数器（Program Counter Register）"></a><strong>1. 程序计数器（Program Counter Register）</strong></h2><p>&emsp;&emsp;程序计数器就是当前线程所执行字节码的<strong>行号指示器</strong>，字节码解释器通过改变计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等功能都需要依赖程序计数器。</p>
 <p>&emsp;&emsp;为了支持多线程间上下文切换，在线程恢复时能恢复到执行位置，每个线程都会有独立的程序计数器，所以程序计数器是<strong>线程私有</strong>内存。</p>
 <h2 id="2-虚拟机栈（Java-Virtual-Machine-Stacks）"><a href="#2-虚拟机栈（Java-Virtual-Machine-Stacks）" class="headerlink" title="2. 虚拟机栈（Java Virtual Machine Stacks）"></a><strong>2. 虚拟机栈（Java Virtual Machine Stacks）</strong></h2><p>&emsp;&emsp;虚拟机栈描述Java方法执行的内存模型：每个方法在执行时会创建一个<strong>栈帧</strong>，用来存储局部变量表、操作数栈、动态链接、方法出口等信息，每个方法从调用直至执行完成的过程，对应着一个栈帧在虚拟机栈中入栈到出栈的过程。</p>
 <p>&emsp;&emsp;虚拟机栈是<strong>线程私有</strong>内存。</p>
 <p>&emsp;&emsp;<strong>局部变量表</strong>用来存放编译阶段可知的各种<strong>基本数据类型</strong>，<strong>对象引用类型</strong>，和<strong>returnAdress类型</strong>。</p>
-<p>&emsp;&emsp;虚拟机规范规定此内存区域的两种异常：1.StackOverflowError 线程请求的栈深度超过虚拟机所允许的深度。2.OutOfMemoryError 虚拟机动态扩展时无法申请到足够的内存。</p>
+<p>&emsp;&emsp;虚拟机规范规定此内存区域的两种异常：</p>
+<ol>
+<li>StackOverflowError 线程请求的栈深度超过虚拟机所允许的深度。</li>
+<li>OutOfMemoryError 虚拟机动态扩展时无法申请到足够的内存。</li>
+</ol>
 <h2 id="3-本地方法栈（Native-Method-Stack）"><a href="#3-本地方法栈（Native-Method-Stack）" class="headerlink" title="3. 本地方法栈（Native Method Stack）"></a><strong>3. 本地方法栈（Native Method Stack）</strong></h2><p>&emsp;&emsp;本地方法栈类似于虚拟机栈，区别是虚拟机栈为虚拟机执行Java方法(字节码)服务，本地方法栈则为Native方法服务，甚至二者可以合并为一个方法栈。</p>
 <h2 id="4-Java堆（Java-Heap）"><a href="#4-Java堆（Java-Heap）" class="headerlink" title="4. Java堆（Java Heap）"></a><strong>4. Java堆（Java Heap）</strong></h2><p>&emsp;&emsp;Java堆是一块<strong>线程共享</strong>的内存区域，堆就是用来存放所有的对象实例，所以<strong>所有的对象实例和数组都要在堆上分配</strong>（不绝对）。</p>
 <p>&emsp;&emsp;垃圾回收管理主要发生在Java堆，所以也叫GC堆。内存回收的收集器采用的是分代收集算法：可以把GC堆分为<strong>新生代</strong>和<strong>老年代</strong>，更细分的话可以分为<strong>Eden空间</strong>、<strong>From Survivor空间</strong>、<strong>To Survivor空间</strong>等。从内存分配的角度看，Java堆可以分出一些线程私有的<strong>分配缓冲区</strong>。无论怎样划分，堆存储的都是对象实例。</p>
@@ -413,19 +417,16 @@
 <p>&emsp;&emsp;除了编译时获取的常量外，运行时也可以将新生成的常量放入运行时常量池，比较常用的就是String.intern()</p>
 <h2 id="7-直接内存（Direct-Memory）"><a href="#7-直接内存（Direct-Memory）" class="headerlink" title="7. 直接内存（Direct Memory）"></a><strong>7. 直接内存（Direct Memory）</strong></h2><p>&emsp;&emsp;直接内存并不是虚拟机规范中定义的内存区域，但这部分内存会被频繁使用，如NIO类引入了一种基于Channel通道于Buffer缓冲区的新I/O方式，其使用Native函数库直接分配堆外内存区域，然后再通过存储在Java堆中的DirectByteBuffer对象作为这块内存的引用进行操作，这样就避免了一直在Java堆和Native堆中来回复制数据，从而提高了性能。</p>
 <p>&emsp;&emsp;因为不属于虚拟机定义的内存区域，所以直接内存只受计算机本身内存大小和处理器寻址空间的限制，配置服务器虚拟机参数时需要考虑到这一部分区域，否则可能会在动态扩展时导致内存溢出。</p>
+<blockquote>
+<p>更多可以参考：<a href="../2019032501.html" title="Title">IO和NIO</a></p>
+</blockquote>
 <hr>
 <h1 id="二、虚拟机中对象生命过程"><a href="#二、虚拟机中对象生命过程" class="headerlink" title="二、虚拟机中对象生命过程"></a><strong>二、虚拟机中对象生命过程</strong></h1><h2 id="1-对象的创建"><a href="#1-对象的创建" class="headerlink" title="1. 对象的创建"></a><strong>1. 对象的创建</strong></h2><p>&emsp;&emsp;在Java语言中，表面上看就是通过new关键字创建一个对象，在虚拟机中经历了一个怎样的过程？</p>
-<ol>
-<li>虚拟机在执行到new指令时，首先要<strong>检查</strong>此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。</li>
-</ol>
-<p>&emsp;&emsp;&emsp;&emsp;如果没有，则执行类的加载过程，详细请看博客<a href="../2019050801.html" title="Title">类的加载机制</a>。</p>
-<ol start="2">
-<li>在类加载检查通过后，虚拟机会为新生的对象<strong>分配内存</strong>，在类加载后就可以确认所需内存大小。</li>
-</ol>
-<blockquote>
-<p>假设Java堆中的内存是规整的，分配内存就是将指针在空闲区域挪动对象大小的距离，这类分配方式叫<strong>指针碰撞</strong>。</p>
-<p>如果Java堆中内存并不规整，虚拟机就需要维护一个列表来记录可用的内存块，在分配时查询此表，找到足够大的空闲空间放置对象，并更新表内数据，这类分配方式叫<strong>空闲列表</strong>。</p>
-<p>Java堆是否规整由垃圾收集器是否由压缩整理功能决定，在使用Serial、ParNew等带Compact过程的收集器时使用<strong>指针碰撞</strong>，而使用CMS这类基于Mark-Sweep算法的收集器时，采用<strong>空闲列表</strong>。</p>
+<h3 id="1-虚拟机在执行到new指令时，首先要检查此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。"><a href="#1-虚拟机在执行到new指令时，首先要检查此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。" class="headerlink" title="1. 虚拟机在执行到new指令时，首先要检查此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。"></a><strong>1. 虚拟机在执行到new指令时，首先要</strong>检查<strong>此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。</strong></h3><p>&emsp;&emsp;&emsp;&emsp;如果没有，则执行类的加载过程，详细请看博客<a href="../2019050801.html" title="Title">类的加载机制</a>。</p>
+<h3 id="2-在类加载检查通过后，虚拟机会为新生的对象分配内存，在类加载后就可以确认所需内存大小。"><a href="#2-在类加载检查通过后，虚拟机会为新生的对象分配内存，在类加载后就可以确认所需内存大小。" class="headerlink" title="2. 在类加载检查通过后，虚拟机会为新生的对象分配内存，在类加载后就可以确认所需内存大小。"></a><strong>2. 在类加载检查通过后，虚拟机会为新生的对象</strong>分配内存<strong>，在类加载后就可以确认所需内存大小。</strong></h3><blockquote>
+<p>&emsp;假设Java堆中的内存是规整的，分配内存就是将指针在空闲区域挪动对象大小的距离，这类分配方式叫<strong>指针碰撞</strong>。</p>
+<p>&emsp;如果Java堆中内存并不规整，虚拟机就需要维护一个列表来记录可用的内存块，在分配时查询此表，找到足够大的空闲空间放置对象，并更新表内数据，这类分配方式叫<strong>空闲列表</strong>。</p>
+<p>&emsp;Java堆是否规整由垃圾收集器是否由压缩整理功能决定，在使用Serial、ParNew等带Compact过程的收集器时使用<strong>指针碰撞</strong>，而使用CMS这类基于Mark-Sweep算法的收集器时，采用<strong>空闲列表</strong>。</p>
 </blockquote>
 <blockquote>
 <p><strong>在划分空间时需要考虑线程安全问题：</strong></p>
@@ -437,14 +438,8 @@
 </ol>
 <p>&emsp;内存分配完成后，虚拟机会将被分配的内存区域初始化为<strong>0值</strong>(不包括对象头)，若采用TLAB可以提前到分配TLAB时进行，这一操作使对象在未被赋值的情况下可以被访问其对应数据类型的0值。</p>
 </blockquote>
-<ol start="3">
-<li>虚拟机对对象进行必要的<strong>设置</strong>，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在<strong>对象头（Object Header）</strong>中。</li>
-</ol>
-<p>&emsp;&emsp;&emsp;&emsp;此过程结束，对VM来说对象已经创建完成，对于Java程序而言才刚刚开始，然后就是初始化&lt; init &gt;，此时所有字段都还为<strong>0</strong>。</p>
-<ol start="4">
-<li>执行对象的&lt; init &gt;方法，把对象按开发设计进行初始化。</li>
-</ol>
-<h2 id="2-对象的内存布局"><a href="#2-对象的内存布局" class="headerlink" title="2. 对象的内存布局"></a><strong>2. 对象的内存布局</strong></h2><p>&emsp;&emsp;在HotSpot虚拟机中，对象在内存中存储的布局分为3块区域：<strong>对象头</strong>（Header）、<strong>实例数据</strong>（Instance Data）和<strong>对齐填充</strong>（Padding）。</p>
+<h3 id="3-虚拟机对对象进行必要的设置，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在对象头（Object-Header）中。"><a href="#3-虚拟机对对象进行必要的设置，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在对象头（Object-Header）中。" class="headerlink" title="3. 虚拟机对对象进行必要的设置，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在对象头（Object Header）中。"></a><strong>3. 虚拟机对对象进行必要的</strong>设置<strong>，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在</strong>对象头（Object Header）<strong>中。</strong></h3><p>&emsp;&emsp;&emsp;&emsp;此过程结束，对VM来说对象已经创建完成，对于Java程序而言才刚刚开始，然后就是初始化&lt; init &gt;，此时所有字段都还为<strong>0</strong>。</p>
+<h3 id="4-执行对象的-lt-init-gt-方法，把对象按开发设计进行初始化。"><a href="#4-执行对象的-lt-init-gt-方法，把对象按开发设计进行初始化。" class="headerlink" title="4. 执行对象的&lt; init &gt;方法，把对象按开发设计进行初始化。"></a><strong>4. 执行对象的&lt; init &gt;方法，把对象按开发设计进行初始化。</strong></h3><h2 id="2-对象的内存布局"><a href="#2-对象的内存布局" class="headerlink" title="2. 对象的内存布局"></a><strong>2. 对象的内存布局</strong></h2><p>&emsp;&emsp;在HotSpot虚拟机中，对象在内存中存储的布局分为3块区域：<strong>对象头</strong>（Header）、<strong>实例数据</strong>（Instance Data）和<strong>对齐填充</strong>（Padding）。</p>
 <h3 id="2-1-对象头"><a href="#2-1-对象头" class="headerlink" title="2.1 对象头"></a><strong>2.1 对象头</strong></h3><p>&emsp;&emsp;对象头，包括两部分信息，第一部分存储对象自身的运行时数据，如哈希码、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳等，这部分被叫做<strong>Mark Word</strong></p>
 <table>
 <thead>
@@ -505,7 +500,7 @@
 <p>&emsp;&emsp;通过一些实验证明，在单线程时，无论是栈帧太大还是虚拟机栈容量太小，当内存无法分配时VM都会抛出StackOverflowError异常。多线程时可能会因为创建线程分配资源的问题产生内存溢出异常，此时内存溢出异常和栈空间大小没有太大关系，而且若不能减少线程数时只能通过减少最大堆和栈容量来换取更多的线程。</p>
 <h3 id="3-方法去和运行时常量池溢出"><a href="#3-方法去和运行时常量池溢出" class="headerlink" title="3. 方法去和运行时常量池溢出"></a><strong>3. 方法去和运行时常量池溢出</strong></h3><p>&emsp;&emsp;运行时常量池是方法区的一部分，通过String.intern()方法来测试。</p>
 <blockquote>
-<p>String.intern()方法作用：当字符串常量池中已包含某个String对象的字符串，就返回池中此字符串的String对象；否则要将此String对象包含的字符串添加到常量池中，并返回其引用。在1.6版本前常量池在永久代中，可以通过-XX:PermSize和-XX:MaxPermSize限制方法区大小。</p>
+<p>&emsp;String.intern()方法作用：当字符串常量池中已包含某个String对象的字符串，就返回池中此字符串的String对象；否则要将此String对象包含的字符串添加到常量池中，并返回其引用。在1.6版本前常量池在永久代中，可以通过-XX:PermSize和-XX:MaxPermSize限制方法区大小。</p>
 <p>更多可以参考：<a href="../2018122501.html" title="Title">Java字符串内存分配-字符串常量池</a>，<a href="../2019030101.html" title="Title">String的intern方法详解</a>等</p>
 </blockquote>
 <p>&emsp;&emsp;循环调用String.intern()创建字符串对象，会抛出java.lang.OutOfMemoryError: PermGen space异常提示运行时常量池溢出，PermGen space表示了运行时常量池属于方法区/永久代的一部分。</p>
@@ -575,8 +570,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019050901.html" rel="prev" title="2019050901">
-                2019050901 <i class="fa fa-chevron-right"></i>
+              <a href="/2019050901.html" rel="prev" title="日志">
+                日志 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -658,7 +653,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-count">71</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -669,7 +664,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -680,7 +675,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">44</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -741,7 +736,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、运行时数据区域"><span class="nav-number">1.</span> <span class="nav-text">一、运行时数据区域</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-程序计数器（Program-Counter-Register）"><span class="nav-number">1.1.</span> <span class="nav-text">1. 程序计数器（Program Counter Register）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-虚拟机栈（Java-Virtual-Machine-Stacks）"><span class="nav-number">1.2.</span> <span class="nav-text">2. 虚拟机栈（Java Virtual Machine Stacks）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-本地方法栈（Native-Method-Stack）"><span class="nav-number">1.3.</span> <span class="nav-text">3. 本地方法栈（Native Method Stack）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Java堆（Java-Heap）"><span class="nav-number">1.4.</span> <span class="nav-text">4. Java堆（Java Heap）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-方法区（Method-Area）"><span class="nav-number">1.5.</span> <span class="nav-text">5. 方法区（Method Area）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-运行时常量池（Runtime-Constant-Pool）"><span class="nav-number">1.6.</span> <span class="nav-text">6. 运行时常量池（Runtime Constant Pool）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-直接内存（Direct-Memory）"><span class="nav-number">1.7.</span> <span class="nav-text">7. 直接内存（Direct Memory）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、虚拟机中对象生命过程"><span class="nav-number">2.</span> <span class="nav-text">二、虚拟机中对象生命过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-对象的创建"><span class="nav-number">2.1.</span> <span class="nav-text">1. 对象的创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-对象的内存布局"><span class="nav-number">2.2.</span> <span class="nav-text">2. 对象的内存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-对象头"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 对象头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-实例数据"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 实例数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-对齐填充"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.3 对齐填充</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-对象的访问定位"><span class="nav-number">2.3.</span> <span class="nav-text">3. 对象的访问定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-句柄"><span class="nav-number">2.3.1.</span> <span class="nav-text">3.1 句柄</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-直接指针"><span class="nav-number">2.3.2.</span> <span class="nav-text">3.2 直接指针</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、内存溢出"><span class="nav-number">3.</span> <span class="nav-text">三、内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Java堆溢出"><span class="nav-number">3.0.1.</span> <span class="nav-text">1. Java堆溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-虚拟机栈和本地方法栈溢出"><span class="nav-number">3.0.2.</span> <span class="nav-text">2. 虚拟机栈和本地方法栈溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-方法去和运行时常量池溢出"><span class="nav-number">3.0.3.</span> <span class="nav-text">3. 方法去和运行时常量池溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-本机内存溢出"><span class="nav-number">3.0.4.</span> <span class="nav-text">4. 本机内存溢出</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、运行时数据区域"><span class="nav-number">1.</span> <span class="nav-text">一、运行时数据区域</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-程序计数器（Program-Counter-Register）"><span class="nav-number">1.1.</span> <span class="nav-text">1. 程序计数器（Program Counter Register）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-虚拟机栈（Java-Virtual-Machine-Stacks）"><span class="nav-number">1.2.</span> <span class="nav-text">2. 虚拟机栈（Java Virtual Machine Stacks）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-本地方法栈（Native-Method-Stack）"><span class="nav-number">1.3.</span> <span class="nav-text">3. 本地方法栈（Native Method Stack）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Java堆（Java-Heap）"><span class="nav-number">1.4.</span> <span class="nav-text">4. Java堆（Java Heap）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-方法区（Method-Area）"><span class="nav-number">1.5.</span> <span class="nav-text">5. 方法区（Method Area）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-运行时常量池（Runtime-Constant-Pool）"><span class="nav-number">1.6.</span> <span class="nav-text">6. 运行时常量池（Runtime Constant Pool）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-直接内存（Direct-Memory）"><span class="nav-number">1.7.</span> <span class="nav-text">7. 直接内存（Direct Memory）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、虚拟机中对象生命过程"><span class="nav-number">2.</span> <span class="nav-text">二、虚拟机中对象生命过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-对象的创建"><span class="nav-number">2.1.</span> <span class="nav-text">1. 对象的创建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-虚拟机在执行到new指令时，首先要检查此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。"><span class="nav-number">2.1.1.</span> <span class="nav-text">1. 虚拟机在执行到new指令时，首先要检查此指令的参数能否在常量池定位到一个类的符号引用，同时检查这个符号引用所代表的类是否已经被加载、解析和初始化过。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-在类加载检查通过后，虚拟机会为新生的对象分配内存，在类加载后就可以确认所需内存大小。"><span class="nav-number">2.1.2.</span> <span class="nav-text">2. 在类加载检查通过后，虚拟机会为新生的对象分配内存，在类加载后就可以确认所需内存大小。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-虚拟机对对象进行必要的设置，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在对象头（Object-Header）中。"><span class="nav-number">2.1.3.</span> <span class="nav-text">3. 虚拟机对对象进行必要的设置，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在对象头（Object Header）中。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-执行对象的-lt-init-gt-方法，把对象按开发设计进行初始化。"><span class="nav-number">2.1.4.</span> <span class="nav-text">4. 执行对象的&lt; init &gt;方法，把对象按开发设计进行初始化。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-对象的内存布局"><span class="nav-number">2.2.</span> <span class="nav-text">2. 对象的内存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-对象头"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 对象头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-实例数据"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 实例数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-对齐填充"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.3 对齐填充</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-对象的访问定位"><span class="nav-number">2.3.</span> <span class="nav-text">3. 对象的访问定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-句柄"><span class="nav-number">2.3.1.</span> <span class="nav-text">3.1 句柄</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-直接指针"><span class="nav-number">2.3.2.</span> <span class="nav-text">3.2 直接指针</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、内存溢出"><span class="nav-number">3.</span> <span class="nav-text">三、内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Java堆溢出"><span class="nav-number">3.0.1.</span> <span class="nav-text">1. Java堆溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-虚拟机栈和本地方法栈溢出"><span class="nav-number">3.0.2.</span> <span class="nav-text">2. 虚拟机栈和本地方法栈溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-方法去和运行时常量池溢出"><span class="nav-number">3.0.3.</span> <span class="nav-text">3. 方法去和运行时常量池溢出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-本机内存溢出"><span class="nav-number">3.0.4.</span> <span class="nav-text">4. 本机内存溢出</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
