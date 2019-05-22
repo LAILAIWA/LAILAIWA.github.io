@@ -95,7 +95,7 @@
 <meta property="og:description" content="介绍Java中的synchronized关键字。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg">
-<meta property="og:updated_time" content="2019-04-02T08:51:05.747Z">
+<meta property="og:updated_time" content="2019-05-22T10:45:04.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="synchronized">
 <meta name="twitter:description" content="介绍Java中的synchronized关键字。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,154
+                  2,899
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  11
                 </span>
               
             </div>
@@ -400,7 +400,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg" rel="gallery_cjvvtrl5g0043n8tmxkm2uwyf"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg" rel="gallery_cjvz3rti80040vwtmt25qkl0c"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg" itemprop="contentUrl"/>
               </a>
@@ -430,24 +430,91 @@
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//结果如下</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br><span class="line">printStaticTwo: </span><br><span class="line">printStaticTwo execute</span><br><span class="line">printStaticTwo end</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;再测试多个对象调用，结果如下：</p>
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//Tom和Lee调用普通方法1</span><br><span class="line">printName start</span><br><span class="line">printName start</span><br><span class="line">printName: Lee</span><br><span class="line">printName execute</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printName end</span><br><span class="line">printName end</span><br><span class="line"></span><br><span class="line">//Tom和Lee调用静态方法3</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;以上不同在了解了JVM等相关知识后，会更加清晰的区分。</p>
-<p>&emsp;&emsp;首先会了解到在类文件中的这些域的区别，当sync修饰普通方法时，在方法调用时取得是对象锁，对象的锁信息会显式当前锁的状态，所以调用同一对象的方法时，前个线程获得锁后，后一个线程就因为取到同一个对象锁而阻塞。而不同对象调用时，取到的对象锁不同，所以就不会起到同步的效果了。</p>
+<p>&emsp;&emsp;要了解在类文件中的这些域的区别，当sync修饰普通方法时，在方法调用时取得是对象锁，对象的锁信息会显式当前锁的状态，所以调用同一对象的方法时，前个线程获得锁后，后一个线程就因为取到同一个对象锁而阻塞。而不同对象调用时，取到的对象锁不同，所以就不会起到同步的效果了。</p>
 <p>&emsp;&emsp;而静态方法锁的对象是T.class，所以对于同一个类文件的对象来说调用被锁的静态方法都会竞争，两个锁的对象不同所以静态方法被调用了，普通方法还可以继续调用，两者不影响。</p>
 <p>&emsp;&emsp;在上篇博客有提到锁是可重入的，获取同个对象锁的线程可以继续调用同对象内的其它加同一个锁的方法，而子类在结构上等同于包裹了父类对象，也可以重入。</p>
 <hr>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a><strong>原理</strong></h1><ul>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a><strong>原理</strong></h1><p><strong>锁不同对象时的关系：</strong></p>
+<ol>
+<li>修饰普通方法，是当前实例对象的锁</li>
+<li>修饰静态同步方法，是当前类的Class对象的锁</li>
+<li>同步方法块，是块内配置的对象的锁</li>
+</ol>
+<p><strong>对应的锁分类：</strong></p>
+<ul>
 <li>对象锁：使用 synchronized 修饰非静态的方法以及 synchronized(this) 同步代码块使用的锁是对象锁。</li>
 <li>类锁：使用 synchronized 修饰静态的方法以及 synchronized(class) 同步代码块使用的锁是类锁。</li>
 <li>私有锁：在类内部声明一个私有属性如private Object lock，在需要加锁的同步块使用 synchronized(lock）</li>
 </ul>
-<blockquote>
-<p>指令符：monitorenter 指令指向同步代码块的开始位置，monitorexit 指令指明同步代码块的结束位置<br>在同步方法中会包含 ACC_SYNCHRONIZED 标记符。该标记符指明了该方法是一个同步方法，从而执行相应的同步调用。</p>
+<h2 id="底层执行细节"><a href="#底层执行细节" class="headerlink" title="底层执行细节"></a><strong>底层执行细节</strong></h2><blockquote>
+<p>用到的指令符：</p>
+<ul>
+<li>monitorenter 指令指向同步代码块的开始位置</li>
+<li>monitorexit 指令指明同步代码块的结束位置</li>
+</ul>
+<p>在同步方法中会包含 ACC_SYNCHRONIZED 标记符。该标记符指明了该方法是一个同步方法，从而执行相应的同步调用。</p>
 </blockquote>
-<p>&emsp;&emsp;每个对象都会有一个监视器(monitor)，当监视器被占用时对象就会处于锁定状态，线程在执行synchronized时会通过指令符monitorenter去获取监视器的所有权。实际运行中的过程是这样的，若monitor计数为0，线程进入，计数加1，此线程即为监视器所有者。线程已拥有所有权，再重新进入，计数继续加1。其它线程访问时，发现监视器已被占用，进入阻塞状态，直到计数归0，再竞争监视器所有权。</p>
+<p>&emsp;&emsp;每个对象都会有一个<strong>监视器(monitor)</strong>，当监视器被占用时对象就会处于锁定状态，线程在执行<strong>synchronized</strong>时会通过指令符<strong>monitorenter</strong>去获取监视器的所有权。实际运行中的过程是这样的，若monitor计数为0，线程进入，计数加1，此线程即为监视器所有者。线程已拥有所有权，再重新进入，计数继续加1。其它线程访问时，发现监视器已被占用，进入阻塞状态，直到计数归0，再竞争监视器所有权。</p>
 <p>&emsp;&emsp;在前几篇博客整理锁机制时，有写到Object的wait(),notify()等方法也依赖于监视器，所以这些方法应该限制在同步的域中调用。</p>
+<h2 id="锁的存储位置"><a href="#锁的存储位置" class="headerlink" title="锁的存储位置"></a><strong>锁的存储位置</strong></h2><p>&emsp;&emsp;synchronized所用的锁存储在<strong>Java对象头</strong>内，对象头具体结构可以参考<a href="../" title="Title">对象头</a>，</p>
+<h3 id="对象头结构"><a href="#对象头结构" class="headerlink" title="对象头结构"></a><strong>对象头结构</strong></h3><p><strong>Java对象头各部分和长度如下：</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">内容</th>
+<th style="text-align:center">长度</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Mark Word</td>
+<td style="text-align:center">32/64bit</td>
+<td style="text-align:left">存储对象的hashcode或锁信息等</td>
+</tr>
+<tr>
+<td style="text-align:center">Class Metadata Adress</td>
+<td style="text-align:center">32/64bit</td>
+<td style="text-align:left">存储到对象类型数据的指针</td>
+</tr>
+<tr>
+<td style="text-align:center">Array Length</td>
+<td style="text-align:center">32/64bit</td>
+<td style="text-align:left">数组的长度(当对象为数组)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>32位的JVM中Mark Word存储结构如下：</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">锁状态</th>
+<th style="text-align:center">25bit</th>
+<th style="text-align:center">4bit</th>
+<th style="text-align:center">1bit是否是偏向锁</th>
+<th style="text-align:center">2bit锁标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">无锁状态</td>
+<td style="text-align:center">对象的hashcode</td>
+<td style="text-align:center">对象分代年龄</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">01</td>
+</tr>
+</tbody>
+</table>
+<p><strong>运行时Mark Word状态变化如下：</strong></p>
+<table><br><tr><br>    <td rowspan="2" align="center">锁状态</td><br>    <td colspan="2" align="center">25bit</td><br>    <td rowspan="2" align="center">4bit</td><br>    <td align="center">1bit</td><br>    <td align="center">2bit</td><br></tr><br><tr><br>    <td align="center">23bit</td><br>    <td align="center">2bit</td><br>    <td align="center">是否偏向锁</td><br>    <td align="center">锁标志位</td><br></tr><br><tr><br>    <td align="center">轻量级锁</td><br>    <td align="center" colspan="4">指向栈中锁记录的指针</td><br>    <td align="center">00</td><br></tr><br><tr><br>    <td align="center">重量级锁</td><br>    <td align="center" colspan="4">指向互斥量(重量级锁)的指针</td><br>    <td align="center">10</td><br></tr><br><tr><br>    <td align="center">GC标记</td><br>    <td align="center" colspan="4">空</td><br>    <td align="center">11</td><br></tr><br><tr><br>    <td align="center">偏向锁</td><br>    <td align="center">线程ID</td><br>    <td align="center">Epoch</td><br>    <td align="center">对象分代年龄</td><br>    <td align="center">1</td><br>    <td align="center">01</td><br></tr><br></table>
+
+<p><strong>64位JVM存储结构如下：</strong></p>
+<table><br><tr><br>    <td align="center" rowspan="2">锁状态</td><br>    <td align="center">25bit</td><br>    <td align="center">31bit</td><br>    <td align="center">1bit</td><br>    <td align="center">4bit</td><br>    <td align="center">1bit</td><br>    <td align="center">2bit</td><br></tr><br><tr><br>    <td></td><br>    <td></td><br>    <td align="center">cms_free</td><br>    <td align="center">分代年龄</td><br>    <td align="center">偏向锁</td><br>    <td align="center">锁标志位</td><br></tr><br><tr><br>    <td align="center">无锁</td><br>    <td align="center">unused</td><br>    <td align="center">hashcode</td><br>    <td></td><br>    <td></td><br>    <td align="center">0</td><br>    <td align="center">01</td><br></tr><br><tr><br>    <td align="center">偏向锁</td><br>    <td align="center" colspan="2">ThreadID(54bit) Epoch(2bit)</td><br>    <td></td><br>    <td></td><br>    <td align="center">1</td><br>    <td align="center">01</td><br></tr><br></table>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%94%81%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9%E5%AF%B9%E6%AF%94.png" alt="锁的优缺点对比"></p>
 <hr>
-<h2 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a><strong>重量级锁</strong></h2><p>&emsp;&emsp;监视器的实现依赖于底层操作系统的Mutex Lock，操作系统切换线程比较耗时，所以这类锁也叫重量级锁。JDK在更新中也对synchronized进行了很多次的优化，目的就是为了减少使用这种重量级锁带来的巨大性能损耗。</p>
-<p>&emsp;&emsp;锁的四种状态：</p>
+<h3 id="重量级锁的状态"><a href="#重量级锁的状态" class="headerlink" title="重量级锁的状态"></a><strong>重量级锁的状态</strong></h3><p>&emsp;&emsp;监视器的实现依赖于底层操作系统的Mutex Lock，操作系统切换线程比较耗时，所以这类锁也叫重量级锁。JDK在更新中也对synchronized进行了很多次的优化，目的就是为了减少使用这种重量级锁带来的巨大性能损耗。</p>
+<p><strong>Java 1.6版本后，锁的四种状态：</strong></p>
 <ol>
 <li>无锁状态  是否偏向锁位为0，锁标志位为01</li>
 <li>偏向锁    是否偏向锁位为1，锁标志位为01</li>
@@ -455,7 +522,30 @@
 <li>重量级锁  锁标志位为10</li>
 </ol>
 <p>&emsp;&emsp;次序即级别由低到高，可以顺序单向升级，但不能降级。这样设计并不是为了代替重量级锁，而是为了在不必要的场景下尽量少的去使用重量级锁。轻量级锁的使用场景是线程交替执行同步块，当出现多线程同时访问同步块时，轻量级锁就会升级为重量级锁。</p>
-<p>&emsp;&emsp;内部的实现过程(无锁-&gt;轻量锁)：</p>
+<hr>
+<h4 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a><strong>偏向锁</strong></h4><p>&emsp;&emsp;<strong>来源</strong>：锁不仅要多线程竞争，也会单线程多次获取，需要某个机制可以降低线程获得锁的开销。</p>
+<p>&emsp;&emsp;获取偏向锁</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E5%81%8F%E5%90%91%E9%94%81%E6%9C%BA%E5%88%B6.png" alt="偏向锁机制"></p>
+<p>&emsp;&emsp;撤销偏向锁，偏向锁机制是只有有竞争时才会释放。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E5%81%8F%E5%90%91%E9%94%81%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="偏向锁初始化的流程"></p>
+<p>&emsp;&emsp;关闭偏向锁，高版本Java默认启动偏向锁，可以通过: -XX:UseBiasedLocking=false 关闭偏向锁，使程序进入轻量级锁状态。</p>
+<hr>
+<h4 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a><strong>轻量级锁</strong></h4><ol>
+<li>加锁</li>
+</ol>
+<blockquote>
+<p>线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间，并 将对象头中的Mark Word复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用 CAS将对象头中的Mark Word替换为指向锁记录的指针。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。</p>
+</blockquote>
+<ol start="2">
+<li>解锁</li>
+</ol>
+<blockquote>
+<p>轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word替换回到对象头，如果成 功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁</p>
+<p>因为自旋会消耗CPU，为了避免无用的自旋（比如获得锁的线程被阻塞住了），一旦锁升级成重量级锁，就不会再恢复到轻量级锁状态。当锁处于这个状态下，其他线程试图获取锁时，都会被阻塞住，当持有锁的线程释放锁之后会唤醒这些线程，被唤醒的线程就会进行新一轮的夺锁之争。</p>
+</blockquote>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E4%BA%89%E5%A4%BA%E9%94%81%E5%AF%BC%E8%87%B4%E7%9A%84%E9%94%81%E8%86%A8%E8%83%80%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="争夺锁导致的锁膨胀流程图"></p>
+<hr>
+<h4 id="锁的状态变迁"><a href="#锁的状态变迁" class="headerlink" title="锁的状态变迁"></a><strong>锁的状态变迁</strong></h4><p>&emsp;&emsp;内部的实现过程(无锁-&gt;轻量锁)：</p>
 <ol>
 <li><p>执行到同步块时，若对象锁为无锁状态，JVM在当前线程的栈帧中开辟一块名为锁记录(Lock Record)的空间，用来存储锁对象当前Mark Word(对象的头信息)的拷贝副本。</p>
 </li>
@@ -500,6 +590,9 @@
 </blockquote>
 <blockquote>
 <p>《Java虚拟机规范》</p>
+</blockquote>
+<blockquote>
+<p>《Java并发编程的艺术》</p>
 </blockquote>
 <blockquote>
 <p><a href="https://www.cnblogs.com/dolphin0520/p/3920373.html" target="_blank" rel="noopener">https://www.cnblogs.com/dolphin0520/p/3920373.html</a></p>
@@ -643,7 +736,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">74</span>
+                  <span class="site-state-item-count">77</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -665,7 +758,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-count">45</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -726,7 +819,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简述"><span class="nav-number">1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#重量级锁"><span class="nav-number">2.1.</span> <span class="nav-text">重量级锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它优化"><span class="nav-number">2.2.</span> <span class="nav-text">其它优化</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简述"><span class="nav-number">1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#底层执行细节"><span class="nav-number">2.1.</span> <span class="nav-text">底层执行细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的存储位置"><span class="nav-number">2.2.</span> <span class="nav-text">锁的存储位置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对象头结构"><span class="nav-number">2.2.1.</span> <span class="nav-text">对象头结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重量级锁的状态"><span class="nav-number">2.2.2.</span> <span class="nav-text">重量级锁的状态</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#偏向锁"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">偏向锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#轻量级锁"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁的状态变迁"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">锁的状态变迁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它优化"><span class="nav-number">2.3.</span> <span class="nav-text">其它优化</span></a></li></ol></li></ol></div>
             
 
           </div>

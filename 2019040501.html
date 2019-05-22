@@ -95,7 +95,7 @@
 <meta property="og:description" content="介绍Java中Unsafe类的原理，实现CAS，以及相关的AtomicInteger系列">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro4.jpg">
-<meta property="og:updated_time" content="2019-04-05T08:18:38.894Z">
+<meta property="og:updated_time" content="2019-05-22T03:09:30.515Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Unsafe类详解和CAS原理">
 <meta name="twitter:description" content="介绍Java中Unsafe类的原理，实现CAS，以及相关的AtomicInteger系列">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,794
+                  3,792
                 </span>
               
 
@@ -400,7 +400,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro4.jpg" rel="gallery_cjvvtrl5w004on8tmiyur2zg2"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro4.jpg" rel="gallery_cjvz3rtih004ivwtmzw1kce4x"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro4.jpg" itemprop="contentUrl"/>
               </a>
@@ -458,7 +458,7 @@
 <h1 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a><strong>CAS</strong></h1><p>&emsp;&emsp;Compare and Swap即比较并交换，设计并发算法时常用到的一种技术</p>
 <p>&emsp;&emsp;前面有提到CAS是通过Unsafe实现的，CAS有三个操作数：内存值V、旧的预期值A、要修改的值B，当且仅当预期值A和内存值V相同时，将内存值修改为B并返回true，否则什么都不做并返回false。</p>
 <figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(<span class="keyword">int</span> b)</span></span>&#123;<span class="comment">//普通的比较</span></span><br><span class="line">    <span class="keyword">if</span> (a == v)&#123;</span><br><span class="line">        v = b;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 比较obj的offset处内存位置中的值和期望的值，如果相同则更新。此更新是不可中断的。</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> obj 需要更新的对象</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> offset obj中整型field的偏移量</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> expect 希望field中存在的值</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> update 如果期望值expect与field的当前值相同，设置filed的值为这个新值</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> 如果field的值被更改返回true</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> compareAndSetInt(Object o, <span class="keyword">long</span> offset,</span><br><span class="line">                                             <span class="keyword">int</span> expected,</span><br><span class="line">                                             <span class="keyword">int</span> x);</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;前者在并发执行时是不安全的，原因和<a href="../2019032102.html" title="Title">线程，并发和同步</a>中的银行例子一样，当判断生效后线程挂起，其它线程执行导致线程下次执行时状态已经不符合条件判断，但还是执行并返回了修改的结果。所以需要像<a href="../2019032902.html" title="Title">锁机制</a>那样给代码块加锁。</p>
+<p>&emsp;&emsp;前者在并发执行时是不安全的，原因和<a href="../2019051401.html" title="Title">并发和同步</a>中的银行例子一样，当判断生效后线程挂起，其它线程执行导致线程下次执行时状态已经不符合条件判断，但还是执行并返回了修改的结果。所以需要像<a href="../2019032902.html" title="Title">锁机制</a>那样给代码块加锁。</p>
 <p>&emsp;&emsp;CAS保证了比较和交换是一组原子操作，不会被中断执行。因为CAS是硬件级别的操作，所以效率比前者加锁要高一些。</p>
 <h2 id="CAS可能产生的ABA问题的解决"><a href="#CAS可能产生的ABA问题的解决" class="headerlink" title="CAS可能产生的ABA问题的解决"></a><strong>CAS可能产生的ABA问题的解决</strong></h2><p>&emsp;&emsp;CAS常用来实现乐观锁，即每次的数据操作都是CAS，只有判断当前执行过程中没有其它线程对数据进行修改时才将结果存入。</p>
 <p>&emsp;&emsp;如加入修改次数，版本号。</p>
@@ -619,7 +619,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">74</span>
+                  <span class="site-state-item-count">77</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -641,7 +641,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-count">45</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
