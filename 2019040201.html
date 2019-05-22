@@ -95,7 +95,7 @@
 <meta property="og:description" content="介绍Java中的volatile关键字。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg">
-<meta property="og:updated_time" content="2019-05-22T07:50:13.096Z">
+<meta property="og:updated_time" content="2019-05-22T10:52:26.350Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="volatile">
 <meta name="twitter:description" content="介绍Java中的volatile关键字。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,030
+                  2,033
                 </span>
               
 
@@ -400,7 +400,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg" rel="gallery_cjvz3rtie004bvwtmy2yhe0d1"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg" rel="gallery_cjvz48v4m0043m4tm46l9phlu"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg" itemprop="contentUrl"/>
               </a>
@@ -413,19 +413,19 @@
       
 
       
-        <h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a><strong>volatile</strong></h1><p>&emsp;&emsp;很多情况为了读写一两个实例域就用同步，这样会显得开销太大了，volatile关键字就是为实例域的同步访问提供了一种免锁机制，被修饰为volatile的域就相当于告诉编译器和虚拟机这个是可能被另一个线程并发更新的，但使用volatile需要了解其细节，以及其与锁的区别，才能正确的使用它。</p>
+        <h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a><strong>volatile</strong></h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h2><p>&emsp;&emsp;很多情况为了读写一两个实例域就用同步，这样会显得开销太大了，volatile关键字就是为实例域的同步访问提供了一种免锁机制，被修饰为volatile的域就相当于告诉编译器和虚拟机这个是可能被另一个线程并发更新的，但使用volatile需要了解其细节，以及其与锁的区别，才能正确的使用它。</p>
 <p>&emsp;&emsp;Java内存模型保证volatile修饰的字段对于所有线程来说看到的结果是一致的</p>
 <blockquote>
 <p><strong>相比synchronized的优点：</strong></p>
 <p>&emsp;&emsp;volatile的使用和执行成本更低，因为没有线程上下文切换和调度的开销</p>
 </blockquote>
 <hr>
-<h1 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a><strong>Java内存模型</strong></h1><p>&emsp;&emsp;定义了程序中变量的访问规则，所有变量都存在主存中，每个线程有自己的工作内存，线程对变量的操作都在工作内存中进行，将结果写入主存，工作内存间不能互相访问。</p>
+<h2 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a><strong>Java内存模型</strong></h2><p>&emsp;&emsp;定义了程序中变量的访问规则，所有变量都存在主存中，每个线程有自己的工作内存，线程对变量的操作都在工作内存中进行，将结果写入主存，工作内存间不能互相访问。</p>
 <p>&emsp;&emsp;Java内存模型只保证了基本读取和赋值是原子操作，实际编程中需要synchronized和Lock来实现原子性，加锁保证同一时刻只有一个线程执行代码块。</p>
 <p>&emsp;&emsp;普通变量被修改时不一定会即使更新到主存中，Java提供了volatile关键字来保证可见性，当一个变量被volatile修饰时，其值被修改会立即更新到主存中，当其他线程需要读取时，就读内存的新值。synchronized和Lock也可保证可见性，释放锁之前会把最新值写入主存。</p>
 <p>&emsp;&emsp;Java内存模型允许对指令重排序，volatile关键字可以保证“一定“的有序性，synchronized和Lock也可保证有序性，单线程就一定”有序“结果正确。Java内存模型遵照先行发生原则(happens-before)，规定了一些执行顺序的原则来保证一些有序，可查阅JVM相关内容了解。</p>
 <hr>
-<h1 id="volatile多线程"><a href="#volatile多线程" class="headerlink" title="volatile多线程"></a><strong>volatile多线程</strong></h1><p>&emsp;&emsp;volatile修饰的变量，线程在每次使用变量的时候，都会读取变量修改后的最新值，volatile禁止指令重排序，volatile很容易被误用，用来进行原子性操作。</p>
+<h2 id="多线程范例"><a href="#多线程范例" class="headerlink" title="多线程范例"></a><strong>多线程范例</strong></h2><p>&emsp;&emsp;volatile修饰的变量，线程在每次使用变量的时候，都会读取变量修改后的最新值，volatile禁止指令重排序，volatile很容易被误用，用来进行原子性操作。</p>
 <figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//线程1</span></span><br><span class="line">boolean <span class="built_in">stop</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">while</span>(!<span class="built_in">stop</span>)&#123;</span><br><span class="line">    doSomething();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//线程2</span></span><br><span class="line"><span class="built_in">stop</span> = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;一般情况下线程1可以正常跳出循环，但当某种情况下线程2未将stop的更新写入主存转去做其他工作，就会导致线程1无限循环。</p>
 <p>&emsp;&emsp;但若用volatile修饰stop变量，会强制使最新值立即写入主存，当线程2进行修改操作时，会使线程1变量stop的缓存无效，所以线程1再次读取stop值时要去主存中读取，所以就保证了多线程运行中线程1运行正确。</p>
@@ -439,7 +439,7 @@
 <p><strong>那么volatile保证有序性吗？</strong>‘</p>
 <p>&emsp;&emsp;volatile能禁止指令重排序，所以一定程度上可以保证有序性，但其禁止指令重排序指的只是对于volatile变量其前面的指令都会先执行完，其后操作等变量执行完毕后才可执行，但对于两部分的指令没有什么限制。</p>
 <hr>
-<h1 id="volatile保证可见性"><a href="#volatile保证可见性" class="headerlink" title="volatile保证可见性"></a><strong>volatile保证可见性</strong></h1><p>&emsp;&emsp;volatile怎么来保证可见性？</p>
+<h2 id="如何保证可见性"><a href="#如何保证可见性" class="headerlink" title="如何保证可见性"></a><strong>如何保证可见性</strong></h2><p>&emsp;&emsp;volatile怎么来保证可见性？</p>
 <p>&emsp;&emsp;首先为了提高处理速度，处理器并不和内存直接进行通信，而是将内存中数据读取到内部缓存中再进行操作。</p>
 <p>&emsp;&emsp;但操作结果并不一定在什么时刻写回到内存中，如果对volatile声明的变量进行了写操作，JVM会向处理器发送一条Lock前缀的指令，将此变量所在的缓存行数据写回内存。</p>
 <p>&emsp;&emsp;此时，其他处理器的缓存还是旧值，所以需要<strong>缓存一致性协议</strong>，每个处理器通过嗅探在总线上传播的数据来检查自己的缓存值是否过期，当检测到缓存行对应的内存地址被修改了，就会将当前处理器的缓存行设置为无效状态，当处理器对这个数据进行修改操作时，会重新从系统内存读到缓存中来。</p>
@@ -448,7 +448,7 @@
 <li>处理器的缓存写回内存会导致其他处理器的缓存无效</li>
 </ol>
 <hr>
-<h1 id="volatile使用优化"><a href="#volatile使用优化" class="headerlink" title="volatile使用优化"></a><strong>volatile使用优化</strong></h1><p>&emsp;&emsp;在Java 7之前的版本中可以通过追加字节使对象扩充到64字节来提高并发编程的效率，因为大部分处理器的高速缓存行是64字节宽，不支持部分填充缓存行，就意味着当队列的头节点和尾节点都不足64字节时，处理器会将它们读到同一个高速缓存行中，多处理器时每个处理器都会缓存同样的头节点和尾节点，当一个处理器视图修改头节点时会锁定整个缓存行，导致其他处理器也不能访问自己的高速缓存中的尾节点。对于队列来说，入对和出队操作需要不停的修改头节点和尾节点，所以这种情况会严重影响队列的入队和出队效率。</p>
+<h2 id="使用优化"><a href="#使用优化" class="headerlink" title="使用优化"></a><strong>使用优化</strong></h2><p>&emsp;&emsp;在Java 7之前的版本中可以通过追加字节使对象扩充到64字节来提高并发编程的效率，因为大部分处理器的高速缓存行是64字节宽，不支持部分填充缓存行，就意味着当队列的头节点和尾节点都不足64字节时，处理器会将它们读到同一个高速缓存行中，多处理器时每个处理器都会缓存同样的头节点和尾节点，当一个处理器视图修改头节点时会锁定整个缓存行，导致其他处理器也不能访问自己的高速缓存中的尾节点。对于队列来说，入对和出队操作需要不停的修改头节点和尾节点，所以这种情况会严重影响队列的入队和出队效率。</p>
 <p>&emsp;&emsp;Doug Lea选择填满高速缓冲区的缓存行，避免两节点存储到同一个缓存行，使两个节点各自的修改不会相互锁定。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Doug Lea早版本的LinkedTransferQueue部分代码</span></span><br><span class="line"><span class="keyword">private</span> transient <span class="keyword">final</span> <span class="type">PaddedAtomicReference</span>&lt;<span class="type">QNode</span>&gt; head;<span class="comment">//头节点</span></span><br><span class="line"><span class="keyword">private</span> transient <span class="keyword">final</span> <span class="type">PaddedAtomicReference</span>&lt;<span class="type">QNode</span>&gt; tail;<span class="comment">//尾节点</span></span><br><span class="line">static <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">PaddedAtomicReference</span> <span class="title">&lt;T&gt;</span> <span class="keyword">extends</span> <span class="title">AtomicReference</span> <span class="title">&lt;T&gt;</span></span>&#123;</span><br><span class="line">    <span class="comment">//使用15个4字节的对象引用追加到64字节</span></span><br><span class="line">    <span class="type">Object</span> p0,p1,...p9,pa,pb,pc,pd,pe;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">AtomicReference</span> <span class="title">&lt;T&gt;</span> <span class="title">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> volatile <span class="type">V</span> value;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;非64字节宽或比较新的版本无需再做此优化。</p>
@@ -685,7 +685,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile"><span class="nav-number">1.</span> <span class="nav-text">volatile</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存模型"><span class="nav-number">2.</span> <span class="nav-text">Java内存模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile多线程"><span class="nav-number">3.</span> <span class="nav-text">volatile多线程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile保证可见性"><span class="nav-number">4.</span> <span class="nav-text">volatile保证可见性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile使用优化"><span class="nav-number">5.</span> <span class="nav-text">volatile使用优化</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#volatile"><span class="nav-number">1.</span> <span class="nav-text">volatile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存模型"><span class="nav-number">1.2.</span> <span class="nav-text">Java内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程范例"><span class="nav-number">1.3.</span> <span class="nav-text">多线程范例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何保证可见性"><span class="nav-number">1.4.</span> <span class="nav-text">如何保证可见性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用优化"><span class="nav-number">1.5.</span> <span class="nav-text">使用优化</span></a></li></ol></li></ol></div>
             
 
           </div>
