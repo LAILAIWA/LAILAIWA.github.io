@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java," />
+  <meta name="keywords" content="java,jvm," />
 
 
 
@@ -86,20 +86,21 @@
 
 
 
-<meta name="description" content="介绍Java中的断言和日志">
-<meta name="keywords" content="java">
+<meta name="description" content="原子操作的实现原理，简单介绍了缓存一致性机制">
+<meta name="keywords" content="java,jvm">
 <meta property="og:type" content="article">
-<meta property="og:title" content="断言和日志">
-<meta property="og:url" content="http://linyishui.top/2019031801.html">
+<meta property="og:title" content="原子操作的实现原理">
+<meta property="og:url" content="http://linyishui.top/2019051601.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="介绍Java中的断言和日志">
+<meta property="og:description" content="原子操作的实现原理，简单介绍了缓存一致性机制">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg">
-<meta property="og:updated_time" content="2019-03-18T09:51:31.523Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/CPU%E6%9C%AF%E8%AF%AD.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE.png">
+<meta property="og:updated_time" content="2019-05-23T09:24:38.053Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="断言和日志">
-<meta name="twitter:description" content="介绍Java中的断言和日志">
-<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg">
+<meta name="twitter:title" content="原子操作的实现原理">
+<meta name="twitter:description" content="原子操作的实现原理，简单介绍了缓存一致性机制">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/CPU%E6%9C%AF%E8%AF%AD.png">
 
 
 
@@ -129,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://linyishui.top/2019031801.html"/>
+  <link rel="canonical" href="http://linyishui.top/2019051601.html"/>
 
 
 
 
 
-  <title>断言和日志 | 沂水博客</title>
+  <title>原子操作的实现原理 | 沂水博客</title>
   
 
 
@@ -272,7 +273,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019031801.html">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019051601.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="沂水">
@@ -289,7 +290,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">断言和日志</h1>
+          <h1 class="post-title" itemprop="name headline">原子操作的实现原理</h1>
         
 
         <div class="post-meta">
@@ -302,8 +303,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-18T16:25:49+08:00">
-                2019-03-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-16T11:10:56+08:00">
+                2019-05-16
               </time>
             
 
@@ -356,7 +357,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  450
+                  1,458
                 </span>
               
 
@@ -372,7 +373,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  5
                 </span>
               
             </div>
@@ -380,7 +381,7 @@
 
           
               <div class="post-description">
-                  介绍Java中的断言和日志
+                  原子操作的实现原理，简单介绍了缓存一致性机制
               </div>
           
 
@@ -395,47 +396,70 @@
 
       
       
-        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-          
-          
-            <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg" rel="gallery_cjw0ha1i8003b4otmawijxdrn"
-                 itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
-                <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234413.jpg" itemprop="contentUrl"/>
-              </a>
-            
-          
-
-          
-          </div>
-        </div>
-      
 
       
-        <h1 id="处理错误机制"><a href="#处理错误机制" class="headerlink" title="处理错误机制"></a><strong>处理错误机制</strong></h1><p>Java的处理错误机制：</p>
-<ol>
-<li>抛出异常</li>
-<li>日志</li>
-<li>断言</li>
+        <h1 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a><strong>原子性</strong></h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a><strong>定义</strong></h2><p>&emsp;&emsp;<strong>原子</strong>(atomic)是不能再被切割的最小粒子。</p>
+<p>&emsp;&emsp;<strong>原子操作</strong>是不能被中断的一个或一系列操作。</p>
+<h2 id="CPU常用术语"><a href="#CPU常用术语" class="headerlink" title="CPU常用术语"></a><strong>CPU常用术语</strong></h2><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/CPU%E6%9C%AF%E8%AF%AD.png" alt="CPU术语"></p>
+<hr>
+<h2 id="一、CPU实现原子操作"><a href="#一、CPU实现原子操作" class="headerlink" title="一、CPU实现原子操作"></a><strong>一、CPU实现原子操作</strong></h2><ol>
+<li><p>简单读写：处理器保证从系统内存中读取或者写入一个字节是原子的，意思是当一个处理器读取一个字节时，其他处理器不能访问这个字节的内存地址。</p>
+</li>
+<li><p>复杂操作：处理器提供总线锁定和缓存锁定两个机制来保证复杂内存操作的原子性。</p>
+</li>
 </ol>
-<p>&emsp;&emsp;断言一般在程序开发和测试阶段使用，断言不应该用来处理异常通知和异常记录，而只是用来在测试时确定错误位置。</p>
-<p>&emsp;&emsp;而日志则是在程序的整个生命周期都可以使用的策略工具。</p>
+<p>非原子操作：如比较常用的读改写操作，最经典的i++就是，要分步执行读取、修改、写入操作。</p>
+<h3 id="总线锁"><a href="#总线锁" class="headerlink" title="总线锁"></a><strong>总线锁</strong></h3><p>&emsp;&emsp;处理器可以通过总线锁来保证原子性，即通过在总线上输出LOCK #信号，使其他处理器的请求阻塞，此处理器就可以独占共享内存了。</p>
+<p>&emsp;&emsp;因为总线锁封闭了处理器和内存间的通信，造成这个阶段其他处理器无法工作的局面，这是很大的性能开销，所以一些场合可以用<strong>缓存锁定</strong>来代替总线锁定。</p>
+<h3 id="缓存锁定"><a href="#缓存锁定" class="headerlink" title="缓存锁定"></a><strong>缓存锁定</strong></h3><p>&emsp;&emsp;谓“缓存锁定”是指内存区域如果被缓存在处理器的缓存行中，并且在Lock操作期间被锁定，那么当它执行锁操作回写到内存时，处理器不在总线上声言LOCK＃信号，而是修改内部的内存地址，并允许它的缓存一致性机制来保证操作的原子性，因为缓存一致性机制会阻止同时修改由两个以上处理器缓存的内存区域数据，当其他处理器回写已被锁定的缓存行的数据时，会使缓存行无效。</p>
+<p><strong>无法使用缓存锁定的情况：</strong></p>
+<ol>
+<li>CPU不支持缓存锁定</li>
+<li>操作的数据无法被缓存到处理器的缓存区，或操作的数据跨了多个缓存行。</li>
+</ol>
+<h3 id="缓存一致性机制"><a href="#缓存一致性机制" class="headerlink" title="缓存一致性机制"></a><strong>缓存一致性机制</strong></h3><p>&emsp;&emsp;简单说就是：当某处理器对缓存中的数据进行了操作之后，通知其他处理器放弃储存在它们内部的缓存，或者从主内存中重新读取</p>
+<blockquote>
+<p>PS: 频繁使用的内存会缓存在处理器的L1、L2和L3高速缓存里，以便减少处理器和内存的交互。</p>
+</blockquote>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE.png" alt="缓存一致性机制"></p>
+<blockquote>
+<p><strong>MESI协议</strong>(Modified、Exclusive、Share or Invalid)</p>
+<p>Modified、Exclusive、Share or Invalid即缓存行的四个状态：</p>
+<ol>
+<li>Modified-<strong>被修改</strong>：处于此状态的数据，只在本CPU中有缓存数据，而其他CPU中没有。同时其状态相对于内存中的值来说，是已经被修改的，且没有更新到内存中。</li>
+<li>Exclusive-<strong>独占</strong>：处于此状态的数据，只有在本CPU中有缓存，且其数据没有修改，即与内存中一致。</li>
+<li>Share-<strong>共享</strong>：处于此状态的数据在多个CPU中都有缓存，且与内存一致。</li>
+<li>Invalid-<strong>无效</strong>：本CPU中的这份缓存已经无效。</li>
+</ol>
+<p>此协议规定：</p>
+<ul>
+<li>一个处于Modified状态的缓存行，必须时刻监听所有试图读取该缓存行对应的主存地址的操作，如果监听到，则必须在此操作执行前把其缓存行中的数据写回CPU。 </li>
+<li>一个处于Share状态的缓存行，必须时刻监听使该缓存行无效或者独享该缓存行的请求，如果监听到，则必须把其缓存行状态设置为I。 </li>
+<li>一个处于Exclusive状态的缓存行，必须时刻监听其他试图读取该缓存行对应的主存地址的操作，如果监听到，则必须把其缓存行状态设置为S。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;当某CPU读取数据时，若其缓存行的状态为Invalid，则需要从内存中读取数据，然后把状态改为Share；如果不是Invalid，则可以直接读取缓存中的数据。但还需要同时判断其他CPU的监听结果，如果其他CPU也有此数据的缓存，并处于Modified状态，则要等待其将数据更新回内存后，才能继续读取。</p>
+<p>&emsp;&emsp;当某CPU写入数据时，只能在状态为Modified和Exclusive时才允许执行，否则需要发送<strong>RFO指令</strong>（Read Or Ownership，这是一种总线事务），通知其他CPU使其缓存无效，会有一定的性能开销，写入后将状态转换为Modified。</p>
+<h3 id="指令支持"><a href="#指令支持" class="headerlink" title="指令支持"></a><strong>指令支持</strong></h3><p>&emsp;&emsp;CPU提供了一些Lock前缀的指令来支持两种锁定：</p>
+<ul>
+<li>位测试和修改指令：BTS、BTR、BTC</li>
+<li>交换指令：XADD、CMPXCHG</li>
+<li>操作和逻辑指令：ADD、OR等</li>
+</ul>
+<p>&emsp;&emsp;这些指令都会使被操作的内存区域加锁。</p>
 <hr>
-<h1 id="断言介绍"><a href="#断言介绍" class="headerlink" title="断言介绍"></a><strong>断言介绍</strong></h1><p>&emsp;&emsp;断言机制允许测试期间向代码中加入一些检查语句，发布后这些语句会被移除。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> 条件;</span><br><span class="line"><span class="keyword">assert</span> 条件 : 表达式;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;assert关键字会检测后面结果，若为false，则前者抛出AssertionError异常，后者传入AssertionError构造器，通过表达式转换为消息字符串。</p>
-<p>&emsp;&emsp;<em>注意断言要开启，在配置中加-ea</em></p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> java<span class="selector-class">.lang</span><span class="selector-class">.AssertionError</span></span><br><span class="line">	at asserts<span class="selector-class">.Test</span><span class="selector-class">.main</span>(Test<span class="selector-class">.java</span>:<span class="number">19</span>)</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;<em>AssertionError对象并不存储表达式的值，因为设计者不希望以此暗示程序员从断言中恢复程序的运行。</em></p>
-<hr>
-<h1 id="日志介绍"><a href="#日志介绍" class="headerlink" title="日志介绍"></a><strong>日志介绍</strong></h1><p>&emsp;&emsp;日志可以记录程序运行轨迹和数据历史，日志记录器有层次结构，也就是记录级别，通过分类可以有效的提取出如Error，Exception等异常信息。</p>
-<p>&emsp;&emsp;目前常用的日志即Log4j，相关内容可以参阅我的这篇博客<a href="../2018102901.html" title="Title">SpringBoot日志简单整理</a></p>
-<p>&emsp;&emsp;日志可以进行过滤和格式化，程序也可以配置多个日志记录器，默认情况下日志由配置文件控制，但也可以用编程来代替。</p>
+<h2 id="二、Java实现原子操作"><a href="#二、Java实现原子操作" class="headerlink" title="二、Java实现原子操作"></a><strong>二、Java实现原子操作</strong></h2><p>&emsp;&emsp;在Java中可以通过<strong>锁机制</strong>和<strong>循环CAS</strong>的方式来实现原子操作。</p>
+<h3 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a><strong>锁机制</strong></h3><p>&emsp;&emsp;可以参考<a href="../2019032902.html" title="Title">锁机制</a></p>
+<p>&emsp;&emsp;锁机制保证了只有获得锁的线程才有权操作被锁定的内存区域，。JVM内部实现了很多种锁机制，有偏向锁、轻量级锁和互斥锁。有意思的是除了偏向锁，JVM实现锁的方式都用了循环CAS，即当一个线程想进入同步块的时候使用循环CAS的方式来获取锁，当它退出同步块的时候使用循环CAS释放锁。</p>
+<h3 id="循环CAS"><a href="#循环CAS" class="headerlink" title="循环CAS"></a><strong>循环CAS</strong></h3><p>&emsp;&emsp;可以参考<a href="../2019051801.html" title="Title">CAS原理</a></p>
+<p>&emsp;&emsp;循环CAS保证了共享变量的原子性操作。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
-<p>《Java核心技术 卷Ⅰ》</p>
+<p>《Java并发编程的艺术》</p>
+</blockquote>
+<blockquote>
+<p><a href="http://www.cnblogs.com/mengheng/p/3491092.html" target="_blank" rel="noopener">http://www.cnblogs.com/mengheng/p/3491092.html</a></p>
 </blockquote>
 <p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -469,6 +493,8 @@
           
             <a href="/tags/java/" rel="tag"># java</a>
           
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
         </div>
       
 
@@ -480,8 +506,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019031601.html" rel="next" title="异常">
-                <i class="fa fa-chevron-left"></i> 异常
+              <a href="/2019051501.html" rel="next" title="线程QA">
+                <i class="fa fa-chevron-left"></i> 线程QA
               </a>
             
           </div>
@@ -490,8 +516,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019031802.html" rel="prev" title="Lambda表达式">
-                Lambda表达式 <i class="fa fa-chevron-right"></i>
+              <a href="/2019051701.html" rel="prev" title="Java内存模型">
+                Java内存模型 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -656,7 +682,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#处理错误机制"><span class="nav-number">1.</span> <span class="nav-text">处理错误机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#断言介绍"><span class="nav-number">2.</span> <span class="nav-text">断言介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#日志介绍"><span class="nav-number">3.</span> <span class="nav-text">日志介绍</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原子性"><span class="nav-number">1.</span> <span class="nav-text">原子性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU常用术语"><span class="nav-number">1.2.</span> <span class="nav-text">CPU常用术语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一、CPU实现原子操作"><span class="nav-number">1.3.</span> <span class="nav-text">一、CPU实现原子操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总线锁"><span class="nav-number">1.3.1.</span> <span class="nav-text">总线锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存锁定"><span class="nav-number">1.3.2.</span> <span class="nav-text">缓存锁定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存一致性机制"><span class="nav-number">1.3.3.</span> <span class="nav-text">缓存一致性机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指令支持"><span class="nav-number">1.3.4.</span> <span class="nav-text">指令支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Java实现原子操作"><span class="nav-number">1.4.</span> <span class="nav-text">二、Java实现原子操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁机制"><span class="nav-number">1.4.1.</span> <span class="nav-text">锁机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#循环CAS"><span class="nav-number">1.4.2.</span> <span class="nav-text">循环CAS</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
