@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="接口，抽象类，注解">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-18T10:45:36.000Z">
+<meta property="og:updated_time" content="2019-06-11T02:37:16.375Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="抽象类，接口，注解">
 <meta name="twitter:description" content="接口，抽象类，注解">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,889
+                  3,950
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  16
+                  17
                 </span>
               
             </div>
@@ -513,9 +513,8 @@
 </ol>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ldc loggerName</span><br><span class="line">invokestatic java<span class="regexp">/util/</span>logging<span class="regexp">/Logger.getLogger:(Ljava/</span>lang<span class="regexp">/String;)Ljava/u</span>til<span class="regexp">/logging/</span>Logger;</span><br><span class="line">ldc className</span><br><span class="line">ldc methodName</span><br><span class="line">invokevirtual java<span class="regexp">/util/</span>logging<span class="regexp">/Logger.entering:(Ljava/</span>lang<span class="regexp">/String;Ljava/</span>lang<span class="regexp">/String;)V</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;BCEL即字节码工程类库，即可以处理类文件的特殊类库。ASM则是一个java字节码操纵框架，可以用来动态生成类或者增强既有类的功能。ASM 可以直接产生二进制 class 文件，也可以在类被加载入 Java 虚拟机之前动态改变类行为。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">javac annotation/set/Item.java</span><br><span class="line">javac -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> annotation/bytecodeAnnotations/EntryLogger</span><br><span class="line">javap -c Item.java</span><br><span class="line">javac -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> annotation/bytecodeAnnotations/EntryLogger set.Item</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">javac -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> annotation/bytecodeAnnotations/EntryLoggerAgent</span><br><span class="line">jar</span><br><span class="line"></span><br><span class="line">javac annotation/set/SetTest.java</span><br><span class="line">java -javaagent:annotation/bytecodeAnnotations/EntryLoggingAgent.jar=set<span class="selector-class">.Item</span> -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> set.SetTest</span><br></pre></td></tr></table></figure>
-<hr>
-<p><em>参考博客和文章书籍等：</em></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">javac annotation/set/Item.java</span><br><span class="line">javac -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> annotation/bytecodeAnnotations/EntryLogger</span><br><span class="line">javap -c Item.java</span><br><span class="line">javac -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> annotation/bytecodeAnnotations/EntryLogger set.Item</span><br><span class="line"></span><br><span class="line">javac -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> annotation/bytecodeAnnotations/EntryLoggerAgent</span><br><span class="line">jar</span><br><span class="line"></span><br><span class="line">javac annotation/set/SetTest.java</span><br><span class="line">java -javaagent:annotation/bytecodeAnnotations/EntryLoggingAgent.jar=set<span class="selector-class">.Item</span> -classpath .:asm-<span class="number">6.2</span><span class="selector-class">.jar</span> set.SetTest</span><br></pre></td></tr></table></figure>
+<h2 id="emsp-emsp-在加载时修改字节码，Java5以后可以通过代理的方式，通过监视程序运行，检验后调用类转换器修改字节码，将结果直接返回给JVM加载，即即使字节码修改。"><a href="#emsp-emsp-在加载时修改字节码，Java5以后可以通过代理的方式，通过监视程序运行，检验后调用类转换器修改字节码，将结果直接返回给JVM加载，即即使字节码修改。" class="headerlink" title="&emsp;&emsp;在加载时修改字节码，Java5以后可以通过代理的方式，通过监视程序运行，检验后调用类转换器修改字节码，将结果直接返回给JVM加载，即即使字节码修改。"></a>&emsp;&emsp;在加载时修改字节码，Java5以后可以通过代理的方式，通过监视程序运行，检验后调用类转换器修改字节码，将结果直接返回给JVM加载，即<strong>即使字节码修改</strong>。</h2><p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
 <p>《Java语言规范》</p>
 </blockquote>
@@ -661,7 +660,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-count">83</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -683,7 +682,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-count">47</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -751,7 +750,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象类"><span class="nav-number">1.</span> <span class="nav-text">抽象类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口"><span class="nav-number">2.</span> <span class="nav-text">接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简述"><span class="nav-number">2.1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特性"><span class="nav-number">2.2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决默认方法冲突"><span class="nav-number">2.3.</span> <span class="nav-text">解决默认方法冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回调"><span class="nav-number">2.4.</span> <span class="nav-text">回调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#比较"><span class="nav-number">2.5.</span> <span class="nav-text">比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#克隆"><span class="nav-number">2.6.</span> <span class="nav-text">克隆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口和抽象类"><span class="nav-number">2.7.</span> <span class="nav-text">接口和抽象类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注解"><span class="nav-number">3.</span> <span class="nav-text">注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用处"><span class="nav-number">3.1.</span> <span class="nav-text">用处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注解语法"><span class="nav-number">3.2.</span> <span class="nav-text">注解语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#元注解"><span class="nav-number">3.3.</span> <span class="nav-text">元注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码级注解处理"><span class="nav-number">3.4.</span> <span class="nav-text">源码级注解处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字节码级注解处理"><span class="nav-number">3.5.</span> <span class="nav-text">字节码级注解处理</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象类"><span class="nav-number">1.</span> <span class="nav-text">抽象类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口"><span class="nav-number">2.</span> <span class="nav-text">接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简述"><span class="nav-number">2.1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特性"><span class="nav-number">2.2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决默认方法冲突"><span class="nav-number">2.3.</span> <span class="nav-text">解决默认方法冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回调"><span class="nav-number">2.4.</span> <span class="nav-text">回调</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#比较"><span class="nav-number">2.5.</span> <span class="nav-text">比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#克隆"><span class="nav-number">2.6.</span> <span class="nav-text">克隆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口和抽象类"><span class="nav-number">2.7.</span> <span class="nav-text">接口和抽象类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注解"><span class="nav-number">3.</span> <span class="nav-text">注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用处"><span class="nav-number">3.1.</span> <span class="nav-text">用处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注解语法"><span class="nav-number">3.2.</span> <span class="nav-text">注解语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#元注解"><span class="nav-number">3.3.</span> <span class="nav-text">元注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码级注解处理"><span class="nav-number">3.4.</span> <span class="nav-text">源码级注解处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字节码级注解处理"><span class="nav-number">3.5.</span> <span class="nav-text">字节码级注解处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#emsp-emsp-在加载时修改字节码，Java5以后可以通过代理的方式，通过监视程序运行，检验后调用类转换器修改字节码，将结果直接返回给JVM加载，即即使字节码修改。"><span class="nav-number">3.6.</span> <span class="nav-text">  在加载时修改字节码，Java5以后可以通过代理的方式，通过监视程序运行，检验后调用类转换器修改字节码，将结果直接返回给JVM加载，即即使字节码修改。</span></a></li></ol></li></ol></div>
             
 
           </div>
