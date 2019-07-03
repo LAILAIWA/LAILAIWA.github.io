@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍Cookie，Session，Token。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-12T10:21:36.071Z">
+<meta property="og:updated_time" content="2019-06-13T02:22:44.887Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cookie，Session，Token">
 <meta name="twitter:description" content="介绍Cookie，Session，Token。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,388
+                  2,924
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  12
+                  11
                 </span>
               
             </div>
@@ -482,13 +482,6 @@
 <li>保证token/session必须有一个有效期</li>
 </ul>
 </blockquote>
-<hr>
-<h1 id="用户权限系统设计"><a href="#用户权限系统设计" class="headerlink" title="用户权限系统设计"></a><strong>用户权限系统设计</strong></h1><h2 id="案例说明"><a href="#案例说明" class="headerlink" title="案例说明"></a><strong>案例说明</strong></h2><p><strong>保安</strong></p>
-<p>需求</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">实现一个公司大楼保安系统，识别所有进入人员身份，不同身份人员能进入房间区域受限，保护公司的财产安全</span><br></pre></td></tr></table></figure>
-<p>思路</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">一、</span><br><span class="line"><span class="bullet">1. </span>人员信息要持久化存储，创建T_USERS(ID,NAME,PWD)</span><br><span class="line"><span class="bullet">2. </span>引入密码-加密(如密码hash等)，加强安全性</span><br><span class="line">二、避免用户和保安对话时密码被窃听</span><br><span class="line"><span class="bullet">3. </span>引入RSA非对称加密+数字签名算法构成HTTPS，保证无法被窃听，篡改。</span><br><span class="line">三、确保员工办公室只有自己能进去</span><br><span class="line"><span class="bullet">4. </span>每个办公室加一个门卫，员工进入大楼内每个门都需要进行一次身份验证</span><br><span class="line">四、防止机密信息外泄</span><br><span class="line"><span class="bullet">5. </span>引入Token令牌，存储身份和权限信息，保证时效性，只有主门卫有权限校对密码信息</span><br><span class="line">五、保证令牌的真实性和有效性</span><br><span class="line"><span class="bullet">6. </span>存储令牌信息，方便定时更新和查询</span><br><span class="line">六、门卫权限过大，令牌数据量大时难以维护和优化</span><br><span class="line"><span class="bullet">7. </span>去除令牌持久化设计，通过数字校验来验证令牌</span><br><span class="line"></span><br><span class="line">用户登录：请求Login，主门卫读用户表验证身份信息，确认后通过私钥生成一份数字签名(明文+签名)</span><br><span class="line">用户进入各个房间：各门卫用公钥解密签名，校验结果和明文，确认真实性，再读取明文数据确定权限。</span><br><span class="line"></span><br><span class="line">即JWT Json Web Token</span><br><span class="line"></span><br><span class="line">数字签名丢失：XSS，</span><br><span class="line">防止丢失，存入Cookie，LocalStorage？易被窃取，篡改或伪造，但对于JWT来讲Cookie是安全的，setCookie For http only</span><br><span class="line">缺点：无法很好的撤回已给出的签名</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -632,7 +625,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">86</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -654,7 +647,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-count">51</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -722,7 +715,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web认证技术的演变"><span class="nav-number">1.1.</span> <span class="nav-text">Web认证技术的演变</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cookie"><span class="nav-number">2.</span> <span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Session"><span class="nav-number">3.</span> <span class="nav-text">Session</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Token"><span class="nav-number">4.</span> <span class="nav-text">Token</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍-1"><span class="nav-number">4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JWT"><span class="nav-number">4.2.</span> <span class="nav-text">JWT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两种Web认证比较"><span class="nav-number">4.3.</span> <span class="nav-text">两种Web认证比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储位置"><span class="nav-number">4.4.</span> <span class="nav-text">存储位置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Local-Storage"><span class="nav-number">4.4.1.</span> <span class="nav-text">Local Storage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie-1"><span class="nav-number">4.4.2.</span> <span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防范CSRF"><span class="nav-number">4.4.3.</span> <span class="nav-text">防范CSRF</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用户权限系统设计"><span class="nav-number">5.</span> <span class="nav-text">用户权限系统设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#案例说明"><span class="nav-number">5.1.</span> <span class="nav-text">案例说明</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web认证技术的演变"><span class="nav-number">1.1.</span> <span class="nav-text">Web认证技术的演变</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cookie"><span class="nav-number">2.</span> <span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Session"><span class="nav-number">3.</span> <span class="nav-text">Session</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Token"><span class="nav-number">4.</span> <span class="nav-text">Token</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍-1"><span class="nav-number">4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JWT"><span class="nav-number">4.2.</span> <span class="nav-text">JWT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两种Web认证比较"><span class="nav-number">4.3.</span> <span class="nav-text">两种Web认证比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储位置"><span class="nav-number">4.4.</span> <span class="nav-text">存储位置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Local-Storage"><span class="nav-number">4.4.1.</span> <span class="nav-text">Local Storage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie-1"><span class="nav-number">4.4.2.</span> <span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防范CSRF"><span class="nav-number">4.4.3.</span> <span class="nav-text">防范CSRF</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
