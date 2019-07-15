@@ -88,19 +88,19 @@
 
 
 
-<meta name="description" content="介绍Java中的volatile关键字。">
+<meta name="description" content="介绍Java中的volatile关键字：volatile内存特性，volatile的实现原理等等">
 <meta name="keywords" content="java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="volatile">
 <meta property="og:url" content="http://linyishui.top/2019040201.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="介绍Java中的volatile关键字。">
+<meta property="og:description" content="介绍Java中的volatile关键字：volatile内存特性，volatile的实现原理等等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg">
-<meta property="og:updated_time" content="2019-07-12T08:41:44.027Z">
+<meta property="og:updated_time" content="2019-07-12T08:56:28.170Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="volatile">
-<meta name="twitter:description" content="介绍Java中的volatile关键字。">
+<meta name="twitter:description" content="介绍Java中的volatile关键字：volatile内存特性，volatile的实现原理等等">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg">
 
 
@@ -382,7 +382,7 @@
 
           
               <div class="post-description">
-                  介绍Java中的volatile关键字。
+                  介绍Java中的volatile关键字：volatile内存特性，volatile的实现原理等等
               </div>
           
 
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg" rel="gallery_cjxzus9wr008ewkt7knfl2nkd"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg" rel="gallery_cjy3u14pg0081hot7lsfjs7iv"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_2___BiwETvlndZw___.jpg" itemprop="contentUrl"/>
               </a>
@@ -439,6 +439,7 @@
 <li>可见性。对一个volatile变量的读，总是能看到（任意线程）对这个volatile变量最后的写<br>入。</li>
 <li>原子性：对任意单个volatile变量的读/写具有原子性，但类似于volatile++这种复合操作不<br>具有原子性。</li>
 </ul>
+<hr>
 <h4 id="volatile写-读建立的happens-before关系"><a href="#volatile写-读建立的happens-before关系" class="headerlink" title="volatile写-读建立的happens-before关系"></a><strong>volatile写-读建立的happens-before关系</strong></h4><p>&emsp;上面讲的是volatile变量自身的特性，对程序员来说，volatile对线程的内存可见性的影响比volatile自身的特性更为重要，也更需要我们去关注。从JSR-133开始（即从JDK5开始），volatile变量的写-读可以实现线程之间的通信。</p>
 <p>&emsp;从内存语义的角度来说，volatile的写-读与锁的释放-获取有相同的内存效果：volatile写和锁的释放有相同的内存语义；volatile读与锁的获取有相同的内存语义。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VolatileExample</span> </span>&#123;      <span class="comment">// volatile示例</span></span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;       </span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;       </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span> </span>&#123;           </span><br><span class="line">        a = <span class="number">1</span>;　　　　　    <span class="comment">// 1           </span></span><br><span class="line">        flag = <span class="keyword">true</span>;　　　  <span class="comment">// 2       </span></span><br><span class="line">    &#125;       </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reader</span><span class="params">()</span> </span>&#123;           </span><br><span class="line">        <span class="keyword">if</span> (flag) &#123;　　　　<span class="comment">// 3               </span></span><br><span class="line">            <span class="keyword">int</span> i = a;　　 <span class="comment">// 4               </span></span><br><span class="line">            ……           </span><br><span class="line">        &#125;       </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -450,6 +451,7 @@
 </ol>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170113.png" alt="happens-before关系"></p>
 <p>&emsp;这里A线程写一个volatile变量后，B线程读同一个volatile变量。A线程在写volatile变量之前所有可见的共享变量，在B线程读同一个volatile变量后，将立即变得对B线程可见。</p>
+<hr>
 <h4 id="volatile写-读的内存语义"><a href="#volatile写-读的内存语义" class="headerlink" title="volatile写-读的内存语义"></a><strong>volatile写-读的内存语义</strong></h4><h6 id="写"><a href="#写" class="headerlink" title="写"></a><strong>写</strong></h6><blockquote>
 <p>volatile写的内存语义：当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值刷新到主内存。</p>
 </blockquote>
@@ -469,6 +471,7 @@
 <li>线程B读一个volatile变量，实质上是线程B接收了之前某个线程发出的（在写这个volatile变量之前对共享变量所做修改的）消息。</li>
 <li>线程A写一个volatile变量，随后线程B读这个volatile变量，这个过程实质上是线程A通过主内存向线程B发送消息。</li>
 </ul>
+<hr>
 <h4 id="volatile内存语义的实现"><a href="#volatile内存语义的实现" class="headerlink" title="volatile内存语义的实现"></a><strong>volatile内存语义的实现</strong></h4><p>&emsp;<a href="../2019051701.html" title="Title">Java内存模型</a>提到过重排序分为<strong>编译器重排序</strong>和<strong>处理器重排序</strong>。为了实现volatile内存语义，JMM会分别限制这两种类型的重排序类型。</p>
 <p>&emsp;下表是JMM针对编译器制定的volatile重排序规则表：</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170116.png" alt="volatile重排序规则表"></p>
@@ -509,6 +512,7 @@
 <p>&emsp;上面的优化针对任意处理器平台，由于不同的处理器有不同“松紧度”的处理器内存模型，内存屏障的插入还可以根据具体的处理器内存模型继续优化。以X86处理器为例，下图中除最后的StoreLoad屏障外，其他的屏障都会被省略。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170120.png" alt="指令序列示意图"></p>
 <p>&emsp;前面保守策略下的volatile读和写，在X86处理器平台可以优化成如图3-22所示。前文提到过，X86处理器仅会对写-读操作做重排序。X86不会对读-读、读-写和写-写操作 做重排序，因此在X86处理器中会省略掉这3种操作类型对应的内存屏障。在X86中，JMM仅需在volatile写后面插入一个StoreLoad屏障即可正确实现volatile写-读的内存语义。这意味着在X86处理器中，volatile写的开销比volatile读的开销会大很多（因为执行StoreLoad屏障开销会比较大）。</p>
+<hr>
 <h4 id="JSR-133为什么要增强volatile的内存语义"><a href="#JSR-133为什么要增强volatile的内存语义" class="headerlink" title="JSR-133为什么要增强volatile的内存语义"></a><strong>JSR-133为什么要增强volatile的内存语义</strong></h4><p>&emsp;在JSR-133之前的旧Java内存模型中，虽然不允许volatile变量之间重排序，但旧的Java内存模型允许volatile变量与普通变量重排序。在旧的内存模型中，VolatileExample示例程序可能被重排序成下列时序来执行，如下图所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170121.png" alt="线程执行时序图"></p>
 <p>&emsp;在旧的内存模型中，当1和2之间没有数据依赖关系时，1和2之间就可能被重排序（3和4类似）。其结果就是：读线程B执行4时，不一定能看到写线程A在执行1时对共享变量的修改。</p>
@@ -691,7 +695,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
