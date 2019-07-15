@@ -110,7 +110,28 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170110.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170111.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170112.png">
-<meta property="og:updated_time" content="2019-07-12T10:25:30.308Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170135.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170136.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170137.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170138.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170139.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170140.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170141.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170142.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170143.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170144.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170145.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170146.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170147.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170148.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170149.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170150.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170151.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170152.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170153.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170154.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170155.png">
+<meta property="og:updated_time" content="2019-07-15T10:54:37.125Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存模型">
 <meta name="twitter:description" content="介绍Java内存模型相关概念，顺序一致性，重排序，同步原语等。">
@@ -371,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5,619
+                  11,254
                 </span>
               
 
@@ -387,7 +408,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  20
+                  40
                 </span>
               
             </div>
@@ -535,13 +556,136 @@
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170111.png" alt="总线的工作机制"></p>
 <p>&emsp;处理器A、B、C同时向总线发起总线事务，总线仲裁(Bus Arbitration)会对竞争做出裁决，确保所有处理器能公平的访问内存。此工作机制可以把所有处理器对内存的访问以串行化的方式来执行，确保了单个总线事务之中内存读/写操作的原子性。</p>
 <p>&emsp;在一些32位的处理器上保证对64位数据的写操作的原子性需要比较大的开销，所以为了照顾这些处理器，Java语言规范鼓励但并不强制要求JVM对64位的long型和double型变量的写操作具有原子性。当JVM在此类处理器上运行时，可能会把一个64的long型和double型变量拆分为两个32位的写操作来执行，那么这两个写操作可能会在不同的总线事务上执行，所以就不在具有原子性了。</p>
-<p>当单个内存操作不具有原子性时，可能会有奇怪的现象发生：</p>
+<p>&emsp;当单个内存操作不具有原子性时，可能会有奇怪的现象发生：</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170112.png" alt="总线事务执行的时序图"></p>
-<p>处理器A写一个long型变量，同时处理器B要读取这个变量，因为处理器A中的64位写操作被拆分为2个32位写操作，并被分配到不同的写事务中执行，而处理器B中的64位读操作被分配到单个读事务中执行。此时处理器B就只能看到被”写了一半”的无效值。（JSR-133之前的内存模型允许64位读操作也进行拆分，JSR-133后规定读操作都必须有原子性）</p>
-<h2 id="volatile的内存语义"><a href="#volatile的内存语义" class="headerlink" title="volatile的内存语义"></a><strong>volatile的内存语义</strong></h2><p>参考<a href="../2019040201.html" title="Title">volatile</a>相关章节。</p>
-<h2 id="锁的内存语义"><a href="#锁的内存语义" class="headerlink" title="锁的内存语义"></a><strong>锁的内存语义</strong></h2><p>参考<a href="../2019062201.html" title="Title">锁的内存语义</a></p>
-<h2 id="final域的内存语义"><a href="#final域的内存语义" class="headerlink" title="final域的内存语义"></a><strong>final域的内存语义</strong></h2><p>（未完待续）</p>
-<h2 id="happens-before-1"><a href="#happens-before-1" class="headerlink" title="happens-before"></a><strong>happens-before</strong></h2><h2 id="双重检查锁定与延迟初始化"><a href="#双重检查锁定与延迟初始化" class="headerlink" title="双重检查锁定与延迟初始化"></a><strong>双重检查锁定与延迟初始化</strong></h2><h2 id="Java内存模型综述"><a href="#Java内存模型综述" class="headerlink" title="Java内存模型综述"></a><strong>Java内存模型综述</strong></h2><hr>
+<p>&emsp;处理器A写一个long型变量，同时处理器B要读取这个变量，因为处理器A中的64位写操作被拆分为2个32位写操作，并被分配到不同的写事务中执行，而处理器B中的64位读操作被分配到单个读事务中执行。此时处理器B就只能看到被”写了一半”的无效值。（JSR-133之前的内存模型允许64位读操作也进行拆分，JSR-133后规定读操作都必须有原子性）</p>
+<h2 id="volatile的内存语义"><a href="#volatile的内存语义" class="headerlink" title="volatile的内存语义"></a><strong>volatile的内存语义</strong></h2><p>&emsp;参考<a href="../2019040201.html" title="Title">volatile</a>相关章节。</p>
+<h2 id="锁的内存语义"><a href="#锁的内存语义" class="headerlink" title="锁的内存语义"></a><strong>锁的内存语义</strong></h2><p>&emsp;参考<a href="../2019062201.html" title="Title">锁的内存语义</a></p>
+<h2 id="final域的内存语义"><a href="#final域的内存语义" class="headerlink" title="final域的内存语义"></a><strong>final域的内存语义</strong></h2><p>&emsp;参考<a href="../2019062301.html" title="Title">final域的内存语义</a></p>
+<h2 id="happens-before-1"><a href="#happens-before-1" class="headerlink" title="happens-before"></a><strong>happens-before</strong></h2><p>&emsp;参考<a href="../2019062401.html" title="Title">happens-before规则</a></p>
+<h2 id="双重检查锁定与延迟初始化"><a href="#双重检查锁定与延迟初始化" class="headerlink" title="双重检查锁定与延迟初始化"></a><strong>双重检查锁定与延迟初始化</strong></h2><p>&emsp;在Java多线程程序中，有时候需要采用延迟初始化来降低初始化类和创建对象的开销。双重检查锁定是常见的延迟初始化技术，但它是一个错误的用法。本文将分析双重检查锁定的错误根源，以及两种线程安全的延迟初始化方案。</p>
+<h3 id="双重检查锁定的由来"><a href="#双重检查锁定的由来" class="headerlink" title="双重检查锁定的由来"></a><strong>双重检查锁定的由来</strong></h3><p>&emsp;在Java程序中，有时候可能需要推迟一些高开销的对象初始化操作，并且只有在使用这些对象时才进行初始化。此时，程序员可能会采用延迟初始化。但要正确实现线程安全的延迟初始化需要一些技巧，否则很容易出现问题。比如，下面是非线程安全的延迟初始化对象的示例代码。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UnsafeLazyInitialization &#123;</span><br><span class="line">   <span class="keyword"> private</span><span class="keyword"> static</span> Instance instance;</span><br><span class="line">   <span class="keyword"> public</span><span class="keyword"> static</span> Instance getInstance() &#123;</span><br><span class="line">       <span class="built_in"> if </span>(instance == null) // 1：A线程执行</span><br><span class="line">       <span class="built_in"> instance </span>=<span class="built_in"> new </span>Instance(); // 2：B线程执行</span><br><span class="line">       <span class="built_in"> return </span>instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在UnsafeLazyInitialization类中，假设A线程执行代码1的同时，B线程执行代码2。此时，线程A可能会看到instance引用的对象还没有完成初始化（出现这种情况的原因见3.8.2节）。对于UnsafeLazyInitialization类，我们可以对getInstance()方法做同步处理来实现线程安全的延迟初始化。示例代码如下。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class SafeLazyInitialization &#123;</span><br><span class="line">    private static<span class="built_in"> Instance </span>instance;</span><br><span class="line">    public synchronized static<span class="built_in"> Instance </span>getInstance() &#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>)</span><br><span class="line">           <span class="built_in"> instance </span>= new Instance();</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;由于对getInstance()方法做了同步处理，synchronized将导致性能开销。如果getInstance()方法被多个线程频繁的调用，将会导致程序执行性能的下降。反之，如果getInstance()方法不会被多个线程频繁的调用，那么这个延迟初始化方案将能提供令人满意的性能。在早期的JVM中，synchronized（甚至是无竞争的synchronized）存在巨大的性能开销。因此，人们想出了一个“聪明”的技巧：双重检查锁定（Double-Checked Locking）。人们想通过双重检查锁定来降低同步的开销。下面是使用双重检查锁定来实现延迟初始化的示例代码。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoubleCheckedLocking</span> &#123;</span> <span class="comment">// 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Instance instance; <span class="comment">// 2</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Instance getInstance() &#123; <span class="comment">// 3</span></span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123; <span class="comment">// 4:第一次检查</span></span><br><span class="line">            <span class="keyword">synchronized</span> (DoubleCheckedLocking.<span class="keyword">class</span>) &#123; <span class="comment">// 5:加锁</span></span><br><span class="line">                <span class="keyword">if</span> (instance == <span class="literal">null</span>) <span class="comment">// 6:第二次检查</span></span><br><span class="line">                    instance = <span class="keyword">new</span> Instance(); <span class="comment">// 7:问题的根源出在这里</span></span><br><span class="line">            &#125; <span class="comment">// 8</span></span><br><span class="line">        &#125; <span class="comment">// 9</span></span><br><span class="line">        <span class="keyword">return</span> instance; <span class="comment">// 10</span></span><br><span class="line">    &#125; <span class="comment">// 11</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;如上面代码所示，如果第一次检查instance不为null，那么就不需要执行下面的加锁和初始化操作。因此，可以大幅降低synchronized带来的性能开销。上面代码表面上看起来，似乎两全其美。</p>
+<blockquote>
+<ul>
+<li>多个线程试图在同一时间创建对象时，会通过加锁来保证只有一个线程能创建对象。</li>
+<li>在对象创建好之后，执行getInstance()方法将不需要获取锁，直接返回已创建好的对象。</li>
+</ul>
+</blockquote>
+<p>&emsp;双重检查锁定看起来似乎很完美，但这是一个错误的优化！在线程执行到第4行，代码读取到instance不为null时，instance引用的对象有可能还没有完成初始化。</p>
+<h3 id="问题的根源"><a href="#问题的根源" class="headerlink" title="问题的根源"></a><strong>问题的根源</strong></h3><p>&emsp;前面的双重检查锁定示例代码的第7行（instance=new Singleton();）创建了一个对象。这一行代码可以分解为如下的3行伪代码。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">memory = allocate(); // 1：分配对象的内存空间</span><br><span class="line">ctorInstance(memory); // 2：初始化对象</span><br><span class="line">instance = memory; // 3：设置instance指向刚分配的内存地址</span><br></pre></td></tr></table></figure>
+<p>&emsp;上面3行伪代码中的2和3之间，可能会被重排序（在一些JIT编译器上，这种重排序是真实发生的，详情见参考文献1的“Out-of-order writes”部分）。2和3之间重排序之后的执行时序如下。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">memory = allocate(); // 1：分配对象的内存空间</span><br><span class="line">instance = memory; // 3：设置instance指向刚分配的内存地址</span><br><span class="line">// 注意，此时对象还没有被初始化！</span><br><span class="line">ctorInstance(memory); // 2：初始化对象</span><br></pre></td></tr></table></figure>
+<p>&emsp;根据《The Java Language Specification,Java SE 7 Edition》（后文简称为Java语言规范），所有线程在执行Java程序时必须要遵守intra-thread semantics。intra-thread semantics保证重排序不会改变单线程内的程序执行结果。换句话说，intra-thread semantics允许那些在单线程内，不会改变单线程程序执行结果的重排序。上面3行伪代码的2和3之间虽然被重排序了，但这个重排序并不会违反intra-thread semantics。这个重排序在没有改变单线程程序执行结果的前提下，可以提高程序的执行性能。</p>
+<p>&emsp;为了更好地理解intra-thread semantics，请看如下面所示的示意图（假设一个线程A在构造对象后，立即访问这个对象）。</p>
+<p>&emsp;如下图所示，只要保证2排在4的前面，即使2和3之间重排序了，也不会违反intra-thread semantics。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170135.png" alt="线程执行时序图"></p>
+<p>&emsp;下面，再让我们查看多线程并发执行的情况。如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170136.png" alt="多线程执行时序图"></p>
+<p>&emsp;由于单线程内要遵守intra-thread semantics，从而能保证A线程的执行结果不会被改变。但是，当线程A和B按图的时序执行时，B线程将看到一个还没有被初始化的对象。回到本文的主题，DoubleCheckedLocking示例代码的第7行（instance=new Singleton();）如果发生重排序，另一个并发执行的线程B就有可能在第4行判断instance不为null。线程B接下来将访问instance所引用的对象，但此时这个对象可能还没有被A线程初始化！下表是这个场景的具体执行时序。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170137.png" alt="多线程执行时序表"></p>
+<p>&emsp;这里A2和A3虽然重排序了，但Java内存模型的intra-thread semantics将确保A2一定会排在A4前面执行。因此，线程A的intra-thread semantics没有改变，但A2和A3的重排序，将导致线程B在B1处判断出instance不为空，线程B接下来将访问instance引用的对象。此时，线程B将会访问到一个还未初始化的对象。</p>
+<p>&emsp;在知晓了问题发生的根源之后，我们可以想出两个办法来实现线程安全的延迟初始化。</p>
+<ol>
+<li>不允许2和3重排序。</li>
+<li>允许2和3重排序，但不允许其他线程“看到”这个重排序。</li>
+</ol>
+<p>&emsp;后文介绍的两个解决方案，分别对应于上面这两点。</p>
+<h3 id="基于volatile的解决方案"><a href="#基于volatile的解决方案" class="headerlink" title="基于volatile的解决方案"></a><strong>基于volatile的解决方案</strong></h3><p>&emsp;对于前面的基于双重检查锁定来实现延迟初始化的方案（指DoubleCheckedLocking示例代码），只需要做一点小的修改（把instance声明为volatile型），就可以实现线程安全的延迟初始化。请看下面的示例代码。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class SafeDoubleCheckedLocking &#123;</span><br><span class="line">   <span class="keyword"> private</span> volatile<span class="keyword"> static</span> Instance instance;</span><br><span class="line">   <span class="keyword"> public</span><span class="keyword"> static</span> Instance getInstance() &#123;</span><br><span class="line">       <span class="built_in"> if </span>(instance == null) &#123;</span><br><span class="line">            synchronized (SafeDoubleCheckedLocking.class) &#123;</span><br><span class="line">               <span class="built_in"> if </span>(instance == null)</span><br><span class="line">                   <span class="built_in"> instance </span>=<span class="built_in"> new </span>Instance(); // instance为volatile，现在没问题了</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">       <span class="built_in"> return </span>instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;注意 这个解决方案需要JDK 5或更高版本（因为从JDK 5开始使用新的JSR-133内存模型规范，这个规范增强了volatile的语义）。当声明对象的引用为volatile后，3.8.2节中的3行伪代码中的2和3之间的重排序，在多线程环境中将会被禁止。上面示例代码将按如下的时序执行，如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170138.png" alt="多线程执行时序图"></p>
+<p>&emsp;这个方案本质上是通过禁止图中的2和3之间的重排序，来保证线程安全的延迟初始化。</p>
+<h3 id="基于类初始化的解决方案"><a href="#基于类初始化的解决方案" class="headerlink" title="基于类初始化的解决方案"></a><strong>基于类初始化的解决方案</strong></h3><p>&emsp;JVM在类的初始化阶段（即在Class被加载后，且被线程使用之前），会执行类的初始化。在执行类的初始化期间，JVM会去获取一个锁。这个锁可以同步多个线程对同一个类的初始化。基于这个特性，可以实现另一种线程安全的延迟初始化方案（这个方案被称之为Initialization On Demand Holder idiom）。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class InstanceFactory &#123;</span><br><span class="line">   <span class="keyword"> private</span><span class="keyword"> static</span> class InstanceHolder &#123;</span><br><span class="line">       <span class="keyword"> public</span><span class="keyword"> static</span> Instance<span class="built_in"> instance </span>=<span class="built_in"> new </span>Instance();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">   <span class="keyword"> public</span><span class="keyword"> static</span> Instance getInstance() &#123;</span><br><span class="line">       <span class="built_in"> return </span>InstanceHolder.instance ; // 这里将导致InstanceHolder类被初始化</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;假设两个线程并发执行getInstance()方法，下面是执行的示意图，如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170139.png" alt="两个线程并发执行的示意图"></p>
+<p>&emsp;这个方案的实质是：允许3.8.2节中的3行伪代码中的2和3重排序，但不允许非构造线程（这里指线程B）“看到”这个重排序。</p>
+<p>&emsp;初始化一个类，包括执行这个类的静态初始化和初始化在这个类中声明的静态字段。根据Java语言规范，在首次发生下列任意一种情况时，一个类或接口类型T将被立即初始化。</p>
+<ol>
+<li>T是一个类，而且一个T类型的实例被创建。</li>
+<li>T是一个类，且T中声明的一个静态方法被调用。</li>
+<li>T中声明的一个静态字段被赋值。</li>
+<li>T中声明的一个静态字段被使用，而且这个字段不是一个常量字段。</li>
+<li>T是一个顶级类（Top Level Class，见Java语言规范的§7.6），而且一个断言语句嵌套在T内部被执行。</li>
+</ol>
+<p>&emsp;在InstanceFactory示例代码中，首次执行getInstance()方法的线程将导致InstanceHolder类被初始化（符合情况4）。</p>
+<p>&emsp;由于Java语言是多线程的，多个线程可能在同一时间尝试去初始化同一个类或接口（比如这里多个线程可能在同一时刻调用getInstance()方法来初始化InstanceHolder类）。因此，在Java中初始化一个类或者接口时，需要做细致的同步处理。Java语言规范规定，对于每一个类或接口C，都有一个唯一的初始化锁LC与之对应。从C到LC的映射，由JVM的具体实现去自由实现。JVM在类初始化期间会获取这个初始化锁，并且每个线程至少获取一次锁来确保这个类已经被初始化过了（事实上，Java语言规范允许JVM的具体实现在这里做一些优化，见后文的说明）。</p>
+<p>&emsp;对于类或接口的初始化，Java语言规范制定了精巧而复杂的类初始化处理过程。Java初始化一个类或接口的处理过程如下（这里对类初始化处理过程的说明，省略了与本文无关的部分；同时为了更好的说明类初始化过程中的同步处理机制，笔者人为的把类初始化的处理过程分为了5个阶段）。</p>
+<h4 id="第1阶段"><a href="#第1阶段" class="headerlink" title="第1阶段"></a><strong>第1阶段</strong></h4><p>&emsp;通过在Class对象上同步（即获取Class对象的初始化锁），来控制类或接口的初始化。这个获取锁的线程会一直等待，直到当前线程能够获取到这个初始化锁。假设Class对象当前还没有被初始化（初始化状态state，此时被标记为state=noInitialization），且有两个线程A和B试图同时初始化这个Class对象。下图是对应的示意图。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170140.png" alt="类初始化——第1阶段"></p>
+<p>&emsp;下表是这个示意图的说明。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170141.png" alt="类初始化——第1阶段的执行时序表"></p>
+<h4 id="第2阶段"><a href="#第2阶段" class="headerlink" title="第2阶段"></a><strong>第2阶段</strong></h4><p>&emsp;线程A执行类的初始化，同时线程B在初始化锁对应的condition上等待。</p>
+<p>&emsp;下表是这个示意图的说明。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170142.png" alt="类初始化——第2阶段的执行时序表"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170143.png" alt="类初始化——第2阶段"></p>
+<h4 id="第3阶段"><a href="#第3阶段" class="headerlink" title="第3阶段"></a><strong>第3阶段</strong></h4><p>&emsp;线程A设置state=initialized，然后唤醒在condition中等待的所有线程。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170144.png" alt="类初始化——第3阶段"></p>
+<p>&emsp;下表是这个示意图的说明。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170145.png" alt="类初始化——第3阶段的执行时序表"></p>
+<h4 id="第4阶段"><a href="#第4阶段" class="headerlink" title="第4阶段"></a><strong>第4阶段</strong></h4><p>&emsp;线程B结束类的初始化处理。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170146.png" alt="类初始化——第4阶段"></p>
+<p>&emsp;下表是这个示意图的说明。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170147.png" alt="类初始化——第4阶段的执行时序表"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170148.png" alt="多线程执行时序图"></p>
+<p>&emsp;线程A在第2阶段的A1执行类的初始化，并在第3阶段的A4释放初始化锁；线程B在第4阶段的B1获取同一个初始化锁，并在第4阶段的B4之后才开始访问这个类。根据Java内存模型规范的锁规则，这里将存在如下的happens-before关系。这个happens-before关系将保证：线程A执行类的初始化时的写入操作（执行类的静态初始化和初始化类中声明的静态字段），线程B一定能看到。</p>
+<h4 id="第5阶段"><a href="#第5阶段" class="headerlink" title="第5阶段"></a><strong>第5阶段</strong></h4><p>&emsp;线程C执行类的初始化的处理。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170149.png" alt="类初始化——第5阶段"></p>
+<p>&emsp;下表是这个示意图的说明。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170150.png" alt="类初始化——第5阶段的执行时序表"></p>
+<p>&emsp;在第3阶段之后，类已经完成了初始化。因此线程C在第5阶段的类初始化处理过程相对简单一些（前面的线程A和B的类初始化处理过程都经历了两次锁获取-锁释放，而线程C的类初始化处理只需要经历一次锁获取-锁释放）。线程A在第2阶段的A1执行类的初始化，并在第3阶段的A4释放锁；线程C在第5阶段的C1获取同一个锁，并在在第5阶段的C4之后才开始访问这个类。根据Java内存模型规范的锁规则，将存在如下的happens-before关系。</p>
+<p>&emsp;这个happens-before关系将保证：线程A执行类的初始化时的写入操作，线程C一定能看<br>到。</p>
+<p>&emsp;注意 这里的condition和state标记是本文虚构出来的。Java语言规范并没有硬性规定一定要使用condition和state标记。JVM的具体实现只要实现类似功能即可。<br>&emsp;注意 Java语言规范允许Java的具体实现，优化类的初始化处理过程（对这里的第5阶段做优化），具体细节参见Java语言规范的12.4.2节。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170151.png" alt="多线程执行时序图"></p>
+<p>&emsp;通过对比基于volatile的双重检查锁定的方案和基于类初始化的方案，我们会发现基于类初始化的方案的实现代码更简洁。但基于volatile的双重检查锁定的方案有一个额外的优势：除了可以对静态字段实现延迟初始化外，还可以对实例字段实现延迟初始化。字段延迟初始化降低了初始化类或创建实例的开销，但增加了访问被延迟初始化的字段的开销。在大多数时候，正常的初始化要优于延迟初始化。如果确实需要对实例字段使用线程安全的延迟初始化，请使用上面介绍的基于volatile的延迟初始化的方案；如果确实需要对静态字段使用线程安全的延迟初始化，请使用上面介绍的基于类初始化的方案。</p>
+<h2 id="Java内存模型综述"><a href="#Java内存模型综述" class="headerlink" title="Java内存模型综述"></a><strong>Java内存模型综述</strong></h2><p>&emsp;前面对Java内存模型的基础知识和内存模型的具体实现进行了说明。下面对Java内存模型的相关知识做一个总结。</p>
+<h3 id="处理器的内存模型"><a href="#处理器的内存模型" class="headerlink" title="处理器的内存模型"></a><strong>处理器的内存模型</strong></h3><p>&emsp;顺序一致性内存模型是一个理论参考模型，JMM和处理器内存模型在设计时通常会以顺序一致性内存模型为参照。在设计时，JMM和处理器内存模型会对顺序一致性模型做一些放松，因为如果完全按照顺序一致性模型来实现处理器和JMM，那么很多的处理器和编译器优化都要被禁止，这对执行性能将会有很大的影响。</p>
+<blockquote>
+<p>根据对不同类型的读/写操作组合的执行顺序的放松，可以把常见处理器的内存模型划分为如下几种类型:</p>
+<ul>
+<li>放松程序中写-读操作的顺序，由此产生了Total Store Ordering内存模型（简称为TSO）。</li>
+<li>在上面的基础上，继续放松程序中写-写操作的顺序，由此产生了Partial Store Order内存模型（简称为PSO）。</li>
+<li>在前面两条的基础上，继续放松程序中读-写和读-读操作的顺序，由此产生了RelaxedMemory Order内存模型（简称为RMO）和PowerPC内存模型。</li>
+</ul>
+</blockquote>
+<p>&emsp;注意，这里处理器对读/写操作的放松，是以两个操作之间不存在数据依赖性为前提的（因<br>为处理器要遵守as-if-serial语义，处理器不会对存在数据依赖性的两个内存操作做重排序）。</p>
+<p>&emsp;下表展示了常见处理器内存模型的细节特征如下。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170152.png" alt="处理器内存模型的特征表"></p>
+<p>&emsp;从表中可以看到，所有处理器内存模型都允许写-读重排序，原因在第1章已经说明过：它们都使用了写缓存区。写缓存区可能导致写-读操作重排序。同时，我们可以看到这些处理器内存模型都允许更早读到当前处理器的写，原因同样是因为写缓存区。由于写缓存区仅对当前处理器可见，这个特性导致当前处理器可以比其他处理器先看到临时保存在自己写缓存区中的写。</p>
+<p>&emsp;表中的各种处理器内存模型，从上到下，模型由强变弱。越是追求性能的处理器，内存模型设计得会越弱。因为这些处理器希望内存模型对它们的束缚越少越好，这样它们就可以做尽可能多的优化来提高性能。</p>
+<p>&emsp;由于常见的处理器内存模型比JMM要弱，Java编译器在生成字节码时，会在执行指令序列的适当位置插入内存屏障来限制处理器的重排序。同时，由于各种处理器内存模型的强弱不同，为了在不同的处理器平台向程序员展示一个一致的内存模型，JMM在不同的处理器中需要插入的内存屏障的数量和种类也不相同。下图展示了JMM在不同处理器内存模型中需要插入的内存屏障的示意图。JMM屏蔽了不同处理器内存模型的差异，它在不同的处理器平台之上为Java程序员呈现了一个一致的内存模型。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170153.png" alt="JMM插入内存屏障的示意图"></p>
+<h3 id="各种内存模型之间的关系"><a href="#各种内存模型之间的关系" class="headerlink" title="各种内存模型之间的关系"></a><strong>各种内存模型之间的关系</strong></h3><p>&emsp;JMM是一个语言级的内存模型，处理器内存模型是硬件级的内存模型，顺序一致性内存模型是一个理论参考模型。下面是语言内存模型、处理器内存模型和顺序一致性内存模型的强弱对比示意图，如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170154.png" alt="各种CPU内存模型的强弱对比示意图"></p>
+<p>&emsp;从图中可以看出：常见的4种处理器内存模型比常用的3中语言内存模型要弱，处理器内存模型和语言内存模型都比顺序一致性内存模型要弱。同处理器内存模型一样，越是追求执行性能的语言，内存模型设计得会越弱。</p>
+<h3 id="JMM的内存可见性保证"><a href="#JMM的内存可见性保证" class="headerlink" title="JMM的内存可见性保证"></a><strong>JMM的内存可见性保证</strong></h3><blockquote>
+<p>按程序类型，Java程序的内存可见性保证可以分为下列3类:</p>
+<ul>
+<li>单线程程序。单线程程序不会出现内存可见性问题。编译器、runtime和处理器会共同确保单线程程序的执行结果与该程序在顺序一致性模型中的执行结果相同。</li>
+<li>正确同步的多线程程序。正确同步的多线程程序的执行将具有顺序一致性（程序的执行结果与该程序在顺序一致性内存模型中的执行结果相同）。这是JMM关注的重点，JMM通过限制编译器和处理器的重排序来为程序员提供内存可见性保证。</li>
+<li>未同步/未正确同步的多线程程序。JMM为它们提供了最小安全性保障：线程执行时读取到的值，要么是之前某个线程写入的值，要么是默认值（0、null、false）。</li>
+</ul>
+</blockquote>
+<p>&emsp;注意，最小安全性保障与64位数据的非原子性写并不矛盾。它们是两个不同的概念，它们“发生”的时间点也不同。最小安全性保证对象默认初始化之后（设置成员域为0、null或false），才会被任意线程使用。最小安全性“发生”在对象被任意线程使用之前。64位数据的非原子性写“发生”在对象被多个线程使用的过程中（写共享变量）。当发生问题时（处理器B看到仅仅被处理器A“写了一半”的无效值），这里虽然处理器B读取到一个被写了一半的无效值，但这个值仍然是处理器A写入的，只不过是处理器A还没有写完而已。最小安全性保证线程读取到的值，要么是之前某个线程写入的值，要么是默认值（0、null、false）。但最小安全性并不保证线程读取到的值，一定是某个线程写完后的值。最小安全性保证线程读取到的值不会无中生有的冒出来，但并不保证线程读取到的值一定是正确的。</p>
+<p>&emsp;下图展示了这3类程序在JMM中与在顺序一致性内存模型中的执行结果的异同。只要多线程程序是正确同步的，JMM保证该程序在任意的处理器平台上的执行结果，与该程序在顺序一致性内存模型中的执行结果一致。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170155.png" alt="3类程序的执行结果的对比图"></p>
+<h3 id="JSR-133对旧内存模型的修补"><a href="#JSR-133对旧内存模型的修补" class="headerlink" title="JSR-133对旧内存模型的修补"></a><strong>JSR-133对旧内存模型的修补</strong></h3><blockquote>
+<p>JSR-133对JDK 5之前的旧内存模型的修补主要有两个:</p>
+<ul>
+<li>增强volatile的内存语义。旧内存模型允许volatile变量与普通变量重排序。JSR-133严格限制volatile变量与普通变量的重排序，使volatile的写-读和锁的释放-获取具有相同的内存语义。</li>
+<li>增强final的内存语义。在旧内存模型中，多次读取同一个final变量的值可能会不相同。为此，JSR-133为final增加了两个重排序规则。在保证final引用不会从构造函数内逸出的情况下，final具有了初始化安全性。</li>
+</ul>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><p>&emsp;本章对Java内存模型做了比较全面的解读。希望读者阅读本章之后，对Java内存模型能够有一个比较深入的了解；同时，也希望本章可帮助读者解决在Java并发编程中经常遇到的各种内存可见性问题。</p>
+<p>（未完待续）</p>
+<hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
 <p>《Java并发编程的艺术》</p>
@@ -684,7 +828,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-count">88</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -774,7 +918,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存模型"><span class="nav-number">1.</span> <span class="nav-text">Java内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java内存模型的抽象结构"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">Java内存模型的抽象结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程之间如何通信"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">线程之间如何通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程之间如何同步"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">线程之间如何同步</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从源代码到指令序列的重排序"><span class="nav-number">1.2.</span> <span class="nav-text">从源代码到指令序列的重排序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐患"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">隐患</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程模型分类"><span class="nav-number">1.3.</span> <span class="nav-text">并发编程模型分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读写缓冲区"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">读写缓冲区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#happens-before"><span class="nav-number">1.4.</span> <span class="nav-text">happens-before</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重排序"><span class="nav-number">2.</span> <span class="nav-text">重排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据依赖性"><span class="nav-number">2.1.</span> <span class="nav-text">数据依赖性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#as-if-serial语义"><span class="nav-number">2.2.</span> <span class="nav-text">as-if-serial语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序顺序规则"><span class="nav-number">2.3.</span> <span class="nav-text">程序顺序规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重排序对多线程的影响"><span class="nav-number">2.4.</span> <span class="nav-text">重排序对多线程的影响</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#顺序一致性"><span class="nav-number">3.</span> <span class="nav-text">顺序一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据竞争与顺序一致性"><span class="nav-number">3.1.</span> <span class="nav-text">数据竞争与顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序一致性内存模型"><span class="nav-number">3.2.</span> <span class="nav-text">顺序一致性内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步程序的顺序一致性内存模型"><span class="nav-number">3.3.</span> <span class="nav-text">同步程序的顺序一致性内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未同步程序的执行特性"><span class="nav-number">3.4.</span> <span class="nav-text">未同步程序的执行特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么Java内存模型不保证对64位的long型和double型变量的写操作具有原子性？"><span class="nav-number">3.4.0.1.</span> <span class="nav-text">为什么Java内存模型不保证对64位的long型和double型变量的写操作具有原子性？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile的内存语义"><span class="nav-number">3.5.</span> <span class="nav-text">volatile的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的内存语义"><span class="nav-number">3.6.</span> <span class="nav-text">锁的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final域的内存语义"><span class="nav-number">3.7.</span> <span class="nav-text">final域的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#happens-before-1"><span class="nav-number">3.8.</span> <span class="nav-text">happens-before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双重检查锁定与延迟初始化"><span class="nav-number">3.9.</span> <span class="nav-text">双重检查锁定与延迟初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存模型综述"><span class="nav-number">3.10.</span> <span class="nav-text">Java内存模型综述</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存模型"><span class="nav-number">1.</span> <span class="nav-text">Java内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java内存模型的抽象结构"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">Java内存模型的抽象结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程之间如何通信"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">线程之间如何通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程之间如何同步"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">线程之间如何同步</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从源代码到指令序列的重排序"><span class="nav-number">1.2.</span> <span class="nav-text">从源代码到指令序列的重排序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#背景"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类型"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐患"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">隐患</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程模型分类"><span class="nav-number">1.3.</span> <span class="nav-text">并发编程模型分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读写缓冲区"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">读写缓冲区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#happens-before"><span class="nav-number">1.4.</span> <span class="nav-text">happens-before</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重排序"><span class="nav-number">2.</span> <span class="nav-text">重排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据依赖性"><span class="nav-number">2.1.</span> <span class="nav-text">数据依赖性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#as-if-serial语义"><span class="nav-number">2.2.</span> <span class="nav-text">as-if-serial语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序顺序规则"><span class="nav-number">2.3.</span> <span class="nav-text">程序顺序规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重排序对多线程的影响"><span class="nav-number">2.4.</span> <span class="nav-text">重排序对多线程的影响</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#顺序一致性"><span class="nav-number">3.</span> <span class="nav-text">顺序一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据竞争与顺序一致性"><span class="nav-number">3.1.</span> <span class="nav-text">数据竞争与顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序一致性内存模型"><span class="nav-number">3.2.</span> <span class="nav-text">顺序一致性内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步程序的顺序一致性内存模型"><span class="nav-number">3.3.</span> <span class="nav-text">同步程序的顺序一致性内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未同步程序的执行特性"><span class="nav-number">3.4.</span> <span class="nav-text">未同步程序的执行特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么Java内存模型不保证对64位的long型和double型变量的写操作具有原子性？"><span class="nav-number">3.4.0.1.</span> <span class="nav-text">为什么Java内存模型不保证对64位的long型和double型变量的写操作具有原子性？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile的内存语义"><span class="nav-number">3.5.</span> <span class="nav-text">volatile的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的内存语义"><span class="nav-number">3.6.</span> <span class="nav-text">锁的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final域的内存语义"><span class="nav-number">3.7.</span> <span class="nav-text">final域的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#happens-before-1"><span class="nav-number">3.8.</span> <span class="nav-text">happens-before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双重检查锁定与延迟初始化"><span class="nav-number">3.9.</span> <span class="nav-text">双重检查锁定与延迟初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#双重检查锁定的由来"><span class="nav-number">3.9.1.</span> <span class="nav-text">双重检查锁定的由来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题的根源"><span class="nav-number">3.9.2.</span> <span class="nav-text">问题的根源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于volatile的解决方案"><span class="nav-number">3.9.3.</span> <span class="nav-text">基于volatile的解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于类初始化的解决方案"><span class="nav-number">3.9.4.</span> <span class="nav-text">基于类初始化的解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第1阶段"><span class="nav-number">3.9.4.1.</span> <span class="nav-text">第1阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第2阶段"><span class="nav-number">3.9.4.2.</span> <span class="nav-text">第2阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第3阶段"><span class="nav-number">3.9.4.3.</span> <span class="nav-text">第3阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第4阶段"><span class="nav-number">3.9.4.4.</span> <span class="nav-text">第4阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第5阶段"><span class="nav-number">3.9.4.5.</span> <span class="nav-text">第5阶段</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存模型综述"><span class="nav-number">3.10.</span> <span class="nav-text">Java内存模型综述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#处理器的内存模型"><span class="nav-number">3.10.1.</span> <span class="nav-text">处理器的内存模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各种内存模型之间的关系"><span class="nav-number">3.10.2.</span> <span class="nav-text">各种内存模型之间的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM的内存可见性保证"><span class="nav-number">3.10.3.</span> <span class="nav-text">JMM的内存可见性保证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSR-133对旧内存模型的修补"><span class="nav-number">3.10.4.</span> <span class="nav-text">JSR-133对旧内存模型的修补</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>
