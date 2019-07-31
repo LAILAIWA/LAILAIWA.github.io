@@ -131,7 +131,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170153.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170154.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170155.png">
-<meta property="og:updated_time" content="2019-07-15T10:54:37.125Z">
+<meta property="og:updated_time" content="2019-07-31T10:05:17.840Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存模型">
 <meta name="twitter:description" content="介绍Java内存模型相关概念，顺序一致性，重排序，同步原语等。">
@@ -392,7 +392,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  11,254
+                  11,329
                 </span>
               
 
@@ -563,34 +563,36 @@
 <h2 id="锁的内存语义"><a href="#锁的内存语义" class="headerlink" title="锁的内存语义"></a><strong>锁的内存语义</strong></h2><p>&emsp;参考<a href="../2019062201.html" title="Title">锁的内存语义</a></p>
 <h2 id="final域的内存语义"><a href="#final域的内存语义" class="headerlink" title="final域的内存语义"></a><strong>final域的内存语义</strong></h2><p>&emsp;参考<a href="../2019062301.html" title="Title">final域的内存语义</a></p>
 <h2 id="happens-before-1"><a href="#happens-before-1" class="headerlink" title="happens-before"></a><strong>happens-before</strong></h2><p>&emsp;参考<a href="../2019062401.html" title="Title">happens-before规则</a></p>
-<h2 id="双重检查锁定与延迟初始化"><a href="#双重检查锁定与延迟初始化" class="headerlink" title="双重检查锁定与延迟初始化"></a><strong>双重检查锁定与延迟初始化</strong></h2><p>&emsp;在Java多线程程序中，有时候需要采用延迟初始化来降低初始化类和创建对象的开销。双重检查锁定是常见的延迟初始化技术，但它是一个错误的用法。本文将分析双重检查锁定的错误根源，以及两种线程安全的延迟初始化方案。</p>
+<h2 id="双重检查锁定与延迟初始化"><a href="#双重检查锁定与延迟初始化" class="headerlink" title="双重检查锁定与延迟初始化"></a><strong>双重检查锁定与延迟初始化</strong></h2><p>&emsp;<strong>背景/作用</strong>：在Java多线程程序中，有时候需要采用延迟初始化(懒加载)来降低初始化类和创建对象的开销。</p>
+<p>&emsp;<strong>双重检查锁定</strong>是常见的延迟初始化技术，但它是一个错误的用法。本章节将分析双重检查锁定的错误根源，以及两种线程安全的延迟初始化方案。</p>
 <h3 id="双重检查锁定的由来"><a href="#双重检查锁定的由来" class="headerlink" title="双重检查锁定的由来"></a><strong>双重检查锁定的由来</strong></h3><p>&emsp;在Java程序中，有时候可能需要推迟一些高开销的对象初始化操作，并且只有在使用这些对象时才进行初始化。此时，程序员可能会采用延迟初始化。但要正确实现线程安全的延迟初始化需要一些技巧，否则很容易出现问题。比如，下面是非线程安全的延迟初始化对象的示例代码。</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UnsafeLazyInitialization &#123;</span><br><span class="line">   <span class="keyword"> private</span><span class="keyword"> static</span> Instance instance;</span><br><span class="line">   <span class="keyword"> public</span><span class="keyword"> static</span> Instance getInstance() &#123;</span><br><span class="line">       <span class="built_in"> if </span>(instance == null) // 1：A线程执行</span><br><span class="line">       <span class="built_in"> instance </span>=<span class="built_in"> new </span>Instance(); // 2：B线程执行</span><br><span class="line">       <span class="built_in"> return </span>instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;在UnsafeLazyInitialization类中，假设A线程执行代码1的同时，B线程执行代码2。此时，线程A可能会看到instance引用的对象还没有完成初始化（出现这种情况的原因见3.8.2节）。对于UnsafeLazyInitialization类，我们可以对getInstance()方法做同步处理来实现线程安全的延迟初始化。示例代码如下。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class UnsafeLazyInitialization &#123;</span><br><span class="line">   <span class="keyword"> private</span><span class="keyword"> static</span> Instance instance;</span><br><span class="line">   <span class="keyword"> public</span><span class="keyword"> static</span> Instance getInstance() &#123;</span><br><span class="line">       <span class="built_in"> if </span>(instance == null) // 1：A线程执行</span><br><span class="line">           <span class="built_in"> instance </span>=<span class="built_in"> new </span>Instance(); // 2：B线程执行</span><br><span class="line">       <span class="built_in"> return </span>instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;在UnsafeLazyInitialization类中，假设A线程执行代码1的同时，B线程执行代码2。此时，线程A可能会看到instance引用的对象还没有完成初始化（思考为什么？）。对于UnsafeLazyInitialization类，我们可以对getInstance()方法做同步处理来实现线程安全的延迟初始化。示例代码如下。</p>
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class SafeLazyInitialization &#123;</span><br><span class="line">    private static<span class="built_in"> Instance </span>instance;</span><br><span class="line">    public synchronized static<span class="built_in"> Instance </span>getInstance() &#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>)</span><br><span class="line">           <span class="built_in"> instance </span>= new Instance();</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;由于对getInstance()方法做了同步处理，synchronized将导致性能开销。如果getInstance()方法被多个线程频繁的调用，将会导致程序执行性能的下降。反之，如果getInstance()方法不会被多个线程频繁的调用，那么这个延迟初始化方案将能提供令人满意的性能。在早期的JVM中，synchronized（甚至是无竞争的synchronized）存在巨大的性能开销。因此，人们想出了一个“聪明”的技巧：双重检查锁定（Double-Checked Locking）。人们想通过双重检查锁定来降低同步的开销。下面是使用双重检查锁定来实现延迟初始化的示例代码。</p>
+<p>&emsp;由于对getInstance()方法做了同步处理，synchronized将导致性能开销。如果getInstance()方法被多个线程频繁的调用，将会导致程序执行性能的下降。反之，如果getInstance()方法不会被多个线程频繁的调用，那么这个延迟初始化方案将能提供令人满意的性能。</p>
+<p>&emsp;在早期的JVM中，synchronized（甚至是无竞争的synchronized）存在巨大的性能开销。因此，人们想出了一个“聪明”的技巧：<strong>双重检查锁定</strong>（Double-Checked Locking）。人们想通过双重检查锁定来降低同步的开销。下面是使用双重检查锁定来实现延迟初始化的示例代码。</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DoubleCheckedLocking</span> &#123;</span> <span class="comment">// 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Instance instance; <span class="comment">// 2</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Instance getInstance() &#123; <span class="comment">// 3</span></span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123; <span class="comment">// 4:第一次检查</span></span><br><span class="line">            <span class="keyword">synchronized</span> (DoubleCheckedLocking.<span class="keyword">class</span>) &#123; <span class="comment">// 5:加锁</span></span><br><span class="line">                <span class="keyword">if</span> (instance == <span class="literal">null</span>) <span class="comment">// 6:第二次检查</span></span><br><span class="line">                    instance = <span class="keyword">new</span> Instance(); <span class="comment">// 7:问题的根源出在这里</span></span><br><span class="line">            &#125; <span class="comment">// 8</span></span><br><span class="line">        &#125; <span class="comment">// 9</span></span><br><span class="line">        <span class="keyword">return</span> instance; <span class="comment">// 10</span></span><br><span class="line">    &#125; <span class="comment">// 11</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;如上面代码所示，如果第一次检查instance不为null，那么就不需要执行下面的加锁和初始化操作。因此，可以大幅降低synchronized带来的性能开销。上面代码表面上看起来，似乎两全其美。</p>
+<p>&emsp;如上面代码所示，双重检查锁定的逻辑是：如果第一次检查instance不为null，那么就不需要执行下面的加锁和初始化操作。因此，可以大幅降低synchronized带来的性能开销。上面代码表面上看起来，似乎两全其美：</p>
 <blockquote>
 <ul>
 <li>多个线程试图在同一时间创建对象时，会通过加锁来保证只有一个线程能创建对象。</li>
 <li>在对象创建好之后，执行getInstance()方法将不需要获取锁，直接返回已创建好的对象。</li>
 </ul>
 </blockquote>
-<p>&emsp;双重检查锁定看起来似乎很完美，但这是一个错误的优化！在线程执行到第4行，代码读取到instance不为null时，instance引用的对象有可能还没有完成初始化。</p>
-<h3 id="问题的根源"><a href="#问题的根源" class="headerlink" title="问题的根源"></a><strong>问题的根源</strong></h3><p>&emsp;前面的双重检查锁定示例代码的第7行（instance=new Singleton();）创建了一个对象。这一行代码可以分解为如下的3行伪代码。</p>
+<p>&emsp;双重检查锁定看起来似乎很完美，但这是一个错误的优化！因为在线程执行到第4行，代码读取到instance不为null时，instance引用的对象有可能还没有完成初始化。虽然提前一次检查避免了加锁，但又把未加锁时的脏读带回了多线程环境。</p>
+<h3 id="问题的根源"><a href="#问题的根源" class="headerlink" title="问题的根源"></a><strong>问题的根源</strong></h3><p>&emsp;前面的双重检查锁定示例代码的第7行（instance = new Singleton();）创建了一个对象。这一行代码可以分解为如下的3行伪代码。</p>
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">memory = allocate(); // 1：分配对象的内存空间</span><br><span class="line">ctorInstance(memory); // 2：初始化对象</span><br><span class="line">instance = memory; // 3：设置instance指向刚分配的内存地址</span><br></pre></td></tr></table></figure>
 <p>&emsp;上面3行伪代码中的2和3之间，可能会被重排序（在一些JIT编译器上，这种重排序是真实发生的，详情见参考文献1的“Out-of-order writes”部分）。2和3之间重排序之后的执行时序如下。</p>
 <figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">memory = allocate(); // 1：分配对象的内存空间</span><br><span class="line">instance = memory; // 3：设置instance指向刚分配的内存地址</span><br><span class="line">// 注意，此时对象还没有被初始化！</span><br><span class="line">ctorInstance(memory); // 2：初始化对象</span><br></pre></td></tr></table></figure>
-<p>&emsp;根据《The Java Language Specification,Java SE 7 Edition》（后文简称为Java语言规范），所有线程在执行Java程序时必须要遵守intra-thread semantics。intra-thread semantics保证重排序不会改变单线程内的程序执行结果。换句话说，intra-thread semantics允许那些在单线程内，不会改变单线程程序执行结果的重排序。上面3行伪代码的2和3之间虽然被重排序了，但这个重排序并不会违反intra-thread semantics。这个重排序在没有改变单线程程序执行结果的前提下，可以提高程序的执行性能。</p>
-<p>&emsp;为了更好地理解intra-thread semantics，请看如下面所示的示意图（假设一个线程A在构造对象后，立即访问这个对象）。</p>
-<p>&emsp;如下图所示，只要保证2排在4的前面，即使2和3之间重排序了，也不会违反intra-thread semantics。</p>
+<p>&emsp;根据《The Java Language Specification,Java SE 7 Edition》（后文简称为Java语言规范），所有线程在执行Java程序时必须要遵守<strong>线程内语义</strong>(intra-thread semantics)。线程内语义保证重排序不会改变单线程内的程序执行结果。换句话说，线程内语义允许那些在单线程内，不会改变单线程程序执行结果的重排序。上面3行伪代码的2和3之间虽然被重排序了，但这个重排序并不会违反线程内语义。这个重排序在没有改变单线程程序执行结果的前提下，可以提高程序的执行性能。</p>
+<p>&emsp;为了更好地理解线程内语义，请看如下面所示的示意图（假设一个线程A在构造对象后，立即访问这个对象）。</p>
+<p>&emsp;如下图所示，只要保证2排在4的前面，即使2和3之间重排序了，也不会违反线程内语义。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170135.png" alt="线程执行时序图"></p>
 <p>&emsp;下面，再让我们查看多线程并发执行的情况。如下图所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170136.png" alt="多线程执行时序图"></p>
-<p>&emsp;由于单线程内要遵守intra-thread semantics，从而能保证A线程的执行结果不会被改变。但是，当线程A和B按图的时序执行时，B线程将看到一个还没有被初始化的对象。回到本文的主题，DoubleCheckedLocking示例代码的第7行（instance=new Singleton();）如果发生重排序，另一个并发执行的线程B就有可能在第4行判断instance不为null。线程B接下来将访问instance所引用的对象，但此时这个对象可能还没有被A线程初始化！下表是这个场景的具体执行时序。</p>
+<p>&emsp;由于单线程内要遵守线程内语义，从而能保证A线程的执行结果不会被改变。但是，当线程A和B按图的时序执行时，B线程将看到一个还没有被初始化的对象。回到本文的主题，DoubleCheckedLocking示例代码的第7行（instance = new Singleton();）如果发生重排序，另一个并发执行的线程B就有可能在第4行判断instance不为null。线程B接下来将访问instance所引用的对象，但此时这个对象可能还没有被A线程初始化！下表是这个场景的具体执行时序。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170137.png" alt="多线程执行时序表"></p>
-<p>&emsp;这里A2和A3虽然重排序了，但Java内存模型的intra-thread semantics将确保A2一定会排在A4前面执行。因此，线程A的intra-thread semantics没有改变，但A2和A3的重排序，将导致线程B在B1处判断出instance不为空，线程B接下来将访问instance引用的对象。此时，线程B将会访问到一个还未初始化的对象。</p>
+<p>&emsp;这里A2和A3虽然重排序了，但Java内存模型的线程内语义将确保A2一定会排在A4前面执行。因此，线程A的线程内语义没有改变，但A2和A3的重排序，将导致线程B在B1处判断出instance不为空，线程B接下来将访问instance引用的对象。此时，线程B将会访问到一个还未初始化的对象。</p>
 <p>&emsp;在知晓了问题发生的根源之后，我们可以想出两个办法来实现线程安全的延迟初始化。</p>
 <ol>
 <li>不允许2和3重排序。</li>
@@ -641,21 +643,29 @@
 <p>&emsp;下表是这个示意图的说明。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170150.png" alt="类初始化——第5阶段的执行时序表"></p>
 <p>&emsp;在第3阶段之后，类已经完成了初始化。因此线程C在第5阶段的类初始化处理过程相对简单一些（前面的线程A和B的类初始化处理过程都经历了两次锁获取-锁释放，而线程C的类初始化处理只需要经历一次锁获取-锁释放）。线程A在第2阶段的A1执行类的初始化，并在第3阶段的A4释放锁；线程C在第5阶段的C1获取同一个锁，并在在第5阶段的C4之后才开始访问这个类。根据Java内存模型规范的锁规则，将存在如下的happens-before关系。</p>
-<p>&emsp;这个happens-before关系将保证：线程A执行类的初始化时的写入操作，线程C一定能看<br>到。</p>
+<p>&emsp;这个happens-before关系将保证：线程A执行类的初始化时的写入操作，线程C一定能看到。</p>
+<blockquote>
 <p>&emsp;注意 这里的condition和state标记是本文虚构出来的。Java语言规范并没有硬性规定一定要使用condition和state标记。JVM的具体实现只要实现类似功能即可。<br>&emsp;注意 Java语言规范允许Java的具体实现，优化类的初始化处理过程（对这里的第5阶段做优化），具体细节参见Java语言规范的12.4.2节。</p>
+</blockquote>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170151.png" alt="多线程执行时序图"></p>
-<p>&emsp;通过对比基于volatile的双重检查锁定的方案和基于类初始化的方案，我们会发现基于类初始化的方案的实现代码更简洁。但基于volatile的双重检查锁定的方案有一个额外的优势：除了可以对静态字段实现延迟初始化外，还可以对实例字段实现延迟初始化。字段延迟初始化降低了初始化类或创建实例的开销，但增加了访问被延迟初始化的字段的开销。在大多数时候，正常的初始化要优于延迟初始化。如果确实需要对实例字段使用线程安全的延迟初始化，请使用上面介绍的基于volatile的延迟初始化的方案；如果确实需要对静态字段使用线程安全的延迟初始化，请使用上面介绍的基于类初始化的方案。</p>
+<p>&emsp;通过对比基于volatile的双重检查锁定的方案和基于类初始化的方案，我们会发现基于类初始化的方案的实现代码更简洁。但基于volatile的双重检查锁定的方案有一个额外的优势：除了可以对静态字段实现延迟初始化外，还可以对实例字段实现延迟初始化。字段延迟初始化降低了初始化类或创建实例的开销，但增加了访问被延迟初始化的字段的开销。在大多数时候，正常的初始化要优于延迟初始化。</p>
+<ol>
+<li><p><strong>如果确实需要对实例字段使用线程安全的延迟初始化，请使用上面介绍的基于volatile的延迟初始化的方案。</strong></p>
+</li>
+<li><p><strong>如果确实需要对静态字段使用线程安全的延迟初始化，请使用上面介绍的基于类初始化的方案。</strong></p>
+</li>
+</ol>
 <h2 id="Java内存模型综述"><a href="#Java内存模型综述" class="headerlink" title="Java内存模型综述"></a><strong>Java内存模型综述</strong></h2><p>&emsp;前面对Java内存模型的基础知识和内存模型的具体实现进行了说明。下面对Java内存模型的相关知识做一个总结。</p>
 <h3 id="处理器的内存模型"><a href="#处理器的内存模型" class="headerlink" title="处理器的内存模型"></a><strong>处理器的内存模型</strong></h3><p>&emsp;顺序一致性内存模型是一个理论参考模型，JMM和处理器内存模型在设计时通常会以顺序一致性内存模型为参照。在设计时，JMM和处理器内存模型会对顺序一致性模型做一些放松，因为如果完全按照顺序一致性模型来实现处理器和JMM，那么很多的处理器和编译器优化都要被禁止，这对执行性能将会有很大的影响。</p>
 <blockquote>
-<p>根据对不同类型的读/写操作组合的执行顺序的放松，可以把常见处理器的内存模型划分为如下几种类型:</p>
+<p>根据对不同类型的读/写操作组合的执行顺序的放松(放松监管)，可以把常见处理器的内存模型划分为如下几种类型:</p>
 <ul>
-<li>放松程序中写-读操作的顺序，由此产生了Total Store Ordering内存模型（简称为TSO）。</li>
-<li>在上面的基础上，继续放松程序中写-写操作的顺序，由此产生了Partial Store Order内存模型（简称为PSO）。</li>
+<li>放松程序中写-读操作的顺序，由此产生了Total Store Ordering全存储内存模型（简称为TSO）。</li>
+<li>在上面的基础上，继续放松程序中写-写操作的顺序，由此产生了Partial Store Order部分存储内存模型（简称为PSO）。</li>
 <li>在前面两条的基础上，继续放松程序中读-写和读-读操作的顺序，由此产生了RelaxedMemory Order内存模型（简称为RMO）和PowerPC内存模型。</li>
 </ul>
 </blockquote>
-<p>&emsp;注意，这里处理器对读/写操作的放松，是以两个操作之间不存在数据依赖性为前提的（因<br>为处理器要遵守as-if-serial语义，处理器不会对存在数据依赖性的两个内存操作做重排序）。</p>
+<p>&emsp;注意，这里处理器对读/写操作的放松，是以两个操作之间不存在数据依赖性为前提的（因为处理器要遵守as-if-serial语义，处理器不会对存在数据依赖性的两个内存操作做重排序）。</p>
 <p>&emsp;下表展示了常见处理器内存模型的细节特征如下。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170152.png" alt="处理器内存模型的特征表"></p>
 <p>&emsp;从表中可以看到，所有处理器内存模型都允许写-读重排序，原因在第1章已经说明过：它们都使用了写缓存区。写缓存区可能导致写-读操作重排序。同时，我们可以看到这些处理器内存模型都允许更早读到当前处理器的写，原因同样是因为写缓存区。由于写缓存区仅对当前处理器可见，这个特性导致当前处理器可以比其他处理器先看到临时保存在自己写缓存区中的写。</p>
@@ -684,7 +694,6 @@
 </ul>
 </blockquote>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><p>&emsp;本章对Java内存模型做了比较全面的解读。希望读者阅读本章之后，对Java内存模型能够有一个比较深入的了解；同时，也希望本章可帮助读者解决在Java并发编程中经常遇到的各种内存可见性问题。</p>
-<p>（未完待续）</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
