@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,thread," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="介绍线程间通信：volatile和synchronized，等待/通知机制，经典范式，管道输入/输出流，join()，ThreadLocal等">
+<meta name="keywords" content="java,thread">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程间通信">
+<meta property="og:url" content="http://linyishui.top/2019080901.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="介绍线程间通信：volatile和synchronized，等待/通知机制，经典范式，管道输入/输出流，join()，ThreadLocal等">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170156.png">
+<meta property="og:updated_time" content="2019-09-10T07:35:14.487Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线程间通信">
+<meta name="twitter:description" content="介绍线程间通信：volatile和synchronized，等待/通知机制，经典范式，管道输入/输出流，join()，ThreadLocal等">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170156.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019080901.html"/>
+
+
+
+
+
+  <title>线程间通信 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019080901.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">线程间通信</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-09T11:26:52+08:00">
+                2019-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,562
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  介绍线程间通信：volatile和synchronized，等待/通知机制，经典范式，管道输入/输出流，join()，ThreadLocal等
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="线程间通信"><a href="#线程间通信" class="headerlink" title="线程间通信"></a><strong>线程间通信</strong></h1><p>&emsp;线程拥有自己的栈空间，线程并不是孤立的运行，除了公共区域，线程间也要进行协作。</p>
+<h2 id="volatile和synchronized"><a href="#volatile和synchronized" class="headerlink" title="volatile和synchronized"></a><strong>volatile和synchronized</strong></h2><p>&emsp;Java支持多个线程同时访问一个对象或者对象的成员变量，由于各个线程各自拥有拷贝，所以线程看到和处理的变量未必是最新值。</p>
+<p>&emsp;关键字volatile可以保证线程访问变量的可见性，但会降低运行效率。而synchronized关键字保证了线程访问变量的可见性和排他性。</p>
+<p>&emsp;synchronized锁同步块通过monitorenter和monitorexit指令，同步方法则是通过方法修饰符的ACC_SYNCHRONIZED来实现。无论是哪种方法，本质都是获取对象的监视器(monitor)，获取过程是排他的，只有一个线程可以拿到synchronized保护对象的监视器。</p>
+<p>&emsp;更多内容可以参考<a href="../2019040201.html" title="Title">volatile</a>，<a href="../2019032701.html" title="Title">synchronized</a></p>
+<hr>
+<h2 id="等待-通知机制"><a href="#等待-通知机制" class="headerlink" title="等待/通知机制"></a><strong>等待/通知机制</strong></h2><p>&emsp;”生产者”线程修改了一个对象的值，”消费者”线程会感知到变化，最简单的实现就是让消费者线程不断地循环检查变量是否符合预期，如下所示。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">while</span> (value != desire)&#123;<span class="comment">//满足条件则跳出循环</span></span><br><span class="line">    <span class="selector-tag">Thread</span><span class="selector-class">.sleep</span>(<span class="number">1000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">doSomething</span>();</span><br></pre></td></tr></table></figure>
+<p>&emsp;但以上方式存在许多问题：1. 难以保证及时性，睡眠时间过长无法及时发现条件已修改，过短则会进行过多无效的尝试。2. 难以降低开销，通过降低睡眠时间会导致消耗更多的处理器资源。</p>
+<p>&emsp;<strong>等待/通知机制</strong>则有效的解决了上述问题，并设计在Java的Object对象上。</p>
+<p>&emsp;回顾一下Object的notify()和wait()方法。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通知一个在对象上等待的线程，使其从wait()方法返回，返回的前提是该线程已获取了对象的锁</span></span><br><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="function"><span class="keyword">void</span> <span class="title">notify</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通知所有等待在该对象上的线程</span></span><br><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="function"><span class="keyword">void</span> <span class="title">notifyAll</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用该方法的线程进入WAITING状态，只有等待另外线程的通知或被中断才会返回，在调用此方法后会释放对象的锁</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">wait</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    wait(<span class="number">0</span>L);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//等待给定时间后若无通知，则超时返回</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="function"><span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeout)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeout, <span class="keyword">int</span> nanos)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (timeout &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"timeout value is negative"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (nanos &lt; <span class="number">0</span> || nanos &gt; <span class="number">999999</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                            <span class="string">"nanosecond timeout value out of range"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (nanos &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        timeout++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    wait(timeout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;<strong>notify()</strong>：唤醒正在监听此对象的监视线程，同时多个线程等待时随机唤醒一个，选择是任意的可以由执行部分来决定，线程通过调用wait()等待对象，在当前线程放弃对象锁之前被唤醒的线程只能继续等待。唤醒的线程将和其它任意线程竞争并没有优先权力。</p>
+<p>&emsp;<strong>wait()</strong> 使当前线程等待，直到它被唤醒，当前线程需要拥有此对象的监视器锁。此方法会将当前线程放入此对象的等待集合中，放弃在此对象上的同步声明(只是此对象的锁)，当线程等待时，所有可以同步此线程的任何其它对象都会保持锁定状态。(因为只能通过synchronized来获取监视器锁，所以这几个方法应该在同步代码块内调用，否则会抛出异常java.lang.IllegalMonitorStateException)</p>
+<p>&emsp;出于线程调度的目的，线程将会被禁用，并处于休眠状态，直到被notify()任意选择中此线程唤醒，或其它线程调用notifyAll()唤醒，或其它线程调用interrupt()中断了当前线程，或指定的等待时间不为0且已到指定时间</p>
+<p>&emsp;等待/通知机制就是指一个线程A调用了对象O的wait()进入等待状态，另一个线程B调用了对象O的notify()或notifyAll()，线程A收到通知后从对象O的wait()返回，进而执行后续操作，两个线程通过对象O作为中介进行交互。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WaitNotify</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">boolean</span> flag = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">static</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span><span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Thread waitThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Wait(),<span class="string">"WaitThread"</span>);</span><br><span class="line">        waitThread.start();</span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">        Thread notifyThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Notify(),<span class="string">"NotifyThread"</span>);</span><br><span class="line">        notifyThread.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Wait</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="comment">//加锁，拥有lock的monitor</span></span><br><span class="line">            <span class="keyword">synchronized</span> (lock)&#123;</span><br><span class="line">                <span class="comment">//当条件不满足时，继续wait，同时释放了lock的锁</span></span><br><span class="line">                <span class="keyword">while</span> (flag)&#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        System.out.println(Thread.currentThread() + <span class="string">" flag is true. wait @ "</span> + <span class="keyword">new</span> SimpleDateFormat(<span class="string">"HH:mm:ss"</span>).format(<span class="keyword">new</span> Date()));</span><br><span class="line">                        lock.wait();</span><br><span class="line">                    &#125;<span class="keyword">catch</span> (InterruptedException ex)&#123;</span><br><span class="line">                        ex.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//条件满足时，完成工作</span></span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">" flag is false. running @ "</span> + <span class="keyword">new</span> SimpleDateFormat(<span class="string">"HH:mm:ss"</span>).format(<span class="keyword">new</span> Date()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Notify</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="comment">//加锁，拥有lock的monitor</span></span><br><span class="line">            <span class="keyword">synchronized</span> (lock)&#123;</span><br><span class="line">                <span class="comment">//获取lock的锁，然后进行通知，通知时不会释放lock的锁</span></span><br><span class="line">                <span class="comment">//直到当前线程释放了lock后，WaitThread才能从wait()中返回</span></span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">" hold lock. notify @ "</span> + <span class="keyword">new</span> SimpleDateFormat(<span class="string">"HH:mm:ss"</span>).format(<span class="keyword">new</span> Date()));</span><br><span class="line">                lock.notifyAll();</span><br><span class="line">                flag = <span class="keyword">false</span>;</span><br><span class="line">                SleepUtils.second(<span class="number">5</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//再次加锁</span></span><br><span class="line">            <span class="keyword">synchronized</span> (lock)&#123;</span><br><span class="line">                <span class="comment">//当条件不满足时，继续wait，同时释放了lock的锁</span></span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">" hold lock again. sleep @ "</span> + <span class="keyword">new</span> SimpleDateFormat(<span class="string">"HH:mm:ss"</span>).format(<span class="keyword">new</span> Date()));</span><br><span class="line">                SleepUtils.second(<span class="number">5</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SleepUtils</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">second</span><span class="params">(<span class="keyword">long</span> seconds)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(seconds);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (InterruptedException ex)&#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;运行结果如下。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Thread</span><span class="selector-attr">[WaitThread,5,main]</span> <span class="selector-tag">flag</span> <span class="selector-tag">is</span> <span class="selector-tag">true</span>. <span class="selector-tag">wait</span> @ <span class="selector-tag">18</span><span class="selector-pseudo">:15</span><span class="selector-pseudo">:32</span></span><br><span class="line"><span class="selector-tag">Thread</span><span class="selector-attr">[NotifyThread,5,main]</span> <span class="selector-tag">hold</span> <span class="selector-tag">lock</span>. <span class="selector-tag">notify</span> @ <span class="selector-tag">18</span><span class="selector-pseudo">:15</span><span class="selector-pseudo">:33</span></span><br><span class="line"><span class="selector-tag">Thread</span><span class="selector-attr">[NotifyThread,5,main]</span> <span class="selector-tag">hold</span> <span class="selector-tag">lock</span> <span class="selector-tag">again</span>. <span class="selector-tag">sleep</span> @ <span class="selector-tag">18</span><span class="selector-pseudo">:15</span><span class="selector-pseudo">:38</span></span><br><span class="line"><span class="selector-tag">Thread</span><span class="selector-attr">[WaitThread,5,main]</span> <span class="selector-tag">flag</span> <span class="selector-tag">is</span> <span class="selector-tag">false</span>. <span class="selector-tag">running</span> @ <span class="selector-tag">18</span><span class="selector-pseudo">:15</span><span class="selector-pseudo">:43</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>调用wait()，notify()和notifyAll()时，需要先对调用对象加锁。</li>
+<li>调用wait()后，线程由RUNNING转为WAITING，并将当前线程放置到对象的等待队列。</li>
+<li>notify()和notifyAll()调用后，等待线程依旧不会从wait()返回，需要等调用notify()和notifyAll()的线程释放锁后，等待线程才有机会从wait()返回</li>
+<li>notify()方法将等待队列中的一个等待线程转移到同步队列中，而notifyAll()则将等待队列所有线程转移到同步队列中，被移动的线程状态由WAITING转为BLOCKED。</li>
+<li>从wait()方法返回的前提是获取了调用对象的锁。</li>
+</ol>
+<p>&emsp;等待/通知机制依托于同步机制，目的就是确保等待线程从wait()返回时能够感知到通知线程对变量做出的修改。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170156.png" alt="WaitNotify.java运行过程"></p>
+<p>&emsp;WaitThread线程和NotifyThread线程模拟了线程间等待通知机制流程，WaitThread首先获取了对象的锁，然后调用了对象的wait()方法，从而放弃锁并进入对象的等待队列WaitQueue中，进入等待状态。由于WaitThread释放了对象的锁，NotifyThread随后获取了对象的锁，并调用对象的notify()方法，将WaitThread从WaitQueue移到SynchronizedQueue中，此时WaitThread的状态变为阻塞状态。NotifyThread释放了锁之后，WaitThread再次获取到锁并从wait()方法返回继续执行。</p>
+<hr>
+<h2 id="等待-通知机制的经典范式"><a href="#等待-通知机制的经典范式" class="headerlink" title="等待/通知机制的经典范式"></a><strong>等待/通知机制的经典范式</strong></h2><h3 id="等待方-消费者"><a href="#等待方-消费者" class="headerlink" title="等待方-消费者"></a><strong>等待方-消费者</strong></h3><blockquote>
+<p>遵守如下原则</p>
+<ol>
+<li>获取对象的锁。</li>
+<li>如果条件不满足，那么调用对象的wait()方法，被通知后仍要检查条件。</li>
+<li>条件满足则执行对应的逻辑。</li>
+</ol>
+</blockquote>
+<p>&emsp;伪代码：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">synchronized</span>(对象)&#123;</span><br><span class="line">    <span class="selector-tag">while</span>(条件不满足)&#123;</span><br><span class="line">        对象<span class="selector-class">.wait</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    对应的处理逻辑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="通知方-生产者"><a href="#通知方-生产者" class="headerlink" title="通知方-生产者"></a><strong>通知方-生产者</strong></h3><blockquote>
+<p>遵守如下原则</p>
+<ol>
+<li>获取对象的锁。</li>
+<li>改变条件。</li>
+<li>通知所有等待在对象上的线程。</li>
+</ol>
+</blockquote>
+<p>&emsp;伪代码：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">synchronized</span>(对象)&#123;</span><br><span class="line">    改变条件</span><br><span class="line">    对象<span class="selector-class">.notifyAll</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="管道输入-输出流"><a href="#管道输入-输出流" class="headerlink" title="管道输入/输出流"></a><strong>管道输入/输出流</strong></h2><p>&emsp;管道输入/输出流和文件输入/输出流或者网络输入/输出流的不同在于它主要用于线程之间的数据传输，传输的媒介为内存。</p>
+<ol>
+<li>PipedOutputStream 面向字节</li>
+<li>PipedInputStream 面向字节</li>
+<li>PipedReader 面向字符</li>
+<li>PipedWriter 面向字符</li>
+</ol>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Piped</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>)throws Exception</span>&#123;</span><br><span class="line">        PipedWriter <span class="keyword">out</span> = <span class="keyword">new</span> PipedWriter();</span><br><span class="line">        PipedReader <span class="keyword">in</span> = <span class="keyword">new</span> PipedReader();</span><br><span class="line">        <span class="comment">//将输入输出流进行连接，否则在使用时会抛出IOException</span></span><br><span class="line">        <span class="keyword">out</span>.connect(<span class="keyword">in</span>);</span><br><span class="line">        Thread printThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Print(<span class="keyword">in</span>),<span class="string">"PrintThread"</span>);</span><br><span class="line">        printThread.start();</span><br><span class="line">        <span class="keyword">int</span> receive = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> ((receive = System.<span class="keyword">in</span>.read()) != <span class="number">-1</span>)&#123;</span><br><span class="line">                <span class="keyword">out</span>.write(receive);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">out</span>.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Print</span> <span class="title">implements</span> <span class="title">Runnable</span>&#123;</span><br><span class="line">        <span class="keyword">private</span> PipedReader <span class="keyword">in</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Print</span>(<span class="params">PipedReader <span class="keyword">in</span></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.<span class="keyword">in</span> = <span class="keyword">in</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> receive = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> ((receive = <span class="keyword">in</span>.read()) != <span class="number">-1</span>)&#123;</span><br><span class="line">                    <span class="comment">//char转asc码</span></span><br><span class="line">                    System.<span class="keyword">out</span>.print((<span class="keyword">char</span>) receive);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">catch</span> (IOException ex)&#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;运行结果如下。main线程接收console的输入字符串，通过PipedWriter写入，然后PrintThread则通过PipedReader读出内容并打印。</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">test </span>word</span><br><span class="line"><span class="keyword">test </span>word</span><br><span class="line">ok ok ok</span><br><span class="line">ok ok ok</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="join"><a href="#join" class="headerlink" title="join()"></a><strong>join()</strong></h2><p>&emsp;当有线程A执行了thread.join()，表示线程A需要等待thread线程终止后才能从join()返回。等待前驱线程结束，接收前驱线程的结束通知即等待通知机制。</p>
+<p>&emsp;更多内容请参考<a href="../2019051301.html" title="Title">Thread类源码剖析</a></p>
+<hr>
+<h2 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a><strong>ThreadLocal</strong></h2><p>&emsp;ThreadLocal，即线程变量，以ThreadLocal为键、以任意对象为值得存储结构。所以可以根据ThreadLocal给线程绑定值。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Profiler</span> </span>&#123;</span><br><span class="line">    <span class="comment">//第一次get()调用会进行初始化(若没有调用set())，每个线程会调用一次</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;Long&gt; TIME_THREADLOCAL = <span class="keyword">new</span> ThreadLocal&lt;Long&gt;()&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">protected</span> <span class="function">Long <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">return</span> System.<span class="title">currentTimeMillis</span><span class="params">()</span></span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">begin</span><span class="params">()</span></span>&#123;</span><br><span class="line">        TIME_THREADLOCAL.set(System.currentTimeMillis());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="function"><span class="keyword">long</span> <span class="title">end</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> System.currentTimeMillis() - TIME_THREADLOCAL.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span><span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        Profiler.begin();</span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">        System.out.println(<span class="string">"Cost: "</span> + Profiler.end() + <span class="string">" mills"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;运行结果如下。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">Cost:</span> <span class="number">2001</span> mills</span><br></pre></td></tr></table></figure>
+<p>&emsp;Profiler可以用来计算函数耗时，在函数调用前执行begin()，调用后执行end()，而且两次调用不用再一个方法或类内，比如AOP编程中，在调用前切入点执行begin()，在调用后切入点执行end()。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java并发编程的艺术》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/thread/" rel="tag"># thread</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019080801.html" rel="next" title="跨域问题">
+                <i class="fa fa-chevron-left"></i> 跨域问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019081001.html" rel="prev" title="线程实际应用">
+                线程实际应用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">98</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程间通信"><span class="nav-number">1.</span> <span class="nav-text">线程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile和synchronized"><span class="nav-number">1.1.</span> <span class="nav-text">volatile和synchronized</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#等待-通知机制"><span class="nav-number">1.2.</span> <span class="nav-text">等待/通知机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#等待-通知机制的经典范式"><span class="nav-number">1.3.</span> <span class="nav-text">等待/通知机制的经典范式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#等待方-消费者"><span class="nav-number">1.3.1.</span> <span class="nav-text">等待方-消费者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通知方-生产者"><span class="nav-number">1.3.2.</span> <span class="nav-text">通知方-生产者</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管道输入-输出流"><span class="nav-number">1.4.</span> <span class="nav-text">管道输入/输出流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#join"><span class="nav-number">1.5.</span> <span class="nav-text">join()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ThreadLocal"><span class="nav-number">1.6.</span> <span class="nav-text">ThreadLocal</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
