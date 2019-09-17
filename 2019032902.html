@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java," />
+  <meta name="keywords" content="java,lock," />
 
 
 
@@ -89,7 +89,7 @@
 
 
 <meta name="description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞。了解常见的一些锁的设计：乐观锁与悲观锁，独占锁与共享锁，公平锁与非公平锁等">
-<meta name="keywords" content="java">
+<meta name="keywords" content="java,lock">
 <meta property="og:type" content="article">
 <meta property="og:title" content="锁机制">
 <meta property="og:url" content="http://linyishui.top/2019032902.html">
@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞。了解常见的一些锁的设计：乐观锁与悲观锁，独占锁与共享锁，公平锁与非公平锁等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg">
-<meta property="og:updated_time" content="2019-05-23T09:37:56.000Z">
+<meta property="og:updated_time" content="2019-09-17T02:44:28.343Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="锁机制">
 <meta name="twitter:description" content="介绍Java中的锁机制，Lock锁和Condition条件对象，synchronized同步方法，同步阻塞。了解常见的一些锁的设计：乐观锁与悲观锁，独占锁与共享锁，公平锁与非公平锁等">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,709
+                  3,612
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  17
+                  14
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg" rel="gallery_ck0l07lj3009488t7r78kk2kt"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg" rel="gallery_ck0n8jtvj007t2ct7kjmzh1z4"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro1.jpg" itemprop="contentUrl"/>
               </a>
@@ -415,22 +415,22 @@
       
 
       
-        <h1 id="前文"><a href="#前文" class="headerlink" title="前文"></a><strong>前文</strong></h1><p>&emsp;&emsp;在上篇博客<a href="../2019051401.html" title="Title">并发和同步</a>中通过一个银行账户的存取来表示多线程运行，但因为线程不安全，导致并发执行时总金额异常，改写测试例子中Bank.transfer()方法，增加以下锁机制。</p>
+        <h1 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a><strong>锁机制</strong></h1><h2 id="前文"><a href="#前文" class="headerlink" title="前文"></a><strong>前文</strong></h2><p>&emsp;在上篇博客<a href="../2019051401.html" title="Title">并发和同步</a>中通过一个银行账户的存取来表示多线程运行，但因为线程不安全，导致并发执行时总金额异常，改写测试例子中Bank.transfer()方法，增加以下锁机制。</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Lock</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transfer</span>(<span class="params"><span class="keyword">int</span> <span class="keyword">from</span>, <span class="keyword">int</span> to, <span class="keyword">double</span> amount</span>) throws InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   bankLock.<span class="keyword">lock</span>();</span><br><span class="line">   <span class="keyword">try</span></span><br><span class="line">   &#123;</span><br><span class="line">      <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)</span><br><span class="line">         sufficientFunds.<span class="keyword">await</span>();</span><br><span class="line">      System.<span class="keyword">out</span>.print(Thread.currentThread());</span><br><span class="line">      accounts[<span class="keyword">from</span>] -= amount;</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" %10.2f from %d to %d"</span>, amount, <span class="keyword">from</span>, to);</span><br><span class="line">      accounts[to] += amount;</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" Total Balance: %10.2f%n"</span>, getTotalBalance());</span><br><span class="line">      sufficientFunds.signalAll();</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">finally</span></span><br><span class="line">   &#123;</span><br><span class="line">      bankLock.unlock();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getTotalBalance</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   bankLock.<span class="keyword">lock</span>();</span><br><span class="line">   <span class="keyword">try</span></span><br><span class="line">   &#123;</span><br><span class="line">      <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">double</span> a : accounts)</span><br><span class="line">         sum += a;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> sum;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">finally</span></span><br><span class="line">   &#123;</span><br><span class="line">      bankLock.unlock();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//synchronized</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> synchronized <span class="keyword">void</span> <span class="title">transfer</span>(<span class="params"><span class="keyword">int</span> <span class="keyword">from</span>, <span class="keyword">int</span> to, <span class="keyword">double</span> amount</span>) throws InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)</span><br><span class="line">      wait();</span><br><span class="line">   System.<span class="keyword">out</span>.print(Thread.currentThread());</span><br><span class="line">   accounts[<span class="keyword">from</span>] -= amount;</span><br><span class="line">   System.<span class="keyword">out</span>.printf(<span class="string">" %10.2f from %d to %d"</span>, amount, <span class="keyword">from</span>, to);</span><br><span class="line">   accounts[to] += amount;</span><br><span class="line">   System.<span class="keyword">out</span>.printf(<span class="string">" Total Balance: %10.2f%n"</span>, getTotalBalance());</span><br><span class="line">   notifyAll();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> synchronized <span class="keyword">double</span> <span class="title">getTotalBalance</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">double</span> a : accounts)</span><br><span class="line">      sum += a;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1 id="什么是锁"><a href="#什么是锁" class="headerlink" title="什么是锁"></a><strong>什么是锁</strong></h1><p>&emsp;&emsp;要学习锁机制，可能浅学会更加容易一些，但脱离的理论和底层细节，在知识点的理解上面就会有不确定的偏差值，久而久之点和点之间矛盾越来越多，知识也没有了统一性了，所以在回顾锁的应用之前，要先学习一下Java中怎么定义和实现锁这个东西的。</p>
-<p>&emsp;&emsp;Java提供了多种锁的实现方式，如synchronized关键字，ReentrantLock类等，详细内容我会在这些博客中再整理回顾以下：<a href="../2019032701.html" title="Title">synchronized</a>，<a href="../2019040201.html" title="Title">volatile</a>，<a href="../2019032901.html" title="Title">ReentrantLock</a></p>
-<p>&emsp;&emsp;以下只是简单的整理一些相关的基础概念。</p>
-<hr>
-<h1 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a><strong>Lock</strong></h1><p>&emsp;&emsp;当线程1被中断时，线程2因为无法获得锁而被阻塞在lock()，等待线程1执行完毕释放锁，线程2方能开始运行。通过锁机制，保证了多线程执行时操作的原子性，从而使运行时总金额能保持正确性，当然会损失掉一些性能。</p>
-<p>&emsp;&emsp;需要注意ReentrantLock锁，其锁的是对象，只有多线程调用同一对象的方法时才会阻塞，不然互不影响。</p>
+<p>&emsp;当线程1被中断时，线程2因为无法获得锁而被阻塞在lock()，等待线程1执行完毕释放锁，线程2方能开始运行。通过锁机制，保证了多线程执行时操作的原子性，从而使运行时总金额能保持正确性，当然会损失掉一些性能。</p>
+<p>&emsp;需要注意ReentrantLock锁，其锁的是对象，只有多线程调用同一对象的方法时才会阻塞，不然互不影响。</p>
 <blockquote>
 <p>锁是可重入的，线程可以重复的获得已持有的锁，所以锁会实现一个计数器来根据对lock()的嵌套调用，线程每一次调用lock()都要执行unlock()来解锁，因为这个特性，所以被某个锁保护的代码可以调用使用同一个锁的方法。</p>
 </blockquote>
-<p>&emsp;&emsp;所以调用Bank.transfer()方法时，又调用了Bank.getTotalBalance()方法，所以此时计数为2，退出时计数退为1，当transfer()也执行结束，计数退为0，线程释放锁。</p>
+<p>&emsp;所以调用Bank.transfer()方法时，又调用了Bank.getTotalBalance()方法，所以此时计数为2，退出时计数退为1，当transfer()也执行结束，计数退为0，线程释放锁。</p>
 <hr>
-<h1 id="条件对象-条件变量"><a href="#条件对象-条件变量" class="headerlink" title="条件对象(条件变量)"></a><strong>条件对象(条件变量)</strong></h1><p>&emsp;&emsp;在线程获得锁后，却需要满足某些条件才能执行时，需要引入条件对象或叫条件变量。</p>
-<p>&emsp;&emsp;在测试用例的银行实现中增加需求：转移资金需要满足当前余额大于转出额度。</p>
+<h2 id="什么是锁"><a href="#什么是锁" class="headerlink" title="什么是锁"></a><strong>什么是锁</strong></h2><p>&emsp;锁是用来控制多个线程访问共享资源的方式。Java提供了多种锁的实现方式，如synchronized关键字，Lock相关实现类等，1.5版本前Java靠synchronized关键字来实现锁功能，1.5后并发包提供了Lock接口和相关实现类。</p>
+<p>&emsp;以下只是简单的整理一些相关的基础概念。</p>
+<hr>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a><strong>volatile</strong></h2><p>&emsp;更多内容参考：<a href="../2019040201.html" title="Title">volatile</a>。</p>
+<hr>
+<h2 id="条件对象-条件变量"><a href="#条件对象-条件变量" class="headerlink" title="条件对象(条件变量)"></a><strong>条件对象(条件变量)</strong></h2><p>&emsp;在线程获得锁后，却需要满足某些条件才能执行时，需要引入<strong>条件对象</strong>或叫<strong>条件变量</strong>。</p>
+<p>&emsp;在测试用例的银行实现中增加需求：转移资金需要满足当前余额大于转出额度。</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (accounts[<span class="keyword">from</span>] &gt;= amount)&#123;<span class="comment">//若线程在判断通过之后，与执行之前被中断，则很有可能会导致执行时其实并不满足条件约束</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bankLock.<span class="keyword">lock</span>();</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)<span class="comment">//当账户余额不足，等待直到另外一个账户向此账户注入资金，但此线程拥有锁，就会排斥其他线程的操作，所以需要条件对象Condition。</span></span><br><span class="line">        sufficientFunds.<span class="keyword">await</span>();<span class="comment">//此线程会阻塞，并放弃锁，这时其他线程就可以对此对象进行操作了。</span></span><br><span class="line">    ...</span><br><span class="line">    sufficientFunds.signalAll();<span class="comment">//此调用激活所有因为条件而阻塞的线程，其中某个会从await()返回，获得锁并继续执行。</span></span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">     bankLock.unlock();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Condition sufficientFunds;</span><br><span class="line">sufficientFunds = bankLock.newCondition();</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>调用await()阻塞的线程和等待锁阻塞的线程不同，前者进入条件的等待集合，当锁可用时，此线程不能解除阻塞，需要等到另一线程调用同个条件的signalAll()方法才行。</p>
@@ -438,7 +438,7 @@
 <p>await() 方法必须立即释放锁，否则临界区状态就不能被其它线程修改，condition_is_true() 返回的结果也就不会改变。 这也是为什么条件变量必须由锁对象来创建，条件变量需要持有锁对象的引用这样才可以释放锁以及被 signal 唤醒后重新加锁。创建条件变量的锁必须是排他锁，如果是共享锁被 await() 方法释放了并不能保证临界区的状态可以被其它线程来修改，可以修改临界区状态的只能是排他锁。这也是为什么 ReadWriteLock.ReadLock 类的 newCondition 方法定义如下</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash">public Condition <span class="function"><span class="title">newCondition</span></span>() &#123;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">    throw new UnsupportedOperationException();</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&#125;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br></pre></td></tr></table></figure>
 </blockquote>
-<p>&emsp;&emsp;那么因为条件而阻塞的线程只能寄希望于有其他线程来帮助他脱离这一情况，否则他永远都不会再运行了，这就会导致死锁。</p>
+<p>&emsp;那么因为条件而阻塞的线程只能寄希望于有其他线程来帮助他脱离这一情况，否则他永远都不会再运行了，这就会导致死锁。</p>
 <p>总结上述内容：</p>
 <ul>
 <li>锁用来保护代码块</li>
@@ -446,55 +446,68 @@
 <li>锁拥有一个或多个条件对象</li>
 <li>每个条件对象管理获得锁后还不能执行的线程</li>
 </ul>
-<h2 id="emsp-emsp-条件等待队列可以参考同步器AQS的实现原理中条件等待队列部分"><a href="#emsp-emsp-条件等待队列可以参考同步器AQS的实现原理中条件等待队列部分" class="headerlink" title="&emsp;&emsp;条件等待队列可以参考同步器AQS的实现原理中条件等待队列部分"></a>&emsp;&emsp;条件等待队列可以参考<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a>中<strong>条件等待队列</strong>部分</h2><h1 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a><strong>synchronized</strong></h1><p>&emsp;&emsp;相比Lock，synchronized是嵌入Java语言的锁机制，synchronized修饰方法时，必须有对象锁才可以调用该方法。对比Lock的条件对象，可以通过Object.wait(),notifyAll()来代替。</p>
+<p>&emsp;条件等待队列可以参考<a href="../2019081301.html" title="Title">条件等待队列</a></p>
+<hr>
+<h2 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a><strong>synchronized</strong></h2><p>&emsp;synchronized是嵌入Java语言的锁机制，synchronized修饰方法时，必须有对象锁才可以调用该方法。</p>
+<h3 id="synchronized的条件变量"><a href="#synchronized的条件变量" class="headerlink" title="synchronized的条件变量"></a><strong>synchronized的条件变量</strong></h3><p>&emsp;对比Lock的条件对象，可以通过Object.wait(),notifyAll()来代替。</p>
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">sufficientFunds</span><span class="selector-class">.await</span>(); <span class="selector-tag">-</span>&gt; <span class="selector-tag">wait</span>();</span><br><span class="line"><span class="selector-tag">sufficientFunds</span><span class="selector-class">.signalAll</span>(); <span class="selector-tag">-</span>&gt; <span class="selector-tag">notifyAll</span>();</span><br><span class="line"><span class="selector-tag">sufficientFunds</span><span class="selector-class">.signal</span>(); <span class="selector-tag">-</span>&gt; <span class="selector-tag">notify</span>();</span><br></pre></td></tr></table></figure>
+<h3 id="内部锁"><a href="#内部锁" class="headerlink" title="内部锁"></a><strong>内部锁</strong></h3><p>&emsp;每个对象都有一个内部锁，每个锁都有一个内部条件，锁来管理想要调用方法的线程，条件来管理调用wait()的线程。</p>
 <blockquote>
-<p>每个对象都有一个内部锁，每个锁都有一个内部条件，锁来管理想要调用方法的线程，条件来管理调用wait()的线程。</p>
-</blockquote>
 <p>内部锁有其局限：</p>
 <ul>
 <li>不能中断一个正在试图获得锁的线程</li>
 <li>试图获取锁时不能设置超时</li>
 <li>每个锁只有一个条件，可能是不够的</li>
 </ul>
-<p>&emsp;&emsp;所以在实际使用时，Java在java.util.concurrent包中提供了不同的机制来处理所有的加锁，即阻塞队列，相关详细内容我会在<a href="../2019032701.html" title="Title">阻塞队列</a>，<a href="../2019032101.html" title="Title">对象流和序列化</a>，<a href="../2019032501.html" title="Title">IO和NIO</a>这些博客中整理。</p>
-<p>&emsp;&emsp;当程序比较简单，并且快速开发时，可以尽量使用synchronized，因为代码非常简洁，且易于实现。</p>
+</blockquote>
+<h3 id="更多内容"><a href="#更多内容" class="headerlink" title="更多内容"></a><strong>更多内容</strong></h3><p>&emsp;所以在实际使用时，Java在java.util.concurrent包中提供了不同的机制来处理所有的加锁，即阻塞队列，相关详细内容在<a href="../2019032701.html" title="Title">阻塞队列</a>，<a href="../2019032101.html" title="Title">对象流和序列化</a>，<a href="../2019032501.html" title="Title">IO和NIO</a>这些博客中整理。</p>
+<p>&emsp;当程序比较简单，并且快速开发时，可以尽量使用synchronized，因为代码非常简洁，且易于实现。</p>
+<p>&emsp;更多内容参考：<a href="../2019032701.html" title="Title">synchronized</a></p>
 <hr>
-<h1 id="同步阻塞"><a href="#同步阻塞" class="headerlink" title="同步阻塞"></a><strong>同步阻塞</strong></h1><p>&emsp;&emsp;synchronized除了修饰方法外，还可以修饰代码块，即同步阻塞。</p>
+<h2 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a><strong>Lock</strong></h2><p>&emsp;</p>
+<p>&emsp;更多内容参考：<a href="../2019032701.html" title="Title">并发包中Lock相关</a></p>
+<hr>
+<h2 id="队列同步器"><a href="#队列同步器" class="headerlink" title="队列同步器"></a><strong>队列同步器</strong></h2><p>&emsp;</p>
+<p>&emsp;更多内容参考<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a></p>
+<hr>
+<h2 id="重入锁：ReentrantLock"><a href="#重入锁：ReentrantLock" class="headerlink" title="重入锁：ReentrantLock"></a><strong>重入锁：ReentrantLock</strong></h2><p>&emsp;</p>
+<p>&emsp;更多内容参考：<a href="../2019032901.html" title="Title">ReentrantLock</a></p>
+<hr>
+<h2 id="同步阻塞"><a href="#同步阻塞" class="headerlink" title="同步阻塞"></a><strong>同步阻塞</strong></h2><p>&emsp;synchronized除了修饰方法外，还可以修饰代码块，即同步阻塞。</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="keyword">lock</span> = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transfer</span>(<span class="params"><span class="keyword">int</span> <span class="keyword">from</span>, <span class="keyword">int</span> to, <span class="keyword">double</span> amount</span>) throws InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   synchronized (<span class="keyword">lock</span>)&#123;</span><br><span class="line">      accounts[<span class="keyword">from</span>] -= amount;</span><br><span class="line">      System.<span class="keyword">out</span>.print(Thread.currentThread());</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" %10.2f from %d to %d"</span>, amount, <span class="keyword">from</span>, to);</span><br><span class="line">      accounts[to] += amount;</span><br><span class="line">      System.<span class="keyword">out</span>.printf(<span class="string">" Total Balance: %10.2f%n"</span>, getTotalBalance());</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;线程调用方法，获得lock的锁，但一般不会这样去实现。</p>
+<p>&emsp;线程调用方法，获得lock的锁，但一般不会这样去实现。</p>
 <hr>
-<h1 id="final"><a href="#final" class="headerlink" title="final"></a><strong>final</strong></h1><p>&emsp;&emsp;若共享域被声明为final时，也可以线程安全的读取此域，因为线程会在构造函数结束后才能访问到此域，当然如果此域存储有其他对象的引用，或者是集合，对于其内的操作无法保证线程安全。</p>
+<h2 id="final"><a href="#final" class="headerlink" title="final"></a><strong>final</strong></h2><p>&emsp;若共享域被声明为final时，也可以线程安全的读取此域，因为线程会在构造函数结束后才能访问到此域，当然如果此域存储有其他对象的引用，或者是集合，对于其内的操作无法保证线程安全。</p>
 <hr>
-<h1 id="乐观锁与悲观锁"><a href="#乐观锁与悲观锁" class="headerlink" title="乐观锁与悲观锁"></a><strong>乐观锁与悲观锁</strong></h1><ul>
+<h2 id="乐观锁与悲观锁"><a href="#乐观锁与悲观锁" class="headerlink" title="乐观锁与悲观锁"></a><strong>乐观锁与悲观锁</strong></h2><ul>
 <li><p>悲观锁：总是假设最坏的情况。认为每次取数据的时候都会被修改，所以每次在拿数据的时候都会上锁</p>
 </li>
 <li><p>乐观锁：总是假设最好的情况。认为每次取数据的时候都不会被修改，所以每次都不会上锁。通过版本号机制和CAS算法实现，乐观锁适用于多读的应用类型，这样可以提高吞吐量。</p>
 </li>
 </ul>
-<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a><strong>应用</strong></h2><p>&emsp;&emsp;悲观锁：数据库中行锁，表锁等，读锁，写锁等，以及Java中synchronized和ReentrantLock等独占锁</p>
-<p>&emsp;&emsp;乐观锁：数据库提供的类似于write_condition机制，以及Java中java.util.concurrent.atomic包</p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a><strong>使用场景</strong></h2><p>&emsp;&emsp;悲观锁：多写少读。</p>
-<p>&emsp;&emsp;乐观锁：多读少写。</p>
-<h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a><strong>实现方式</strong></h2><p>&emsp;&emsp;悲观锁：可以参考<a href="../2019032701.html" title="Title">synchronized</a>，<a href="../2019032901.html" title="Title">ReentrantLock</a>。</p>
-<p>&emsp;&emsp;乐观锁：可以参考<a href="../2019032901.html" title="Title">版本号机制</a>，<a href="../2019032901.html" title="Title">CAS算法</a>。</p>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a><strong>应用</strong></h3><p>&emsp;悲观锁：数据库中行锁，表锁等，读锁，写锁等，以及Java中synchronized和ReentrantLock等独占锁</p>
+<p>&emsp;乐观锁：数据库提供的类似于write_condition机制，以及Java中java.util.concurrent.atomic包</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a><strong>使用场景</strong></h3><p>&emsp;悲观锁：多写少读。</p>
+<p>&emsp;乐观锁：多读少写。</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a><strong>实现方式</strong></h3><p>&emsp;悲观锁：可以参考<a href="../2019032701.html" title="Title">synchronized</a>，<a href="../2019032901.html" title="Title">ReentrantLock</a>。</p>
+<p>&emsp;乐观锁：可以参考<a href="../2019032901.html" title="Title">版本号机制</a>，<a href="../2019032901.html" title="Title">CAS算法</a>。</p>
 <hr>
-<h1 id="独占锁-排他锁-与共享锁"><a href="#独占锁-排他锁-与共享锁" class="headerlink" title="独占锁(排他锁)与共享锁"></a><strong>独占锁(排他锁)与共享锁</strong></h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h2><ul>
+<h2 id="独占锁-排他锁-与共享锁"><a href="#独占锁-排他锁-与共享锁" class="headerlink" title="独占锁(排他锁)与共享锁"></a><strong>独占锁(排他锁)与共享锁</strong></h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h3><ul>
 <li><p>独占锁(排他锁)：每次只能有一个线程能持有锁。当锁被头节点获取后，只有头节点获取锁，其余节点的线程继续沉睡，等待锁被释放后，才会唤醒下一个节点的线程。</p>
 </li>
 <li><p>共享锁：允许多个线程同时获取锁。只要头节点获取锁成功，就在唤醒自身节点对应的线程的同时，继续唤醒AQS队列中的下一个节点的线程，每个节点在唤醒自身的同时还会唤醒下一个节点对应的线程，以实现共享状态的“向后传播”，从而实现共享功能。</p>
 </li>
 </ul>
-<p>&emsp;&emsp;ReentrantLock基于aqs实现，基本原理是aqs的status为0时表示锁被占用，为1时表示锁被释放。ReentrantLock就是独占锁，独占锁又分为公平锁和非公平锁。</p>
-<p>&emsp;&emsp;ReadWriteLock属于独占锁，ReadWriteLock 里面的读锁不是排他锁，它允许多线程同时持有读锁，这是共享锁。共享锁和排他锁是通过 Node 类里面的 nextWaiter 字段区分的。</p>
-<p>&emsp;&emsp;具体可以参考<a href="../2019032901.html" title="Title">可重入的独占锁ReentrantLock的实现原理</a>，<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a></p>
-<h2 id="公平锁和非公平锁"><a href="#公平锁和非公平锁" class="headerlink" title="公平锁和非公平锁"></a><strong>公平锁和非公平锁</strong></h2><ul>
+<p>&emsp;ReentrantLock基于aqs实现，基本原理是aqs的status为0时表示锁被占用，为1时表示锁被释放。ReentrantLock就是独占锁，独占锁又分为公平锁和非公平锁。</p>
+<p>&emsp;ReadWriteLock属于独占锁，ReadWriteLock 里面的读锁不是排他锁，它允许多线程同时持有读锁，这是共享锁。共享锁和排他锁是通过 Node 类里面的 nextWaiter 字段区分的。</p>
+<p>&emsp;具体可以参考<a href="../2019032901.html" title="Title">可重入的独占锁ReentrantLock的实现原理</a>，<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a></p>
+<h3 id="公平锁和非公平锁"><a href="#公平锁和非公平锁" class="headerlink" title="公平锁和非公平锁"></a><strong>公平锁和非公平锁</strong></h3><ul>
 <li><p>公平锁：保证按照获取锁的顺序来得到锁</p>
 </li>
 <li><p>非公平锁：可以进行抢占</p>
 </li>
 </ul>
-<p>&emsp;&emsp;公平锁运行过程：</p>
+<p>&emsp;公平锁运行过程：</p>
 <ol>
 <li>调用aqs的lock方法尝试获取锁</li>
 <li>调用上层组件reentrantlock的trylock方法尝试获取同步状态 </li>
@@ -502,21 +515,20 @@
 <li>然后该线程进入自旋状态 ，自旋时首先判断前驱节点是否为头节点并且能否成功获取到同步状态</li>
 <li>如果都成立，则成功获取锁，如果不成立，则先讲将其前驱节点等待状态设置为signal，然后利用Locksupport挂起，等待前驱线程唤醒当被前驱节点唤醒，且成功回去同步状态后，才成功获取到了锁。对于释放锁，就是通过aqs设置同步状态为1的过程，同时唤醒后继节点</li>
 </ol>
-<p>&emsp;&emsp;独占锁获取锁时，设置节点模式为Node.EXCLUSIVE</p>
+<p>&emsp;独占锁获取锁时，设置节点模式为Node.EXCLUSIVE</p>
 <figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">    acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">    selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;共享锁获取锁，节点模式则为Node.SHARED</p>
+<p>&emsp;共享锁获取锁，节点模式则为Node.SHARED</p>
 <figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private void doAcquireShared(int arg) &#123;</span><br><span class="line">    final <span class="keyword">Node</span> <span class="title">node</span> = addWaiter(<span class="keyword">Node</span>.<span class="title">SHARED</span>);</span><br><span class="line">    boolean failed = <span class="literal">true</span>;</span><br><span class="line">    .....    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;非公平锁与公平锁的唯一区别是，在获取锁时，不管是否有线程在等待锁，直接通过aqs修改同步状态，进行锁抢占，如果抢占失败，那后面的流程就与公平锁一致了。</p>
-<p>&emsp;&emsp;共享锁的基本流程与独占锁相同，主要区别在于判断锁获取的条件上，由于是共享锁，也就允许多个线程同时获取，所以同步状态的数量同时的大于1的，如果同步状态为非0，则线程就可以获取锁，只有当同步状态为0时，才说明共享数量的锁已经被全部获取，其余线程只能等待。共享锁的释放过程正好与之相反，释放锁对应的AQS操作时增加同步状态的值。</p>
-<p>&emsp;&emsp;可以参考<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a></p>
+<p>&emsp;非公平锁与公平锁的唯一区别是，在获取锁时，不管是否有线程在等待锁，直接通过aqs修改同步状态，进行锁抢占，如果抢占失败，那后面的流程就与公平锁一致了。</p>
+<p>&emsp;共享锁的基本流程与独占锁相同，主要区别在于判断锁获取的条件上，由于是共享锁，也就允许多个线程同时获取，所以同步状态的数量同时的大于1的，如果同步状态为非0，则线程就可以获取锁，只有当同步状态为0时，才说明共享数量的锁已经被全部获取，其余线程只能等待。共享锁的释放过程正好与之相反，释放锁对应的AQS操作时增加同步状态的值。</p>
 <hr>
-<h1 id="读锁和写锁"><a href="#读锁和写锁" class="headerlink" title="读锁和写锁"></a><strong>读锁和写锁</strong></h1><p>&emsp;&emsp;读写锁分为两个锁对象 ReadLock 和 WriteLock，这两个锁对象共享同一个AQS。</p>
-<p>&emsp;&emsp;AQS 的锁计数变量 state 将分为两个部分，前 16bit 为共享锁 ReadLock 计数，后 16bit 为互斥锁 WriteLock 计数。互斥锁记录的是当前写锁重入的次数，共享锁记录的是所有当前持有共享读锁的线程重入总次数。</p>
-<p>&emsp;&emsp;读写锁同样也需要考虑公平锁和非公平锁。共享锁和互斥锁的公平锁策略和 ReentrantLock 一样，就是看看当前还有没有其它线程在排队，自己会乖乖排到队尾。非公平锁策略不一样，它会比较偏向于给写锁提供更多的机会。如果当前 AQS 队列里有任何读写请求的线程在排队，那么写锁可以直接去争抢，但是如果队头是写锁请求，那么读锁需要将机会让给写锁，去队尾排队。</p>
-<p>&emsp;&emsp;毕竟读写锁适合读多写少的场合，对于偶尔出现一个写锁请求就应该得到更高的优先级去处理。</p>
-<p>&emsp;&emsp;具体可以参考<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a></p>
+<h2 id="读锁和写锁"><a href="#读锁和写锁" class="headerlink" title="读锁和写锁"></a><strong>读锁和写锁</strong></h2><p>&emsp;读写锁分为两个锁对象 ReadLock 和 WriteLock，这两个锁对象共享同一个AQS。</p>
+<p>&emsp;AQS 的锁计数变量 state 将分为两个部分，前 16bit 为共享锁 ReadLock 计数，后 16bit 为互斥锁 WriteLock 计数。互斥锁记录的是当前写锁重入的次数，共享锁记录的是所有当前持有共享读锁的线程重入总次数。</p>
+<p>&emsp;读写锁同样也需要考虑公平锁和非公平锁。共享锁和互斥锁的公平锁策略和 ReentrantLock 一样，就是看看当前还有没有其它线程在排队，自己会乖乖排到队尾。非公平锁策略不一样，它会比较偏向于给写锁提供更多的机会。如果当前 AQS 队列里有任何读写请求的线程在排队，那么写锁可以直接去争抢，但是如果队头是写锁请求，那么读锁需要将机会让给写锁，去队尾排队。</p>
+<p>&emsp;毕竟读写锁适合读多写少的场合，对于偶尔出现一个写锁请求就应该得到更高的优先级去处理。</p>
+<p>&emsp;具体可以参考<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a></p>
 <hr>
-<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a><strong>死锁</strong></h1><p>&emsp;&emsp;即线程之间互相等待，导致程序瘫痪。</p>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a><strong>死锁</strong></h2><p>&emsp;即线程之间互相等待，导致程序瘫痪。</p>
 <blockquote>
 <p><strong>死锁产生的四个必要条件：</strong></p>
 <ol>
@@ -536,34 +548,14 @@
 </ol>
 </blockquote>
 <hr>
-<h1 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a><strong>Q&amp;A</strong></h1><blockquote>
-<p><strong>什么是阻塞队列？阻塞队列的实现原理是什么？如何使用阻塞队列来实现生产者-消费者模型？</strong></p>
-<p>&emsp;&emsp;阻塞队列（BlockingQueue）是一个支持两个附加操作的队列。</p>
-<p>&emsp;&emsp;这两个附加的操作是：在队列为空时，获取元素的线程会等待队列变为非空。当队列满时，存储元素的线程会等待队列可用。</p>
-<p>&emsp;&emsp;阻塞队列常用于生产者和消费者的场景，生产者是往队列里添加元素的线程，消费者是从队列里拿元素的线程。阻塞队列就是生产者存放元素的容器，而消费者也只从容器里拿元素。</p>
-<p>&emsp;&emsp;JDK7提供了7个阻塞队列。分别是：</p>
-<p>&emsp;&emsp;* ArrayBlockingQueue ：一个由数组结构组成的有界阻塞队列。</p>
-<p>&emsp;&emsp;* LinkedBlockingQueue ：一个由链表结构组成的有界阻塞队列。</p>
-<p>&emsp;&emsp;* PriorityBlockingQueue ：一个支持优先级排序的无界阻塞队列。</p>
-<p>&emsp;&emsp;* DelayQueue：一个使用优先级队列实现的无界阻塞队列。</p>
-<p>&emsp;&emsp;* SynchronousQueue：一个不存储元素的阻塞队列。</p>
-<p>&emsp;&emsp;* LinkedTransferQueue：一个由链表结构组成的无界阻塞队列。</p>
-<p>&emsp;&emsp;* LinkedBlockingDeque：一个由链表结构组成的双向阻塞队列。</p>
-<p>&emsp;&emsp;Java 5之前实现同步存取时，可以使用普通的一个集合，然后在使用线程的协作和线程同步可以实现生产者，消费者模式，主要的技术就是用好，wait ,notify,notifyAll,sychronized这些关键字。而在java 5之后，可以使用阻塞队列来实现，此方式大大简少了代码量，使得多线程编程更加容易，安全方面也有保障。</p>
-<p>&emsp;&emsp;BlockingQueue接口是Queue的子接口，它的主要用途并不是作为容器，而是作为线程同步的的工具，因此他具有一个很明显的特性，当生产者线程试图向BlockingQueue放入元素时，如果队列已满，则线程被阻塞，当消费者线程试图从中取出一个元素时，如果队列为空，则该线程会被阻塞，正是因为它所具有这个特性，所以在程序中多个线程交替向BlockingQueue中放入元素，取出元素，它可以很好的控制线程之间的通信。</p>
-<p>&emsp;&emsp;阻塞队列使用最经典的场景就是socket客户端数据的读取和解析，读取数据的线程不断将数据放入队列，然后解析线程不断从队列取数据解析。</p>
-</blockquote>
-<blockquote>
-<p><strong>互斥锁和自旋锁、信号量的区别？</strong></p>
-<p>&emsp;&emsp;互斥锁也可以叫互斥量，广义上讲可以值所有实现互斥作用的同步机制。狭义上讲指的就是mutex这种特定的二元锁机制。互斥锁的作用就是互斥，mutual exclusive，是用来保护临界区(critical section)的 。所谓临界区就是代码的一个区间，如果两个线程同时执行就有可能出问题，所以需要互斥锁来保护。</p>
-<p>&emsp;&emsp;信号量（semaphore） 是一种更高级的同步机制，mutex（互斥锁） 可以说是 semaphore（信号量） 在仅取值0/1时的特例。Semaphore可以有更多的取值空间，用来实现更加复杂的同步，而不单单是线程间互斥。</p>
-<p>&emsp;&emsp;自旋锁 是一种 互斥锁 的实现方式而已，相比一般的互斥锁会在等待期间放弃cpu，自旋锁（spinlock） 则是不断循环并测试锁的状态，这样就一直占着cpu。所以相比于自旋锁和信号量，在申请锁失败的话，自旋锁会不断的查询，申请线程不会进入休眠，信号量和互斥锁如果申请锁失败的话线程进入休眠，如果申请锁被释放后会唤醒休眠的线程。</p>
-<p>&emsp;&emsp;同步锁 好像没啥特殊说法，你可以理解为能实现同步作用的都可以叫同步锁，比如信号量。最后，不要钻这些名词的牛角尖，更重要的是理解这些东西背后的原理，叫什么名字并没有什么好说的。这些东西在不同的语言和平台上又有可能会有不同的叫法，其实本质上就这么回事。</p>
-</blockquote>
+<h2 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a><strong>Q&amp;A</strong></h2><p>&emsp;<a href="../2019081401.html" title="Title">锁Q&amp;A</a></p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
 <p>《Java核心技术 卷Ⅰ》</p>
+</blockquote>
+<blockquote>
+<p>《Java并发编程的艺术》</p>
 </blockquote>
 <blockquote>
 <p><a href="https://blog.csdn.net/u014368614/article/details/86591498" target="_blank" rel="noopener">https://blog.csdn.net/u014368614/article/details/86591498</a></p>
@@ -602,6 +594,8 @@
         <div class="post-tags">
           
             <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/lock/" rel="tag"># lock</a>
           
         </div>
       
@@ -707,7 +701,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">98</span>
+                  <span class="site-state-item-count">102</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -729,7 +723,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">52</span>
+                  <span class="site-state-item-count">54</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -797,7 +791,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前文"><span class="nav-number">1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是锁"><span class="nav-number">2.</span> <span class="nav-text">什么是锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock"><span class="nav-number">3.</span> <span class="nav-text">Lock</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件对象-条件变量"><span class="nav-number">4.</span> <span class="nav-text">条件对象(条件变量)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#emsp-emsp-条件等待队列可以参考同步器AQS的实现原理中条件等待队列部分"><span class="nav-number">4.1.</span> <span class="nav-text">  条件等待队列可以参考同步器AQS的实现原理中条件等待队列部分</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized"><span class="nav-number">5.</span> <span class="nav-text">synchronized</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步阻塞"><span class="nav-number">6.</span> <span class="nav-text">同步阻塞</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final"><span class="nav-number">7.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#乐观锁与悲观锁"><span class="nav-number">8.</span> <span class="nav-text">乐观锁与悲观锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-number">8.1.</span> <span class="nav-text">应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用场景"><span class="nav-number">8.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现方式"><span class="nav-number">8.3.</span> <span class="nav-text">实现方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#独占锁-排他锁-与共享锁"><span class="nav-number">9.</span> <span class="nav-text">独占锁(排他锁)与共享锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">9.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#公平锁和非公平锁"><span class="nav-number">9.2.</span> <span class="nav-text">公平锁和非公平锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#读锁和写锁"><span class="nav-number">10.</span> <span class="nav-text">读锁和写锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#死锁"><span class="nav-number">11.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q-amp-A"><span class="nav-number">12.</span> <span class="nav-text">Q&amp;A</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#锁机制"><span class="nav-number">1.</span> <span class="nav-text">锁机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前文"><span class="nav-number">1.1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是锁"><span class="nav-number">1.2.</span> <span class="nav-text">什么是锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">1.3.</span> <span class="nav-text">volatile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件对象-条件变量"><span class="nav-number">1.4.</span> <span class="nav-text">条件对象(条件变量)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronized"><span class="nav-number">1.5.</span> <span class="nav-text">synchronized</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized的条件变量"><span class="nav-number">1.5.1.</span> <span class="nav-text">synchronized的条件变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部锁"><span class="nav-number">1.5.2.</span> <span class="nav-text">内部锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多内容"><span class="nav-number">1.5.3.</span> <span class="nav-text">更多内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lock"><span class="nav-number">1.6.</span> <span class="nav-text">Lock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#队列同步器"><span class="nav-number">1.7.</span> <span class="nav-text">队列同步器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重入锁：ReentrantLock"><span class="nav-number">1.8.</span> <span class="nav-text">重入锁：ReentrantLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同步阻塞"><span class="nav-number">1.9.</span> <span class="nav-text">同步阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final"><span class="nav-number">1.10.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#乐观锁与悲观锁"><span class="nav-number">1.11.</span> <span class="nav-text">乐观锁与悲观锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#应用"><span class="nav-number">1.11.1.</span> <span class="nav-text">应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.11.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现方式"><span class="nav-number">1.11.3.</span> <span class="nav-text">实现方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#独占锁-排他锁-与共享锁"><span class="nav-number">1.12.</span> <span class="nav-text">独占锁(排他锁)与共享锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">1.12.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#公平锁和非公平锁"><span class="nav-number">1.12.2.</span> <span class="nav-text">公平锁和非公平锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读锁和写锁"><span class="nav-number">1.13.</span> <span class="nav-text">读锁和写锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">1.14.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q-amp-A"><span class="nav-number">1.15.</span> <span class="nav-text">Q&amp;A</span></a></li></ol></li></ol></div>
             
 
           </div>
