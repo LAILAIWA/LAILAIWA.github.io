@@ -71,13 +71,13 @@
     <link href="http://linyishui.top/2019081301.html"/>
     <id>http://linyishui.top/2019081301.html</id>
     <published>2019-08-13T01:08:52.000Z</published>
-    <updated>2019-09-17T01:14:14.412Z</updated>
+    <updated>2019-09-17T02:53:29.273Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="条件等待队列"><a href="#条件等待队列" class="headerlink" title="条件等待队列"></a><strong>条件等待队列</strong></h1><p>&emsp;当多个线程 await() 在同一个条件变量上时，会形成一个条件等待队列。同一个锁可以创建多个条件变量，就会存在多个条件等待队列。这个队列和 AQS 的队列结构很接近，只不过它不是双向队列，而是单向队列。队列中的节点和 AQS 等待队列的节点是同一个类，但是节点指针不是 prev 和 next，而是 nextWaiter。</p><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class AQS &#123;</span><br><span class="line">  ...</span><br><span class="line">  class ConditionObject &#123;</span><br><span class="line">    <span class="keyword">Node</span> <span class="title">firstWaiter</span>;  // 指向第一个节点</span><br><span class="line">    <span class="keyword">Node</span> <span class="title">lastWaiter</span>;  // 指向第二个节点</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  class <span class="keyword">Node</span> <span class="title">&#123;</span></span><br><span class="line"><span class="title">    static</span> final int CONDITION = -<span class="number">2</span>;</span><br><span class="line">    static final int SIGNAL = -<span class="number">1</span>;</span><br><span class="line">    Thread thread;  // 当前等待的线程</span><br><span class="line">    <span class="keyword">Node</span> <span class="title">nextWaiter</span>;  // 指向下一个条件等待节点</span><br><span class="line"></span><br><span class="line">    <span class="keyword">Node</span> <span class="title">prev</span>;</span><br><span class="line">    <span class="keyword">Node</span> <span class="title">next</span>;</span><br><span class="line">    int waitStatus;  // waitStatus = CONDITION</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160107.jpg" alt=""></p><p>&emsp;ConditionObject 是 AQS 的内部类，这个对象里会有一个隐藏的指针 this$0 指向外部的 AQS 对象，ConditionObject 可以直接访问 AQS 对象的所有属性和方法（加锁解锁）。位于条件等待队列里的所有节点的 waitStatus 状态都被标记为 CONDITION，表示节点是因为条件变量而等待。</p><hr><h1 id="队列转移"><a href="#队列转移" class="headerlink" title="队列转移"></a><strong>队列转移</strong></h1><p>&emsp;当条件变量的 signal() 方法被调用时，条件等待队列的头节点线程会被唤醒，该节点从条件等待队列中被摘走，然后被转移到 AQS 的等待队列中，准备排队尝试重新获取锁。这时节点的状态从 CONDITION 转为 SIGNAL，表示当前节点是被条件变量唤醒转移过来的。</p><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class AQS &#123;</span><br><span class="line">  ...</span><br><span class="line">  boolean transferForSignal(<span class="keyword">Node</span> <span class="title">node</span>) &#123;</span><br><span class="line">    // 重置节点状态</span><br><span class="line">    if (!<span class="keyword">node</span>.<span class="title">compareAndSetWaitStatus</span>(<span class="keyword">Node</span>.<span class="title">CONDITION</span>, <span class="number">0</span>))</span><br><span class="line">      return <span class="literal">false</span></span><br><span class="line">    <span class="keyword">Node</span> <span class="title">p</span> = enq(<span class="keyword">node</span><span class="title">); // 进入 AQS</span> 等待队列</span><br><span class="line">    int ws = p.waitStatus;</span><br><span class="line">    // 再修改状态为SIGNAL</span><br><span class="line">    if (ws &gt; <span class="number">0</span> || !p.compareAndSetWaitStatus(ws, <span class="keyword">Node</span>.<span class="title">SIGNAL</span>))</span><br><span class="line">       LockSupport.unpark(<span class="keyword">node</span>.<span class="title">thread</span>);</span><br><span class="line">       return <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>&emsp;被转移的节点的 nextWaiter 字段的含义也发生了变更，在条件队列里它是下一个节点的指针，在 AQS 等待队列里它是共享锁还是互斥锁的标志。</p><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160108.jpg" alt="Java 并发包常用类库依赖结构"></p><hr><p><em>参考博客和文章书籍等：</em></p><blockquote><p>《Java核心技术 卷Ⅰ》</p></blockquote><p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>]]></content>
     
     <summary type="html">
     
-      介绍Java中的条件等待队列相关内容：
+      介绍Java中的条件等待队列相关内容：条件等待队列和队列转移
     
     </summary>
     
@@ -178,9 +178,9 @@
       <category term="技术文档" scheme="http://linyishui.top/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
     
     
-      <category term="web" scheme="http://linyishui.top/tags/web/"/>
-    
       <category term="security" scheme="http://linyishui.top/tags/security/"/>
+    
+      <category term="web" scheme="http://linyishui.top/tags/web/"/>
     
   </entry>
   
@@ -279,11 +279,11 @@
   </entry>
   
   <entry>
-    <title>杠杆？</title>
+    <title>杠杆等常见术语</title>
     <link href="http://linyishui.top/2019080301.html"/>
     <id>http://linyishui.top/2019080301.html</id>
     <published>2019-08-03T03:37:23.000Z</published>
-    <updated>2019-08-20T02:40:16.947Z</updated>
+    <updated>2019-09-17T02:55:35.704Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h1 id="杠杆"><a href="#杠杆" class="headerlink" title="杠杆"></a><strong>杠杆</strong></h1><h2 id="什么是杠杆？"><a href="#什么是杠杆？" class="headerlink" title="什么是杠杆？"></a><strong>什么是杠杆？</strong></h2><blockquote><p>所谓<strong>杠杆</strong>，从狭义上讲，是指<strong>资产与股东权益之比</strong>；从广义讲，则是指<strong>通过负债实现以较小的资本金控制较大的资产规模，从而扩大盈利能力或购买力</strong>。</p></blockquote><p>&emsp;简单理解就是个体债务和实际收入的比值，当你用10块的本金通过借款90块，最后100块就是10倍的杠杆。</p><h2 id="杠杆对于个人有什么影响？"><a href="#杠杆对于个人有什么影响？" class="headerlink" title="杠杆对于个人有什么影响？"></a><strong>杠杆对于个人有什么影响？</strong></h2><p>&emsp;举个例子，个人通过自己本金100等额借到100借款，再用这200再去借到等额的200，如此迭代倍增借贷下去，用户就可以用一个较小的本金借到相当夸张倍数的资产，类似于力学的杠杆效应，支点是杠杆率。当然借款都伴随着利息，而推动用户不断提高杠杆率的动力来源自收益率大于利息，所以资产总量越大获得的利益差额就越大。所以在一个高度增长的经济环境下，通过这样的方法可以让个体获得巨大的利益。假设我们通过1W本金，通过利率5%借贷最多借到了20W。我们通过股票市场可以稳定赚到10%的利润。那么我们通过借贷获得的利润就是2W，再除去利息9500，获得纯利润10500，是我们本金能赚到的10倍。(比较粗糙的计算，理解原理即可)</p><p>&emsp;从上述例子可以看出来杠杆率其实相比负债率更能体现债务的偿还能力，比如一人固定资产如房子等价值500万，但其年收入为10万，如果他贷款250万，根据计算资产负债率=负债总额/资产总额，负债率只有33%，是比较正常的数值，但实际情况下如果不卖房子他是没有偿还能力的。</p><h3 id="银行借贷杠杆"><a href="#银行借贷杠杆" class="headerlink" title="银行借贷杠杆"></a><strong>银行借贷杠杆</strong></h3><p>&emsp;银行有一个准备金率，准备金是金融机构为保证客户提取存款和资金清算需要而准备的，是缴存在中央银行的存款，准备金率就是存款准备金占其存款总额的比例。假设准备金率是20%，所以当我有本金100时，我可以通过反复借贷拿到最多500元。这种方式叫<strong>间接融资</strong>，而间接融资很明显会产生一个杠杆效应，会增加市场货币。</p><p>&emsp;直接融资就是直接借出100给企业融资，增加直接融资的比例也间接的是在去杠杆。</p><h1 id="去杠杆"><a href="#去杠杆" class="headerlink" title="去杠杆"></a><strong>去杠杆</strong></h1><h2 id="为什么要去杠杆？"><a href="#为什么要去杠杆？" class="headerlink" title="为什么要去杠杆？"></a><strong>为什么要去杠杆？</strong></h2><p>&emsp;自从次贷危机爆发以来，“去杠杆化”一词遍从国外一直流行到国内。所谓“去杠杆化”，是指公司或者个人减少使用金融杠杆，把原来通过各种方式“借”到的钱退还出去的这样一个潮流。</p><p>&emsp;杠杆实际上就是借贷盈利，环境好的时候，资金回笼，参与者都能大赚一笔；环境不好的时候，利息压死人，所以要大量变卖手里的筹码，让大量企业和个人担负大量的债务，甚至瞬间破产。</p><p>&emsp;环境好的时候，企业会利用高杠杆扩大生产规模，追求更多的利益，生产出来的东西超过人们所需要的，就会导致产能过剩和资源浪费。</p><p>&emsp;在国内，可能大部分贷款都是用来炒股，炒房，做一些布局和烧钱的投资，或者搞高污染高耗能的产业，这些钱并没有用来提高生产力和创造足够多的实际经济贡献，社会产能结构慢慢失衡。</p><p>&emsp;2008年全球金融危机，背后就是高杠杆引发的一系列连锁反应。我国这么多年，一直在加杠杆，尤其是2008年以后，一直以高杠杆换取高增长的经济增速，杠杆高到一定程度就会到风险不可控的地步，为了逐渐减少金融风险，让经济回归正常发展，必须要去杠杆。</p><h2 id="高杠杆的影响？"><a href="#高杠杆的影响？" class="headerlink" title="高杠杆的影响？"></a><strong>高杠杆的影响？</strong></h2><p>&emsp;高杠杆率对应着高风险，在经济增长比较良好的阶段，市场规模一直在扩大，高杠杆总有人接盘，经济也没有太大的不良反应。</p><p>&emsp;杠杆是一个强力的经济工具，用好这个工具其实对经济和社会都是利大于弊的，有个经济现象叫“明斯基时刻”（Minsky Moment）是指海曼·明斯基Hyman Minsky(美国经济学家)所描述的时刻，即资产价值崩溃时刻。他的观点主要是经济长时期稳定可能导致债务增加、杠杆比率上升，进而从内部滋生爆发金融危机和陷入漫长去杠杆化周期的风险。明斯基时刻表示的是市场繁荣与衰退之间的转折点。在我的理解种人性在这里面起主导作用，而避免明斯基时刻。</p><h2 id="如何去杠杆？"><a href="#如何去杠杆？" class="headerlink" title="如何去杠杆？"></a><strong>如何去杠杆？</strong></h2><ol><li>缩紧信贷，提高门槛，加强监管。</li><li>减少负债，悬崖勒马，制度改革。</li></ol><h2 id="货币升值的影响？"><a href="#货币升值的影响？" class="headerlink" title="货币升值的影响？"></a><strong>货币升值的影响？</strong></h2><blockquote><p>从几个角度来分析：</p><ol><li>A币升值-&gt;A币能换到更多的B币-&gt;国民对外购买力增强</li><li>A币升值-&gt;B币只能换更少的A币-&gt;企业在A国成本不会有太大改变-&gt;对外商品定价不变的情况下利润一定是减少的-&gt;企业只能提高在外产品售价-&gt;商品失去竞争力</li></ol></blockquote><p>&emsp;利润计算：成本300A，售价100B，A和B兑换比例：4 : 1。所以此时企业利润为：100A/25B。当A币升值，兑换比例变为2 ：1，成本售价不变，企业亏损100A/25B，为了保持过往利润，需要将售价提升到200B。商品丧失掉在B对应市场的竞争力。 </p><hr><p><em>参考博客和文章书籍等：</em></p><blockquote><p><a href="https://www.zhihu.com/question/20417339/answer/136814369" title="Title" target="_blank" rel="noopener">金融机构的去杠杆化以及杠杆率是什么意思？</a></p></blockquote><blockquote><p><a href="http://www.sohu.com/a/237595453_250785" title="Title" target="_blank" rel="noopener">如何防范“明斯基时刻”？</a></p></blockquote><blockquote><p><a href="https://zh.wikipedia.org/zh/%E8%B3%87%E9%87%91%E6%A7%93%E6%A1%BF" title="Title" target="_blank" rel="noopener">资金杠杆-维基百科</a></p></blockquote><p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>]]></content>
     
@@ -293,10 +293,10 @@
     
     </summary>
     
-      <category term="杂谈" scheme="http://linyishui.top/categories/%E6%9D%82%E8%B0%88/"/>
+      <category term="金融经济" scheme="http://linyishui.top/categories/%E9%87%91%E8%9E%8D%E7%BB%8F%E6%B5%8E/"/>
     
     
-      <category term="other" scheme="http://linyishui.top/tags/other/"/>
+      <category term="economy" scheme="http://linyishui.top/tags/economy/"/>
     
   </entry>
   
