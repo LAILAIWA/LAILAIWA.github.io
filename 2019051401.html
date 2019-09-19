@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍Java中的并发和同步">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-19T08:45:01.549Z">
+<meta property="og:updated_time" content="2019-09-19T08:52:15.029Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="并发和同步">
 <meta name="twitter:description" content="介绍Java中的并发和同步">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,758
+                  2,498
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  10
                 </span>
               
             </div>
@@ -427,6 +427,25 @@
 <p>锁是可重入的，线程可以重复的获得已持有的锁，所以锁会实现一个计数器来根据对lock()的嵌套调用，线程每一次调用lock()都要执行unlock()来解锁，因为这个特性，所以被某个锁保护的代码可以调用使用同一个锁的方法。</p>
 </blockquote>
 <p>&emsp;所以调用Bank.transfer()方法时，又调用了Bank.getTotalBalance()方法，所以此时计数为2，退出时计数退为1，当transfer()也执行结束，计数退为0，线程释放锁。</p>
+<hr>
+<h2 id="条件对象-条件变量"><a href="#条件对象-条件变量" class="headerlink" title="条件对象(条件变量)"></a><strong>条件对象(条件变量)</strong></h2><p>&emsp;在线程获得锁后，但需要满足某些条件才能执行时，需要引入<strong>条件对象</strong>或叫<strong>条件变量</strong>。</p>
+<p>&emsp;在测试用例的银行实现中增加需求：转移资金需要满足当前余额大于转出额度。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (accounts[<span class="keyword">from</span>] &gt;= amount)&#123;<span class="comment">//若线程在判断通过之后，与执行之前被中断，则很有可能会导致执行时其实并不满足条件约束</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bankLock.<span class="keyword">lock</span>();</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (accounts[<span class="keyword">from</span>] &lt; amount)<span class="comment">//当账户余额不足，等待直到另外一个账户向此账户注入资金，但此线程拥有锁，就会排斥其他线程的操作，所以需要条件对象Condition。</span></span><br><span class="line">        sufficientFunds.<span class="keyword">await</span>();<span class="comment">//此线程会阻塞，并放弃锁，这时其他线程就可以对此对象进行操作了。</span></span><br><span class="line">    ...</span><br><span class="line">    sufficientFunds.signalAll();<span class="comment">//此调用激活所有因为条件而阻塞的线程，其中某个会从await()返回，获得锁并继续执行。</span></span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">     bankLock.unlock();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Condition sufficientFunds;</span><br><span class="line">sufficientFunds = bankLock.newCondition();</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>调用await()阻塞的线程和等待锁阻塞的线程不同，前者进入条件的等待集合，当锁可用时，此线程不能解除阻塞，需要等到另一线程调用同个条件的signalAll()方法才行。</p>
+<p>阻塞在条件变量上的线程可以有多个，这些阻塞线程会被串联成一个条件等待队列。当 signalAll() 被调用时，会唤醒所有的阻塞线程，让所有的阻塞线程重新开始争抢锁。如果调用的是 signal() 只会唤醒队列头部的线程，这样可以避免「惊群问题」。</p>
+<p>await() 方法必须立即释放锁，否则临界区状态就不能被其它线程修改，condition_is_true() 返回的结果也就不会改变。 这也是为什么条件变量必须由锁对象来创建，条件变量需要持有锁对象的引用这样才可以释放锁以及被 signal 唤醒后重新加锁。创建条件变量的锁必须是排他锁，如果是共享锁被 await() 方法释放了并不能保证临界区的状态可以被其它线程来修改，可以修改临界区状态的只能是排他锁。这也是为什么 ReadWriteLock.ReadLock 类的 newCondition 方法定义如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash">public Condition <span class="function"><span class="title">newCondition</span></span>() &#123;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">    throw new UnsupportedOperationException();</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&#125;</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>&emsp;那么因为条件而阻塞的线程只能寄希望于有其他线程来帮助他脱离这一情况，否则他永远都不会再运行了，这就会导致死锁。</p>
+<p>总结上述内容：</p>
+<ul>
+<li>锁用来保护代码块</li>
+<li>锁用来管理试图进入被保护区域的线程</li>
+<li>锁拥有一个或多个条件对象</li>
+<li>每个条件对象管理获得锁后还不能执行的线程</li>
+</ul>
+<p>&emsp;条件等待队列可以参考<a href="../2019081301.html" title="Title">条件等待队列</a></p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -660,7 +679,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、并发"><span class="nav-number">1.</span> <span class="nav-text">一、并发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程的三个问题"><span class="nav-number">1.1.</span> <span class="nav-text">并发编程的三个问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、同步"><span class="nav-number">2.</span> <span class="nav-text">二、同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#案例"><span class="nav-number">2.1.</span> <span class="nav-text">案例</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、并发"><span class="nav-number">1.</span> <span class="nav-text">一、并发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发编程的三个问题"><span class="nav-number">1.1.</span> <span class="nav-text">并发编程的三个问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、同步"><span class="nav-number">2.</span> <span class="nav-text">二、同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#案例"><span class="nav-number">2.1.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件对象-条件变量"><span class="nav-number">2.2.</span> <span class="nav-text">条件对象(条件变量)</span></a></li></ol></li></ol></div>
             
 
           </div>
