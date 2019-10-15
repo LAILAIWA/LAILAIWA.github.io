@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java,web," />
+  <meta name="keywords" content="java,security," />
 
 
 
@@ -89,14 +89,14 @@
 
 
 <meta name="description" content="介绍Cookie，Session，Token。">
-<meta name="keywords" content="java,web">
+<meta name="keywords" content="java,security">
 <meta property="og:type" content="article">
 <meta property="og:title" content="加密算法">
 <meta property="og:url" content="http://linyishui.top/2019052001.html">
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍Cookie，Session，Token。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-06-12T03:20:00.966Z">
+<meta property="og:updated_time" content="2019-10-14T07:32:53.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="加密算法">
 <meta name="twitter:description" content="介绍Cookie，Session，Token。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  914
+                  943
                 </span>
               
 
@@ -397,25 +397,26 @@
       
 
       
-        <h1 id="哈希加密"><a href="#哈希加密" class="headerlink" title="哈希加密"></a><strong>哈希加密</strong></h1><h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a><strong>介绍</strong></h2><p>&emsp;&emsp;防止密码泄露，通过散列的方法对口令进行一次性的加密，加密过程不可逆，从哈希值无法直接还原到原密码。</p>
+        <h1 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a><strong>加密算法</strong></h1><hr>
+<h2 id="第一节-哈希加密"><a href="#第一节-哈希加密" class="headerlink" title="第一节 哈希加密"></a><strong>第一节 哈希加密</strong></h2><h3 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a><strong>1 介绍</strong></h3><p>&emsp;&emsp;防止密码泄露，通过散列的方法对口令进行一次性的加密，加密过程不可逆，从哈希值无法直接还原到原密码。</p>
 <p>&emsp;&emsp;但哈希加密很快就被破解了，可以通过如<strong>字典破解</strong>，<strong>暴力破解</strong>等效率很低的破解方法，也可以通过<strong>查表法</strong>，<strong>反向查表法</strong>，<strong>彩虹表</strong>等方式来高效破解。</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a><strong>原理</strong></h2><p>&emsp;&emsp;单向散列算法，通过算法H将较大集合P映射到一个较小集合Q，即Q=H(P)</p>
+<h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2 原理"></a><strong>2 原理</strong></h3><p>&emsp;&emsp;单向散列算法，通过算法H将较大集合P映射到一个较小集合Q，即Q=H(P)</p>
 <p>&emsp;&emsp;P集合中任意元素p都有唯一q与其对应，但q可以对应多个p。H(P)可以快速计算，且难以通过q反推出p，给出一个p1，难以推出p2使H(p1)=H(p2)。</p>
 <p>&emsp;&emsp;因为这些特性，哈希算法常用来存储密码。</p>
-<h2 id="低效破解"><a href="#低效破解" class="headerlink" title="低效破解"></a><strong>低效破解</strong></h2><p>&emsp;&emsp;暴力破解，即尝试密码长度允许的所有排列组合，只要密码长度足够，就会因为无法达到一定的算力而无法破解，所以会建议一定的安全长度来保证安全性。</p>
+<h3 id="3-低效破解"><a href="#3-低效破解" class="headerlink" title="3 低效破解"></a><strong>3 低效破解</strong></h3><p>&emsp;&emsp;暴力破解，即尝试密码长度允许的所有排列组合，只要密码长度足够，就会因为无法达到一定的算力而无法破解，所以会建议一定的安全长度来保证安全性。</p>
 <p>&emsp;&emsp;字典破解，即通过创建一个小型数据库，存储单词、短语、常用密码等，进行哈希换算，再和要破解的密码进行比照。</p>
-<h2 id="高效破解"><a href="#高效破解" class="headerlink" title="高效破解"></a><strong>高效破解</strong></h2><p>&emsp;&emsp;查表法，即先计算一些常用密码的哈希值，然后存储到Table中，在破解时进行比对，内存时间平衡法通过大量的内存来减少破解时间，</p>
+<h3 id="4-高效破解"><a href="#4-高效破解" class="headerlink" title="4 高效破解"></a><strong>4 高效破解</strong></h3><p>&emsp;&emsp;查表法，即先计算一些常用密码的哈希值，然后存储到Table中，在破解时进行比对，内存时间平衡法通过大量的内存来减少破解时间，</p>
 <p>&emsp;&emsp;反向查表法，即先通过暴力破解获取一些哈希值，构造一个哈希表，获取已知数据，计算对应哈希值，并查询对应的数据。</p>
 <p>&emsp;&emsp;彩虹表，结合暴力法和查表法，对于Q=H(P)，通过算法R使P=R(Q)，然后计算H(p0)-&gt;R(q1)-&gt;H(p1)-&gt;R(q2)…-&gt;R(qn)-&gt;pn反复调用HR算法计算得到pn，存储p0和pn组合，代入不同的p0得到多组结果并存储。破解时根据获取的散列值q，进行一次R(q)得到c1，把c1和所存pn进行比较，若找到相等pn，则其对应的qn很有可能就是获取的散列值q，再进行一次HR计算，得到qn并比对，若相等则p(n-1)一定是想要的密令p，若不相等就继续直到遍历完所以存储组合。再对q进行R(q)-&gt;H(c1)-&gt;R(c2)，对比c2和qn，若相等，则对应的p(n-2)就很可能是所求密令，继续计算c3、c4直到c(n-1)。总体来讲就是通过0-n对存储了p0到pn链的所有数据，可以很大的节约空间，但就是需要进行n次比对，所以相比查表法在时间上是会有更多的牺牲。</p>
 <hr>
-<h1 id="加盐"><a href="#加盐" class="headerlink" title="加盐"></a><strong>加盐</strong></h1><h2 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a><strong>介绍</strong></h2><p>&emsp;&emsp;加盐即将口令通过和一个随机数Salt关联，只要口令改变随机数即改变。随机数以未加密的形式放入口令文件中，将口令和随机数一起加密。</p>
+<h2 id="第二节-加盐"><a href="#第二节-加盐" class="headerlink" title="第二节 加盐"></a><strong>第二节 加盐</strong></h2><h3 id="1-介绍-1"><a href="#1-介绍-1" class="headerlink" title="1 介绍"></a><strong>1 介绍</strong></h3><p>&emsp;&emsp;加盐即将口令通过和一个随机数Salt关联，只要口令改变随机数即改变。随机数以未加密的形式放入口令文件中，将口令和随机数一起加密。</p>
 <p>&emsp;&emsp;后台开发时常用Hash值的形式来存储用户密码，当后台被攻击时，哈希值泄露，黑客仍可以通过如彩虹表等方式破解用户密码。通过加盐可以提高密码的破解难度。</p>
-<h2 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a><strong>原理</strong></h2><p>&emsp;&emsp;由哈希加密的H(P)变为H(P+Salt)，每次哈希计算所选用的盐值都是随机数。因为H发生变化，所以已有的彩虹表数据就会失效，需要根据新的H重新生成，所以破解难度就提高了。</p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a><strong>实现</strong></h2><hr>
-<h1 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a><strong>MD5</strong></h1><hr>
-<h1 id="becrypt"><a href="#becrypt" class="headerlink" title="becrypt"></a><strong>becrypt</strong></h1><hr>
-<h1 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a><strong>RSA</strong></h1><hr>
-<h1 id="oauth"><a href="#oauth" class="headerlink" title="oauth"></a><strong>oauth</strong></h1>
+<h3 id="2-原理-1"><a href="#2-原理-1" class="headerlink" title="2 原理"></a><strong>2 原理</strong></h3><p>&emsp;&emsp;由哈希加密的H(P)变为H(P+Salt)，每次哈希计算所选用的盐值都是随机数。因为H发生变化，所以已有的彩虹表数据就会失效，需要根据新的H重新生成，所以破解难度就提高了。</p>
+<h3 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a><strong>3 实现</strong></h3><hr>
+<h2 id="第三节-MD5"><a href="#第三节-MD5" class="headerlink" title="第三节 MD5"></a><strong>第三节 MD5</strong></h2><hr>
+<h2 id="第四节-becrypt"><a href="#第四节-becrypt" class="headerlink" title="第四节 becrypt"></a><strong>第四节 becrypt</strong></h2><hr>
+<h2 id="第五节-RSA"><a href="#第五节-RSA" class="headerlink" title="第五节 RSA"></a><strong>第五节 RSA</strong></h2><hr>
+<h2 id="第六节-oauth"><a href="#第六节-oauth" class="headerlink" title="第六节 oauth"></a><strong>第六节 oauth</strong></h2>
       
     </div>
     
@@ -446,7 +447,7 @@
           
             <a href="/tags/java/" rel="tag"># java</a>
           
-            <a href="/tags/web/" rel="tag"># web</a>
+            <a href="/tags/security/" rel="tag"># security</a>
           
         </div>
       
@@ -552,7 +553,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">111</span>
+                  <span class="site-state-item-count">114</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -574,7 +575,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">55</span>
+                  <span class="site-state-item-count">57</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -642,7 +643,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#哈希加密"><span class="nav-number">1.</span> <span class="nav-text">哈希加密</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">1.2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#低效破解"><span class="nav-number">1.3.</span> <span class="nav-text">低效破解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高效破解"><span class="nav-number">1.4.</span> <span class="nav-text">高效破解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#加盐"><span class="nav-number">2.</span> <span class="nav-text">加盐</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍-1"><span class="nav-number">2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理-1"><span class="nav-number">2.2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">2.3.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MD5"><span class="nav-number">3.</span> <span class="nav-text">MD5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#becrypt"><span class="nav-number">4.</span> <span class="nav-text">becrypt</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RSA"><span class="nav-number">5.</span> <span class="nav-text">RSA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#oauth"><span class="nav-number">6.</span> <span class="nav-text">oauth</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#加密算法"><span class="nav-number">1.</span> <span class="nav-text">加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-哈希加密"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 哈希加密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-介绍"><span class="nav-number">1.1.1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理"><span class="nav-number">1.1.2.</span> <span class="nav-text">2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-低效破解"><span class="nav-number">1.1.3.</span> <span class="nav-text">3 低效破解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-高效破解"><span class="nav-number">1.1.4.</span> <span class="nav-text">4 高效破解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-加盐"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 加盐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-介绍-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现"><span class="nav-number">1.2.3.</span> <span class="nav-text">3 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-MD5"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 MD5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-becrypt"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 becrypt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-RSA"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 RSA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-oauth"><span class="nav-number">1.6.</span> <span class="nav-text">第六节 oauth</span></a></li></ol></li></ol></div>
             
 
           </div>
