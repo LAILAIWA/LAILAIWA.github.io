@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,design pattern,mvc," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="《设计模式：可复用面向对象软件的基础》读书笔记，涉及前言，引言和第一章内容。">
+<meta name="keywords" content="java,design pattern,mvc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《设计模式：可复用面向对象软件的基础》读书笔记">
+<meta property="og:url" content="http://linyishui.top/2019090401.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="《设计模式：可复用面向对象软件的基础》读书笔记，涉及前言，引言和第一章内容。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010102.png">
+<meta property="og:updated_time" content="2019-10-17T07:25:39.866Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《设计模式：可复用面向对象软件的基础》读书笔记">
+<meta name="twitter:description" content="《设计模式：可复用面向对象软件的基础》读书笔记，涉及前言，引言和第一章内容。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010101.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019090401.html"/>
+
+
+
+
+
+  <title>《设计模式：可复用面向对象软件的基础》读书笔记 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019090401.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《设计模式：可复用面向对象软件的基础》读书笔记</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-04T15:26:13+08:00">
+                2019-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,667
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  《设计模式：可复用面向对象软件的基础》读书笔记，涉及前言，引言和第一章内容。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a><strong>设计模式</strong></h1><h2 id="一、前言、引言"><a href="#一、前言、引言" class="headerlink" title="一、前言、引言"></a><strong>一、前言、引言</strong></h2><p>&emsp;&emsp;<strong>本书主要描述</strong>在面向对象软件设计过程中针对特定问题简洁而优雅的解决方案。根据模式的性质进行<strong>分类</strong>：创建型、结构型和行为型。</p>
+<p>&emsp;&emsp;<strong>粒度</strong>：指的是系统内存扩展增量的最小值，指数据仓库中数据单位保存数据的细化程度。对于程序设计来说，粒度就是程序中的一个最小单元划分，比如面向过程语言中的单元是过程和函数，是程序中的最小组件，而这些组件就可以实现最基本的代码重用。但当程序变大变复杂就会显得粒度太低，过多的函数非常难以管理。</p>
+<p>&emsp;&emsp;<strong>粗/细粒度</strong>：指相对规模的划分，可以理解为抽象程度。</p>
+<p>&emsp;&emsp;很难一次就得到兼具复用性和灵活性的设计，<strong>重复设计</strong>是不可避免的，但有经验的面向对象设计者能做出良好的设计。</p>
+<p>&emsp;&emsp;其中<strong>内行的一点</strong>是，不是解决任何问题都要从头做起，复用以前用过的解决方案，待有好的解决方案时，再一次次的使用新的方案。</p>
+<p>&emsp;&emsp;<strong>本书的目的</strong>就是将面向对象软件的设计经验作为<strong>设计模式</strong>记录下来</p>
+<p>&emsp;&emsp;<strong>本书的设计模式</strong>是对被用来在特定场景下解决一般设计问题的类和相互通信的对象的描述。</p>
+<hr>
+<h2 id="二、模式的四要素"><a href="#二、模式的四要素" class="headerlink" title="二、模式的四要素"></a><strong>二、模式的四要素</strong></h2><p>&emsp;&emsp;模式由四个基本要素组成：</p>
+<ol>
+<li>名称：方便记忆和使用，加强思考。</li>
+<li>问题：描述模式的使用场景，也可以包括使用模式必须包括的一系列先决条件。</li>
+<li>解决方案：模式设计的组成成分，之间的相互关系及各自的职责和协作方式。</li>
+<li>效果：模式应用的效果以及使用模式应权衡的问题。</li>
+</ol>
+<hr>
+<h2 id="三、MVC的设计模式"><a href="#三、MVC的设计模式" class="headerlink" title="三、MVC的设计模式"></a><strong>三、MVC的设计模式</strong></h2><p>&emsp;&emsp;MVC包括三类对象，模型Model是应用对象，视图View是在屏幕上的表示，控制器Controller定义用户界面对用户输入的响应方式。</p>
+<p>&emsp;&emsp;MVC分离了用户界面设计的这些对象，来提高灵活性和复用性。</p>
+<p>&emsp;&emsp;MVC通过创建一个”订购/通知”的协议来<strong>分离</strong>V和M。视图需要保证其显示正确的反映了模型的状态。一旦模型数据发生变化，需要通知相关视图，视图则进行刷新，这样一个模型可以提供不同的多个视图表现，也可以只更新视图而无需重写模型。</p>
+<p>&emsp;&emsp;MVC的这种分离设计也用于进行对象分离，进行解耦，即<strong>观察者模式</strong>(Observer)。</p>
+<p>&emsp;&emsp;MVC另一个特征是视图可以进行嵌套，也就是将对象划分为一组，并将这组对象看作一个对象。即<strong>组合模式</strong>(Composite)。此模式通过创建一个类的层次结构，用一些子类来定义原子对象，其他类来定义组合对象，组合对象即原子对象组合而成的对象。</p>
+<p>&emsp;&emsp;MVC也可以在不改变视图的情况下改变对用户输入的响应方式。这些都是解耦之后带来的灵活性提升。</p>
+<p>&emsp;&emsp;View-Controller关系是策略模式(Strategy)的一个例子。</p>
+<p>&emsp;&emsp;MVC还涉及到的设计模式：用来指定视图缺省控制器的工厂方法模式(Factory method)，用来增加视图滚动的装饰器模式(Decorator)，不过这些都是次要的应用了。</p>
+<hr>
+<h2 id="四、介绍设计模式的统一结构"><a href="#四、介绍设计模式的统一结构" class="headerlink" title="四、介绍设计模式的统一结构"></a><strong>四、介绍设计模式的统一结构</strong></h2><p>&emsp;&emsp;本书通过以下抽象结构来统一介绍设计模式。</p>
+<ol>
+<li>模式名和分类</li>
+<li>意图：回答这些问题(此模式是做什么的？其基本原理和意图是什么？它解决的是什么样的特定设计问题？)</li>
+<li>别名</li>
+<li>动机：用来说明一个设计问题以及如何使用模式中的类和对象来解决此问题的特定情境。</li>
+<li>适用性：什么情况下适用？此模式又改进了哪些不良设计？我们又该如何识别这些情况？</li>
+<li>结构：通过基于对象建模技术(OMT)的表示法对模式中的类进行图形描述。</li>
+<li>参与者：模式中的类和对象以及它们的职责。</li>
+<li>协作：参与者如何协作实现职责。</li>
+<li>效果：模式怎样支持其目标？使用此模式的效果和所需做的权衡取舍？系统结构的哪些方面可以独立改变？</li>
+<li>实现：实现此模式时需要知道的提示、技术要点以及应该避免的缺陷，还有是否存在某些特定于实现语言的问题。</li>
+<li>代码示例</li>
+<li>已知应用：实际系统中模式案例。</li>
+<li>相关模式：和此模式紧密相关的模式有哪些？不同之处是什么？此模式应该和哪些模式一起使用？</li>
+</ol>
+<hr>
+<h2 id="五、所有设计模式"><a href="#五、所有设计模式" class="headerlink" title="五、所有设计模式"></a><strong>五、所有设计模式</strong></h2><p>&emsp;&emsp;本书包含的模式：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参与</th>
+<th style="text-align:center">创建型</th>
+<th style="text-align:center">结构型</th>
+<th style="text-align:center">行为型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">类</td>
+<td style="text-align:center">Factory Method <br> 工厂方法</td>
+<td style="text-align:center">Adapter(类) <br> 适配器-类</td>
+<td style="text-align:center">Interpreter <br> 解释器 <br> Template Method <br> 模板方法</td>
+</tr>
+<tr>
+<td style="text-align:center">对象</td>
+<td style="text-align:center">Abstract Factory <br> 抽象工厂 <br> Builder <br> 生成器 <br> Prototype <br> 原型 <br> Singleton <br> 单例</td>
+<td style="text-align:center">Adapter(对象) <br> 适配器-对象 <br> Bridge <br> 桥接 <br> Composite <br> 组合 <br> Decorator <br> 装饰 <br> Facade <br> 外观 <br> Flyweight <br> 享元 <br> Proxy <br> 代理</td>
+<td style="text-align:center">Chain of Responsibility <br> 职责链 <br> Command <br> 命令 <br> Iterator <br> 迭代器 <br> Mediator <br> 中介者 <br> Memento <br> 备忘录 <br> Observer <br> 观察者 <br> State <br> 状态 <br> Strategy <br> 策略 <br> Visitor <br> 访问者</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;根据目的准则划分：创建型、结构型和行为型。其中创建型模式与对象的创建有关；结构型模式处理类和对象的组合；行为型模式对类或对象怎样交互和怎样分配进行描述。</p>
+<p>&emsp;&emsp;根据范围准则划分：类和对象。类模式处理类和子类的关系，关系通过继承建立，是静态的，编译时便确定。对象模式则处理对象间的关系，这些关系在运行时刻可以变换。</p>
+<ol>
+<li>创建型类模式，将对象的部分创建工作延迟到子类。</li>
+<li>创建型对象模式，将对象的部分创建工作延迟到另一个对象。</li>
+<li>结构型类模式，使用继承机制来组合类。</li>
+<li>结构型对象模式，描述了对象的组装方式。</li>
+<li>行为型类模式，使用继承描述算法和控制流。</li>
+<li>行为型对象模式，描述一组对象怎样协作完成单个对象无法完成的任务。</li>
+</ol>
+<p>&emsp;&emsp;组合模式(Composite)常和迭代器模式(Iterator)或访问者模式(Visitor)一起使用。原型模式(Prototype)常用量替代抽象工厂模式(Abstract Factory)。组合模式(Composite)和装饰模式(Decorator)结构类似。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010101.png" alt="设计模式之间的关系"></p>
+<hr>
+<h2 id="六、设计模式怎样解决设计问题"><a href="#六、设计模式怎样解决设计问题" class="headerlink" title="六、设计模式怎样解决设计问题"></a><strong>六、设计模式怎样解决设计问题</strong></h2><h3 id="1-寻找合适的对象"><a href="#1-寻找合适的对象" class="headerlink" title="1 寻找合适的对象"></a><strong>1 寻找合适的对象</strong></h3><p>&emsp;&emsp;客户请求是使对象执行操作的唯一方法，操作又是对象改变内部数据的唯一方法。因为这些限制，对象的内部状态是被封装的。面向对象设计最困难的部分是将系统分解为对象集合。</p>
+<p>&emsp;&emsp;面向对象设计支持众多的设计方法。可以写出一个问题描述，挑出名词和动词，进而创建相应的类和操作；也可以关注于系统的协作和职责关系；也可以对现实世界建模，再将分析时发现的对象转化至设计中。</p>
+<p>&emsp;&emsp;设计中往往需要抽象出现实世界并不存在的对象的抽象方法，这对设计的灵活性是很重要的。</p>
+<h3 id="2-决定对象的粒度"><a href="#2-决定对象的粒度" class="headerlink" title="2 决定对象的粒度"></a><strong>2 决定对象的粒度</strong></h3><p>&emsp;&emsp;对象可以表示下自硬件上到整个应用的任何事物。</p>
+<p>&emsp;&emsp;外观模式(Facade)描述了怎样用对象表示完整的子系统；享元模式(Flyweight)描述了如何支持大量的最小粒度的对象。其他一些设计模式描述了将一个对象分解成许多小对象的特定方法。抽象工厂模式(Abstract Factory)和生成器模式(Builder)产生那些专门负责生成其他对象的对象。访问者模式(Visitor)和命令模式(Command)生成的对象专门负责实现对其他对象或对象组的请求。</p>
+<h3 id="3-指定对象接口"><a href="#3-指定对象接口" class="headerlink" title="3 指定对象接口"></a><strong>3 指定对象接口</strong></h3><p>&emsp;&emsp;对象声明的每一个操作指定操作名、作为参数的对象和返回值，这就是所谓的操作的型构(signature)。对象操作所定义的所有操作型构的集合被称为该对象的接口(interface)。</p>
+<p>&emsp;&emsp;类型(type)是用来标识特定接口的一个名字，当一个类型的接口包含另一个类型的接口时，可以说它是另一个类型的子类型(subtype)，另一个类型则是它的超类型(supertype)</p>
+<p>&emsp;&emsp;当给对象发送请求时，所引起的具体操作既与请求本身有关又与接受对象有关，支持相同请求的不同对象可能对请求激发的操作有不同的实现。发送给对象的请求和它的相应操作在运行时刻的连接称之为<strong>动态绑定</strong>。动态绑定就是指发送的请求直到运行时刻才受具体的实现的约束，动态绑定允许你在运行时刻彼此替换有相同接口的对象。这种可替换性就称作<strong>多态</strong>。</p>
+<h3 id="4-描述对象的实现"><a href="#4-描述对象的实现" class="headerlink" title="4 描述对象的实现"></a><strong>4 描述对象的实现</strong></h3><p>&emsp;&emsp;<strong>针对接口编程，而不是针对实现编程。</strong></p>
+<p>&emsp;&emsp;理解对象实例化，类继承，抽象类和具体类，混入类。</p>
+<p>&emsp;&emsp;<strong>类继承</strong>和<strong>接口继承</strong>的比较，类继承根据一个对象的实现定义了另一个对象的实现，即代码和表示的共享机制。接口继承则描述了一个对象什么时候能被用来替代另一个对象。</p>
+<p>&emsp;&emsp;类继承实现了可复用，而继承拥有定义具有相同接口的对象族的能力，而多态则依赖于这种能力。只根据抽象类中定义的接口来操纵对象的好处：1.客户无须知道他们使用对象的特定类型，只须对象有客户所期望的接口。2.客户无须知道他们使用的对象是用什么类来实现的，他们只须知道定义接口的抽象类。</p>
+<h3 id="5-运用复用机制"><a href="#5-运用复用机制" class="headerlink" title="5 运用复用机制"></a><strong>5 运用复用机制</strong></h3><h4 id="继承和组合的比较"><a href="#继承和组合的比较" class="headerlink" title="继承和组合的比较"></a><strong>继承和组合的比较</strong></h4><p>&emsp;&emsp;<strong>优先使用对象组合，而不是类继承</strong></p>
+<p>&emsp;&emsp;功能复用最常用的技术是<strong>类继承</strong>和<strong>对象组合</strong>。</p>
+<p>&emsp;&emsp;类继承这种通过生成子类的复用通常被称为<strong>白箱复用</strong>，白箱指可视性，即父类内部细节对子类可见。</p>
+<p>&emsp;&emsp;对象组合是类继承之外的另一种复用选择，新的复杂的功能可以通过组装或组合对象来获取。要求被组合的对象具有良好定义的接口，所以被称为<strong>黑箱复用</strong>，因为对象的内部细节是不可见的。</p>
+<p>&emsp;&emsp;继承和组合各有优缺点。</p>
+<blockquote>
+<p>继承优点：</p>
+<ol>
+<li>类继承在编译时静态定义，可以直接应用。</li>
+<li>类继承比较方便的改变被复用的实现。</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>继承缺点：</p>
+<ol>
+<li>类继承在编译时便确定，无法在运行时再改变继承自父类的实现。</li>
+<li>“继承破坏了封装性”，继承对子类揭露父类的内部细节。</li>
+<li>父类任何变化必然导致子类发生变化。这种依赖关系限制了灵活性并最终会限制复用性。一个解决方案是只继承抽象类，因为抽象类提供较少的实现。</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>组合优点：</p>
+<ol>
+<li>对象组合通过获得对其他对象的引用而在运行阶段动态定义。</li>
+<li>组合要求对象遵守彼此的接口约定，进而促进接口制定的规范性。</li>
+<li>这些接口并不会妨碍你将一个对象和其他对象一起使用。而且因为对象只能通过接口访问，所以并没有破坏封装性；</li>
+<li>只要类型一致，运行阶段可以用一个对象替代另一个对象。</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;继承实现复用往往比组合要容易许多，所以通常会结合起来使用。</p>
+<h4 id="委托"><a href="#委托" class="headerlink" title="委托"></a><strong>委托</strong></h4><p>&emsp;&emsp;委托是一种组合方法，使组合具有和继承一样的复用能力，是对象组合的一个特例，可以替代继承。</p>
+<p>&emsp;&emsp;在委托方式下，有两个对象参与处理一个请求，接受请求的对象将操作委托给他的<strong>代理者</strong>，类似于子类委托给父类。</p>
+<p>&emsp;&emsp;比如我们实现了一个矩形类来处理所有矩形操作，窗口类可以复用矩形类的操作，而不必成为矩形类的子类。</p>
+<blockquote>
+<p>委托优点：便于在运行阶段组合对象操作，以及改变这些操作的组合方式。</p>
+<p>委托缺点：</p>
+<ol>
+<li>动态的、高度参数化的软件比静态软件更难于理解。</li>
+<li>运行时效率相比会降低。</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;所以委托适合于其使设计更加简单的情况，委托可以得到的效率与上下文有关，最适合符合特定程式的情景，即标准模式的情景。</p>
+<p>&emsp;&emsp;状态模式(State)、策略模式(Strategy)和访问者模式(Visitor)中都使用了委托。</p>
+<p>&emsp;&emsp;状态模式中，一个对象将请求委托给一个描述当前状态的State对象来处理。策略模式中，一个对象将一个特定的请求委托给一个描述请求执行策略的对象，一个对象只会有一个状态，但对于不同的请求可以有多个策略。而访问者模式中，对象结构的每个元素上的操作总是被委托到Visitor对象。</p>
+<h4 id="继承和参数化类型的比较"><a href="#继承和参数化类型的比较" class="headerlink" title="继承和参数化类型的比较"></a><strong>继承和参数化类型的比较</strong></h4><p>&emsp;&emsp;<strong>参数化类型</strong>是另一种功能复用技术，是类属(generic)或模板(templates)。定义一个类型时并不去指定该类型所用到的其他所有类型，未经指定的类型在使用时通过参数的形式提供。</p>
+<p>&emsp;&emsp;参数化类型和继承都无法在运行阶段改变，但参数化类型允许改变类所用到的类型。</p>
+<h3 id="6-关联运行阶段和编译阶段的结构"><a href="#6-关联运行阶段和编译阶段的结构" class="headerlink" title="6 关联运行阶段和编译阶段的结构"></a><strong>6 关联运行阶段和编译阶段的结构</strong></h3><p>&emsp;&emsp;编译阶段的代码结构由继承关系固定的类组成。而运行阶段的结构则由快速变化的通信对象网络组成。</p>
+<p>&emsp;&emsp;对象间有<strong>聚合</strong>和<strong>相识</strong>的关系。聚合表示一个对象拥有/包含另一个对象或其一部分。相识则表示一个对象仅知道另一个对象，可以说是关联或引用的关系，可以彼此请求但无需负责。聚合意味着对象有相同的生命周期，而相识则是比聚合耦合度更低的关系。</p>
+<h3 id="7-设计应支持变化"><a href="#7-设计应支持变化" class="headerlink" title="7 设计应支持变化"></a><strong>7 设计应支持变化</strong></h3><ol>
+<li><strong>通过显式的指定一个类来创建对象。</strong>这样会使程序受特定实现的约束，而不是特定接口的约束，为了避免这种情况，应该间接的创建对象。(相关模式：Abstract Factory,Factory Method，Prototype)</li>
+<li><strong>对特殊操作的依赖。</strong>当为请求指定一个特殊化的操作时，就固定了请求的方式。为了避免写死代码，应该可以在编译或运行阶段可以方便的改变响应请求的方法。(相关模式：Chain of Responsibility,Command)</li>
+<li><strong>对硬件和软件平台的依赖。</strong>依赖于特定平台，很难进行移植。<br>(相关模式：Abstract Factory,Bridge)</li>
+<li><strong>对对象表示或实现的依赖。</strong>知道对象将怎样表示、保存、定位或实现的客户在对象进行变化时也需要进行变化，最好隐藏这些信息以防连锁变化。<br>(相关模式：Abstract Factory,Bridge,Memento,Proxy)</li>
+<li><strong>算法依赖。</strong>算法在开发和复用时常常被扩展、优化和替代，尽量避免依赖于某个特定算法。<br>(相关模式：Builder,Iterator,Strategy,Template Method,Visitor)</li>
+<li><strong>紧耦合。</strong>紧耦合的类很难独立的被复用，因为他们之间相互依赖。松散耦合可以提高一个类本身被复用的可能性，使系统更易于学习、移植、修改和扩展。设计模式通过抽象耦合和分层技术来提高松散耦合。<br>(相关模式：Abstract Factory,Command,Facade,Mediator,Observer,Chain of Responsibility)</li>
+<li><strong>通过生成子类来扩充功能。</strong>通常很难通过定义子类来定制对象，新类会有固定的实现开销，还需要对父类的深入了解。可以通过对象组合和委托技术，以新的方式来组合已有对象，而不是通过定义已存在类的子类的方式加入程序。<br>(相关模式：Bridge,Chain of Responsibility,Composite,Decorator,Observer,Strategy)</li>
+<li><strong>不能方便的对类进行修改。</strong>有时不得不修改一个难以修改的类，如引用他人代码，但没有源码，或是修改一个类要同时修改关联的众多子类。<br>(相关模式：Adapter,Decorator,Visitor)</li>
+</ol>
+<hr>
+<h2 id="七、怎样选择设计模式"><a href="#七、怎样选择设计模式" class="headerlink" title="七、怎样选择设计模式"></a><strong>七、怎样选择设计模式</strong></h2><ol>
+<li>思考设计模式是怎样解决设计问题</li>
+<li>浏览模式的意图部分</li>
+<li>研究模式怎样互相关联</li>
+<li>研究目的相似的模式</li>
+<li>检查重新设计的原因</li>
+<li>考虑你的设计中哪些是可变的</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010102.png" alt="设计模式所支持的设计的可变方面"></p>
+<hr>
+<h2 id="八、怎样使用设计模式"><a href="#八、怎样使用设计模式" class="headerlink" title="八、怎样使用设计模式"></a><strong>八、怎样使用设计模式</strong></h2><ol>
+<li>大致浏览一遍模式</li>
+<li>回头研究结构部分、参与者部分和协作部分</li>
+<li>看代码示例部分，看看这个模式代码形式的具体例子</li>
+<li>选择模式参与者的名字，使他们在应用上下文中有意义</li>
+<li>定义类</li>
+<li>定义模式中专用于应用的操作名称</li>
+<li>实现执行模式中责任和协作的操作</li>
+</ol>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《设计模式：可复用面向对象软件的基础》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/design-pattern/" rel="tag"># design pattern</a>
+          
+            <a href="/tags/mvc/" rel="tag"># mvc</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019090201.html" rel="next" title="Shiro">
+                <i class="fa fa-chevron-left"></i> Shiro
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">115</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设计模式"><span class="nav-number">1.</span> <span class="nav-text">设计模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、前言、引言"><span class="nav-number">1.1.</span> <span class="nav-text">一、前言、引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、模式的四要素"><span class="nav-number">1.2.</span> <span class="nav-text">二、模式的四要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、MVC的设计模式"><span class="nav-number">1.3.</span> <span class="nav-text">三、MVC的设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、介绍设计模式的统一结构"><span class="nav-number">1.4.</span> <span class="nav-text">四、介绍设计模式的统一结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、所有设计模式"><span class="nav-number">1.5.</span> <span class="nav-text">五、所有设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六、设计模式怎样解决设计问题"><span class="nav-number">1.6.</span> <span class="nav-text">六、设计模式怎样解决设计问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-寻找合适的对象"><span class="nav-number">1.6.1.</span> <span class="nav-text">1 寻找合适的对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-决定对象的粒度"><span class="nav-number">1.6.2.</span> <span class="nav-text">2 决定对象的粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-指定对象接口"><span class="nav-number">1.6.3.</span> <span class="nav-text">3 指定对象接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-描述对象的实现"><span class="nav-number">1.6.4.</span> <span class="nav-text">4 描述对象的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-运用复用机制"><span class="nav-number">1.6.5.</span> <span class="nav-text">5 运用复用机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#继承和组合的比较"><span class="nav-number">1.6.5.1.</span> <span class="nav-text">继承和组合的比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#委托"><span class="nav-number">1.6.5.2.</span> <span class="nav-text">委托</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#继承和参数化类型的比较"><span class="nav-number">1.6.5.3.</span> <span class="nav-text">继承和参数化类型的比较</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-关联运行阶段和编译阶段的结构"><span class="nav-number">1.6.6.</span> <span class="nav-text">6 关联运行阶段和编译阶段的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-设计应支持变化"><span class="nav-number">1.6.7.</span> <span class="nav-text">7 设计应支持变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七、怎样选择设计模式"><span class="nav-number">1.7.</span> <span class="nav-text">七、怎样选择设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八、怎样使用设计模式"><span class="nav-number">1.8.</span> <span class="nav-text">八、怎样使用设计模式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
