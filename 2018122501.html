@@ -97,7 +97,7 @@
 <meta property="og:description" content="涉及内容：字符串常量池-常量池表，运行时常量池，字符串常量池">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg">
-<meta property="og:updated_time" content="2019-10-23T09:50:32.989Z">
+<meta property="og:updated_time" content="2019-10-24T08:16:25.116Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java字符串内存分配-字符串常量池">
 <meta name="twitter:description" content="涉及内容：字符串常量池-常量池表，运行时常量池，字符串常量池">
@@ -360,7 +360,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,722
+                  2,884
                 </span>
               
 
@@ -376,7 +376,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  10
+                  11
                 </span>
               
             </div>
@@ -404,7 +404,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg" rel="gallery_ck2361lgv006m58t74ld1g931"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg" rel="gallery_ck24kfgtx006jwst7rvyknngb"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/instagram___BrBmyx_h9yy___.jpg" itemprop="contentUrl"/>
               </a>
@@ -418,12 +418,12 @@
 
       
         
-        <div id="aplayer-DCtIWMrk" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-yaeOWrzC" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-DCtIWMrk"),
+            element: document.getElementById("aplayer-yaeOWrzC"),
             narrow: false,
             autoplay: false,
             showlrc: false,
@@ -461,6 +461,9 @@
 <p>&emsp;&emsp;其数据大部分(<em>除了常量池中内容，还可能有动态生成加入的内容，因为运行时常量池有动态性，即除了编译时的字符常量，也可以在运行时将新常量加入池内，比如String.intern方法</em>)都是由常量池表转换而来。<br><!--
 &emsp;&emsp;因为JVM规范没有规定运行时常量池的细节，也就是不同虚拟机可以自由设置用来存放运行时常量池的内存区域，每一个Class文件都对应一个运行时常量池。--></p>
 <p><strong>3.字符串常量池(String pool)：</strong></p>
+<p>&emsp;&emsp;字符串常量池是用来存储驻留字符串(interned string)的全局字符串池，HotSpot VM中实现String pool功能的是StringTable类，StringTable是一个哈希表，其存储的是驻留字符串的引用，相当于字符串实例被哈希表引用后就被赋予了驻留字符串的身份。对于类中的运行时常量池中的字符串常量，经过解析之后同样存储的是字符串的引用。解析的过程中会去查询StringTable，以保证运行时常量池所引用的字符串和StirngTable中一致。</p>
+<p>&emsp;&emsp;JVM规定进入字符串常量池的实例叫被驻留的字符串(interned string)，各个JVM可能有不同的实现，HotSpot是设置一个哈希表来引用堆中的字符串实例，被引用就是被驻留。</p>
+<p>&emsp;&emsp;字符串常量池在JDK1.7版本后存于Heap堆内，旧版本存于Perm区域(静态区域，较小)中。所以旧版本时比较字符串地址，字符串常量池中的实例地址和堆中的实例地址必定是不同的，而新版本调用intern方法写入常量池时因为调用对象已存于堆中，就无需再存储一份String对象了，所以直接存储其在堆内的引用。但”abc”字符串常量仍会在常量池内创建实例。</p>
 <blockquote>
 <p>字符串常量池和运行时常量池区别：</p>
 <ol>
@@ -468,8 +471,6 @@
 <li>字符串常量池只记录字符串对象，运行时常量池记录各种对象。</li>
 </ol>
 </blockquote>
-<p>&emsp;&emsp;JVM规定进入字符串常量池的实例叫被驻留的字符串(interned string)，各个JVM可能有不同的实现，HotSpot是设置一个哈希表来引用堆中的字符串实例，被引用就是被驻留。</p>
-<p>&emsp;&emsp;字符串常量池在JDK1.7版本后存于Heap堆内，旧版本存于Perm区域(静态区域，较小)中。所以旧版本时比较字符串地址，字符串常量池中的实例地址和堆中的实例地址必定是不同的，而新版本调用intern方法写入常量池时因为调用对象已存于堆中，就无需再存储一份String对象了，所以直接存储其在堆内的引用。但”abc”字符串常量仍会在常量池内创建实例。</p>
 <p><strong>4.享元模式</strong></p>
 <p>&emsp;&emsp;字符串常量池涉及到一个设计模式：享元模式，即共享元素模式。</p>
 <p>&emsp;&emsp;含义是：一个系统若有多处用到了同一元素，那么应该只定义存储一份，然后让所有地方引用此元素。</p>
@@ -542,6 +543,7 @@
 </ul>
 <p>&emsp;&emsp;更多内容请参考<a href="../2019030101.html" title="Title">String的intern方法详解</a>。</p>
 <hr>
+<p><em>参考博客和文章书籍等：</em></p>
 <p><em>参考博客：</em></p>
 <blockquote>
 <p><a href="https://blog.csdn.net/u010297957/article/details/50995869" target="_blank" rel="noopener">https://blog.csdn.net/u010297957/article/details/50995869</a><br><a href="https://www.cnblogs.com/justinli/p/4064128.html" target="_blank" rel="noopener">https://www.cnblogs.com/justinli/p/4064128.html</a><br><a href="https://rednaxelafx.iteye.com/blog/774673" target="_blank" rel="noopener">https://rednaxelafx.iteye.com/blog/774673</a><br><a href="https://www.zhihu.com/question/29884421/answer/113785601" target="_blank" rel="noopener">https://www.zhihu.com/question/29884421/answer/113785601</a></p>
@@ -684,7 +686,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">119</span>
+                  <span class="site-state-item-count">120</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
