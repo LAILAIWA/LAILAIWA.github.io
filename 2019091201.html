@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,jvm," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
+<meta name="keywords" content="java,jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="垃圾收集器（二）垃圾收集算法">
+<meta property="og:url" content="http://linyishui.top/2019091201.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010115.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010116.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010117.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010119.png">
+<meta property="og:updated_time" content="2019-11-05T09:45:00.985Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="垃圾收集器（二）垃圾收集算法">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010114.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019091201.html"/>
+
+
+
+
+
+  <title>垃圾收集器（二）垃圾收集算法 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019091201.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">垃圾收集器（二）垃圾收集算法</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-12T17:26:28+08:00">
+                2019-09-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,711
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="第二节-垃圾收集算法"><a href="#第二节-垃圾收集算法" class="headerlink" title="第二节 垃圾收集算法"></a><strong>第二节 垃圾收集算法</strong></h2><h3 id="2-1-标记-清除算法"><a href="#2-1-标记-清除算法" class="headerlink" title="2.1 标记-清除算法"></a><strong>2.1 标记-清除算法</strong></h3><p>&emsp;&emsp;<strong>最基础</strong>的收集算法是“标记-清除”算法(Mark-Sweep)算法，算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象，它的标记过程其实在前一节讲述对象标记判定时已经介绍过了。最基础是因为后续的收集算法都是基于此思路改进而来。主要有两点不足：一是效率问题，标记和清除过程都不高效；另一个是空间问题，标记和清除之后会产生大量不连续的内存碎片，会导致以后在程序需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010114.png" alt="“标记-清除”算法示意图"></p>
+<hr>
+<h3 id="2-2-复制算法"><a href="#2-2-复制算法" class="headerlink" title="2.2 复制算法"></a><strong>2.2 复制算法</strong></h3><p>&emsp;&emsp;复制算法是为了解决效率问题而设计，将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这块的内存用完了，就将还存活的对象复制到另一块上，然后将已使用过的内存空间一次清理掉。这样的做法使每次都是对整个半区进行内存回收，内存分配时就不用考虑到内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。但此算法的代价是会将内存空间缩小一半，代价实在太高。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010115.png" alt="复制算法示意图"></p>
+<p>&emsp;&emsp;<strong>当前的商业虚拟机都采用此算法来回收新生代</strong>，IBM研究表示新生代中对象98%都是“朝生夕死”，所以不需要对半划分内存空间，而是划分为一块大的Eden空间和两块较小的Survivor空间。每次使用Eden和其中一块Survivor。当回收时，将Eden和Survivor中还存活着的对象一次性的复制到另外一块Survivor空间上，最后清理掉Eden和用过的Survivor空间。(HotSpot默认Eden和Survivor空间大小比例为8:1，即每次新生代可用内存空间为整体的90%)。当Survivor空间不够用时，需要依赖其他内存(老年代)进行<strong>分配担保</strong>(Handle Promotion)。</p>
+<p>&emsp;&emsp;分配担保类似于银行的担保人，如果一块Survivor空间没有足够的空间存放上次新生代收集下的存活对象，可以通过分配担保机制进入老年代，只要新生代有很好的“信誉”。具体实现此处不作详细描述。</p>
+<hr>
+<h3 id="2-3-标记-整理算法"><a href="#2-3-标记-整理算法" class="headerlink" title="2.3 标记-整理算法"></a><strong>2.3 标记-整理算法</strong></h3><p>&emsp;&emsp;复制算法在对象存活率较高时需要进行较多的复制操作，会降低其运行效率。还有就是如果预留空间较小就需要额外的空间进行分配担保，以应对对象存活率极高的情况，所以老年代不会选用复制算法。</p>
+<p>&emsp;&emsp;根据老年代的特点，有了标记-整理算法，标记过程等同于标记-清除算法，但后续步骤不是直接对可回收对象进行清理，而是让所有存活对象都向一端移动，然后直接清理掉端边界以外的内存。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010116.png" alt="“标记-整理”算法示意图"></p>
+<hr>
+<h3 id="2-4-分代收集算法"><a href="#2-4-分代收集算法" class="headerlink" title="2.4 分代收集算法"></a><strong>2.4 分代收集算法</strong></h3><p>&emsp;&emsp;<strong>当前的商业虚拟机的垃圾收集都采用分代收集算法</strong>，就是根据对象的存活周期的不同将内存划分为几块。一般把Java堆划分为新生代和老年代，可以根据各个代的特点采用最适合的收集算法。新生代中，每次垃圾收集会有大量对象被清理，仅有少量存活，就采用复制算法；老年代中对象存活率较高，没有额外的内存空间作分配担保，就采用标记-清除算法或标记-整理算法。</p>
+<hr>
+<h2 id="第三节-HotSpot算法实现"><a href="#第三节-HotSpot算法实现" class="headerlink" title="第三节 HotSpot算法实现"></a><strong>第三节 HotSpot算法实现</strong></h2><h3 id="3-1-枚举根节点"><a href="#3-1-枚举根节点" class="headerlink" title="3.1 枚举根节点"></a><strong>3.1 枚举根节点</strong></h3><p>&emsp;&emsp;可达性分析中从GC Roots节点找引用链这个操作为例，可以作为GC Roots的节点主要在<strong>全局性的引用</strong>(如常量或类静态属性)与<strong>执行上下文</strong>(如栈帧中的本地变量表)中，有些应用仅方法区就有数百兆，逐个检查这里面的引用是不现实的。</p>
+<p>&emsp;&emsp;可达性分析中的GC停顿用来确保分析工作在一个保证一致性的“快照”中进行。在整个分析期间整个执行系统看起来就像被冻结在某个时间点上，不能在分析过程中对象关系还在不断地变化，不能满足这一点就无法保证最终分析结果的准确性。这就是GC进行时必须停顿所有Java执行线程的其中一个原因，即使CMS收集器号称不会发生停顿，枚举根节点时也必须停顿。</p>
+<p>&emsp;&emsp;主流的Java虚拟机都是<strong>准确式GC</strong>(虚拟机可以知道内存中某个位置的数据类型具体是什么类型，如内存中有一个32位整数123456，虚拟机可以得知其是一个reference类型指向123456内存地址或者是一个数值为123456的整数，这样虚拟机才能在GC时判断堆上的数据是否还能被使用)。所以当执行系统停顿下来，并不需要一个不漏的检查完所有<strong>执行上下文</strong>和<strong>全局的引用设置</strong>，虚拟机有办法知道哪些地方存放着对象引用。在HotSpot的实现中，是通过一组被称为<strong>OopMap</strong>的数据结构来达到此目的，在<strong>类加载完成</strong>时，HotSpot就把对象内什么偏移量上是什么类型的数据计算出来，在<strong>JIT编译过程</strong>中，也会在特定的位置记录下栈和寄存器中哪些位置是引用。所以GC在扫描时就可以直接得知这些信息了。</p>
+<p>&emsp;&emsp;下列代码是HotSpot Client VM生成的一段String.hashCode()方法的本地代码，可以看到在0x026eb7a9处的call指令有OopMap记录，它指明了EBX寄存器和栈中偏移量为16的内存区域中各有一个<strong>普通对象指针</strong>的引用，有效范围从call指令开始直到0x026eb730（指令流的起始位置）+142（OopMap记录的偏移量）=0x026eb7be，即hlt指令为止。</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Verified Entry Point]</span><br><span class="line"><span class="number">0x026eb730</span>: <span class="keyword">mov</span>    %eax,-<span class="number">0x8000</span>(%esp)</span><br><span class="line">......</span><br><span class="line"><span class="comment">;; ImplicitNullCheckStub slow case</span></span><br><span class="line"><span class="number">0x026eb7a9</span>: <span class="keyword">call</span>   <span class="number">0x026e83e0</span>         <span class="comment">; OopMap&#123;ebx=Oop [16]=Oop off=142&#125;</span></span><br><span class="line">                                        <span class="comment">;*caload</span></span><br><span class="line">                                        <span class="comment">; - java.lang.String::hashCode@48 (line 1489)</span></span><br><span class="line">                                        <span class="comment">;    &#123;runtime_call&#125;</span></span><br><span class="line">  <span class="number">0x026eb7ae</span>: <span class="keyword">push</span>   <span class="number">$0</span>x83c5c18         <span class="comment">;    &#123;external_word&#125;</span></span><br><span class="line">  <span class="number">0x026eb7b3</span>: <span class="keyword">call</span>   <span class="number">0x026eb7b8</span></span><br><span class="line">  <span class="number">0x026eb7b8</span>: <span class="keyword">pusha</span></span><br><span class="line">  <span class="number">0x026eb7b9</span>: <span class="keyword">call</span>   <span class="number">0x0822bec0</span>         <span class="comment">;    &#123;runtime_call&#125;  </span></span><br><span class="line">  <span class="number">0x026eb7be</span>: <span class="keyword">hlt</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-2-安全点"><a href="#3-2-安全点" class="headerlink" title="3.2 安全点"></a><strong>3.2 安全点</strong></h3><p>&emsp;&emsp;在OopMap的帮助下，HotSpot可以快速且准确地完成GC Roots枚举，但随之而来的一个现实的问题：可能导致引用关系变化，或者说OopMap内容变化的指令非常多，如果为每一条指令都生成对应的OopMap，那将会需要大量的额外空间，这样会导致GC的空间成本变得很高。</p>
+<p>&emsp;&emsp;HotSpot实际上并没有为每条指令都生成OopMap，只是在“特定的位置”记录了这些信息，这些位置称为<strong>安全点</strong>（Safepoint），即程序执行时并非在所有地方都能停顿下来开始GC，只会在安全点暂停。Safepoint的选定既不能太少以致于让GC等待时间太长，也不能过于频繁以致于过分增大运行时的负荷。所以安全点的选定基本上是以程序“<strong>是否具有让程序长时间执行的特征</strong>”为标准进行选定的——因为每条指令的执行时间都非常短暂，程序不会因为指令流长度太长这个原因而过长时间运行，“<strong>长时间执行</strong>”的最明显特征就是<strong>指令序列复用</strong>，例如方法调用、循环跳转、异常跳转等，所以具有这些功能的指令才会产生Safepoint。</p>
+<p>&emsp;&emsp;关于Safepoint，另外一个需要考虑的问题是如何在GC发生时让所有线程（不包括执行JNI调用的线程）都“跑”到最近的安全点上再停顿下来。有两种实现方案：<strong>抢先式中断</strong>（Preemptive Suspension）和<strong>主动式中断</strong>（Voluntary Suspension）。</p>
+<p>&emsp;&emsp;抢先式中断不需要线程的执行代码主动去配合，在GC发生时，首先把所有线程全部中断，如果发现有线程中断的地方不在安全点，就恢复线程，让它“跑”到安全点上。但如今几乎没有虚拟机实现采用抢先式中断来暂停线程从而响应GC事件。</p>
+<p>&emsp;&emsp;主动式中断的思想是当GC需要中断线程的时候，不直接对线程操作，而只是简单地设置一个标志，各个线程执行时主动去轮询这个标志，发现中断标志为真时就自己中断挂起。轮询标志的地方和安全点是重合的，另外再加上创建对象需要分配内存的地方。</p>
+<p>&emsp;&emsp;下面代码中的test指令是HotSpot生成的轮询指令，当需要暂停线程时，虚拟机把0x160100的内存页设置为不可读，线程执行到test指令时就会产生一个自陷异常信号，在预先注册的异常处理器中暂停线程实现等待，这样一条汇编指令便完成安全点轮询和触发线程中断。</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x01b6d627</span>: <span class="keyword">call</span>   <span class="number">0x01b2b210</span>         <span class="comment">; OopMap&#123;[60]=Oop off=460&#125;</span></span><br><span class="line">                                        <span class="comment">;*invokeinterface size</span></span><br><span class="line">                                        <span class="comment">; - Client::main@113 (line 23)</span></span><br><span class="line">                                        <span class="comment">;    &#123;virtual_call&#125;</span></span><br><span class="line">  <span class="number">0x01b6d62c</span>: <span class="keyword">nop</span>                       <span class="comment">; OopMap&#123;[60]=Oop off=461&#125;</span></span><br><span class="line">                                        <span class="comment">;*if_icmplt</span></span><br><span class="line">                                        <span class="comment">; - Client::main@118 (line 23)</span></span><br><span class="line">  <span class="number">0x01b6d62d</span>: <span class="keyword">test</span>   %eax,<span class="number">0x160100</span>      <span class="comment">;   &#123;poll&#125;</span></span><br><span class="line">  <span class="number">0x01b6d633</span>: <span class="keyword">mov</span>    <span class="number">0x50</span>(%esp),%esi</span><br><span class="line">  <span class="number">0x01b6d637</span>: <span class="keyword">cmp</span>    %eax,%esi</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="3-3-安全区域"><a href="#3-3-安全区域" class="headerlink" title="3.3 安全区域"></a><strong>3.3 安全区域</strong></h3><p>&emsp;&emsp;Safepoint并没有完美地解决了如何进入GC的问题。Safepoint机制保证了程序执行时，在不久的时间内就会遇到可进入GC的Safepoint，但程序“不执行”的时候呢？所谓的程序不执行就是没有分配CPU时间，典型的例子就是线程处于Sleep状态或者Blocked状态，这时候线程无法响应JVM的中断请求，“走”到安全的地方去中断挂起，JVM显然不太可能等待线程重新被分配CPU时间。对于这种情况，就需要<strong>安全区域</strong>（Safe Region）来解决。</p>
+<p>&emsp;&emsp;安全区域是指在一段代码片段之中，引用关系不会发生变化。在这个区域中的任意地方开始GC都是安全的。也可以把Safe Region看做是被扩展了的Safepoint。</p>
+<p>&emsp;&emsp;在线程执行到Safe Region中的代码时，首先标识自己已经进入了Safe Region，那样，当在这段时间里JVM要发起GC时，就不用管标识自己为Safe Region状态的线程了，在线程需要离开Safe Region时，它就要检查系统是否已经完成了根节点枚举（或者是整个GC过程），如果完成了，那线程就继续执行，否则它就必须等待直到收到可以安全离开Safe Region的信号为止。</p>
+<p>&emsp;&emsp;到此，简单介绍了HotSpot虚拟机如何去发起内存回收的问题，但是虚拟机如何具体地进行内存回收动作仍然未涉及，因为内存回收如何进行是由虚拟机所采用的GC收集器决定的，而通常虚拟机中往往不止有一种GC收集器，之后来看HotSpot中有哪些GC收集器。</p>
+<hr>
+<h2 id="第四节-垃圾收集器"><a href="#第四节-垃圾收集器" class="headerlink" title="第四节 垃圾收集器"></a><strong>第四节 垃圾收集器</strong></h2><p>&emsp;&emsp;如何说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。Java虚拟机规范中对垃圾收集器应该如何实现并没有任何规定，因此不同的厂商、不同版本的虚拟机所提供的垃圾收集器都可能会有很大差别，并且一般都会提供参数供用户根据自己的应用特点和要求组合出各个年代所使用的收集器。这里讨论的收集器基于JDK 1.7 Update 14之后的HotSpot虚拟机（在这个版本中正式提供了商用的G1收集器，之前G1仍处于实验状态），虚拟机包含的所有收集器如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010117.png" alt="HotSpot虚拟机的垃圾收集器"></p>
+<p>&emsp;&emsp;上图展示了7种作用于不同分代的收集器，如果两个收集器之间存在连线，就说明他们可以搭配使用。虚拟机所处的区域，则表示它是属于新生代收集器还是老年代收集器。接下来各节将逐一介绍这些收集器的特性、基本原理和使用场景，并重点分析CMS和G1这两款相对复杂的收集器，了解它们的部分运作细节。</p>
+<h3 id="4-1-Serial收集器"><a href="#4-1-Serial收集器" class="headerlink" title="4.1 Serial收集器"></a><strong>4.1 Serial收集器</strong></h3><p>&emsp;&emsp;Serial收集器是最基本、发展历史最悠久的收集器，曾经（在JDK 1.3.1 之前）是虚拟机新生代收集的唯一选择。此收集器是一个单线程的收集器，但其“单线程”的意义并不仅仅说明它只会使用一个CPU或一条收集线程去完成垃圾收集工作，更重要的是在它进行垃圾收集时，必须暂停其他所有的工作线程，直到它收集结束。“Stop The World” 这个名字也许听起来很酷，但这项工作实际上是由虚拟机在后台自动发起和自动完成的，在用户不可见的情况下把用户正常工作的线程全部停掉，这对很多应用来说都是难以接受的。下图示意了Serial / Serial Old 收集器运行过程。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010118.png" alt="Serial / Serial Old 收集器运行示意图"></p>
+<p>&emsp;&emsp;对于“Stop The World”带给用户的不良体验，虚拟机设计者的苦衷是“你妈妈在给你打扫房间的时候，肯定也会让你老老实实地在椅子上或者房间外待着，如果她一边打扫，你一边乱扔纸屑，这房间还能打扫完？”这确实是一个合情合理的矛盾，但垃圾收集是比打扫房间要复杂的多。</p>
+<p>&emsp;&emsp;从JDK 1.3 开始，一直到现在HotSpot开发团队仍在致力于消除或减少工作线程因内存回收而导致停顿的努力一直在进行着，从Serial收集器到Parallel收集器，再到Concurrent Mark Sweep（CMS）乃至GC收集器的最前沿成果Garbage First（G1）收集器，一个个越来越优秀也越来越复杂的收集器的不断出现，用户线程的停顿时间在不断缩短，但是仍无法完全消除。</p>
+<p>&emsp;&emsp;Serial收集器到现在仍是虚拟机运行在Client模式下的默认新生代收集器，它还有相比于其他收集器的优点：<strong>简单而高效</strong>（单线程下）。对于限定单线程环境下，Serial收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。在用户的桌面应用场景中，分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代，停顿时间完全可以控制在几十毫秒最多一百多毫秒以内，只要不是频繁发生，这点停顿是可以接受的。所以对于运行在Client模式下的虚拟机来说Serial收集器是很好的选择。</p>
+<hr>
+<h3 id="4-2-ParNew收集器"><a href="#4-2-ParNew收集器" class="headerlink" title="4.2 ParNew收集器"></a><strong>4.2 ParNew收集器</strong></h3><p>&emsp;&emsp;ParNew收集器其实就是Serial收集器的<strong>多线程版本</strong>，除了使用多条线程进行垃圾收集之外，其余行为包括Serial收集器可用的所有控制参数（例如：-XX:SurvivorRatio、-XX:PretenureSizeThreshold、-XX:HandlePromotionFailure等）、收集算法、Stop The World、对象分配规则、回收策略等都与Serial收集器一样，在实现上，这两种收集器也共用了很多相当多的代码。ParNew收集器的工作过程如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010119.png" alt="ParNew / Serial Old 收集器运行示意图"></p>
+<p>&emsp;&emsp;ParNew收集器除了多线程收集以外并没有其他创新之处，但它是许多运行在Server模式下的虚拟机中首选的新生代收集器，其中有一个与性能无关但很重要的原因是，除了Serial收集器外，<strong>目前只有它能与CMS收集器配合工作</strong>。在JDK 1.5时期，HotSpot推出了一款在强交互应用中几乎可认为有划时代意义的垃圾收集器——CMS收集器（Concurrent Mark Sweep，稍后详细介绍），这款收集器是HotSpot虚拟机中第一款真正意义上的并发（Concurrent）收集器，它第一次实现了让垃圾收集线程与用户线程基本上同时工作。</p>
+<p>&emsp;&emsp;不幸的是，CMS作为老年代的收集器，却无法与JDK 1.4.0中已经存在的新生代收集器Parallel Scavenge配合工作，所以在JDK 1.5中使用CMS来收集老年代的时候，新生代只能选择ParNew或者Serial收集器中的一个。ParNew收集器也是使用-XX:+UseConcMarkSweepGC选项后的默认新生代收集器，也可以使用-XX:+UseParNewGC选项来强制执行它。</p>
+<p>&emsp;&emsp;ParNew收集器在单CPU的环境中不会比Serial收集器好，甚至因为存在线程交互的开销，此收集器在通过超线程技术实现的两个CPU的环境中都不能百分百的超过Serial收集器。随着可使用CPU的数量增加，其对于GC时系统资源的有效利用还是很有好处的，它默认开启的收集线程数与CPU的数量相同，在CPU非常多的环境下，可以使用-XX:ParallelGCThreads参数来限制垃圾收集的线程数。</p>
+<blockquote>
+<p><strong>并发编程</strong>的两个概念名词在垃圾收集器的上下文语境中的解释：</p>
+<ul>
+<li>并行（Parallel）：指多条垃圾收集线程并行工作，但此时用户线程仍处于等待状态。</li>
+<li>并发（Concurrent）：指用户线程与垃圾收集线程同时执行（但不一定是并行的，可能会交替执行），用户程序在继续运行，而垃圾收集程序运行在另一个CPU上。</li>
+</ul>
+</blockquote>
+<hr>
+<h3 id="4-3-Parallel-Scavenge收集器"><a href="#4-3-Parallel-Scavenge收集器" class="headerlink" title="4.3 Parallel Scavenge收集器"></a><strong>4.3 Parallel Scavenge收集器</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<h3 id="4-4-Serial-Old收集器"><a href="#4-4-Serial-Old收集器" class="headerlink" title="4.4 Serial Old收集器"></a><strong>4.4 Serial Old收集器</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<h3 id="4-5-Parallel-Old收集器"><a href="#4-5-Parallel-Old收集器" class="headerlink" title="4.5 Parallel Old收集器"></a><strong>4.5 Parallel Old收集器</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<h3 id="4-6-CMS收集器"><a href="#4-6-CMS收集器" class="headerlink" title="4.6 CMS收集器"></a><strong>4.6 CMS收集器</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<h3 id="4-7-G1收集器"><a href="#4-7-G1收集器" class="headerlink" title="4.7 G1收集器"></a><strong>4.7 G1收集器</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<h3 id="4-8-理解GC日志"><a href="#4-8-理解GC日志" class="headerlink" title="4.8 理解GC日志"></a><strong>4.8 理解GC日志</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<h3 id="4-9-垃圾收集器参数总结"><a href="#4-9-垃圾收集器参数总结" class="headerlink" title="4.9 垃圾收集器参数总结"></a><strong>4.9 垃圾收集器参数总结</strong></h3><p>&emsp;&emsp;</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《深入理解Java虚拟机》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019091101.html" rel="next" title="GitLab">
+                <i class="fa fa-chevron-left"></i> GitLab
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019091301.html" rel="prev" title="垃圾收集器（三）内存分配与回收策略">
+                垃圾收集器（三）内存分配与回收策略 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">124</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-垃圾收集算法"><span class="nav-number">1.</span> <span class="nav-text">第二节 垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-标记-清除算法"><span class="nav-number">1.1.</span> <span class="nav-text">2.1 标记-清除算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-复制算法"><span class="nav-number">1.2.</span> <span class="nav-text">2.2 复制算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-标记-整理算法"><span class="nav-number">1.3.</span> <span class="nav-text">2.3 标记-整理算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-分代收集算法"><span class="nav-number">1.4.</span> <span class="nav-text">2.4 分代收集算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-HotSpot算法实现"><span class="nav-number">2.</span> <span class="nav-text">第三节 HotSpot算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-枚举根节点"><span class="nav-number">2.1.</span> <span class="nav-text">3.1 枚举根节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-安全点"><span class="nav-number">2.2.</span> <span class="nav-text">3.2 安全点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-安全区域"><span class="nav-number">2.3.</span> <span class="nav-text">3.3 安全区域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-垃圾收集器"><span class="nav-number">3.</span> <span class="nav-text">第四节 垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Serial收集器"><span class="nav-number">3.1.</span> <span class="nav-text">4.1 Serial收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-ParNew收集器"><span class="nav-number">3.2.</span> <span class="nav-text">4.2 ParNew收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Parallel-Scavenge收集器"><span class="nav-number">3.3.</span> <span class="nav-text">4.3 Parallel Scavenge收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Serial-Old收集器"><span class="nav-number">3.4.</span> <span class="nav-text">4.4 Serial Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-Parallel-Old收集器"><span class="nav-number">3.5.</span> <span class="nav-text">4.5 Parallel Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-CMS收集器"><span class="nav-number">3.6.</span> <span class="nav-text">4.6 CMS收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-G1收集器"><span class="nav-number">3.7.</span> <span class="nav-text">4.7 G1收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-理解GC日志"><span class="nav-number">3.8.</span> <span class="nav-text">4.8 理解GC日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-9-垃圾收集器参数总结"><span class="nav-number">3.9.</span> <span class="nav-text">4.9 垃圾收集器参数总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

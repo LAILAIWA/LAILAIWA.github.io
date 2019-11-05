@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%80%9A%E8%BF%87%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%80%9A%E8%BF%87%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1.png">
-<meta property="og:updated_time" content="2019-10-29T08:16:14.564Z">
+<meta property="og:updated_time" content="2019-10-31T10:50:59.700Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java内存区域和内存溢出异常">
 <meta name="twitter:description" content="简单介绍Java虚拟机中的Java内存区域和内存溢出异常。">
@@ -359,7 +359,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,747
+                  4,812
                 </span>
               
 
@@ -420,11 +420,13 @@
 </blockquote>
 <p>&emsp;&emsp;64位的long和double占两个局部变量空间，其他都占用一个。</p>
 <p>&emsp;&emsp;局部变量表所需的内存空间在编译阶段完成分配，所以当进入一个方法时，这个方法需要在帧中分配多大的局部变量空间是完全确定的，在运行阶段局部变量表空间大小不会发生变化。</p>
-<h4 id="规范规定的异常-1"><a href="#规范规定的异常-1" class="headerlink" title="规范规定的异常"></a><strong>规范规定的异常</strong></h4><p>&emsp;&emsp;虚拟机规范规定此内存区域的两种异常：</p>
+<h4 id="规范规定的异常-1"><a href="#规范规定的异常-1" class="headerlink" title="规范规定的异常"></a><strong>规范规定的异常</strong></h4><blockquote>
+<p>虚拟机规范规定此内存区域的两种异常：</p>
 <ol>
 <li>StackOverflowError 线程请求的栈深度超过虚拟机所允许的深度。</li>
 <li>OutOfMemoryError 虚拟机动态扩展时无法申请到足够的内存。</li>
 </ol>
+</blockquote>
 <h3 id="三、本地方法栈（Native-Method-Stack）"><a href="#三、本地方法栈（Native-Method-Stack）" class="headerlink" title="三、本地方法栈（Native Method Stack）"></a><strong>三、本地方法栈（Native Method Stack）</strong></h3><p>&emsp;&emsp;本地方法栈类似于虚拟机栈，区别是虚拟机栈为虚拟机执行Java方法(字节码)服务，本地方法栈则为Native方法服务。虚拟机规范对本地方法栈的实现没有什么特殊的要求，所以二者甚至可以合并为一个方法栈。</p>
 <h3 id="四、Java堆（Java-Heap）"><a href="#四、Java堆（Java-Heap）" class="headerlink" title="四、Java堆（Java Heap）"></a><strong>四、Java堆（Java Heap）</strong></h3><p>&emsp;&emsp;Java堆是一块<strong>线程共享</strong>的内存区域，对于大部分应用来说它是最大的一块内存区域。</p>
 <p>&emsp;&emsp;堆就是用来存放所有的对象实例，所以<strong>所有的对象实例和数组都要在堆上分配</strong>（随着JIT编译器的发展和逃逸分析技术的成熟，栈上分配和标量替换技术可能就让这个说法不那么绝对了）。</p>
@@ -444,12 +446,12 @@
 </blockquote>
 <h4 id="规范规定的异常-5"><a href="#规范规定的异常-5" class="headerlink" title="规范规定的异常"></a><strong>规范规定的异常</strong></h4><p>&emsp;&emsp;因为不属于虚拟机定义的内存区域，所以直接内存只受计算机本身内存大小和处理器寻址空间的限制，开发人员在配置虚拟机参数时，会根据实际内存设置-Xmx等参数信息，但经常忽略直接内存，使得各个内存区域的总和大于物理内存上限，从而导致动态扩展时抛出OutOfMemoryError。</p>
 <hr>
-<h2 id="第二节-虚拟机中对象生命过程"><a href="#第二节-虚拟机中对象生命过程" class="headerlink" title="第二节 虚拟机中对象生命过程"></a><strong>第二节 虚拟机中对象生命过程</strong></h2><h3 id="2-1-对象的创建"><a href="#2-1-对象的创建" class="headerlink" title="2.1 对象的创建"></a><strong>2.1 对象的创建</strong></h3><p>&emsp;&emsp;在Java语言中，表面上看就是通过new关键字创建一个对象，在虚拟机中经历了一个怎样的过程？</p>
+<h2 id="第二节-虚拟机中对象生命过程"><a href="#第二节-虚拟机中对象生命过程" class="headerlink" title="第二节 虚拟机中对象生命过程"></a><strong>第二节 虚拟机中对象生命过程</strong></h2><h3 id="2-1-对象的创建"><a href="#2-1-对象的创建" class="headerlink" title="2.1 对象的创建"></a><strong>2.1 对象的创建</strong></h3><p>&emsp;&emsp;在Java语言中，表面上看就是通过new关键字创建一个对象，在虚拟机中又是经历了一个怎样的过程？</p>
 <ol>
 <li>虚拟机在执行到new指令时，首先要<strong>检查</strong>此指令的参数能否在<strong>常量池</strong>定位到一个类的<strong>符号引用</strong>，同时检查这个符号引用所代表的类是否已经被<strong>加载、解析和初始化</strong>过。</li>
 </ol>
 <blockquote>
-<p>&emsp;如果没有，则执行类的加载过程，详细请看博客<a href="../2019050801.html" title="Title">类的加载机制</a>。</p>
+<p>&emsp;如果没有，则执行类的加载过程，详细可参考<a href="../2019050801.html" title="Title">类的加载机制</a>。</p>
 </blockquote>
 <ol start="2">
 <li>在类加载检查通过后，虚拟机会为新生的对象<strong>分配内存</strong>，在类加载后就可以确认所需内存大小。</li>
@@ -464,15 +466,15 @@
 <p>&emsp;比如给对象A分配内存，但指针还未来得及修改，此时对象B同时使用了指针来分配内存。</p>
 <p>&emsp;解决方案一般如下：</p>
 <ol>
-<li>对分配内存空间的动作进行同步处理，虚拟机采用CAS+失败重试的方式来保证操作的原子性。</li>
-<li>把内存分配的动作按照线程划分在不同的空间中进行，即每个线程都预先在Java堆中预先分配一小块内存区域，叫做<strong>本地线程分配缓冲（TLAB）</strong>，线程在自己的TLAB上面分配内存，只有当TLAB用完要分配新的TLAB时再同步锁定，虚拟机是否使用TLAB可以根据参数-XX:+/-UserTLAB来设定。</li>
+<li>对分配内存空间的动作进行同步处理，虚拟机采用<strong>CAS</strong>+<strong>失败重试</strong>的方式来保证操作的原子性。</li>
+<li>把内存分配的动作按照线程划分在不同的空间中进行，即每个线程都预先在Java堆中预先分配一小块内存区域，叫做<strong>本地线程分配缓冲（TLAB）</strong>，线程在自己的TLAB上面分配内存，只有当TLAB用完要分配新的TLAB时再同步锁定，虚拟机是否使用TLAB可以根据参数<em>-XX:+/-UserTLAB</em>来设定。</li>
 </ol>
-<p>&emsp;内存分配完成后，虚拟机会将被分配的内存区域初始化为<strong>0值</strong>(不包括对象头)，若采用TLAB可以提前到分配TLAB时进行，这一操作使对象在未被赋值的情况下可以被访问其对应数据类型的0值。</p>
+<p>&emsp;内存分配完成后，虚拟机会将被分配的内存区域初始化为<strong>零值</strong>(不包括对象头)，若采用TLAB则可以提前到分配TLAB时进行，这一操作使对象在未被赋值的情况下可以被访问其对应数据类型的0值。</p>
 </blockquote>
 <ol start="3">
 <li>虚拟机对对象进行必要的<strong>设置</strong>，如对象所属类、对象哈希码、类的元数据信息、对象的GC分代年龄信息等。然后把这些信息存放在<strong>对象头（Object Header）</strong>中。</li>
 </ol>
-<p>&emsp;&emsp;此过程结束，对VM来说对象已经创建完成，对于Java程序而言才刚刚开始，然后就是初始化&lt; init &gt;，此时所有字段都还为<strong>0</strong>。</p>
+<p>&emsp;&emsp;此过程结束，对VM来说对象已经创建完成，对于Java程序而言才刚刚开始，然后就是初始化&lt; init &gt;，此时所有字段都还为<strong>零</strong>。</p>
 <ol start="4">
 <li>执行对象的&lt; init &gt;方法，把对象按开发设计进行初始化。</li>
 </ol>
@@ -514,16 +516,17 @@
 </tr>
 </tbody>
 </table>
-<p>&emsp;&emsp;第二部分是类型指针，即对象指向它的类元数据的指针，VM通过这个指针确定此对象是哪个类的实例。</p>
+<p>&emsp;&emsp;第二部分是<strong>类型指针</strong>，即对象指向它的类元数据的指针，VM通过这个指针确定此对象是哪个类的实例。</p>
 <p>&emsp;&emsp;此外若对象是Java数组时，对象头需要记录数组长度，VM可以根据对象的元数据来确定Java对象大小，对于数组则无法确定。</p>
 <h4 id="2-2-2-实例数据"><a href="#2-2-2-实例数据" class="headerlink" title="2.2.2 实例数据"></a><strong>2.2.2 实例数据</strong></h4><p>&emsp;&emsp;实例数据部分就是对象的具体信息，即类中定义的各类型信息，包含父类继承的，此部分的存储顺序会受<strong>虚拟机分配策略参数</strong>和字段在Java源码中定义顺序的影响。HotSpot的默认顺序：longs/doubles、ints、shorts/chars、bytes/booleans、oops（Ordinary Object Pointers）。</p>
-<h4 id="2-2-3-对齐填充"><a href="#2-2-3-对齐填充" class="headerlink" title="2.2.3 对齐填充"></a><strong>2.2.3 对齐填充</strong></h4><p>&emsp;&emsp;没有其它含义，只是起占位符的作用，因为HosSpot VM要求对象起始地址必须是8字节的整数倍，也就是对象大小必须是8字节的整数倍，对象头刚好是8或16，当实例数据部分不对齐时就需要此部分来填充。</p>
-<h3 id="2-3-对象的访问定位"><a href="#2-3-对象的访问定位" class="headerlink" title="2.3 对象的访问定位"></a><strong>2.3 对象的访问定位</strong></h3><p>&emsp;&emsp;如何访问对象？Java定义了reference类型规定了一个指向对象的引用，如何定位和访问堆中对象的物理位置需要VM的实现。主流的访问方式是<strong>句柄</strong>和<strong>直接指针</strong>。</p>
+<p>&emsp;&emsp;相同宽度的字段总是分配到一起，父类定义的变量会先于子类，若CompactFileds为true则子类可能出现在父类变量的空隙。</p>
+<h4 id="2-2-3-对齐填充"><a href="#2-2-3-对齐填充" class="headerlink" title="2.2.3 对齐填充"></a><strong>2.2.3 对齐填充</strong></h4><p>&emsp;&emsp;没有其它含义，只是起占位符的作用，因为HosSpot VM要求<strong>对象起始地址必须是8字节的整数倍</strong>，也就是对象大小必须是8字节的整数倍，对象头刚好是8或16，当实例数据部分不对齐时就需要此部分来填充。</p>
+<h3 id="2-3-对象的访问定位"><a href="#2-3-对象的访问定位" class="headerlink" title="2.3 对象的访问定位"></a><strong>2.3 对象的访问定位</strong></h3><p>&emsp;&emsp;如何访问对象？Java定义了reference类型只规定了一个指向对象的引用，如何定位和访问堆中对象的物理位置需要VM的实现。主流的访问方式是<strong>句柄</strong>和<strong>直接指针</strong>。</p>
 <h4 id="2-3-1-句柄"><a href="#2-3-1-句柄" class="headerlink" title="2.3.1 句柄"></a><strong>2.3.1 句柄</strong></h4><p>&emsp;&emsp;Java堆会划分一块内存作为句柄池，reference类型存储对象的<strong>句柄地址</strong>，句柄则包含了对象的实例数据和类型数据的具体地址信息。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%80%9A%E8%BF%87%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1.png" alt="通过句柄访问对象"></p>
-<h4 id="2-3-2-直接指针"><a href="#2-3-2-直接指针" class="headerlink" title="2.3.2 直接指针"></a><strong>2.3.2 直接指针</strong></h4><p>&emsp;&emsp;Java堆布局时需要考虑到访问类型数据的信息，所以reference类型存储的是<strong>对象的堆地址</strong></p>
+<h4 id="2-3-2-直接指针"><a href="#2-3-2-直接指针" class="headerlink" title="2.3.2 直接指针"></a><strong>2.3.2 直接指针</strong></h4><p>&emsp;&emsp;当使用直接指针访问，那么Java堆布局时就必须考虑到访问类型数据的信息，而reference类型存储的是<strong>对象的堆地址</strong></p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%80%9A%E8%BF%87%E5%8F%A5%E6%9F%84%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1.png" alt="通过直接指针访问对象"></p>
-<p>&emsp;&emsp;句柄的优势是reference存储的是稳定的句柄地址，在对象被移动时只会改变句柄中的实例数据指针，而reference类型则无需修改。</p>
+<h4 id="2-3-3-优势对比"><a href="#2-3-3-优势对比" class="headerlink" title="2.3.3 优势对比"></a><strong>2.3.3 优势对比</strong></h4><p>&emsp;&emsp;句柄的优势是reference存储的是稳定的句柄地址，在对象被移动时只会改变句柄中的实例数据指针，而reference类型则无需修改。</p>
 <p>&emsp;&emsp;直接指针的优势是速度更快，节省了一次指针定位的时间开销，因为对象的访问是很频繁的，所以此类开销是很可观的，HotSpot采用直接指针访问。</p>
 <hr>
 <h2 id="第三节-内存溢出"><a href="#第三节-内存溢出" class="headerlink" title="第三节 内存溢出"></a><strong>第三节 内存溢出</strong></h2><p>&emsp;&emsp;Java的内存区域除了程序计数器外都有发生OutOfMemoryError异常的可能：</p>
@@ -690,7 +693,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">120</span>
+                  <span class="site-state-item-count">124</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -780,7 +783,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存区域和内存溢出异常"><span class="nav-number">1.</span> <span class="nav-text">Java内存区域和内存溢出异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-运行时数据区域"><span class="nav-number">1.2.</span> <span class="nav-text">第一节 运行时数据区域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、程序计数器（Program-Counter-Register）"><span class="nav-number">1.2.1.</span> <span class="nav-text">一、程序计数器（Program Counter Register）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、虚拟机栈（Java-Virtual-Machine-Stacks）"><span class="nav-number">1.2.2.</span> <span class="nav-text">二、虚拟机栈（Java Virtual Machine Stacks）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局部变量表"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">局部变量表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、本地方法栈（Native-Method-Stack）"><span class="nav-number">1.2.3.</span> <span class="nav-text">三、本地方法栈（Native Method Stack）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、Java堆（Java-Heap）"><span class="nav-number">1.2.4.</span> <span class="nav-text">四、Java堆（Java Heap）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、方法区（Method-Area）"><span class="nav-number">1.2.5.</span> <span class="nav-text">五、方法区（Method Area）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-3"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、运行时常量池（Runtime-Constant-Pool）"><span class="nav-number">1.2.6.</span> <span class="nav-text">六、运行时常量池（Runtime Constant Pool）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-4"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、直接内存（Direct-Memory）"><span class="nav-number">1.2.7.</span> <span class="nav-text">七、直接内存（Direct Memory）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-5"><span class="nav-number">1.2.7.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-虚拟机中对象生命过程"><span class="nav-number">1.3.</span> <span class="nav-text">第二节 虚拟机中对象生命过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-对象的创建"><span class="nav-number">1.3.1.</span> <span class="nav-text">2.1 对象的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-对象的内存布局"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.2 对象的内存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-对象头"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">2.2.1 对象头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-实例数据"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">2.2.2 实例数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-对齐填充"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">2.2.3 对齐填充</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-对象的访问定位"><span class="nav-number">1.3.3.</span> <span class="nav-text">2.3 对象的访问定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-句柄"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">2.3.1 句柄</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-直接指针"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">2.3.2 直接指针</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-内存溢出"><span class="nav-number">1.4.</span> <span class="nav-text">第三节 内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-Java堆溢出"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">3.1 Java堆溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-虚拟机栈和本地方法栈溢出"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">3.2 虚拟机栈和本地方法栈溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-方法去和运行时常量池溢出"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">3.3 方法去和运行时常量池溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-本机内存溢出"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">3.4 本机内存溢出</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java内存区域和内存溢出异常"><span class="nav-number">1.</span> <span class="nav-text">Java内存区域和内存溢出异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-运行时数据区域"><span class="nav-number">1.2.</span> <span class="nav-text">第一节 运行时数据区域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、程序计数器（Program-Counter-Register）"><span class="nav-number">1.2.1.</span> <span class="nav-text">一、程序计数器（Program Counter Register）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、虚拟机栈（Java-Virtual-Machine-Stacks）"><span class="nav-number">1.2.2.</span> <span class="nav-text">二、虚拟机栈（Java Virtual Machine Stacks）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局部变量表"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">局部变量表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、本地方法栈（Native-Method-Stack）"><span class="nav-number">1.2.3.</span> <span class="nav-text">三、本地方法栈（Native Method Stack）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、Java堆（Java-Heap）"><span class="nav-number">1.2.4.</span> <span class="nav-text">四、Java堆（Java Heap）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-2"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、方法区（Method-Area）"><span class="nav-number">1.2.5.</span> <span class="nav-text">五、方法区（Method Area）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-3"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#六、运行时常量池（Runtime-Constant-Pool）"><span class="nav-number">1.2.6.</span> <span class="nav-text">六、运行时常量池（Runtime Constant Pool）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-4"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#七、直接内存（Direct-Memory）"><span class="nav-number">1.2.7.</span> <span class="nav-text">七、直接内存（Direct Memory）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#规范规定的异常-5"><span class="nav-number">1.2.7.1.</span> <span class="nav-text">规范规定的异常</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-虚拟机中对象生命过程"><span class="nav-number">1.3.</span> <span class="nav-text">第二节 虚拟机中对象生命过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-对象的创建"><span class="nav-number">1.3.1.</span> <span class="nav-text">2.1 对象的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-对象的内存布局"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.2 对象的内存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-对象头"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">2.2.1 对象头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-实例数据"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">2.2.2 实例数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-对齐填充"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">2.2.3 对齐填充</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-对象的访问定位"><span class="nav-number">1.3.3.</span> <span class="nav-text">2.3 对象的访问定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-句柄"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">2.3.1 句柄</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-直接指针"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">2.3.2 直接指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-优势对比"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">2.3.3 优势对比</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-内存溢出"><span class="nav-number">1.4.</span> <span class="nav-text">第三节 内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-Java堆溢出"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">3.1 Java堆溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-虚拟机栈和本地方法栈溢出"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">3.2 虚拟机栈和本地方法栈溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-方法去和运行时常量池溢出"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">3.3 方法去和运行时常量池溢出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-本机内存溢出"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">3.4 本机内存溢出</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
