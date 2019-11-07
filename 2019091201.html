@@ -102,7 +102,10 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010117.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010118.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010119.png">
-<meta property="og:updated_time" content="2019-11-05T09:45:00.985Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010120.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010121.png">
+<meta property="og:updated_time" content="2019-11-07T10:37:27.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器（二）垃圾收集算法">
 <meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
@@ -363,7 +366,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,711
+                  8,931
                 </span>
               
 
@@ -379,7 +382,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  17
+                  32
                 </span>
               
             </div>
@@ -459,15 +462,75 @@
 </ul>
 </blockquote>
 <hr>
-<h3 id="4-3-Parallel-Scavenge收集器"><a href="#4-3-Parallel-Scavenge收集器" class="headerlink" title="4.3 Parallel Scavenge收集器"></a><strong>4.3 Parallel Scavenge收集器</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="4-3-Parallel-Scavenge收集器"><a href="#4-3-Parallel-Scavenge收集器" class="headerlink" title="4.3 Parallel Scavenge收集器"></a><strong>4.3 Parallel Scavenge收集器</strong></h3><p>&emsp;&emsp;Parallel Scavenge收集器是一个新生代收集器，使用复制算法，还是并行的多线程收集器，似乎和ParNew收集器没什么区别。Parallel Scavenge收集器的特点是它的关注点和其他收集器不同，<strong>CMS等收集器的关注点是尽可能的缩短垃圾收集时用户线程的停顿时间，而Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量</strong>（Throughput）。吞吐量就是CPU用于运行用户代码的时间与CPU总消耗时间的比值，即吞吐量 = 运行用户代码时间 / (运行用户代码时间 + 垃圾收集时间)，如果虚拟机运行了100分钟，其中垃圾收集花费了1分钟，吞吐量就是99%。</p>
+<p>&emsp;&emsp;停顿时间短意味着有较快的响应速度可以提升用户体验，适合与用户交互的程序；高吞吐量则可以高效率的利用CPU时间，尽快的完成程序的运算任务，适合在后台运算而不需要太多交互的任务。</p>
+<p>&emsp;&emsp;Parallel Scavenge收集器提供了两个参数用于精确控制吞吐量，-XX:MaxGCPauseMills，-XX:GCTimeRatio。</p>
+<p>&emsp;&emsp;Parallel Scavenge收集器也经常被叫做“吞吐量优先”收集器，除了以上两个参数还有一个-XX:UseAdaptiveSizePolicy值得关注。</p>
+<blockquote>
+<ul>
+<li>-XX:MaxGCPauseMills 此参数控制最大垃圾收集停顿时间。MaxGCPauseMills参数的值是大于0的毫秒数，收集器会尽可能地保证内存回收花费时间不超过设定时间。但并不是设置的小就会使垃圾收集速度变快，GC停顿时间缩短是以牺牲吞吐量和新生代空间来换取的：系统会把新生代调小，也就导致垃圾收集会更频繁，所以吞吐量就会降低。</li>
+<li>-XX:GCTimeRatio 此参数直接设置吞吐量大小。GCTimeRatio参数的值是一个大于0且小于100的整数，也就是垃圾收集时间占总时间的比率，相当于吞吐量的倒数。比如参数值为19，允许的最大GC时间就为1 / (1 + 19) = 5%的最大时间比率，如果为99，结果就为1%。</li>
+<li>-XX:UseAdaptiveSizePolicy 它是一个<strong>开关参数</strong>，开启后就不需要手动指定新生代大小（-Xmn）、Eden与Survivor区的比例（-XX:SurvivorRatio）、晋升老年代对象大小（-XX:PretenureSizeThreshold）等细节参数，虚拟机会根据当前系统运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或最大的吞吐量。这种调节方式叫GC自适应的调节策略（GC Ergonomics）。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;如果开发者能力不足以进行优化工作，使用Parallel Scavenge收集器搭配自适应调节策略，把优化任务交给虚拟机来完成会是一个不错的选择。只需要把基本的内存数据设置好（-Xmx设置最大堆等），然后MaxGCPauseMills（关注最大停顿时间）或GCTimeRatio（关注最大吞吐量）参数给虚拟机设置一个优化目标，具体调节就由虚拟机去完成了。</p>
+<p>&emsp;&emsp;自适应调节策略是Parallel Scavenge收集器和ParNew收集器的一个重要区别。</p>
 <hr>
-<h3 id="4-4-Serial-Old收集器"><a href="#4-4-Serial-Old收集器" class="headerlink" title="4.4 Serial Old收集器"></a><strong>4.4 Serial Old收集器</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="4-4-Serial-Old收集器"><a href="#4-4-Serial-Old收集器" class="headerlink" title="4.4 Serial Old收集器"></a><strong>4.4 Serial Old收集器</strong></h3><p>&emsp;&emsp;Serial Old收集器是Serial收集器的老年代版本，同样是一个单线程收集器，使用“标记-整理”算法。此收集器的主要意义同样是在于给Client模式下的虚拟机使用。但在Server模式下，它还有两大用途：一种用途是在JDK 1.5 以及之前的版本中与Parallel Scavenge收集器搭配使用，另一种用途就是作为CMS收集器的后备预案，在并发收集发生Concurrent Mode Failure时使用。</p>
+<p>&emsp;&emsp;Serial Old收集器工作过程如下图。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010118.png" alt="Serial / Serial Old 收集器运行示意图"></p>
 <hr>
-<h3 id="4-5-Parallel-Old收集器"><a href="#4-5-Parallel-Old收集器" class="headerlink" title="4.5 Parallel Old收集器"></a><strong>4.5 Parallel Old收集器</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="4-5-Parallel-Old收集器"><a href="#4-5-Parallel-Old收集器" class="headerlink" title="4.5 Parallel Old收集器"></a><strong>4.5 Parallel Old收集器</strong></h3><p>&emsp;&emsp;Parallel Old收集器是Parallel Scavenge收集器的老年代版本，使用多线程和“标记-整理”算法。此收集器从JDK 1.6开始提供，在此之前新生代的Parallel Scavenge收集器只能搭配老年代的Serial Old收集器，因为它无法与CMS收集器配合。Serial Old收集器在服务端应用性能上并不可靠，使用了Parallel Scavenge收集器也未必能够在整体应用上获得最大吞吐量的效果，由于单线程的老年代收集中无法充分利用服务器多CPU的处理能力，在老年大很大而且硬件比较高级的环境中，这种组合甚至不一定比ParNew+CMS的组合更好。</p>
+<p>&emsp;&emsp;Parallel Old收集器出现完善了“吞吐量优先”收集器有了合适的组合，在注重吞吐量以及CPU资源敏感的场合，可以优先考虑Parallel Scavenge收集器+Parallel Old收集器的搭配。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010120.png" alt="Parallel Scavenge / Parallel Old 收集器运行示意图"></p>
 <hr>
-<h3 id="4-6-CMS收集器"><a href="#4-6-CMS收集器" class="headerlink" title="4.6 CMS收集器"></a><strong>4.6 CMS收集器</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="4-6-CMS收集器"><a href="#4-6-CMS收集器" class="headerlink" title="4.6 CMS收集器"></a><strong>4.6 CMS收集器</strong></h3><p>&emsp;&emsp;CMS（Concurrent Mark Sweep）收集器是一种以获取最短回收停顿时间为目标的收集器。目前很大一部分的Java应用集中在互联网站或B/S系统的服务端上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，从而给用户带来较好的体验，CMS收集器非常适合这种需求。</p>
+<p>&emsp;&emsp;从名字Mark Sweep便可以得知CMS收集器是基于“标记-清除”算法实现的，其运作过程相比前几个收集器相对复杂。</p>
+<blockquote>
+<p>CMS收集器运作过程：</p>
+<ul>
+<li><strong>初始标记</strong>（CMS initial mark）：仅仅是标记一下GC Roots能直接关联到的对象，速度很快。初始标记和重新标记两个步骤仍需要“Stop The World”。</li>
+<li><strong>并发标记</strong>（CMS concurrent mark）：进行GC Roots Tracing的过程。</li>
+<li><strong>重新标记</strong>（CMS remark）：为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，此阶段的停顿时间一般会比初始标记阶段稍长，但比并发标记阶段短。</li>
+<li><strong>并发清除</strong>（CMS concurrent sweep）：并发清除和并发标记是耗时最长的阶段，这两个阶段收集器线程都可以与用户线程一起工作。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;总体来说CMS收集器的内存回收过程是与用户线程一起并发执行的，下图可以看到CMS收集器的运作步骤中并发和需要停顿的时间。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010121.png" alt="Concurrent Mark Sweep 收集器运行示意图"></p>
+<p>&emsp;&emsp;CMS是一款优秀的收集器，优点就是<strong>并发收集</strong>、<strong>低停顿</strong>，所以Sun公司文档中称其为<strong>并发低停顿收集器</strong>（Concurrent Low Pause Collector），但CMS也有明显的缺点。</p>
+<h4 id="CMS的三个缺点"><a href="#CMS的三个缺点" class="headerlink" title="CMS的三个缺点"></a><strong>CMS的三个缺点</strong></h4><p>&emsp;&emsp;1. <strong>对CPU资源十分敏感</strong>，这是并发设计程序的通病。在并发阶段，虽然不会导致用户线程停顿，但会因为占用了一部分线程或者说CPU资源而导致应用程序变慢，总吞吐量会降低。</p>
+<p>&emsp;&emsp;CMS默认启动的回收线程数是 (CPU数量 + 3) / 4，也就是当CPU在4个以上时，并发回收时垃圾收集线程不少于25%的CPU资源，并且随着CPU数量的增加而下降。但是当CPU不足4个时，CMS对用户程序的影响就可能变得很大，如果CPU本身负载就比较大，还要分出一半的运算能力去执行收集器线程，就会导致用户程序的执行速度突然下降50%。</p>
+<p>&emsp;&emsp;为了应对这种情况，虚拟机提供了一种称为<strong>增量式并发收集器</strong>（Incremental Concurrent Mark Sweep / i-CMS）的CMS收集器变种，所做的工作和单CPU年代PC机操作系统使用<strong>抢占式</strong>来模拟多任务机制的思路一样，就是在并发标记、清理的时候让GC线程、用户线程交替运行，尽量减少线程独占资源的时间，这样整个垃圾收集的过程会更长，但会降低对用户程序的影响。但实际使用中i-CMS效果非常一般，所以后续版本已经弃用（deprecated）。</p>
+<p>&emsp;&emsp;2. <strong>无法处理浮动垃圾，可能出现“Concurrent Mode Failure”失败而导致另一次Full GC的产生</strong>。因为CMS并发清理阶段用户线程还在运行，所以自然会不断地产生垃圾，这部分垃圾产生在标记过程之后，所以CMS无法在此次收集中处理它们，只能留到下次GC时再进行清理。这部分垃圾就被称为浮动垃圾（Floating Garbage）。因为垃圾收集阶段用户线程还在运行，还意味着需要预留足够的内存空间给用户线程使用，因此CMS收集器不能像其他收集器那样等到老年代几乎被填满了再去收集，而是需要预留一部分空间提供并发收集时的程序运作使用。</p>
+<p>&emsp;&emsp;使用JDK 1.5默认设置时，CMS收集器当老年代使用了68%就会被激活，这个数值比较保守，可以通过提高参数-XX:CMSInitiatingOccupancyFraction的值来提高触发百分比，从而降低内存回收次数获取更好的性能。JDK 1.6时，CMS收集器的启动阈值已经提升至92%。如果CMS运行期间预留的内存无法满足程序需要，会出现一次“Concurrent Mode Failure”失败，此时虚拟机将启动后背预案：临时启动Serial Old收集器来重新进行老年代的垃圾收集，这样停顿时间就很长了。所以CMSInitiatingOccupancyFraction参数谨慎处理，设置太高反而可能导致性能降低。</p>
+<p>&emsp;&emsp;3. <strong>生成大量的空间碎片</strong>。因为CMS收集器基于“标记-清除”算法，所以自然会在收集结束后产生大量的空间碎片，给大对象的分配造成困难，经常老年代仍有大量空间未使用，却无法找到足够大的连续空间来分配当前对象，不得不提前触发一次Full GC。</p>
+<p>&emsp;&emsp;为了解决这个问题，CMS收集器提供了一个-XX:+UseCMSCompactAtFullCollection开关参数（默认开启），用于在CMS收集器顶不住要进行Full GC时开启内存碎片的合并整理过程，此过程无法并发，解决了空间碎片问题，但代价是延长了停顿时间。</p>
+<p>&emsp;&emsp;虚拟机还提供了另外一个参数-XX:CMSFullGCsBeforeCompaction，此参数用来设置执行多少次不压缩Full GC后，跟着来一次带压缩的（默认为0，表示每次进入Full GC时都进行碎片整理）</p>
 <hr>
-<h3 id="4-7-G1收集器"><a href="#4-7-G1收集器" class="headerlink" title="4.7 G1收集器"></a><strong>4.7 G1收集器</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="4-7-G1收集器"><a href="#4-7-G1收集器" class="headerlink" title="4.7 G1收集器"></a><strong>4.7 G1收集器</strong></h3><p>&emsp;&emsp;G1（Garbage-First）收集器是当今收集器技术发展的最前沿成果之一，早在JDK 1.7时就有了进化特征，在JDK 6u14时有了Early Access版本提供实验、使用。直到JDK 7u4时达到成熟阶段。G1是一款面向服务端应用的垃圾收集器，其使命是替换掉JDK 1.5发布的CMS收集器。</p>
+<blockquote>
+<p>G1相比其它收集器的特点：</p>
+<ul>
+<li><strong>并行与并发</strong> ：G1能充分利用多CPU、多核环境下的硬件优势，使用多个CPU来缩短“Stop The World”停顿的时间，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java线程继续执行。</li>
+<li><strong>分代收集</strong> ：和其他收集器一样，G1仍然保留了分代概念。虽然G1能独立管理整个GC堆，不需要其他收集器配合，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间、熬过多次GC的旧对象以获取更好的收集效果。</li>
+<li><strong>空间整合</strong> ：与CMS的“标记-清除”算法不同，G1从整体来看是基于“标记-整理”算法实现的收集器。从局部（两个Region之间）上来看是基于“复制”算法实现的，但无论如何，这两种算法都意味着G1运行期间不会产生内存空间碎片，收集后能提供规整的可用内存。这个特性有利于程序长时间运行，分配大对象不会因为找不到连续空间而提前触发下次GC。</li>
+<li><strong>可预测的停顿</strong> ：这个特点是G1相对于CMS的另一大优势，G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒，这几乎已经是实时Java（RTSJ）的垃圾收集器的特征了。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;在G1之前的其他收集器进行收集的范围都是整个新生代或者老年代，而G1收集器的Java堆内存布局会有很大变化，它将整个Java堆分为对个大小相等的独立区域（Region），虽然还保留了新生代和老年代的概念，但两者之间不再物理隔离，都是一部分Region（不需要连续）的集合。</p>
+<p>&emsp;&emsp;G1收集器之所以能建立可预测的停顿时间模型，是因为它可以有计划的避免在整个Java堆中进行全区域的垃圾收集。G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region（G1由来）。这种使用Region划分内存空间以及有优先级的区域回收方式，保证了G1收集器在有限的时间内可以获取尽可能高的收集效率。</p>
+<p>&emsp;&emsp;G1把内存“化整为零”的思路，实际实现并不简单。一个细节为例：把Java堆分为多个Region后，垃圾收集是否就真的能以Region为单位进行了？似乎顺理成章，但仔细想想会发现问题所在：Region不可能是孤立的。一个对象分配在某个Region中，它并非只能被此Region中的对象引用，而是可以和整个Java堆中任意的对象发生引用关系。那么在做可达性分析判定确定对象是否存活时，岂不是还要扫描整个Java堆才能保证准确性？这个问题并非G1独有，但G1尤其明显突出。在以前的分代收集中，新生代一般都比老年代要小许多，收集也要频繁许多，那么回收新生代对象时也面临着同样的问题，如果回收新生代对象时不能不同时扫描老年代的话，Minor GC的效率要下降不少。</p>
+<p>&emsp;&emsp;G1收集器中Region间的对象引用，其他收集器中新生代和老年代之间的对象引用，都是通过 Remembered Set 来避免全堆扫描。在G1中每个 Region 都有一个对应的 Remembered Set ，当虚拟机发现程序在对 Reference 类型的数据进行写操作时，会产生一个 Write Barrier 暂时中断写操作，检查 Reference 引用的对象是否处于不同的 Region 之中（在分代的例子中就是检查是否老年代的对象引用了新生代的对象），如果是，便通过 CardTable 把相关引用信息记录到被引用对象所属的 Region 的 Remembered Set 之中。当进行内存回收时，在GC根节点的枚举范围中加入 Remembered Set 即可保证不对全堆扫描也不会有遗漏。 </p>
+<blockquote>
+<p>不考虑维护 Remembered Set 的操作，G1收集器的运作步骤：</p>
+<ul>
+<li><strong>初始标记</strong>（Initial Marking）：仅仅是标记一下GC Roots能直接关联到的对象，并修改TAMS（Next To at Mark Start）的值，使下一阶段用户程序并发运行时，能在正确可用的Region中创建对象，这阶段需要停顿线程，但耗时很短。</li>
+<li><strong>并发标记</strong>（Concurrent Marking）：从GC Roots开始对堆中对象进行可达性分析，找出存活的对象，此阶段耗时较长，但可与用户程序并发执行。</li>
+<li><strong>最终标记</strong>（Final Marking）：此阶段是为了修正在并发标记期间因用户程序继续运作而导致标记产生变动的那一部分标记记录，虚拟机将这段时间对象变化记录在线程 Remembered Set Logs里面，最终标记阶段。</li>
+<li><strong>筛选回收</strong>（Live Data Counting and Evacuation）：并发清除和并发标记是耗时最长的阶段，这两个阶段收集器线程都可以与用户线程一起工作。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;G1收集器的前几个步骤和CMS收集器类似。</p>
 <hr>
 <h3 id="4-8-理解GC日志"><a href="#4-8-理解GC日志" class="headerlink" title="4.8 理解GC日志"></a><strong>4.8 理解GC日志</strong></h3><p>&emsp;&emsp;</p>
 <hr>
@@ -705,7 +768,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-垃圾收集算法"><span class="nav-number">1.</span> <span class="nav-text">第二节 垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-标记-清除算法"><span class="nav-number">1.1.</span> <span class="nav-text">2.1 标记-清除算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-复制算法"><span class="nav-number">1.2.</span> <span class="nav-text">2.2 复制算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-标记-整理算法"><span class="nav-number">1.3.</span> <span class="nav-text">2.3 标记-整理算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-分代收集算法"><span class="nav-number">1.4.</span> <span class="nav-text">2.4 分代收集算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-HotSpot算法实现"><span class="nav-number">2.</span> <span class="nav-text">第三节 HotSpot算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-枚举根节点"><span class="nav-number">2.1.</span> <span class="nav-text">3.1 枚举根节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-安全点"><span class="nav-number">2.2.</span> <span class="nav-text">3.2 安全点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-安全区域"><span class="nav-number">2.3.</span> <span class="nav-text">3.3 安全区域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-垃圾收集器"><span class="nav-number">3.</span> <span class="nav-text">第四节 垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Serial收集器"><span class="nav-number">3.1.</span> <span class="nav-text">4.1 Serial收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-ParNew收集器"><span class="nav-number">3.2.</span> <span class="nav-text">4.2 ParNew收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Parallel-Scavenge收集器"><span class="nav-number">3.3.</span> <span class="nav-text">4.3 Parallel Scavenge收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Serial-Old收集器"><span class="nav-number">3.4.</span> <span class="nav-text">4.4 Serial Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-Parallel-Old收集器"><span class="nav-number">3.5.</span> <span class="nav-text">4.5 Parallel Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-CMS收集器"><span class="nav-number">3.6.</span> <span class="nav-text">4.6 CMS收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-G1收集器"><span class="nav-number">3.7.</span> <span class="nav-text">4.7 G1收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-理解GC日志"><span class="nav-number">3.8.</span> <span class="nav-text">4.8 理解GC日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-9-垃圾收集器参数总结"><span class="nav-number">3.9.</span> <span class="nav-text">4.9 垃圾收集器参数总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-垃圾收集算法"><span class="nav-number">1.</span> <span class="nav-text">第二节 垃圾收集算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-标记-清除算法"><span class="nav-number">1.1.</span> <span class="nav-text">2.1 标记-清除算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-复制算法"><span class="nav-number">1.2.</span> <span class="nav-text">2.2 复制算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-标记-整理算法"><span class="nav-number">1.3.</span> <span class="nav-text">2.3 标记-整理算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-分代收集算法"><span class="nav-number">1.4.</span> <span class="nav-text">2.4 分代收集算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-HotSpot算法实现"><span class="nav-number">2.</span> <span class="nav-text">第三节 HotSpot算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-枚举根节点"><span class="nav-number">2.1.</span> <span class="nav-text">3.1 枚举根节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-安全点"><span class="nav-number">2.2.</span> <span class="nav-text">3.2 安全点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-安全区域"><span class="nav-number">2.3.</span> <span class="nav-text">3.3 安全区域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-垃圾收集器"><span class="nav-number">3.</span> <span class="nav-text">第四节 垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Serial收集器"><span class="nav-number">3.1.</span> <span class="nav-text">4.1 Serial收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-ParNew收集器"><span class="nav-number">3.2.</span> <span class="nav-text">4.2 ParNew收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Parallel-Scavenge收集器"><span class="nav-number">3.3.</span> <span class="nav-text">4.3 Parallel Scavenge收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Serial-Old收集器"><span class="nav-number">3.4.</span> <span class="nav-text">4.4 Serial Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-Parallel-Old收集器"><span class="nav-number">3.5.</span> <span class="nav-text">4.5 Parallel Old收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-CMS收集器"><span class="nav-number">3.6.</span> <span class="nav-text">4.6 CMS收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CMS的三个缺点"><span class="nav-number">3.6.1.</span> <span class="nav-text">CMS的三个缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-G1收集器"><span class="nav-number">3.7.</span> <span class="nav-text">4.7 G1收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-理解GC日志"><span class="nav-number">3.8.</span> <span class="nav-text">4.8 理解GC日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-9-垃圾收集器参数总结"><span class="nav-number">3.9.</span> <span class="nav-text">4.9 垃圾收集器参数总结</span></a></li></ol></li></ol></div>
             
 
           </div>
