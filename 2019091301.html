@@ -96,10 +96,19 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-05T09:42:50.241Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010128.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010129.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010130.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010131.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010132.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010133.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010134.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010135.png">
+<meta property="og:updated_time" content="2019-11-11T08:39:53.647Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器（三）内存分配与回收策略">
 <meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010128.png">
 
 
 
@@ -356,7 +365,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  124
+                  2,918
                 </span>
               
 
@@ -372,7 +381,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  11
                 </span>
               
             </div>
@@ -397,15 +406,55 @@
       
 
       
-        <h2 id="第五节-内存分配与回收策略"><a href="#第五节-内存分配与回收策略" class="headerlink" title="第五节 内存分配与回收策略"></a><strong>第五节 内存分配与回收策略</strong></h2><h3 id="5-1-对象优先在Eden分配"><a href="#5-1-对象优先在Eden分配" class="headerlink" title="5.1 对象优先在Eden分配"></a><strong>5.1 对象优先在Eden分配</strong></h3><p>&emsp;&emsp;</p>
+        <h1 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a><strong>内存分配与回收策略</strong></h1><h2 id="前文"><a href="#前文" class="headerlink" title="前文"></a><strong>前文</strong></h2><p>&emsp;&emsp;自动内存管理可以总结为自动化的处理两个问题：<strong>给对象分配内存</strong>和<strong>回收分配给对象的内存</strong>。给对象分配内存，宏观的看就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接的栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况下也可能会直接分配在老年代中，分配的规则也并非百分百固定，细节由当前所使用的收集器组合决定，以及虚拟机中与内存相关的参数的设置。</p>
+<p>&emsp;&emsp;接下来会介绍几个最常见的内存分配规则，并通过代码去验证这些规则。所有代码在测试时使用Client模式虚拟机运行，没有手工的指定收集器组合，验证的是在使用Serial/Serial Old收集器下的内存分配和回收的策略（ParNew / Serial Old收集器组合的规则也基本一致）。</p>
 <hr>
-<h3 id="5-2-大对象直接进入老年代"><a href="#5-2-大对象直接进入老年代" class="headerlink" title="5.2 大对象直接进入老年代"></a><strong>5.2 大对象直接进入老年代</strong></h3><p>&emsp;&emsp;</p>
+<h2 id="5-1-对象优先在Eden分配"><a href="#5-1-对象优先在Eden分配" class="headerlink" title="5.1 对象优先在Eden分配"></a><strong>5.1 对象优先在Eden分配</strong></h2><p>&emsp;&emsp;大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够空间进行分配时，虚拟机将发起一次Minor GC。</p>
+<p>&emsp;&emsp;虚拟机提供了<strong>-XX:+PrintGCDetails</strong>这个收集器日志参数，使虚拟机在发生垃圾收集时打印内存回收日志，并且在进程退出时输出当前内存各区域的分配情况。在应用中内存回收日志一般是打印到文件后通过日志工具进行分析。</p>
+<p>&emsp;&emsp;下列代码中testAllocation()方法中，尝试分配3个2MB大小和1个4MB大小的对象，在运行时通过-Xms20M、-Xmx20M、-Xmn10M这三个参数限制了Java堆大小为20MB，不可扩展，其中10MB分配给新生代，剩下的10MB分配给老年代。-XX:SurvivorRatio=8决定了新生代中Eden区与一个Survivor区的空间比例是8:1，从输出的结果可以清晰的看到“eden space 8192K、from space 1024K、to space 1024K”的信息，新生代总可用空间为9216KB（Eden区+1个Survivor区的总容量）。</p>
+<p>&emsp;&emsp;执行testAllocation()中分配allocation4对象的语句时会发生一次Minor GC，这次GC的结果是新生代6651KB变为148KB，而总内存占用量则几乎没有减少（因为allocation1、allocation2、allocation3三个对象都是存活的，虚拟机几乎没有找到可回收的对象）。这次GC发生的原因是给allocation4分配内存的时候，发现Eden已经被占用了6MB，剩余空间已不足以分配allocation4所需的4MB内存，因此发生Minor GC。GC期间虚拟机又发现已有的3个2MB大小的对象全部无法放入Survivor空间（Survivor空间只有1MB大小），所以只能通过分配担保机制提前转移到老年代。</p>
+<p>&emsp;&emsp;这次GC结束后，4MB的allocation4顺利分配在Eden中，因此程序执行完的结果是Eden占用4MB（被allocation4占用），Survivor空闲，老年代被占用6MB（被allocation1、allocation2、allocation3占用）。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">testAllocation</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] allocation1, allocation2, allocation3, allocation4;</span><br><span class="line">    allocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation4 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB]; <span class="comment">//出现一次Minor GC</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010128.png" alt="运行结果"></p>
+<blockquote>
+<p>Minor GC和Full GC不同点？</p>
+<ul>
+<li>新生代GC（Minor GC）：指发生在新生代的垃圾收集动作，因为Java对象大多都具备朝生夕灭的特性，所以Minor GC非常频繁，一般回收速度也比较快。</li>
+<li>老年代GC（Major GC / Full GC）：指发生在老年代的GC，出现了Major GC，经常会伴随着至少一次的Minor GC（但非绝对的，在Parallel Scavenge收集器的收集策略里就有直接进行Major GC的策略选择过程）。Major GC的速度一般会比Minor GC慢10倍以上。</li>
+</ul>
+</blockquote>
 <hr>
-<h3 id="5-3-长期存活的对象将进入老年代"><a href="#5-3-长期存活的对象将进入老年代" class="headerlink" title="5.3 长期存活的对象将进入老年代"></a><strong>5.3 长期存活的对象将进入老年代</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="5-2-大对象直接进入老年代"><a href="#5-2-大对象直接进入老年代" class="headerlink" title="5.2 大对象直接进入老年代"></a><strong>5.2 大对象直接进入老年代</strong></h3><p>&emsp;&emsp;所谓大对象是指需要大量连续内存空间的Java对象，最典型的大对象就是较长的字符串或数组。大对象的内存分配是对虚拟机非常考验的事情，特别是一群“朝生夕死”的“短命大对象”，应该在编程时避免出现这种场景。经常出现大对象容易导致内存还有不少空间时就提前触发垃圾收集来安置它们。</p>
+<p>&emsp;&emsp;虚拟机提供了一个<strong>-XX:PretenureSizeThreshold</strong>参数，大于此参数值的对象会直接在老年代分配。这样的目的是避免在Eden区及两个Survivor区之间发生大量的内存复制。</p>
+<p>&emsp;&emsp;执行下列代码的testPretenureSizeThreshold()后，Eden空间几乎没有被使用，老年代的10MB空间则被使用了40%，所以allocation对象是直接被分配在了老年代，原因就是PretenureSizeThreshold参数设置为3MB。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8</span></span><br><span class="line"><span class="comment"> * -XX:PretenureSizeThreshold=3145728</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">testPretenureSizeThreshold</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] allocation;</span><br><span class="line">    allocation = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB]; <span class="comment">//直接分配在老年代中</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010129.png" alt="运行结果"></p>
+<blockquote>
+<p>注意：PretenureSizeThreshold参数只对Serial和ParNew两款收集器有效，Parallel Scavenge收集器不会识别此参数，此收集器一般不用设置，如果遇到需要使用此参数场景，推荐使用ParNew+CMS收集器组合。</p>
+</blockquote>
 <hr>
-<h3 id="5-4-动态对象年龄判定"><a href="#5-4-动态对象年龄判定" class="headerlink" title="5.4 动态对象年龄判定"></a><strong>5.4 动态对象年龄判定</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="5-3-长期存活的对象将进入老年代"><a href="#5-3-长期存活的对象将进入老年代" class="headerlink" title="5.3 长期存活的对象将进入老年代"></a><strong>5.3 长期存活的对象将进入老年代</strong></h3><p>&emsp;&emsp;虚拟机采用分代收集的思想来管理内存，自然需要能够识别对象应被归属的代，所以虚拟机给每个对象定义了一个<strong>对象年龄计数器</strong>。如果对象在Eden出生并经过第一次Minor GC后仍然存活，且能被Survivor容纳的话，会被移动到Survivor空间，并且年龄设置为1。对象在Survivor区中每“熬过”一次Minor GC，年龄就会增加1岁，当年龄增加到一定程度（默认为15），会被晋升到老年代。对象晋升到老年代的年龄阈值，可以通过参数<strong>-XX:MaxTenuringThreshold</strong>设置。</p>
+<p>&emsp;&emsp;可以尝试分别以1和15为值设置参数MaxTenuringThreshold，测试下列代码的testTenuringThreshold()。对象allocation1需要256KB内存，Survivor空间可以容纳。当MaxTenuringThreshold=1时，allocation1在第二次GC发生时进入老年代，新生代已使用内存GC后非常干净的变为0KB。而MaxTenuringThreshold=15时，第二次GC发生后，allocation1对象还留在新生代Survivor空间，此时新生代仍有40KB占用。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1</span></span><br><span class="line"><span class="comment"> * -XX:PrintTenuringDistribution</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarning</span>(<span class="string">"unused"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">testTenuringThreshold</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] allocation1, allocation2, allocation3;</span><br><span class="line">    allocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[_1MB / <span class="number">4</span>];</span><br><span class="line">    <span class="comment">//什么时候进入老年代取决于-XX:MaxTenuringThreshold设置</span></span><br><span class="line">    allocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB];</span><br><span class="line">    allocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB];</span><br><span class="line">    allocation3 = <span class="keyword">null</span>;</span><br><span class="line">    allocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;MaxTenuringThreshold=1运行结果。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010130.png" alt="运行结果"></p>
+<p>&emsp;&emsp;MaxTenuringThreshold=15运行结果。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010131.png" alt="运行结果"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010132.png" alt="运行结果"></p>
 <hr>
-<h3 id="5-5-空间分配担保"><a href="#5-5-空间分配担保" class="headerlink" title="5.5 空间分配担保"></a><strong>5.5 空间分配担保</strong></h3><p>&emsp;&emsp;</p>
+<h3 id="5-4-动态对象年龄判定"><a href="#5-4-动态对象年龄判定" class="headerlink" title="5.4 动态对象年龄判定"></a><strong>5.4 动态对象年龄判定</strong></h3><p>&emsp;&emsp;为了更好的适应不同程序的内存状况，虚拟机并不是一直要求对象年龄必须达到MaxTenuringThreshold才能晋升老年代，<strong>如果在Survivor空间中相同年龄所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代</strong>。</p>
+<p>&emsp;&emsp;执行下列代码的testTenuringThreshold2()，设置-XX:MaxTenuringThreshold=15，可以发现运行结果中Survivor空间占用依然为0%，而老年代比预期增加6%，所以allocation1、allocation2直接进入了老年代，而不是等到age=15。这两个对象内存和为512KB，且年龄相同，满足同年占比一半的规则，可以注释掉其中一个对象观察结果。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=15</span></span><br><span class="line"><span class="comment"> * -XX:PrintTenuringDistribution</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarning</span>(<span class="string">"unused"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">testTenuringThreshold2</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] allocation1, allocation2, allocation3, allocation4;</span><br><span class="line">    allocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[_1MB / <span class="number">4</span>];</span><br><span class="line">    <span class="comment">//allocation1+allocation2大于Survivor空间一半</span></span><br><span class="line">    allocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[_1MB / <span class="number">4</span>];</span><br><span class="line">    allocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB];</span><br><span class="line">    allocation4 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB];</span><br><span class="line">    allocation4 = <span class="keyword">null</span>;</span><br><span class="line">    allocation4 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">4</span> * _1MB];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010133.png" alt="运行结果"></p>
+<hr>
+<h3 id="5-5-空间分配担保"><a href="#5-5-空间分配担保" class="headerlink" title="5.5 空间分配担保"></a><strong>5.5 空间分配担保</strong></h3><p>&emsp;&emsp;在发生Minor GC之前，虚拟机会检查老年代最大可用连续空间是否大于新生代所有对象总空间，如果成立则可以保证此Minor GC是安全的。如果不成立，虚拟机会查看<strong>HandlePromotionFailure</strong>设置值是否允许担保失败。如果允许，那么会继续检查老年代最大可用连续空间是否大于历次晋升到老年代对象的平均大小，如果大于则会尝试进行一次Minor GC，尽管这次是承担着风险的。如果HandlePromotionFailure值设置不允许，或者小于平均大小，则改为进行一次Full GC。</p>
+<p>&emsp;&emsp;“冒险”是在承担什么风险？我们知道新生代使用复制收集算法，为了内存利用率，只使用其中一个Survivor空间来作为轮换备份，因此当出现大量对象Minor GC后仍然存活的情况，就需要老年代进行分配担保，把Survivor无法容纳的对象直接进入老年代。但老年代能进行担保的前提是其自身有足够的空间可以容纳这些对象，有多少对象在GC后会活下来是无法提前知道的，所以只好取每次回收晋升到老年代对象容量的平均大小值作为经验值，与老年代的剩余空间进行比较，决定是否进行Full GC来让老年代腾出更多空间。</p>
+<p>&emsp;&emsp;取平均值进行比较其实是一种动态概率的手段，如果某次Minor GC后存活的对象突然激增，依然会导致担保失败（HandlePromotionFailure）。如果出现了HandlePromotionFailure失败，就只好在失败后再发动一次Full GC。虽然担保失败时最麻烦，但大部分情况下都还会将HandlePromotionFailure开关打开，避免Full GC太过频繁，参考下列代码，在JDK 6 Update 24之前的版本中运行测试。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:HandlePromotionFailure</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarning</span>(<span class="string">"unused"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">testHandlePromotion</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] allocation1, allocation2, allocation3, allocation4, allocation5, allocation6, allocation7;</span><br><span class="line">    allocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation1 = <span class="keyword">null</span>;</span><br><span class="line">    allocation4 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation5 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation6 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation4 = <span class="keyword">null</span>;</span><br><span class="line">    allocation5 = <span class="keyword">null</span>;</span><br><span class="line">    allocation6 = <span class="keyword">null</span>;</span><br><span class="line">    allocation7 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010134.png" alt="运行结果"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010135.png" alt="运行结果"></p>
+<p>&emsp;&emsp;在JDK 6 Update 24之后的版本中结果会有差异，HandlePromotionFailure参数不再影响到虚拟机的空间分配担保策略，观察OpenJDK中的源码变化，虽然HandlePromotionFailure参数仍然被定义了，但代码中已不会再使用它，规则改变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行Minor GC，否则进行Full GC。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> TenuredGeneration::promotion_attempt_is_safe(<span class="keyword">size_t</span></span><br><span class="line">max_promotion_in_bytes) <span class="keyword">const</span> &#123;</span><br><span class="line">    <span class="comment">//老年代最大可用的连续空间</span></span><br><span class="line">    <span class="keyword">size_t</span> available = max_contiguous_available();</span><br><span class="line">    <span class="comment">//每次晋升到老年代的平均大小</span></span><br><span class="line">    <span class="keyword">size_t</span> av_promo = (<span class="keyword">size_t</span>)gc_status()-&gt;avg_promoted()-&gt;padded_average();</span><br><span class="line">    <span class="comment">//老年代可用空间是否大于平均晋升大小，或者老年代可用空间是否大于当此GC时新生代所有对象容量</span></span><br><span class="line">    <span class="keyword">bool</span> res = (available &gt;= av_promo) || (available &gt;= max_promotion_in_bytes);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -465,6 +514,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019091401.html" rel="prev" title="CentOS（未完成）">
+                CentOS（未完成） <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -545,7 +598,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">124</span>
+                  <span class="site-state-item-count">125</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -567,7 +620,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-count">61</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -635,7 +688,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-内存分配与回收策略"><span class="nav-number">1.</span> <span class="nav-text">第五节 内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-对象优先在Eden分配"><span class="nav-number">1.1.</span> <span class="nav-text">5.1 对象优先在Eden分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-大对象直接进入老年代"><span class="nav-number">1.2.</span> <span class="nav-text">5.2 大对象直接进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-长期存活的对象将进入老年代"><span class="nav-number">1.3.</span> <span class="nav-text">5.3 长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-动态对象年龄判定"><span class="nav-number">1.4.</span> <span class="nav-text">5.4 动态对象年龄判定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-空间分配担保"><span class="nav-number">1.5.</span> <span class="nav-text">5.5 空间分配担保</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存分配与回收策略"><span class="nav-number">1.</span> <span class="nav-text">内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前文"><span class="nav-number">1.1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-对象优先在Eden分配"><span class="nav-number">1.2.</span> <span class="nav-text">5.1 对象优先在Eden分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-大对象直接进入老年代"><span class="nav-number">1.2.1.</span> <span class="nav-text">5.2 大对象直接进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-长期存活的对象将进入老年代"><span class="nav-number">1.2.2.</span> <span class="nav-text">5.3 长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-动态对象年龄判定"><span class="nav-number">1.2.3.</span> <span class="nav-text">5.4 动态对象年龄判定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-空间分配担保"><span class="nav-number">1.2.4.</span> <span class="nav-text">5.5 空间分配担保</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

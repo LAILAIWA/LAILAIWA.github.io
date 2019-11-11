@@ -88,13 +88,13 @@
 
 
 
-<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
+<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
 <meta name="keywords" content="java,jvm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="垃圾收集器（二）垃圾收集算法">
 <meta property="og:url" content="http://linyishui.top/2019091201.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
+<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010114.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010115.png">
@@ -111,10 +111,10 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010125.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010126.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010127.png">
-<meta property="og:updated_time" content="2019-11-08T09:05:23.013Z">
+<meta property="og:updated_time" content="2019-11-08T09:13:42.940Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器（二）垃圾收集算法">
-<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010114.png">
 
 
@@ -396,7 +396,7 @@
 
           
               <div class="post-description">
-                  简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法，复制算法，标记-整理算法，分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器，ParNew收集器，Parallel Scavenge收集器，Serial Old收集器，Parallel Old收集器，CMS收集器，G1收集器)，理解GC日志，垃圾收集器参数总结等。
+                  简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。
               </div>
           
 
@@ -567,7 +567,7 @@
 <p>&emsp;&emsp;“3324K-&gt;152K(3712K)”含义是<strong>GC前该内存区域已使用容量-&gt;GC后该内存区域已使用容量(该内存区域总容量)</strong>。方括号外的“3324K-&gt;152K(11904K)”含义是<strong>GC前Java堆已使用容量-&gt;GC后Java堆已使用容量(Java堆总容量)</strong>。</p>
 <p>&emsp;&emsp;“0.0025925 secs”表示该内存区域GC所占用时间，单位为秒。有些收集器会给出更具体的时间数据“[Time : user=0.01 sys=0.00, real=0.02 secs]”<br>三个参数分别代表用户态消耗的CPU时间，内核态消耗的CPU时间和操作从开始到结束经过的墙钟时间（Wall Clock Time）。当系统有多CPU或多核时，会叠加这些CPU时间，所以user或sys超过real是正常的。</p>
 <blockquote>
-<p>CPU时间和墙钟时间的区别是：墙钟时间包括各种非运算的等待耗时，如等待磁盘I/O，等待线程阻塞，而CPU时间不包括这些耗时。</p>
+<p>CPU时间和墙钟时间的区别是：墙钟时间包括各种非运算的等待耗时，如等待磁盘I/O、等待线程阻塞，而CPU时间不包括这些耗时。</p>
 </blockquote>
 <hr>
 <h3 id="4-9-垃圾收集器参数总结"><a href="#4-9-垃圾收集器参数总结" class="headerlink" title="4.9 垃圾收集器参数总结"></a><strong>4.9 垃圾收集器参数总结</strong></h3><p>&emsp;&emsp;整理了一下垃圾收集相关的常用参数。</p>
@@ -623,8 +623,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019091101.html" rel="next" title="GitLab">
-                <i class="fa fa-chevron-left"></i> GitLab
+              <a href="/2019091101.html" rel="next" title="GitLab（未完成）">
+                <i class="fa fa-chevron-left"></i> GitLab（未完成）
               </a>
             
           </div>
@@ -716,7 +716,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">124</span>
+                  <span class="site-state-item-count">125</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -738,7 +738,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-count">61</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
