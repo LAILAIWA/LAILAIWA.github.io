@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java,unfinished," />
+  <meta name="keywords" content="java,unfinished,stream," />
 
 
 
@@ -89,16 +89,16 @@
 
 
 <meta name="description" content="介绍">
-<meta name="keywords" content="java,unfinished">
+<meta name="keywords" content="java,unfinished,stream">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Optional（未完成）">
+<meta property="og:title" content="默认方法（未完成）">
 <meta property="og:url" content="http://linyishui.top/2019092101.html">
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-20T10:59:43.276Z">
+<meta property="og:updated_time" content="2019-11-22T10:44:20.947Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Optional（未完成）">
+<meta name="twitter:title" content="默认方法（未完成）">
 <meta name="twitter:description" content="介绍">
 
 
@@ -135,7 +135,7 @@
 
 
 
-  <title>Optional（未完成） | 沂水博客</title>
+  <title>默认方法（未完成） | 沂水博客</title>
   
 
 
@@ -289,7 +289,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Optional（未完成）</h1>
+          <h1 class="post-title" itemprop="name headline">默认方法（未完成）</h1>
         
 
         <div class="post-meta">
@@ -302,7 +302,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-21T11:12:22+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-21T11:13:17+08:00">
                 2019-09-21
               </time>
             
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  216
+                  450
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  2
                 </span>
               
             </div>
@@ -397,17 +397,15 @@
       
 
       
-        <h1 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a><strong>Optional</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><p>&emsp;&emsp;函数式语言会通过更多的描述性数据类型来避免null，Java 8提供了Optional<t>类，使用它可以有效的避免NullPointerException。</t></p>
-<p>&emsp;&emsp;Optional<t>类是一个容器类，可以包含也可以不包含值，代表一个值存在或不存在，其方法可以明确地处理值不存在的情况。</t></p>
-<blockquote>
-<ul>
-<li>isPresent() 在值存在时返回true，否则返回false。</li>
-<li>isPresent(Consumer<t> block) 在值存在时执行给定代码块。</t></li>
-<li>T get() 在值存在时返回值，否则抛出异常NoSuchElement。</li>
-<li>T orElse() 在值存在时返回值，否则返回一个默认值。</li>
-</ul>
+        <h1 id="默认方法"><a href="#默认方法" class="headerlink" title="默认方法"></a><strong>默认方法</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><blockquote>
+<p><strong>把代码传递给方法（方法引用、Lambda）和接口中的默认方法这两种特性的补充可以看作是为Stream而设计的</strong>。</p>
 </blockquote>
-<p>&emsp;&emsp;未完待续！！！第10章</p>
+<p>&emsp;&emsp;默认方法的设计初衷是为了支持库设计师，辅助他们写出更容易改进的接口。</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; students1 = inventory.stream<span class="function"><span class="params">()</span>.<span class="title">filter</span><span class="params">((Student s) -&gt; s.getAge() &gt; <span class="number">18</span>)</span></span></span><br><span class="line"><span class="function">                                   .<span class="title">collect</span><span class="params">(toList())</span>;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">List</span>&lt;<span class="title">Student</span>&gt; <span class="title">students2</span> = <span class="title">inventory</span>.<span class="title">parallelStream</span><span class="params">()</span>.<span class="title">filter</span><span class="params">((Student s) -&gt; s.getAge() &gt; <span class="number">18</span>)</span></span></span><br><span class="line"><span class="function">                                   .<span class="title">collect</span><span class="params">(toList())</span>;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Java 8之前，List是没有stream()或parallelStream()方法的，List所继承的Collection<t>接口也没有。那么对于设计者而言，最简单的做法就是把stream()方法加入Collection接口，并加入ArrayList类的实现。但这样的更新使Collection接口多出一个方法，以前版本中会有大量依照Collection接口而扩展的实体类，他们就必须都实现stream()方法，那么<strong>怎样才能改变已发布的接口而不用破坏已有的实现呢</strong>？</t></p>
+<p>&emsp;&emsp;Java 8采用的做法就是<strong>允许接口包含实现类没有提供实现的方法签名，缺失的这些方法由接口来完成实现</strong>。所以<strong>Java 8提供了default关键字来在接口中实现默认方法</strong>。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//List源码中sort方法的默认实现</span></span><br><span class="line"><span class="keyword">default</span> <span class="keyword">void</span> <span class="built_in">sort</span>(Comparator&lt;? <span class="keyword">super</span> E&gt; c) &#123;</span><br><span class="line">    <span class="keyword">Object</span>[] a = <span class="keyword">this</span>.toArray();</span><br><span class="line">    Arrays.<span class="built_in">sort</span>(a, (Comparator) c);</span><br><span class="line">    ListIterator&lt;E&gt; i = <span class="keyword">this</span>.listIterator();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">Object</span> e : a) &#123;</span><br><span class="line">        i.next();</span><br><span class="line">        i.<span class="built_in">set</span>((E) e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;类可以实现多个接口，当默认实现冲突时，Java有一套处理和限制来避免类似C++的菱形继承问题。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -447,6 +445,8 @@
           
             <a href="/tags/unfinished/" rel="tag"># unfinished</a>
           
+            <a href="/tags/stream/" rel="tag"># stream</a>
+          
         </div>
       
 
@@ -458,8 +458,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019092001.html" rel="next" title="流">
-                <i class="fa fa-chevron-left"></i> 流
+              <a href="/2019092701.html" rel="next" title="Optional（未完成）">
+                <i class="fa fa-chevron-left"></i> Optional（未完成）
               </a>
             
           </div>
@@ -468,8 +468,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019092201.html" rel="prev" title="行为参数化">
-                行为参数化 <i class="fa fa-chevron-right"></i>
+              <a href="/2019092201.html" rel="prev" title="流（一）入门介绍">
+                流（一）入门介绍 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -551,7 +551,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">134</span>
+                  <span class="site-state-item-count">137</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -573,7 +573,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-count">67</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -641,7 +641,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">1.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 引文</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#默认方法"><span class="nav-number">1.</span> <span class="nav-text">默认方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 引文</span></a></li></ol></li></ol></div>
             
 
           </div>

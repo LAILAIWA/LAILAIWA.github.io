@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java," />
+  <meta name="keywords" content="java,stream," />
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="简单介绍了行为参数化这一概念，行为参数化的意义，在Java 8版本前如何实现行为参数化，Java 8又对行为参数化提供了哪些支持等。">
-<meta name="keywords" content="java">
+<meta name="description" content="介绍Java 8中加入的流——第一节，内容包括：引文(为什么有了集合还需要流、流解决了集合的两个问题、流的优点)，流简介(stream和parallelStream、流是什么)，流和集合(只能遍历一次、外部迭代和内部迭代)，流的操作(中间操作、终端操作)">
+<meta name="keywords" content="java,stream">
 <meta property="og:type" content="article">
-<meta property="og:title" content="行为参数化">
+<meta property="og:title" content="流（一）入门介绍">
 <meta property="og:url" content="http://linyishui.top/2019092201.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="简单介绍了行为参数化这一概念，行为参数化的意义，在Java 8版本前如何实现行为参数化，Java 8又对行为参数化提供了哪些支持等。">
+<meta property="og:description" content="介绍Java 8中加入的流——第一节，内容包括：引文(为什么有了集合还需要流、流解决了集合的两个问题、流的优点)，流简介(stream和parallelStream、流是什么)，流和集合(只能遍历一次、外部迭代和内部迭代)，流的操作(中间操作、终端操作)">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-19T07:32:51.554Z">
+<meta property="og:updated_time" content="2019-11-22T10:55:56.563Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="行为参数化">
-<meta name="twitter:description" content="简单介绍了行为参数化这一概念，行为参数化的意义，在Java 8版本前如何实现行为参数化，Java 8又对行为参数化提供了哪些支持等。">
+<meta name="twitter:title" content="流（一）入门介绍">
+<meta name="twitter:description" content="介绍Java 8中加入的流——第一节，内容包括：引文(为什么有了集合还需要流、流解决了集合的两个问题、流的优点)，流简介(stream和parallelStream、流是什么)，流和集合(只能遍历一次、外部迭代和内部迭代)，流的操作(中间操作、终端操作)">
 
 
 
@@ -135,7 +135,7 @@
 
 
 
-  <title>行为参数化 | 沂水博客</title>
+  <title>流（一）入门介绍 | 沂水博客</title>
   
 
 
@@ -289,7 +289,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">行为参数化</h1>
+          <h1 class="post-title" itemprop="name headline">流（一）入门介绍</h1>
         
 
         <div class="post-meta">
@@ -302,7 +302,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-22T14:52:26+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-22T10:15:53+08:00">
                 2019-09-22
               </time>
             
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  982
+                  2,844
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  11
                 </span>
               
             </div>
@@ -380,7 +380,7 @@
 
           
               <div class="post-description">
-                  简单介绍了行为参数化这一概念，行为参数化的意义，在Java 8版本前如何实现行为参数化，Java 8又对行为参数化提供了哪些支持等。
+                  介绍Java 8中加入的流——第一节，内容包括：引文(为什么有了集合还需要流、流解决了集合的两个问题、流的优点)，流简介(stream和parallelStream、流是什么)，流和集合(只能遍历一次、外部迭代和内部迭代)，流的操作(中间操作、终端操作)
               </div>
           
 
@@ -397,28 +397,203 @@
       
 
       
-        <h1 id="行为参数化"><a href="#行为参数化" class="headerlink" title="行为参数化"></a><strong>行为参数化</strong></h1><p>&emsp;&emsp;行为参数化是一种开发模式，Lambda只是提供了更简洁的实现方式，让旧版本通过类和接口的实现方式变得更方便罢了。</p>
-<h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a><strong>意义</strong></h2><p>&emsp;&emsp;应对频繁变更的需求：行为参数化意味着可以准备一段代码，并推迟它的执行，比如可以当作参数传递给另一个方法，等到需要时再执行。</p>
+        <h1 id="流（一）入门介绍"><a href="#流（一）入门介绍" class="headerlink" title="流（一）入门介绍"></a><strong>流（一）入门介绍</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><h3 id="为什么有了集合还需要流？"><a href="#为什么有了集合还需要流？" class="headerlink" title="为什么有了集合还需要流？"></a><strong>为什么有了集合还需要流？</strong></h3><p>&emsp;&emsp;流的出现是为了在某些场景下能够代替集合，集合的业务中常常涉及到类似数据库的操作，当有一些复杂需求需要嵌套遍历运算时，集合就需要公式似的写一串代码，很难让人一眼看明白代码代表的意思。如下案例实现在集合中筛选金额较高的交易，并按货币分组。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建累积交易分组的Map</span></span><br><span class="line"><span class="built_in">Map</span>&lt;Currency, <span class="built_in">List</span>&lt;Transaction&gt;&gt; transactionsByCurrencies = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"><span class="comment">//遍历交易List</span></span><br><span class="line"><span class="keyword">for</span>(Transaction transaction : transactions)&#123;</span><br><span class="line">    <span class="comment">//筛选金额较高的交易</span></span><br><span class="line">    <span class="keyword">if</span>(transaction.getPrice() &gt; <span class="number">1000</span>)&#123;</span><br><span class="line">        <span class="comment">//提取交易货币</span></span><br><span class="line">        Currency currency = transaction.getCurrency();</span><br><span class="line">        <span class="built_in">List</span>&lt;Transaction&gt; transactionForCurrency = transactionsByCurrencies.<span class="keyword">get</span>(currency);</span><br><span class="line">        <span class="comment">//如果此货币分组为空，就新建一个</span></span><br><span class="line">        <span class="keyword">if</span>(transactionForCurrency == <span class="keyword">null</span>)&#123;</span><br><span class="line">            transactionForCurrency = <span class="keyword">new</span> ArratList();</span><br><span class="line">            transactionsByCurrencies.put(currency,transactionForCurrency);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//将当前遍历的交易添加到具有同一货币的交易List中</span></span><br><span class="line">        transactionForCurrency.add(transaction);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如果通过Stream API，可以改写上述代码如下。</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> static java.util.stream.Collectors.toList;</span><br><span class="line">Map&lt;Currency, List&lt;Transaction&gt;&gt; transactionsByCurrencies = transactions.stream<span class="function"><span class="params">()</span>.<span class="title">filter</span><span class="params">((Transaction t) -&gt; t.getPrice() &gt; <span class="number">1000</span>)</span>.<span class="title">collect</span><span class="params">(groupingBy(Transaction::getCurrency))</span>;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;流允许我们以声明性方式处理数据几个（通过查询语句实现，而不是临时编写一个实现）。</p>
+<h3 id="流解决了集合的两个问题"><a href="#流解决了集合的两个问题" class="headerlink" title="流解决了集合的两个问题"></a><strong>流解决了集合的两个问题</strong></h3><p>&emsp;&emsp;两个问题是：集合处理时的固定套路和晦涩，以及难以有效利用多核性能。</p>
+<p>&emsp;&emsp;<strong>集合的主要目的是为了存储和访问数据，而Stream则主要用于描述对数据的计算。</strong></p>
+<p>&emsp;&emsp;集合需要手动实现迭代和运算处理，这种数据迭代叫<strong>外部迭代</strong>，而流式的迭代完全在库内部实现，叫做<strong>内部迭代</strong>。流则和SQL的思路一样，采用了更高级的语言表达，由<strong>实现</strong>（Streams库）来选择最佳的低级执行机制。这样就可以避免用synchronized编写代码，它不仅容易出错，且在多核环境下需要很大的成本。筛选一个集合的最快方案就是先转为Stream，再进行并行处理，最后再转换为List。编程中往往会有一些反复出现的数据处理模式，可以根据标准进行<strong>筛选数据</strong>、<strong>提取数据</strong>、<strong>给数据分组</strong>等会很方便。</p>
+<p>&emsp;&emsp;<strong>这些操作往往可以并行化</strong>。比如在两个CPU上筛选集合，可以一个处理列表前半部，一个处理后半部，这叫做分支步骤(1)；然后CPU对各自半个集合进行筛选(2)；最后(3)，一个CPU将两个结果合并。</p>
+<h3 id="流的优点"><a href="#流的优点" class="headerlink" title="流的优点"></a><strong>流的优点</strong></h3><blockquote>
+<p>流相较集合的优点：</p>
+<ul>
+<li><strong>声明性</strong>：如果使用SQL这种数据库语言会发现一些查询语句转化为Java要变得很长，Java8的流支持这种简明的数据库查询式编程且用的是Java语法，我们的目标是说明要做什么，而不是要如何来实现这个操作。</li>
+<li><strong>可复合</strong>：可以对流做一些集合不能做的优化操作，如可以将对同一个流的若干操作组合起来，从而只遍历一次数据，而不是花大代价的去多次遍历。</li>
+<li><strong>可并行</strong>：Java可以自动的将流操作并行化，而集合则不行。</li>
+<li>流被设计为无需同时将数据调入内存，这样就可以处理无法装入内存的流数据了。</li>
+</ul>
+</blockquote>
 <hr>
-<h2 id="旧版本实现行为参数化"><a href="#旧版本实现行为参数化" class="headerlink" title="旧版本实现行为参数化"></a><strong>旧版本实现行为参数化</strong></h2><p>&emsp;&emsp;如书中苹果集合筛选实例，客户从颜色开始提出需求，再到重量等，每个需求我们都需要实现一个filter。你可能会想，还是有办法只用一个filter的，于是你实现了filter(List<apple> inventory, String color, int weight, …)，但这并不能根本解决问题，比如需求变更为根据不同场景筛选对应的属性，或是组合多个属性进行复杂查询，又该如何减少重复代码呢？</apple></p>
-<p>&emsp;&emsp;我们可以对苹果的筛选标准建模，定义一个<strong>谓词</strong>，返回一个boolean值。</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public<span class="built_in"> interface </span>ApplePredicate&#123;</span><br><span class="line">    boolean test(Apple apple);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;所以我们可以根据需求去扩展ApplePredicate的实现，不同的筛选策略就实现对应的代码。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppleHeavyWeightPredicate</span> <span class="keyword">implements</span> <span class="title">ApplePredicate</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">test</span><span class="params">(Apple apple)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> apple.getWeight() &gt; <span class="number">150</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;我们把这些不同的策略看作是filter方法的不同行为，这类似于<strong>策略设计模式</strong>，我们可以封装一些算法，在运行时再去选择一个执行。ApplePredicate就是算法族，AppleHeavyWeightPredicate等就是不同策略。</p>
-<p>&emsp;&emsp;下一步我们需要filterApples()方法能接收ApplePredicate对象，这就是行为参数化：<strong>让方法接受多种行为（策略）作为参数，并在内部使用，来完成不同的行为</strong>。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">List</span>&lt;Apple&gt; filterApples(<span class="keyword">List</span>&lt;Apple&gt; inventory, ApplePredicate p)&#123;</span><br><span class="line">    <span class="keyword">List</span>&lt;Student&gt; result = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span>(Apple apple : inventory)&#123;</span><br><span class="line">        <span class="keyword">if</span>(p.test(apple))&#123;</span><br><span class="line">            result.add(apple);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;上述过程中我们已经做到了让filterApples()方法根据我们定义ApplePredicate对象传递的代码来选择行为，实际上就已经做到了行为参数化。</p>
-<p>&emsp;&emsp;我们发现<strong>解决不断变更的需求这一问题时，通过把迭代集合这一行为和筛选逻辑判断行为进行了分离，随着需求而变的行为作为参数传递选择，从而通过重复使用一个方法来应对变化的需求</strong>。</p>
+<h2 id="第二节-流简介"><a href="#第二节-流简介" class="headerlink" title="第二节 流简介"></a><strong>第二节 流简介</strong></h2><h3 id="stream和parallelStream"><a href="#stream和parallelStream" class="headerlink" title="stream和parallelStream"></a><strong>stream和parallelStream</strong></h3><p>&emsp;&emsp;集合接口Collection在Java 8中增加了默认方法stream()和parallelStream()，分别代表着<strong>流的顺序和并行处理</strong>。</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">default</span> Stream&lt;E&gt; stream() &#123;</span><br><span class="line">    <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">default</span> Stream&lt;E&gt; parallelStream() &#123;</span><br><span class="line">    <span class="keyword">return</span> StreamSupport.stream(spliterator(), <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="regexp">//顺序处理</span></span><br><span class="line"><span class="regexp">List&lt;Student&gt; result = students.stream().filter((Student s) -&gt; s.getAge() &gt; 18).collect(Collectors.toList());</span></span><br><span class="line"><span class="regexp">//</span>并行处理</span><br><span class="line">List&lt;Student&gt; result = students.parallelStream<span class="function"><span class="params">()</span>.<span class="title">filter</span><span class="params">((Student s) -&gt; s.getAge() &gt; <span class="number">18</span>)</span>.<span class="title">collect</span><span class="params">(Collectors.toList())</span>;</span></span><br></pre></td></tr></table></figure>
+<h3 id="流是什么"><a href="#流是什么" class="headerlink" title="流是什么"></a><strong>流是什么</strong></h3><p>&emsp;&emsp;简单的定义，<strong>流是从支持数据处理操作的源生成的元素序列</strong>。</p>
+<blockquote>
+<ul>
+<li><strong>元素序列</strong>：和集合一样，流也提供了接口Stream，可以访问特定元素类型的一组有序值。集合是数据结构，其目的是以特定的时间/空间复杂度存储和访问元素。流的目的是表达计算。集合表述数据，流表述计算。</li>
+<li><strong>源</strong>：流会使用一个提供数据的源，如集合、数组或输入/输出资源。从有序集合生成流时会保留顺序。</li>
+<li><strong>数据处理操作</strong>：流的数据处理功能支持类似于数据库的操作，以及函数式编程语言中的常用操作，如filter、map、reduce、find、match、sort等。流操作可以顺序执行也可以并行执行。</li>
+<li><strong>流水线</strong>：很多流操作本身会返回一个流，所以这些操作就可以链接起来，形成一个大的流水线。也为我们做如延迟和短路这些优化提供了可能。</li>
+<li><strong>内部迭代</strong>：与使用迭代器进行显示迭代的集合不同，流的迭代操作是在背后进行的。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;如下代码中，<strong>数据源</strong>是菜肴列表，它提供给流一个<strong>元素序列</strong>。一系列<strong>数据处理操作</strong>构成了<strong>流水线</strong>，最后的collect操作并没有返回流，而是返回List结果。在collect操作被调用前，流水线上其他操作都在排队等待。</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; threeHighCaloricDishNames = menu.stream<span class="params">()</span> <span class="string">//</span>从集合获得流，准备创建流水线</span><br><span class="line">        <span class="string">.filter</span><span class="params">(d -&gt; d.getCalories()</span> &gt; 300) <span class="string">//</span>筛选高热量的菜肴</span><br><span class="line">        <span class="string">.map</span><span class="params">(Dish::getName)</span> <span class="string">//</span>获取菜名</span><br><span class="line">        <span class="string">.limit</span><span class="params">(3)</span> <span class="string">//</span>只选择头三个</span><br><span class="line">        <span class="string">.collect</span><span class="params">(Collectors.toList()</span>); <span class="string">//</span>将结果存在另一个List中</span><br><span class="line">System.out.println<span class="params">(threeHighCaloricDishNames)</span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;流水线类似于<strong>构建器模式</strong>，一个调用链来设置一套配置，再调用build()方法。</p>
 <hr>
-<h2 id="对行为参数化进行优化"><a href="#对行为参数化进行优化" class="headerlink" title="对行为参数化进行优化"></a><strong>对行为参数化进行优化</strong></h2><p>&emsp;&emsp;因为filterApples()方法只能接受对象，所以我们传递的代码只能包装在对象中，但Java 8后就可以通过Lambda，直接把apple.getWeight() &gt; 150;这种表达式直接传递给filterApples()方法，而不用构建多个ApplePredicate对象。</p>
-<h3 id="匿名类"><a href="#匿名类" class="headerlink" title="匿名类"></a><strong>匿名类</strong></h3><p>&emsp;&emsp;熟悉Java的人可能会想到匿名类好像就可以解决重复创建ApplePredicate对象的问题，因为它可以随用随建。</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; result = filterApples(<span class="name">inventory</span>, new ApplePredicate()&#123;</span><br><span class="line">    public boolean test(<span class="name">Apple</span> apple)&#123;</span><br><span class="line">        return apple.getWeight() &gt; <span class="number">150</span><span class="comment">;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;但匿名类仍存在一些缺点：1.它不太简洁。2.它让用户觉得难以理解。匿名类虽然解决了为ApplePredicate接口构建实体类的问题，但实际上仍需要创建这些对象，实际上并没有彻底的解决啰嗦的问题。</p>
-<h3 id="Lambda表达式"><a href="#Lambda表达式" class="headerlink" title="Lambda表达式"></a><strong>Lambda表达式</strong></h3><p>&emsp;&emsp;Lambda表达式的实现如下，彻底解决了啰嗦问题。</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; result = filterApples(<span class="name">inventory</span>, (<span class="name">Apple</span> a) -&gt; apple.getWeight() &gt; <span class="number">150</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<h3 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a><strong>泛型</strong></h3><p>&emsp;&emsp;通过泛型进一步抽象，让filterApples()能够适用更多的对象。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="keyword">List</span>&lt;T&gt; filter(<span class="keyword">List</span>&lt;T&gt; <span class="keyword">list</span>, Predicate&lt;T&gt; p)&#123;</span><br><span class="line">    <span class="keyword">List</span>&lt;Student&gt; result = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span>(T e : <span class="keyword">list</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(p.test(e))&#123;</span><br><span class="line">            result.add(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="第三节-流和集合"><a href="#第三节-流和集合" class="headerlink" title="第三节 流和集合"></a><strong>第三节 流和集合</strong></h2><p>&emsp;&emsp;我们可以把DVD中存储的电影（基于字节或帧无所谓）看作是一个集合，而网络中通过视频流看同一部电影看作是流。视频流不需要用户等待加载完整个视频，而是只要下载当前观看位置的那几帧就可以了。</p>
+<p>&emsp;&emsp;这样看，<strong>流和集合的差异就在于何时进行计算</strong>，集合是一个内存中的数据结构，它包含了数据结构中目前的所有值，集合中的所有元素都要先计算出来才能添加到集合中，你可以对集合元素做增删操作，但每个元素都必须算出后存放在内存里。</p>
+<p>&emsp;&emsp;流则只是概念上的固定数据结构，你不能增删元素，它的元素是按需计算的。这是一种生产者——消费者关系，流也可以看作是一个延迟创建的集合：只有消费者要求时才会计算值（需求驱动，实时制造）。集合则是急切创建的（供应商驱动）。比如我们需要创建一个所有质数的集合，质数是无穷无尽的，所以这个质数集合我们永远也拿不到。另一个例子是查询分页，集合就是我把所有元素都返回给用户，流则是根据需求返回优先级最高的一页数据。</p>
+<h3 id="只能遍历一次"><a href="#只能遍历一次" class="headerlink" title="只能遍历一次"></a><strong>只能遍历一次</strong></h3><p>&emsp;&emsp;流和迭代器一样，只能遍历一次。如果还需要重新遍历就需要从数据源再重新获取一个新流，当然这里指的是集合之类可以重复的源，而不是I/O通道。</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stream s = menu.stream();</span><br><span class="line">s.<span class="keyword">for</span>Each(System.<span class="keyword">out</span>::println);</span><br><span class="line">s.<span class="keyword">for</span>Each(System.<span class="keyword">out</span>::println);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;执行后抛出异常: stream has already been operated upon or closed</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> java<span class="selector-class">.lang</span><span class="selector-class">.IllegalStateException</span>: stream has already been operated upon or closed</span><br><span class="line">	at java<span class="selector-class">.util</span><span class="selector-class">.stream</span><span class="selector-class">.AbstractPipeline</span><span class="selector-class">.sourceStageSpliterator</span>(AbstractPipeline<span class="selector-class">.java</span>:<span class="number">279</span>)</span><br><span class="line">	at java<span class="selector-class">.util</span><span class="selector-class">.stream</span><span class="selector-class">.ReferencePipeline</span><span class="variable">$Head</span>.forEach(ReferencePipeline<span class="selector-class">.java</span>:<span class="number">580</span>)</span><br><span class="line">	at categories<span class="selector-class">.java</span><span class="selector-class">.a7stream</span><span class="selector-class">.Test</span><span class="selector-class">.main</span>(Test<span class="selector-class">.java</span>:<span class="number">31</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="外部迭代和内部迭代"><a href="#外部迭代和内部迭代" class="headerlink" title="外部迭代和内部迭代"></a><strong>外部迭代和内部迭代</strong></h3><p>&emsp;&emsp;集合Collection需要开发者自行去做迭代，叫外部迭代。流则是内部迭代，Stream库帮你做了迭代，并把得到的流值存放起来，你只要声明要做什么即可。</p>
+<figure class="highlight pony"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>&lt;<span class="type">String</span>&gt; names = <span class="function"><span class="keyword">new</span> <span class="title">ArrayList</span>&lt;&gt;();</span></span><br><span class="line"><span class="function"><span class="comment">//集合通过for-each循环外部迭代</span></span></span><br><span class="line"><span class="function"><span class="title">for</span>(<span class="type">Dish</span> dish : menu)&#123;</span></span><br><span class="line"><span class="function">    <span class="title">names</span>.<span class="title">add</span>(dish.getName());</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="comment">//集合通过迭代器做外部迭代</span></span></span><br><span class="line"><span class="function"><span class="title">Iterator</span>&lt;<span class="title">Dish</span>&gt; <span class="title">iterator</span> = <span class="title">menu</span>.<span class="title">iterator</span>();</span></span><br><span class="line"><span class="function"><span class="title">while</span> (iterator.hasNext())&#123;</span></span><br><span class="line"><span class="function">    <span class="title">Dish</span> <span class="title">d</span> = <span class="title">iterator</span>.<span class="title">next</span>();</span></span><br><span class="line"><span class="function">    <span class="title">names</span>.<span class="title">add</span>(d.getName());</span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"><span class="comment">//流内部迭代</span></span></span><br><span class="line"><span class="function"><span class="title">names</span> = <span class="title">menu</span>.<span class="title">stream</span>().<span class="title">map</span>(<span class="type">Dish</span>::getName).<span class="title">collect</span>(<span class="type">Collectors</span>.toList());</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们设想一个应用场景，你需要女儿把地上的玩具收回箱子。如果是外部迭代，你需要一个个的指示她去整理所有玩具，需要显式的取出每个项目进行处理。如果是内部迭代，她可以选择一手拿一个，也可以自己决定先拿离盒子较近的玩具，而你只需要告诉她把所有的玩具收回箱子即可。流的内部迭代可以自动选择一种适合你硬件的数据表示和并行实现，而集合就需要你自己手动来处理所有的并行问题。</p>
+<hr>
+<h2 id="第四节-流的操作"><a href="#第四节-流的操作" class="headerlink" title="第四节 流的操作"></a><strong>第四节 流的操作</strong></h2><p>&emsp;&emsp;可以连接起来的流操作称为<strong>中间操作</strong>，关闭流的操作叫<strong>终端操作</strong>。</p>
+<blockquote>
+<ul>
+<li>一个数据源来执行一个查询</li>
+<li>一个中间操作链，形成一条流水线</li>
+<li>一个终端操作，执行流水线，并能生成结果</li>
+</ul>
+</blockquote>
+<h3 id="中间操作"><a href="#中间操作" class="headerlink" title="中间操作"></a><strong>中间操作</strong></h3><p>&emsp;&emsp;除非流水线触发一个终端操作，否则中间操作不会执行任何处理，中间操作可以合并起来，在终端操作时一次性处理。</p>
+<p>&emsp;&emsp;可以尝试在中间操作中添加打印，观察执行顺序。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//打印每个操作</span></span><br><span class="line">List&lt;<span class="keyword">String</span>&gt; delayNames = menu.stream() <span class="comment">//从集合获得流，准备创建流水线</span></span><br><span class="line">        .filter(d -&gt; &#123;</span><br><span class="line">            <span class="keyword">System</span>.out.println(<span class="string">"filtering"</span> + d.<span class="built_in">getName</span>());</span><br><span class="line">            <span class="keyword">return</span> d.getCalories() &gt; <span class="number">300</span>;</span><br><span class="line">        &#125;) <span class="comment">//筛选高热量的菜肴</span></span><br><span class="line">        .map(d -&gt; &#123;</span><br><span class="line">            <span class="keyword">System</span>.out.println(<span class="string">"maping"</span> + d.<span class="built_in">getName</span>());</span><br><span class="line">            <span class="keyword">return</span> d.<span class="built_in">getName</span>();</span><br><span class="line">        &#125;) <span class="comment">//获取菜名</span></span><br><span class="line">        .limit(<span class="number">3</span>) <span class="comment">//只选择头三个</span></span><br><span class="line">        .collect(Collectors.toList()); <span class="comment">//将结果存在另一个List中</span></span><br><span class="line"><span class="keyword">System</span>.out.println(threeHighCaloricDishNames);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;打印结果如下，可以发现Java通过流的延迟性质进行了多个优化：(1)通过limit操作和短路技巧可以只取前3个元素。(2)循环合并技术把filter和map操作合并到同一次遍历中了。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">filtering</span> pork</span><br><span class="line"><span class="symbol">maping</span> pork</span><br><span class="line"><span class="symbol">filtering</span> <span class="keyword">beef</span></span><br><span class="line"><span class="keyword">maping </span><span class="keyword">beef</span></span><br><span class="line"><span class="keyword">filtering </span>chicken</span><br><span class="line"><span class="symbol">maping</span> chicken</span><br><span class="line">[pork, <span class="keyword">beef, </span>chicken]</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">操作</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">返回类型</th>
+<th style="text-align:left">操作参数</th>
+<th style="text-align:left">函数描述符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">filter</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<t></t></td>
+<td style="text-align:left">Predicate<t></t></td>
+<td style="text-align:left">T -&gt; boolean</td>
+</tr>
+<tr>
+<td style="text-align:left">map</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<r></r></td>
+<td style="text-align:left">Function&lt;T, R&gt;</td>
+<td style="text-align:left">T -&gt; R</td>
+</tr>
+<tr>
+<td style="text-align:left">limit</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<t></t></td>
+<td style="text-align:left">long maxSize</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">sorted</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<t></t></td>
+<td style="text-align:left">Comparator<t></t></td>
+<td style="text-align:left">(T, T) -&gt; int</td>
+</tr>
+<tr>
+<td style="text-align:left">peek</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<t></t></td>
+<td style="text-align:left">Consumer<t></t></td>
+<td style="text-align:left">T -&gt; void</td>
+</tr>
+<tr>
+<td style="text-align:left">distinct</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<t></t></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">skip</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<t></t></td>
+<td style="text-align:left">long n</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">mapToInt</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">IntStream</td>
+<td style="text-align:left">ToIntFunction<t></t></td>
+<td style="text-align:left">T -&gt; int</td>
+</tr>
+<tr>
+<td style="text-align:left">mapToLong</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">LongStream</td>
+<td style="text-align:left">ToLongFunction<t></t></td>
+<td style="text-align:left">T -&gt; long</td>
+</tr>
+<tr>
+<td style="text-align:left">mapToDouble</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">DoubleStream</td>
+<td style="text-align:left">ToDoubleFunction<t></t></td>
+<td style="text-align:left">T -&gt; double</td>
+</tr>
+<tr>
+<td style="text-align:left">flatMap</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">Stream<r></r></td>
+<td style="text-align:left">Function&lt;T, Stream<r>&gt;</r></td>
+<td style="text-align:left">T -&gt; R</td>
+</tr>
+<tr>
+<td style="text-align:left">flatMapToInt</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">IntStream</td>
+<td style="text-align:left">Function&lt;T, IntStream&gt;</td>
+<td style="text-align:left">T -&gt; int</td>
+</tr>
+<tr>
+<td style="text-align:left">flatMapToLong</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">LongStream</td>
+<td style="text-align:left">Function&lt;T, LongStream&gt;</td>
+<td style="text-align:left">T -&gt; long</td>
+</tr>
+<tr>
+<td style="text-align:left">flatMapToDouble</td>
+<td style="text-align:left">中间</td>
+<td style="text-align:left">DoubleStream</td>
+<td style="text-align:left">Function&lt;T, DoubleStream&gt;</td>
+<td style="text-align:left">T -&gt; double</td>
+</tr>
+</tbody>
+</table>
+<h3 id="终端操作"><a href="#终端操作" class="headerlink" title="终端操作"></a><strong>终端操作</strong></h3><p>&emsp;&emsp;终端操作会从流水线生成非流的结果，如List、Integer、void等。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">操作</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">forEach</td>
+<td style="text-align:left">终端</td>
+<td style="text-align:left">消费流中的每个元素并对其应用Lambda，返回void</td>
+</tr>
+<tr>
+<td style="text-align:left">count</td>
+<td style="text-align:left">终端</td>
+<td style="text-align:left">返回流中元素的个数，返回long</td>
+</tr>
+<tr>
+<td style="text-align:left">collect</td>
+<td style="text-align:left">终端</td>
+<td style="text-align:left">把流归约为集合，如List、Map甚至Integer</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -456,6 +631,8 @@
           
             <a href="/tags/java/" rel="tag"># java</a>
           
+            <a href="/tags/stream/" rel="tag"># stream</a>
+          
         </div>
       
 
@@ -467,8 +644,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019092101.html" rel="next" title="Optional（未完成）">
-                <i class="fa fa-chevron-left"></i> Optional（未完成）
+              <a href="/2019092101.html" rel="next" title="默认方法（未完成）">
+                <i class="fa fa-chevron-left"></i> 默认方法（未完成）
               </a>
             
           </div>
@@ -477,8 +654,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019092301.html" rel="prev" title="默认方法（未完成）">
-                默认方法（未完成） <i class="fa fa-chevron-right"></i>
+              <a href="/2019092301.html" rel="prev" title="流（二）使用和构建">
+                流（二）使用和构建 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -560,7 +737,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">134</span>
+                  <span class="site-state-item-count">137</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -582,7 +759,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-count">67</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -650,7 +827,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#行为参数化"><span class="nav-number">1.</span> <span class="nav-text">行为参数化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#意义"><span class="nav-number">1.1.</span> <span class="nav-text">意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#旧版本实现行为参数化"><span class="nav-number">1.2.</span> <span class="nav-text">旧版本实现行为参数化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对行为参数化进行优化"><span class="nav-number">1.3.</span> <span class="nav-text">对行为参数化进行优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#匿名类"><span class="nav-number">1.3.1.</span> <span class="nav-text">匿名类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lambda表达式"><span class="nav-number">1.3.2.</span> <span class="nav-text">Lambda表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#泛型"><span class="nav-number">1.3.3.</span> <span class="nav-text">泛型</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#流（一）入门介绍"><span class="nav-number">1.</span> <span class="nav-text">流（一）入门介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 引文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么有了集合还需要流？"><span class="nav-number">1.1.1.</span> <span class="nav-text">为什么有了集合还需要流？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流解决了集合的两个问题"><span class="nav-number">1.1.2.</span> <span class="nav-text">流解决了集合的两个问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流的优点"><span class="nav-number">1.1.3.</span> <span class="nav-text">流的优点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-流简介"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 流简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stream和parallelStream"><span class="nav-number">1.2.1.</span> <span class="nav-text">stream和parallelStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流是什么"><span class="nav-number">1.2.2.</span> <span class="nav-text">流是什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-流和集合"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 流和集合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#只能遍历一次"><span class="nav-number">1.3.1.</span> <span class="nav-text">只能遍历一次</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#外部迭代和内部迭代"><span class="nav-number">1.3.2.</span> <span class="nav-text">外部迭代和内部迭代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-流的操作"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 流的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#中间操作"><span class="nav-number">1.4.1.</span> <span class="nav-text">中间操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#终端操作"><span class="nav-number">1.4.2.</span> <span class="nav-text">终端操作</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

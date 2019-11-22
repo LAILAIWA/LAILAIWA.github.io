@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,stream,collector," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="介绍Java 8中加入的流——第三节，内容包括：收集器，归约和汇总(collect、reduce)，分组，分区，收集器接口(supplier、accumulator、finisher、combiner、characteristics、融合实现ToListCollector)，实现收集器。">
+<meta name="keywords" content="java,stream,collector">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流（三）收集器">
+<meta property="og:url" content="http://linyishui.top/2019092401.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="介绍Java 8中加入的流——第三节，内容包括：收集器，归约和汇总(collect、reduce)，分组，分区，收集器接口(supplier、accumulator、finisher、combiner、characteristics、融合实现ToListCollector)，实现收集器。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-22T10:56:06.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="流（三）收集器">
+<meta name="twitter:description" content="介绍Java 8中加入的流——第三节，内容包括：收集器，归约和汇总(collect、reduce)，分组，分区，收集器接口(supplier、accumulator、finisher、combiner、characteristics、融合实现ToListCollector)，实现收集器。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019092401.html"/>
+
+
+
+
+
+  <title>流（三）收集器 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019092401.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">流（三）收集器</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-24T18:38:07+08:00">
+                2019-09-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,053
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  18
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  介绍Java 8中加入的流——第三节，内容包括：收集器，归约和汇总(collect、reduce)，分组，分区，收集器接口(supplier、accumulator、finisher、combiner、characteristics、融合实现ToListCollector)，实现收集器。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="流（三）收集器"><a href="#流（三）收集器" class="headerlink" title="流（三）收集器"></a><strong>流（三）收集器</strong></h1><h2 id="第八节-用流收集数据"><a href="#第八节-用流收集数据" class="headerlink" title="第八节 用流收集数据"></a><strong>第八节 用流收集数据</strong></h2><h3 id="8-1-收集器"><a href="#8-1-收集器" class="headerlink" title="8.1 收集器"></a><strong>8.1 收集器</strong></h3><p>&emsp;&emsp;收集器简洁灵活的定义了collect用来生成结果集合的标准，collect操作本质是一个归约操作，遍历流中的每个元素，进行转换操作，将结果累积到一个数据结构中并最终输出。</p>
+<figure class="highlight tp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">R</span>, A&gt; <span class="keyword">R</span> collect(Collector&lt;? super T, A, <span class="keyword">R</span>&gt; collector);</span><br><span class="line"></span><br><span class="line">&lt;<span class="keyword">R</span>&gt; <span class="keyword">R</span> collect(Supplier&lt;<span class="keyword">R</span>&gt; supplier,</span><br><span class="line">              BiConsumer&lt;<span class="keyword">R</span>, ? super T&gt; accumulator,</span><br><span class="line">              BiConsumer&lt;<span class="keyword">R</span>, <span class="keyword">R</span>&gt; combiner);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Collector接口的实现决定了如何对流进行归约操作，Collectors提供了许多常用的静态工厂方法，主要提供了三个功能：将流元素归约为一个值，元素分组，元素分区。</p>
+<h3 id="8-2-归约和汇总"><a href="#8-2-归约和汇总" class="headerlink" title="8.2 归约和汇总"></a><strong>8.2 归约和汇总</strong></h3><p>&emsp;&emsp;具体使用场景可以参考以下实例代码。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//统计：统计菜单有多少道菜肴</span></span><br><span class="line"><span class="keyword">long</span> dishedNum = menu.stream().<span class="keyword">collect</span>(Collectors.counting());</span><br><span class="line"><span class="keyword">long</span> dishedNum1 = menu.stream().<span class="keyword">count</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//求最大/最小值：找出热量最高的菜肴</span></span><br><span class="line">Comparator&lt;Dish&gt; dishCaloriesComparator = Comparator.comparingInt(Dish::getCalories);</span><br><span class="line">Optional&lt;Dish&gt; mostCaloriesDish = menu.stream().<span class="keyword">collect</span>(Collectors.maxBy(dishCaloriesComparator));</span><br><span class="line">Optional&lt;Dish&gt; mostCaloriesDish1 = menu.stream().max(dishCaloriesComparator);</span><br><span class="line"></span><br><span class="line"><span class="comment">//汇总求和：求所有菜肴总热量</span></span><br><span class="line"><span class="keyword">int</span> totalCalories = menu.stream().<span class="keyword">collect</span>(Collectors.summingInt(Dish::getCalories));</span><br><span class="line"><span class="comment">////这种写法最简洁，且性能最好，避免了自动拆箱</span></span><br><span class="line"><span class="keyword">int</span> totalCalories1 = menu.stream().mapToInt(Dish::getCalories).sum();</span><br><span class="line">    </span><br><span class="line"><span class="comment">//汇总求平均：求所有菜肴热量平均值</span></span><br><span class="line"><span class="keyword">double</span> averageCalories = menu.stream().<span class="keyword">collect</span>(Collectors.averagingInt(Dish::getCalories));</span><br><span class="line"></span><br><span class="line"><span class="comment">//一次遍历求所有汇总结果</span></span><br><span class="line">IntSummaryStatistics statistics = menu.stream().<span class="keyword">collect</span>(Collectors.summarizingInt(Dish::getCalories));</span><br><span class="line">System.out.<span class="keyword">println</span>(statistics);<span class="comment">//IntSummaryStatistics&#123;count=9, sum=4200, min=120, average=466.666667, max=800&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//连接字符串</span></span><br><span class="line">String shortMenu = menu.stream().map(Dish::getName).<span class="keyword">collect</span>(Collectors.joining());</span><br><span class="line">System.out.<span class="keyword">println</span>(shortMenu);<span class="comment">//porkbeefchickenfrench friesriceseason fruitpizzaprawnssalmon</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//加分隔符</span></span><br><span class="line">String shortMenu1 = menu.stream().map(Dish::getName).<span class="keyword">collect</span>(Collectors.joining(<span class="string">", "</span>));</span><br><span class="line">System.out.<span class="keyword">println</span>(shortMenu1);<span class="comment">//pork, beef, chicken, french fries, rice, season fruit, pizza, prawns, salmon</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;前面都是常用情况的便捷工具，Collectors提供的reducing()则需要三个参数(初始值，转换函数，操作)。有一个重载的单参数reducing()，流中第一个元素作为起点，转换函数为默认输入参数。</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int totalCalories3 = menu.stream<span class="function"><span class="params">()</span>.<span class="title">collect</span><span class="params">(Collectors.reducing(<span class="number">0</span>,Dish::getCalories,(i,j) -&gt; i + j))</span>;</span></span><br><span class="line"><span class="function"><span class="title">int</span> <span class="title">totalCalories4</span> = <span class="title">menu</span>.<span class="title">stream</span><span class="params">()</span>.<span class="title">map</span><span class="params">(Dish::getCalories)</span>.<span class="title">reduce</span><span class="params">(<span class="number">0</span>,(i,j) -&gt; i + j)</span>;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">//单参数<span class="title">reducing</span><span class="params">()</span>，</span></span><br><span class="line"><span class="function"><span class="title">Optional</span>&lt;<span class="title">Dish</span>&gt; <span class="title">mostCaloriesDish2</span> = <span class="title">menu</span>.<span class="title">stream</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        .<span class="title">collect</span><span class="params">(Collectors.reducing(</span></span></span><br><span class="line"><span class="function"><span class="params">                (d1,d2) -&gt; d1.getCalories() &gt; d2.getCalories() ? d1 :d2))</span>;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, U&gt;</span><br><span class="line">Collector&lt;T, ?, U&gt; reducing(U identity,</span><br><span class="line">                            Function&lt;? <span class="keyword">super</span> T, ? <span class="keyword">extends</span> U&gt; mapper,</span><br><span class="line">                            BinaryOperator&lt;U&gt; op) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;&gt;(</span><br><span class="line">            boxSupplier(identity),</span><br><span class="line">            (a, t) -&gt; &#123; a[<span class="number">0</span>] = op.apply(a[<span class="number">0</span>], mapper.apply(t)); &#125;,</span><br><span class="line">            (a, b) -&gt; &#123; a[<span class="number">0</span>] = op.apply(a[<span class="number">0</span>], b[<span class="number">0</span>]); <span class="keyword">return</span> a; &#125;,</span><br><span class="line">            a -&gt; a[<span class="number">0</span>], CH_NOID);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//单参数</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ?, Optional&lt;T&gt;&gt;</span><br><span class="line">reducing(BinaryOperator&lt;T&gt; op) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">OptionalBox</span> <span class="keyword">implements</span> <span class="title">Consumer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">        T value = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">boolean</span> present = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">accept</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (present) &#123;</span><br><span class="line">                value = op.apply(value, t);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                value = t;</span><br><span class="line">                present = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;T, OptionalBox, Optional&lt;T&gt;&gt;(</span><br><span class="line">            OptionalBox::<span class="keyword">new</span>, OptionalBox::accept,</span><br><span class="line">            (a, b) -&gt; &#123; <span class="keyword">if</span> (b.present) a.accept(b.value); <span class="keyword">return</span> a; &#125;,</span><br><span class="line">            a -&gt; Optional.ofNullable(a.value), CH_NOID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="collect和reduce的区别"><a href="#collect和reduce的区别" class="headerlink" title="collect和reduce的区别"></a><strong>collect和reduce的区别</strong></h4><p>&emsp;&emsp;二者往往可以实现相同的功能，reduce方法旨在把两个值结合起来生成一个新值，是一个不可变的归约。collect方法则相反，设计上就是要改变容器，从而累积要输出的结果。还有一点就是collect方法相比reduce更适合并行工作。</p>
+<h3 id="8-3-分组"><a href="#8-3-分组" class="headerlink" title="8.3 分组"></a><strong>8.3 分组</strong></h3><p>&emsp;&emsp;Collectors提供了静态工厂方法groupingBy，参数Function叫<strong>分类函数</strong>，用来把流中元素分成不同的组。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Map</span>&lt;Dish.<span class="built_in">Type</span>, <span class="built_in">List</span>&lt;Dish&gt;&gt; dishesByType = menu.stream().collect(Collectors.groupingBy(Dish::getType));</span><br><span class="line">dishesByType.forEach((k,v) -&gt; System.out.println(k + <span class="string">"-&gt;"</span> + v));</span><br><span class="line"></span><br><span class="line"><span class="comment">//groupingBy</span></span><br><span class="line">public <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ?, <span class="built_in">Map</span>&lt;K, <span class="built_in">List</span>&lt;T&gt;&gt;&gt;</span><br><span class="line">groupingBy(<span class="built_in">Function</span>&lt;? <span class="keyword">super</span> T, ? <span class="keyword">extends</span> K&gt; classifier) &#123;</span><br><span class="line">    <span class="keyword">return</span> groupingBy(classifier, toList());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;实际开发中，用来分类的Type可能不存在，但我们可以<strong>自定义</strong>，并用Lambda表达式来描述逻辑。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//以热量分组</span></span><br><span class="line">Map&lt;CaloricLevel,List&lt;Dish&gt;&gt; dishesByCaloricLevel = menu.stream().collect(Collectors.groupingBy(</span><br><span class="line">    dish -&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span>(dish.getCalories() &lt;= <span class="number">400</span>) <span class="keyword">return</span> CaloricLevel.DIET;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(dish.getCalories() &lt;= <span class="number">700</span>) <span class="keyword">return</span> CaloricLevel.NORMAL;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">return</span> CaloricLevel.FAT;</span><br><span class="line">    &#125;</span><br><span class="line">));</span><br><span class="line">dishesByCaloricLevel.forEach((k,v) -&gt; System.<span class="keyword">out</span>.println(k + <span class="string">"-&gt;"</span> + v));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<strong>多级分组</strong>需要调用双参数版本的groupingBy方法，可以扩展至任意层级的树形结构Map。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//多级分组</span></span><br><span class="line"><span class="built_in">Map</span>&lt;Dish.<span class="built_in">Type</span>, <span class="built_in">Map</span>&lt;CaloricLevel, <span class="built_in">List</span>&lt;Dish&gt;&gt;&gt; dishesByTypeCaloricLevel =</span><br><span class="line">        menu.stream().collect(</span><br><span class="line">                Collectors.groupingBy(Dish::getType,</span><br><span class="line">                        Collectors.groupingBy(dish -&gt;&#123;</span><br><span class="line">                            <span class="keyword">if</span>(dish.getCalories() &lt;= <span class="number">400</span>) <span class="keyword">return</span> CaloricLevel.DIET;</span><br><span class="line">                            <span class="keyword">else</span> <span class="keyword">if</span>(dish.getCalories() &lt;= <span class="number">700</span>) <span class="keyword">return</span> CaloricLevel.NORMAL;</span><br><span class="line">                            <span class="keyword">else</span> <span class="keyword">return</span> CaloricLevel.FAT;</span><br><span class="line">                        &#125;))</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public <span class="keyword">static</span> &lt;T, K, A, D&gt;</span><br><span class="line">Collector&lt;T, ?, <span class="built_in">Map</span>&lt;K, D&gt;&gt; groupingBy(<span class="built_in">Function</span>&lt;? <span class="keyword">super</span> T, ? <span class="keyword">extends</span> K&gt; classifier,</span><br><span class="line">                                      Collector&lt;? <span class="keyword">super</span> T, A, D&gt; downstream) &#123;</span><br><span class="line">    <span class="keyword">return</span> groupingBy(classifier, HashMap::<span class="keyword">new</span>, downstream);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<strong>按子组收集数据</strong>: groupingBy方法的第二个参数可以是任意Collector的实现，不一定非要是groupingBy。collectingAndThen方法则可以在收集器完成处理后转换返回类型，需要参数：收集器和转换函数，最后返回一个收集器。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分类汇总求和</span></span><br><span class="line"><span class="built_in">Map</span>&lt;Dish.<span class="keyword">Type</span>, Long&gt; typesCount =</span><br><span class="line">        menu.stream().collect(</span><br><span class="line">                Collectors.groupingBy(Dish<span class="type">::getType</span>,Collectors.counting()));</span><br><span class="line"></span><br><span class="line"><span class="comment">//分类汇总取最大值</span></span><br><span class="line"><span class="built_in">Map</span>&lt;Dish.<span class="keyword">Type</span>, Optional&lt;Dish&gt;&gt; mostCaloricByType =</span><br><span class="line">        menu.stream().collect(</span><br><span class="line">                Collectors.groupingBy(Dish<span class="type">::getType</span>,Collectors.maxBy(Comparator.comparing(Dish<span class="type">::getCalories</span>))));</span><br><span class="line"></span><br><span class="line"><span class="comment">//收集后转换类型</span></span><br><span class="line"><span class="built_in">Map</span>&lt;Dish.<span class="keyword">Type</span>, Dish&gt; mostCaloricByType1 =</span><br><span class="line">        menu.stream().collect(</span><br><span class="line">                Collectors.groupingBy(Dish<span class="type">::getType</span>,Collectors.collectingAndThen(</span><br><span class="line">                        Collectors.maxBy(Comparator.comparing(Dish<span class="type">::getCalories</span>)),Optional<span class="type">::get</span>)));</span><br><span class="line">mostCaloricByType1.forEach((k,v) -&gt; System.out.println(k + <span class="string">"-&gt;"</span> + v));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;原始流先根据分类函数分为多个子流，每个子流再由第二个收集器进行处理，归约收集器返回取得的最大值Optional<dish>，collectingAndThen收集器返回从Optional<dish>提取的值，最后第二级收集器的结果成为分组映射的值。</dish></dish></p>
+<h3 id="8-4-分区"><a href="#8-4-分区" class="headerlink" title="8.4 分区"></a><strong>8.4 分区</strong></h3><p>&emsp;&emsp;分区是分组的特殊情况，<strong>由一个谓词作为分类函数</strong>，即分区函数。分区函数返回一个布尔值，意味着得到的分组Map的键值为Boolean，所以只能分为两组。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;Dish&gt;&gt; partitionedMenu = menu.stream().collect(Collectors.partitioningBy(Dish<span class="type">::isVegetarian</span>));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;分区也可以像分组那样多级组合，可以看作是特殊的使用谓词来做分组函数的分组。</p>
+<h3 id="8-5-收集器接口"><a href="#8-5-收集器接口" class="headerlink" title="8.5 收集器接口"></a><strong>8.5 收集器接口</strong></h3><p>&emsp;&emsp;Collector接口为实现具体的归约操作（收集器）提供了范本，</p>
+<blockquote>
+<ul>
+<li>T是流中要收集的项目的泛型。</li>
+<li>A是累加器的类型，累加器在收集过程中用于累积部分结果的对象。</li>
+<li>R是收集操作得到的对象类型。</li>
+</ul>
+</blockquote>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">public interface Collector<span class="params">&lt;T, A, R&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//创建并返回新的可变结果容器的函数</span></span><br><span class="line">    Supplier<span class="params">&lt;A&gt;</span> supplier();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将值折叠到可变结果容器中的函数</span></span><br><span class="line">    BiConsumer<span class="params">&lt;A, T&gt;</span> accumulator();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//接受两个部分结果并将其合并的函数。</span></span><br><span class="line">    <span class="comment">//组合器函数可以将状态从一个参数折叠到另一个参数并返回该参数，或者返回一个新的结果容器。</span></span><br><span class="line">    BinaryOperator<span class="params">&lt;A&gt;</span> combiner();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//执行从中间累积类型A到最终结果类型R的最终转换</span></span><br><span class="line">    Function<span class="params">&lt;A, R&gt;</span> finisher();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回Collector.Characteristics的Set，指示此收集器的特征。这个集合应该是不可变的。</span></span><br><span class="line">    Set<span class="params">&lt;Characteristics&gt;</span> characteristics();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回由给定的supplier、accumulator和combiner函数描述的新Collector。生成的Collector具有Collector.Characteristics.IDENTITY_FINISH特征。</span></span><br><span class="line">    public static<span class="params">&lt;T, R&gt;</span> Collector<span class="params">&lt;T, R, R&gt;</span> of(Supplier<span class="params">&lt;R&gt;</span> supplier,</span><br><span class="line">                                              BiConsumer<span class="params">&lt;R, T&gt;</span> accumulator,</span><br><span class="line">                                              BinaryOperator<span class="params">&lt;R&gt;</span> combiner,</span><br><span class="line">                                              Characteristics... characteristics) &#123;</span><br><span class="line">        Objects.requireNonNull(supplier);</span><br><span class="line">        Objects.requireNonNull(accumulator);</span><br><span class="line">        Objects.requireNonNull(combiner);</span><br><span class="line">        Objects.requireNonNull(characteristics);</span><br><span class="line">        Set<span class="params">&lt;Characteristics&gt;</span> cs = (characteristics.length == <span class="number">0</span>)</span><br><span class="line">                                  ? Collectors.CH_ID</span><br><span class="line">                                  : Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.IDENTITY_FINISH,</span><br><span class="line">                                                                           characteristics));</span><br><span class="line">        return new Collectors.CollectorImpl<span class="params">&lt;&gt;</span>(supplier, accumulator, combiner, cs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//返回由给定的supplier、accumulator、combiner和finisher函数描述的新Collector。</span></span><br><span class="line">    public static<span class="params">&lt;T, A, R&gt;</span> Collector<span class="params">&lt;T, A, R&gt;</span> of(Supplier<span class="params">&lt;A&gt;</span> supplier,</span><br><span class="line">                                                 BiConsumer<span class="params">&lt;A, T&gt;</span> accumulator,</span><br><span class="line">                                                 BinaryOperator<span class="params">&lt;A&gt;</span> combiner,</span><br><span class="line">                                                 Function<span class="params">&lt;A, R&gt;</span> finisher,</span><br><span class="line">                                                 Characteristics... characteristics) &#123;</span><br><span class="line">        Objects.requireNonNull(supplier);</span><br><span class="line">        Objects.requireNonNull(accumulator);</span><br><span class="line">        Objects.requireNonNull(combiner);</span><br><span class="line">        Objects.requireNonNull(finisher);</span><br><span class="line">        Objects.requireNonNull(characteristics);</span><br><span class="line">        Set<span class="params">&lt;Characteristics&gt;</span> cs = Collectors.CH_NOID;</span><br><span class="line">        if (characteristics.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            cs = EnumSet.noneOf(Characteristics.class);</span><br><span class="line">            Collections.addAll(cs, characteristics);</span><br><span class="line">            cs = Collections.unmodifiableSet(cs);</span><br><span class="line">        &#125;</span><br><span class="line">        return new Collectors.CollectorImpl<span class="params">&lt;&gt;</span>(supplier, accumulator, combiner, finisher, cs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//表示Collector属性的特性，可用于优化缩减实现。</span></span><br><span class="line">    enum <span class="class">Characteristics </span>&#123;</span><br><span class="line">        <span class="comment">//指示此收集器是并发的，这意味着结果容器可以支持与来自多个线程的同一结果容器同时调用的累加器函数。</span></span><br><span class="line">        <span class="comment">//如果CONCURRENT收集器也不是UNORDERED，则仅当应用于无序数据源时，才应并发计算该收集器。</span></span><br><span class="line">        CONCURRENT,</span><br><span class="line"></span><br><span class="line">        <span class="comment">//指示集合操作不承诺保留输入元素的相遇顺序。（如果结果容器没有内在顺序，例如Set，则可能是这样的。）</span></span><br><span class="line">        UNORDERED,</span><br><span class="line"></span><br><span class="line">        <span class="comment">//表示分页装订器函数是标识函数，可以省略。如果设置了，则从A到R的未检查强制转换必须成功。</span></span><br><span class="line">        IDENTITY_FINISH</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="8-5-1-supplier"><a href="#8-5-1-supplier" class="headerlink" title="8.5.1 supplier"></a><strong>8.5.1 supplier</strong></h4><p>&emsp;&emsp;supplier方法返回一个结果为空的Supplier<a>，也就是一个无参数函数，被调用时会创建一个空的累加器实例，供数据收集过程使用。对于把累加器本身作为结果返回的收集器（如toList），在对空流操作时，这个空的累加器也代表着收集过程的结果。</a></p>
+<h4 id="8-5-2-accumulator"><a href="#8-5-2-accumulator" class="headerlink" title="8.5.2 accumulator"></a><strong>8.5.2 accumulator</strong></h4><p>&emsp;&emsp;accumulator方法会返回执行归约操作的函数。当遍历到流的第n个元素时，此函数执行时会有两个参数：保存归约结果的累加器，和第n个元素。此函数会返回void，因为累加器是原位更新，即函数的执行改变了它的内部状态</p>
+<h4 id="8-5-3-finisher"><a href="#8-5-3-finisher" class="headerlink" title="8.5.3 finisher"></a><strong>8.5.3 finisher</strong></h4><p>&emsp;&emsp;在遍历完流后，finisher方法返回在累积过程的最后要调用的一个函数，以便将累加器对象转换为整个集合操作的最终结果。</p>
+<p>&emsp;&emsp;这三个方法已足够对流进行顺序归约。</p>
+<h4 id="8-5-4-combiner"><a href="#8-5-4-combiner" class="headerlink" title="8.5.4 combiner"></a><strong>8.5.4 combiner</strong></h4><p>&emsp;&emsp;combiner方法会返回一个供归约操作使用的函数，它定义了对流的各个子部分进行并行处理时，各个子部分归约所得到的累加器要如何进行合并。</p>
+<p>&emsp;&emsp;有了此方法就可以对流进行并行归约了，过程要用到分支/合并框架和Spliterator抽象。</p>
+<blockquote>
+<ul>
+<li>原始流会以递归的方式拆分为子流，直到定义流是否需要进一步拆分的一个条件为非。</li>
+<li>所以子流都可以并行处理，每个子流都可以进行顺序归约算法。</li>
+<li>使用收集器combiner返回的函数，将所有部分结果两两合并。</li>
+</ul>
+</blockquote>
+<h4 id="8-5-5-characteristics"><a href="#8-5-5-characteristics" class="headerlink" title="8.5.5 characteristics"></a><strong>8.5.5 characteristics</strong></h4><p>&emsp;&emsp;characteristics会返回一个不可变的Characteristics集合，它定义了收集器的行为——尤其是关于流是否可以进行并行归约，以及可以使用哪些优化的提示。</p>
+<blockquote>
+<p>枚举类Characteristics包含三个项目</p>
+<ul>
+<li>UNORDERED：归约结果不受流中项目的遍历和累积顺序的影响。</li>
+<li>CONCURRENT：accumulator函数可以从多个线程同时调用，且该收集器可以进行并行归约流。如果收集器没有标注UNORDERED，则仅当应用于无序数据源时才应并发归约。</li>
+<li>IDENTITY_FINISH：表明完成器方法返回的函数是一个恒等函数，可以跳过。这种情况下，累加器对象会直接用作归约过程的最终结果。也意味着将累加器A不加检查的转换为结果R是安全的。</li>
+</ul>
+</blockquote>
+<h4 id="8-5-6-融合实现ToListCollector"><a href="#8-5-6-融合实现ToListCollector" class="headerlink" title="8.5.6 融合实现ToListCollector"></a><strong>8.5.6 融合实现ToListCollector</strong></h4><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">ToListCollector</span>&lt;T&gt; <span class="title">implements</span> <span class="title">Collector</span>&lt;T, <span class="title">List</span>&lt;T&gt;, <span class="title">List</span>&lt;T&gt;&gt; &#123;</span></span><br><span class="line">    @Override</span><br><span class="line">    public Supplier&lt;List&lt;T<span class="meta">&gt;&gt; </span>supplier() &#123;<span class="regexp">//</span>创建集合操作的起始点</span><br><span class="line">        <span class="keyword">return</span> ArrayList::new;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public BiConsumer&lt;List&lt;T&gt;, T&gt; accumulator() &#123;<span class="regexp">//</span>累积遍历过的项目，原位修改累加器</span><br><span class="line">        <span class="keyword">return</span> List::add;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Function&lt;List&lt;T&gt;, List&lt;T<span class="meta">&gt;&gt; </span>finisher() &#123;<span class="regexp">//</span>恒等函数</span><br><span class="line">        <span class="keyword">return</span> Function.identity();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public BinaryOperator&lt;List&lt;T<span class="meta">&gt;&gt; </span>combiner() &#123;<span class="regexp">//</span>修改第一个累加器，将其和第二个累加器内容合并</span><br><span class="line">        <span class="keyword">return</span> (list1, list2) -&gt; &#123;</span><br><span class="line">            list1.addAll(list2);</span><br><span class="line">            <span class="keyword">return</span> list1;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Set&lt;Characteristics&gt; characteristics() &#123;<span class="regexp">//</span>累加器不是UNORDERED的，因为我们想保留顺序</span><br><span class="line">        <span class="keyword">return</span> Collections.unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH,Characteristics.CONCURRENT));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们实现的这个收集器和Collectors.toList()区别只是在一些优化上。collect()有一个三参数的重载方法(supplier,accumulator,combiner)，</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">List</span>&lt;Dish&gt; dishes = menu.stream().collect(Collectors.toList());</span><br><span class="line"><span class="comment">//toList是一个工厂方法由单例生成，ToListCollector则需要实例化</span></span><br><span class="line"><span class="built_in">List</span>&lt;Dish&gt; dishes1 = menu.stream().collect(<span class="literal">new</span> ToListCollector&lt;&gt;());</span><br><span class="line"><span class="comment">//简单但不易读，且收集器永远是IDENTITY_FINISH+CONCURRENT且非UNORDERED的</span></span><br><span class="line"><span class="built_in">List</span>&lt;Dish&gt; dishes2 = menu.stream().collect(ArrayList<span class="type">::new</span>, <span class="built_in">List</span><span class="type">::add</span>,<span class="built_in">List</span><span class="type">::addAll</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="8-6-实现收集器"><a href="#8-6-实现收集器" class="headerlink" title="8.6 实现收集器"></a><strong>8.6 实现收集器</strong></h3><p>&emsp;&emsp;</p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Map&lt;<span class="keyword">Boolean</span>, <span class="keyword">List</span>&lt;Integer&gt;&gt; primes = partitionPrimes(<span class="number">5</span>);</span><br><span class="line">primes.<span class="keyword">forEach</span>((k,v) -&gt; System.out.println(k + <span class="string">"-&gt;"</span> + v));</span><br><span class="line"><span class="comment">//false-&gt;[4]</span></span><br><span class="line"><span class="comment">//true-&gt;[2, 3, 5]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;<span class="keyword">Boolean</span>, <span class="keyword">List</span>&lt;Integer&gt;&gt; partitionPrimes(<span class="keyword">int</span> n)&#123;</span><br><span class="line">    <span class="keyword">return</span> IntStream.rangeClosed(<span class="number">2</span>, n).boxed().collect(Collectors.partitioningBy(candidate -&gt; isPrime(candidate)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> isPrime(<span class="keyword">int</span> candidate)&#123;</span><br><span class="line">    <span class="keyword">int</span> candidateRoot = (<span class="keyword">int</span>) Math.sqrt((<span class="keyword">double</span>) candidate);</span><br><span class="line">    <span class="keyword">return</span> IntStream.rangeClosed(<span class="number">2</span>, candidateRoot).noneMatch(i -&gt; candidate % i == <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;若除数本身不是质数则无需测试，只需要用被测试数之前的质数来测试，但我们所使用的收集器在收集过程无法访问部分结果，也就是我们无法访问已经找到的质数列表。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isPrime</span><span class="params">(List&lt;Integer&gt; primes, <span class="keyword">int</span> candidate)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> primes.stream().noneMatch(i -&gt; candidate % i == <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们需要筛选已找到的质数中小于被测数的，通过filter只能对整个流进行筛选，如果流很大会造成问题，我们只要在质数大于被测数平方根的时候停下就行了。因此实现如下takeWhile方法。</p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> isPrime(<span class="keyword">List</span>&lt;Integer&gt; primes, <span class="keyword">int</span> candidate)&#123;</span><br><span class="line">    <span class="keyword">int</span> candidateRoot = (<span class="keyword">int</span>) Math.sqrt((<span class="keyword">double</span>) candidate);</span><br><span class="line">    <span class="keyword">return</span> takeWhile(primes, i -&gt; i &lt;= candidateRoot).stream().noneMatch(i -&gt; candidate % i == <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;A&gt; <span class="keyword">List</span>&lt;A&gt; takeWhile(<span class="keyword">List</span>&lt;A&gt; <span class="keyword">list</span>, Predicate&lt;A&gt; p)&#123;<span class="comment">//给定一个排序集合和一个谓词，返回元素满足谓词的最长前缀</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(A item : <span class="keyword">list</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(!p.test(item))&#123;<span class="comment">//检查列表中的当前项目是否符合谓词</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">list</span>.subList(<span class="number">0</span>, i);<span class="comment">//不满足就返回该项目之前的前缀子列表</span></span><br><span class="line">        &#125;</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">list</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;takeWhile方法是及时的，但我们需要一个延迟求值的方法来与noneMatch合并，需要熟悉Stream API的实现原理才可以实现。有了算法我们可以手动实现一个收集器了，代码如下。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class PrimeNumbersCollector implements Collector&lt;<span class="built_in">Integer</span>,</span><br><span class="line">                                                        <span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;,</span><br><span class="line">                                                        <span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;&gt; &#123;</span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> Supplier&lt;<span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;&gt; supplier() &#123;</span><br><span class="line">        <span class="comment">//创建了作为累加器的map，并为true和false键初始化了空列表。</span></span><br><span class="line">        <span class="keyword">return</span> () -&gt; <span class="literal">new</span> HashMap&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;()&#123;</span><br><span class="line">            &#123;</span><br><span class="line">                put(<span class="literal">true</span>,<span class="literal">new</span> ArrayList&lt;&gt;());</span><br><span class="line">                put(<span class="literal">false</span>,<span class="literal">new</span> ArrayList&lt;&gt;());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> BiConsumer&lt;<span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;, <span class="built_in">Integer</span>&gt; accumulator() &#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt; acc, <span class="built_in">Integer</span> candidate) -&gt; &#123;</span><br><span class="line">            acc.get(isPrime(acc.get(<span class="literal">true</span>),candidate)) <span class="comment">//根据isPrime结果获取质数或非质数列表</span></span><br><span class="line">                    .add(candidate); <span class="comment">//将被测数添加到相应列表</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> BinaryOperator&lt;<span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;&gt; combiner() &#123;</span><br><span class="line">        <span class="comment">//此收集器是无法并行运算的，因为算法本身是顺序的，所以当前combiner()无法被调用</span></span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt; map1, <span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt; map2) -&gt; &#123;</span><br><span class="line">            map1.get(<span class="literal">true</span>).addAll(map2.get(<span class="literal">true</span>));</span><br><span class="line">            map1.get(<span class="literal">false</span>).addAll(map2.get(<span class="literal">false</span>));</span><br><span class="line">            <span class="keyword">return</span> map1;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> Function&lt;<span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;, <span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt;&gt; finisher() &#123;</span><br><span class="line">        <span class="keyword">return</span> Function.identity();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">Set</span>&lt;Characteristics&gt; characteristics() &#123;</span><br><span class="line">        <span class="keyword">return</span> Collections.unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断是否为质数</span></span><br><span class="line"><span class="comment">     * @param primes 已有质数列表</span></span><br><span class="line"><span class="comment">     * @param candidate 当前被测数</span></span><br><span class="line"><span class="comment">     * @return 结果</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">boolean</span> isPrime(<span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt; primes, int candidate)&#123;</span><br><span class="line">        int candidateRoot = (int) Math.sqrt((double) candidate);</span><br><span class="line">        <span class="keyword">return</span> takeWhile(primes, i -&gt; i &lt;= candidateRoot).stream().noneMatch(i -&gt; candidate % i == <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查找符合谓词的元素集合</span></span><br><span class="line"><span class="comment">     * @param list 元素列表</span></span><br><span class="line"><span class="comment">     * @param p 谓词</span></span><br><span class="line"><span class="comment">     * @return 符合元素集合</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> &lt;A&gt; <span class="built_in">List</span>&lt;A&gt; takeWhile(<span class="built_in">List</span>&lt;A&gt; <span class="built_in">list</span>, Predicate&lt;A&gt; p)&#123;</span><br><span class="line">        int i = <span class="number">0</span>;</span><br><span class="line">        for(A item : <span class="built_in">list</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(!p.test(item))&#123;<span class="comment">//检查列表中的当前项目是否符合谓词</span></span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">list</span>.subList(<span class="number">0</span>, i);<span class="comment">//不满足就返回该项目之前的前缀子列表</span></span><br><span class="line">            &#125;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">list</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> static <span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt; partitionPrimesWithPrimeNumbersCollector(int n)&#123;</span><br><span class="line">        <span class="keyword">return</span> IntStream.rangeClosed(<span class="number">2</span>, n).boxed().collect(<span class="literal">new</span> PrimeNumbersCollector());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Map</span>&lt;<span class="built_in">Boolean</span>, <span class="built_in">List</span>&lt;<span class="built_in">Integer</span>&gt;&gt; primes1 = partitionPrimesWithPrimeNumbersCollector(<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;可以写一些测试代码对比一下性能提升比例，本机测试如下，大概提升了30%性能。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Fastest execution <span class="keyword">done</span> <span class="keyword">in</span> 626 msecs</span><br><span class="line">Fastest execution <span class="keyword">done</span> <span class="keyword">in</span> 445 msecs</span><br></pre></td></tr></table></figure>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java8实战》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/stream/" rel="tag"># stream</a>
+          
+            <a href="/tags/collector/" rel="tag"># collector</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019092301.html" rel="next" title="流（二）使用和构建">
+                <i class="fa fa-chevron-left"></i> 流（二）使用和构建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019092501.html" rel="prev" title="流（四）并行化处理">
+                流（四）并行化处理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">137</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#流（三）收集器"><span class="nav-number">1.</span> <span class="nav-text">流（三）收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第八节-用流收集数据"><span class="nav-number">1.1.</span> <span class="nav-text">第八节 用流收集数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-收集器"><span class="nav-number">1.1.1.</span> <span class="nav-text">8.1 收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-归约和汇总"><span class="nav-number">1.1.2.</span> <span class="nav-text">8.2 归约和汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#collect和reduce的区别"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">collect和reduce的区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-分组"><span class="nav-number">1.1.3.</span> <span class="nav-text">8.3 分组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-分区"><span class="nav-number">1.1.4.</span> <span class="nav-text">8.4 分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-5-收集器接口"><span class="nav-number">1.1.5.</span> <span class="nav-text">8.5 收集器接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#8-5-1-supplier"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">8.5.1 supplier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-5-2-accumulator"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">8.5.2 accumulator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-5-3-finisher"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">8.5.3 finisher</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-5-4-combiner"><span class="nav-number">1.1.5.4.</span> <span class="nav-text">8.5.4 combiner</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-5-5-characteristics"><span class="nav-number">1.1.5.5.</span> <span class="nav-text">8.5.5 characteristics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-5-6-融合实现ToListCollector"><span class="nav-number">1.1.5.6.</span> <span class="nav-text">8.5.6 融合实现ToListCollector</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-6-实现收集器"><span class="nav-number">1.1.6.</span> <span class="nav-text">8.6 实现收集器</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
