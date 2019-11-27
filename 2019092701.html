@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java,unfinished," />
+  <meta name="keywords" content="java,optional," />
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="介绍">
-<meta name="keywords" content="java,unfinished">
+<meta name="description" content="介绍Java 8中加入的Optional，内容包括：引文，如何为缺失的值建模（Java中的null、其他语言中null的替代品），Optional类，Optional应用（创建Optional对象、使用map从Optional对象中提取和转换值、使用flatMap链接Optional对象、默认行为及解引用Optional对象、两个Optional对象的组合、使用filter剔除特定的值、总结），O">
+<meta name="keywords" content="java,optional">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Optional（未完成）">
+<meta property="og:title" content="Optional">
 <meta property="og:url" content="http://linyishui.top/2019092701.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="介绍">
+<meta property="og:description" content="介绍Java 8中加入的Optional，内容包括：引文，如何为缺失的值建模（Java中的null、其他语言中null的替代品），Optional类，Optional应用（创建Optional对象、使用map从Optional对象中提取和转换值、使用flatMap链接Optional对象、默认行为及解引用Optional对象、两个Optional对象的组合、使用filter剔除特定的值、总结），O">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-26T07:36:32.897Z">
+<meta property="og:updated_time" content="2019-11-27T03:24:48.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Optional（未完成）">
-<meta name="twitter:description" content="介绍">
+<meta name="twitter:title" content="Optional">
+<meta name="twitter:description" content="介绍Java 8中加入的Optional，内容包括：引文，如何为缺失的值建模（Java中的null、其他语言中null的替代品），Optional类，Optional应用（创建Optional对象、使用map从Optional对象中提取和转换值、使用flatMap链接Optional对象、默认行为及解引用Optional对象、两个Optional对象的组合、使用filter剔除特定的值、总结），O">
 
 
 
@@ -135,7 +135,7 @@
 
 
 
-  <title>Optional（未完成） | 沂水博客</title>
+  <title>Optional | 沂水博客</title>
   
 
 
@@ -289,7 +289,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Optional（未完成）</h1>
+          <h1 class="post-title" itemprop="name headline">Optional</h1>
         
 
         <div class="post-meta">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  216
+                  3,823
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  15
                 </span>
               
             </div>
@@ -380,7 +380,7 @@
 
           
               <div class="post-description">
-                  介绍
+                  介绍Java 8中加入的Optional，内容包括：引文，如何为缺失的值建模（Java中的null、其他语言中null的替代品），Optional类，Optional应用（创建Optional对象、使用map从Optional对象中提取和转换值、使用flatMap链接Optional对象、默认行为及解引用Optional对象、两个Optional对象的组合、使用filter剔除特定的值、总结），Optional实战（用Optional封装可能为null的值、异常与Optional的对比、基础类型的Optional）等。
               </div>
           
 
@@ -397,7 +397,8 @@
       
 
       
-        <h1 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a><strong>Optional</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><p>&emsp;&emsp;函数式语言会通过更多的描述性数据类型来避免null，Java 8提供了Optional<t>类，使用它可以有效的避免NullPointerException。</t></p>
+        <h1 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a><strong>Optional</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><p>&emsp;&emsp;对于Java编程来说，NullPointerException——空指针异常可以说是最经常遇到的异常了，这是引入null引用的代价，最初只是因为对“不存在的值”进行建模时这样实现起来非常容易，但后果就是使程序员需要对对象的字段进行检查，判断它的值是否为所期望，但结果却指向了一个空指针，并立即抛出了NullPointerException。如Java这些语言采用空引用的设计最初只是为了和老的语言保持兼容，但为此却付出了很多的代价。</p>
+<p>&emsp;&emsp;函数式语言会通过更多的描述性数据类型来避免null，Java 8提供了Optional<t>类，使用它可以有效的避免NullPointerException。</t></p>
 <p>&emsp;&emsp;Optional<t>类是一个容器类，可以包含也可以不包含值，代表一个值存在或不存在，其方法可以明确地处理值不存在的情况。</t></p>
 <blockquote>
 <ul>
@@ -407,7 +408,128 @@
 <li>T orElse() 在值存在时返回值，否则返回一个默认值。</li>
 </ul>
 </blockquote>
-<p>&emsp;&emsp;未完待续！！！第10章</p>
+<hr>
+<h2 id="第二节-如何为缺失的值建模"><a href="#第二节-如何为缺失的值建模" class="headerlink" title="第二节 如何为缺失的值建模"></a><strong>第二节 如何为缺失的值建模</strong></h2><h3 id="Java中的null"><a href="#Java中的null" class="headerlink" title="Java中的null"></a><strong>Java中的null</strong></h3><p>&emsp;&emsp;如下述代码便会抛出NullPointerException，导致程序的终止。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span> Car car;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Car <span class="title">getCar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> car;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span> Insurance insurance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Insurance <span class="title">getInsurance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> insurance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Insurance</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        getCarInsuranceName(<span class="keyword">new</span> Person());<span class="comment">//Exception in thread "main" java.lang.NullPointerException</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getCarInsuranceName</span><span class="params">(Person person)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> person.getCar().getInsurance().getName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;为了避免空指针异常，通常我们要在需要的地方添加null的检查，如下述情况，是一种深层质疑的防御式检查。但很明显这种方式不具有扩展性，也牺牲了代码的可读性。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function">String <span class="title">getCarInsuranceName</span><span class="params">(Person person)</span></span>&#123;<span class="comment">//防御式检查减少NullPointerException</span></span><br><span class="line">    <span class="keyword">if</span>(person != <span class="keyword">null</span>)&#123;</span><br><span class="line">        Car car = person.getCar();</span><br><span class="line">        <span class="keyword">if</span>(car != <span class="keyword">null</span>)&#123;</span><br><span class="line">            Insurance insurance = car.getInsurance();</span><br><span class="line">            <span class="keyword">if</span>(insurance != <span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="function"><span class="keyword">return</span> insurance.<span class="title">getName</span><span class="params">()</span></span>;<span class="comment">//业务上设定公司必然有名字，所以可以避免了这一层检查，但不会直接反映在建模中</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Unknown"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们可以换一种尝试，避免深层递归的if语句块，而是每次遭遇null就返回字符串常量”Unknown”。这种方式使代码极难维护，且容易出现错误。</p>
+<blockquote>
+<p>null导致的问题？</p>
+<ul>
+<li><strong>错误之源</strong>：导致的NullPointerException是Java开发中最典型的异常。</li>
+<li><strong>代码膨胀</strong>：使代码充斥着深度嵌套的null检查，代码的可读性糟糕透顶。</li>
+<li><strong>毫无意义</strong>：null本身没有任何语义，它代表的是在静态类型语言中以一种错误的方式对缺失变量值得建模。</li>
+<li><strong>破坏哲学</strong>：Java一直试图让程序员忽略指针的存在，但null指针是例外。</li>
+<li><strong>留下漏洞</strong>：null不属于任何类型，可以被赋值给任意引用类型的变量，导致当这个变量被传递给系统的另一个部分后，无从获知这个null变量最初的赋值是何类型。</li>
+</ul>
+</blockquote>
+<h3 id="其他语言中null的替代品"><a href="#其他语言中null的替代品" class="headerlink" title="其他语言中null的替代品"></a><strong>其他语言中null的替代品</strong></h3><p>&emsp;&emsp;稍微新一些的语言如Groovy，通过引入<strong>安全导航操作符</strong>（Safe Navigation Operator，?）可以安全的访问可能为null的变量。如下述代码，person对象可能没有car对象，但安全导航操作符可以避免抛出空指针异常，而是在遭遇null时将null引用沿着调用链传递下去，返回一个null。</p>
+<figure class="highlight flix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">carInsuranceName</span> </span>= person?.car?.insurance?.name</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们遇到空指针异常时会自然的用if判断来规避异常，但这只是暂时的掩盖了问题，且使得以后的调查和修复变得更加困难。而安全导航操作符也只是一个更强大的扫把，让我们毫无顾虑的犯错。</p>
+<p>&emsp;&emsp;另外一些语言如Haskell、Scala试图从另外一个角度来处理这个问题。Haskell中包含了一个Maybe类型，本质上是对optional值得封装。Maybe类型的变量可以是指定类型的值，也可以什么都不是，但没有null引用的概念。Scala类似的结构是Option[T]，必须显式的调用Option类型的available操作，检查该变量是否有值，但其实也是一种变相的“null检查”。</p>
+<p>&emsp;&emsp;Java 8则从这些中吸取了灵感，引入了Optional<t>的新类。</t></p>
+<hr>
+<h2 id="第三节-Optional类"><a href="#第三节-Optional类" class="headerlink" title="第三节 Optional类"></a><strong>第三节 Optional类</strong></h2><p>&emsp;&emsp;当变量存在时，Optional只是对类简单封装。变量不存在时，缺失的值会被建模成一个空的Optional对象，由Optional.empty()返回。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Optional</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Common instance for &#123;<span class="doctag">@code</span> empty()&#125;.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Optional<span class="meta">&lt;?</span>&gt; <span class="keyword">EMPTY</span> = <span class="keyword">new</span> Optional&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Optional() &#123;</span><br><span class="line">        this.value = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span>&lt;T&gt; Optional&lt;T&gt; <span class="keyword">empty</span>() &#123;</span><br><span class="line">        @SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">        Optional&lt;T&gt; t = (Optional&lt;T&gt;) <span class="keyword">EMPTY</span>;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;null引用和Optional.empty()有什么区别呢？如果尝试引用一个null则会导致空指针异常，但后者则可以，它是Optional类的一个有效对象，多种场景都可以调用。使用Optional就可以不用再通过理解业务模型来决定null是否属于一个变量的有效范畴。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Person</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Optional&lt;Car&gt; car;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Optional&lt;Car&gt; <span class="title">getCar</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> car;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Car</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Optional&lt;Insurance&gt; insurance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Optional&lt;Insurance&gt; <span class="title">getInsurance</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> insurance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Insurance</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;<span class="comment">//保险公司必须有名字</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;所以我们只要声明为Optional，表示此变量是允许缺失的，而未声明的也无需再用if判断来规避空指针异常，这样只会掩盖错误。始终如一的采用Optional可以非常清晰的界定出变量值的缺失是结构上的问题，还是算法上的缺陷，又或是数据中的问题。引入Optional并非是要消除null引用，而是帮助我们更好的设计出普适的API。</p>
+<hr>
+<h2 id="第四节-Optional应用"><a href="#第四节-Optional应用" class="headerlink" title="第四节 Optional应用"></a><strong>第四节 Optional应用</strong></h2><h3 id="创建Optional对象"><a href="#创建Optional对象" class="headerlink" title="创建Optional对象"></a><strong>创建Optional对象</strong></h3><p>&emsp;&emsp;声明</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//声明一个空的<span class="keyword">Optional</span>对象</span><br><span class="line"><span class="keyword">Optional</span>&lt;Car&gt; optCar1 = <span class="keyword">Optional</span>.empty();</span><br><span class="line"></span><br><span class="line">//通过一个非空的值来创建<span class="keyword">Optional</span>对象</span><br><span class="line"><span class="keyword">Optional</span>&lt;Car&gt; optCar2 = <span class="keyword">Optional</span>.of(new Car());</span><br><span class="line"></span><br><span class="line">//创建一个允许null值的<span class="keyword">Optional</span>对象</span><br><span class="line"><span class="keyword">Optional</span>&lt;Car&gt; optCar3 = <span class="keyword">Optional</span>.ofNullable(null);</span><br></pre></td></tr></table></figure>
+<h3 id="使用map从Optional对象中提取和转换值"><a href="#使用map从Optional对象中提取和转换值" class="headerlink" title="使用map从Optional对象中提取和转换值"></a><strong>使用map从Optional对象中提取和转换值</strong></h3><p>&emsp;&emsp;Optional的map方法类似于流的map方法，将所提供的函数操作应用于流的每个元素，这里可以把Optional看作特殊的集合，至多只有一个元素，如果包含值就把值作为参数传递给map，然后对值进行转换；如果值为空，就什么也不做。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//传统方法</span></span><br><span class="line"><span class="keyword">String</span> name = <span class="built_in">null</span>;</span><br><span class="line"><span class="keyword">if</span>(insurance != <span class="built_in">null</span>)&#123;</span><br><span class="line">    name = insurance.<span class="built_in">getName</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Optional</span></span><br><span class="line">Optional&lt;Insurance&gt; optInsurance = Optional.ofNullable(insurance);</span><br><span class="line">Optional&lt;<span class="keyword">String</span>&gt; name = optInsurance.map(Insurance::<span class="built_in">getName</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="使用flatMap链接Optional对象"><a href="#使用flatMap链接Optional对象" class="headerlink" title="使用flatMap链接Optional对象"></a><strong>使用flatMap链接Optional对象</strong></h3><p>&emsp;&emsp;如果我们想用Optional重构getCarInsuranceName方法，第一反应自然是用map方法重写，但改写后却无法通过编译。原因就是map方法返回的是Optional<t>类型的值，而getCar返回值是Optional<car>对应T，所以第一次map返回Optional&lt;Optional<car>&gt;，对其调用getInsurance自然是非法的。</car></car></t></p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//传统方法——未深度质疑</span></span><br><span class="line"><span class="keyword">public</span> static <span class="built_in">String</span> getCarInsuranceName(Person person)&#123;</span><br><span class="line">    <span class="keyword">return</span> person.getCar().getInsurance().getName();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//map重写</span></span><br><span class="line"><span class="keyword">public</span> static <span class="built_in">String</span> getCarInsuranceName(Person person)&#123;</span><br><span class="line">    Optional&lt;Person&gt; optPerson = Optional.of(person);</span><br><span class="line">    Optional&lt;<span class="built_in">String</span>&gt; name = optPerson.<span class="built_in">map</span>(Person<span class="type">::getCar</span>)</span><br><span class="line">                                     .<span class="built_in">map</span>(Car<span class="type">::getInsurance</span>)</span><br><span class="line">                                     .<span class="built_in">map</span>(Insurance<span class="type">::getName</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这个时候我们应该回忆起流的flatMap方法，接受一个函数参数，函数的返回值是另一个流，将函数作用在流的每个元素上，最终获得一个新的流的流。由方法生成的流会扁平化为一个流，我们现在想要的就是把两层Optional合并为一个。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//flatMap重写</span></span><br><span class="line"><span class="keyword">public</span> static <span class="built_in">String</span> getCarInsuranceName(Person person)&#123;</span><br><span class="line">    Optional&lt;Person&gt; optPerson = Optional.of(person);</span><br><span class="line">    <span class="keyword">return</span> optPerson.flatMap(Person<span class="type">::getCar</span>)</span><br><span class="line">                    .flatMap(Car<span class="type">::getInsurance</span>)</span><br><span class="line">                    .<span class="built_in">map</span>(Insurance<span class="type">::getName</span>)</span><br><span class="line">                    .orElse(<span class="string">"Unknown"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;optPerson是Optional封装的Person，调用flatMap(Person::getCar)后，第一步，某个Function作为参数被传递给optPerson，对其进行转换。所以Function是调用getCar方法，返回一个Optional<car>类型的对象，Optional<person>也会转换为Optional&lt;Optional<car>&gt;，最终被flatMap操作合并。orElse方法在Optional值为空时返回一个默认值。</car></person></car></p>
+<blockquote>
+<p>Optional无法序列化，因为设计者当时未考虑将其作为类的字段使用，仅仅是为了支持能返回Optional对象的语法，所以如果需要序列化时，类字段请不要包装Optional，提供一个能访问声明为Optional、变量值可能缺失的接口即可。</p>
+</blockquote>
+<h3 id="默认行为及解引用Optional对象"><a href="#默认行为及解引用Optional对象" class="headerlink" title="默认行为及解引用Optional对象"></a><strong>默认行为及解引用Optional对象</strong></h3><p>&emsp;&emsp;Optional类提供了多种方法读取Optional实例中的变量值。</p>
+<blockquote>
+<ul>
+<li>get()：变量存在，直接返回封装的变量值，否则抛出NoSuchElementException异常，相比null引用并未有多大改进。</li>
+<li>orElse(T other)：允许在Optional对象不包含值时提供一个默认值。</li>
+<li>orElseThrow(Supplier&lt;? extends X&gt; exceptionSupplier)：是orElse方法的延迟调用版，Supplier方法在Optional对象不包含值时执行调用。当创建默认值是一件耗时费力的工作时应该采用此方法（借此提高性能），或者需要某方法只有在Optional为空时才能调用。</li>
+<li>ifPresent(Consumer&lt;? super T&gt;)：在变量值存在时执行一个作为参数传入的方法，否则不做任何操作</li>
+</ul>
+</blockquote>
+<h3 id="两个Optional对象的组合"><a href="#两个Optional对象的组合" class="headerlink" title="两个Optional对象的组合"></a><strong>两个Optional对象的组合</strong></h3><p>&emsp;&emsp;findCheapestInsurance方法接受两个参数Person和Car，通过一系列复杂的业务逻辑，找出满足该组合的最便宜的保险公司。如果我们想要实现一个null安全的版本，可能会如nullSafeFindCheapestInsurance这样实现。从参数我们就可以得知person和car都可能为空，这种时候方法的返回值不会包含任何值。但这种实现和findCheapestInsurance并没有太多本质上的区别。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Insurance findCheapestInsurance(Person person, Car car)&#123;</span><br><span class="line">    Insurance cheapestCompany = <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">//不同的保险公司提供的查询服务</span></span><br><span class="line">    <span class="comment">//对比所有数据</span></span><br><span class="line">    <span class="keyword">return</span> cheapestCompany;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Optional&lt;Insurance&gt; nullSafeFindCheapestInsurance(Optional&lt;Person&gt; person, Optional&lt;Car&gt; car)&#123;</span><br><span class="line">    <span class="keyword">if</span>(person.isPresent() &amp;&amp; car.isPresent())&#123;</span><br><span class="line">        <span class="keyword">return</span> Optional.of(findCheapestInsurance(person.<span class="keyword">get</span>(),car.<span class="keyword">get</span>()))</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Optional.empty();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;可以通过如三元操作符那样无需任何条件判断的结构，用一行语句来实现方法，代码如下。首先对person调用flatMap，如果是空值则传递的Lambda表达式不会执行，所以此次调用会直接返回一个空的Optional对象。如果不是空值，则此次调用会传递Lambda表达式，执行转换，并最终返回一个Optional<insurance>对象。函数体中对第二个Optional对象car执行了map操作，若car为空值则返回一个空的Optional对象，所以整个nullSafeFindCheapestInsurance的最终返回值也是一个空的Optional对象。如果两个参数变量值都存在，那么作为参数传递给map方法的Lambda表达式能够使用这两个值安全的调用findCheapestInsurance。</insurance></p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">Optional</span>&lt;Insurance&gt; nullSafeFindCheapestInsurance(<span class="keyword">Optional</span>&lt;Person&gt; person, <span class="keyword">Optional</span>&lt;Car&gt; car)&#123;</span><br><span class="line">    <span class="keyword">return</span> person.flatMap(p -&gt; car.map(c -&gt; findCheapestInsurance(p,c)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用filter剔除特定的值"><a href="#使用filter剔除特定的值" class="headerlink" title="使用filter剔除特定的值"></a><strong>使用filter剔除特定的值</strong></h3><p>&emsp;&emsp;在对引用对象的一些属性进行操作时，每次都要事先对null引用进行判断。如下代码中判断保险公司名称，这种情况可以通过filter方法来改写。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//检查保险公司名称是否为XX，首先要判断引用是否为null</span></span><br><span class="line"><span class="keyword">if</span>(insurance != <span class="literal">null</span> &amp;&amp; <span class="string">"CambridgeInsurance"</span>.<span class="keyword">equals</span>(insurance.getName()))&#123;</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"OK"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//filter方法改写</span></span><br><span class="line">Optional&lt;Insurance&gt; optInsurance = Optional.ofNullable(insurance);</span><br><span class="line">optInsurance.filter(insurance1 -&gt; <span class="string">"CambridgeInsurance"</span>.<span class="keyword">equals</span>(insurance.getName())).ifPresent(x -&gt; System.<span class="keyword">out</span>.println(<span class="string">"OK"</span>));</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;filter方法接受一个谓词作为参数，如果Optional对象值存在，且符合谓词的条件，filter方法会返回其值。否则返回一个空的Optional对象。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><table>
+<thead>
+<tr>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">概述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">empty</td>
+<td style="text-align:left">返回一个空的Optional实例</td>
+</tr>
+<tr>
+<td style="text-align:left">filter</td>
+<td style="text-align:left">如果值存在且满足提供的谓词，就返回包含该值的Optional对象；否则返回一个空的Optional对象</td>
+</tr>
+<tr>
+<td style="text-align:left">flatMap</td>
+<td style="text-align:left">如果值存在，就对该值执行提供的mapping函数调用，返回一个Optional类型的值，否则返回一个空的Optional对象</td>
+</tr>
+<tr>
+<td style="text-align:left">get</td>
+<td style="text-align:left">如果值存在，就将被Optional封装的值返回，否则抛出一个NoSuchElementException异常</td>
+</tr>
+<tr>
+<td style="text-align:left">ifPresent</td>
+<td style="text-align:left">如果值存在，就执行使用该值的方法调用，否则什么也不做</td>
+</tr>
+<tr>
+<td style="text-align:left">isPresent</td>
+<td style="text-align:left">如果值存在，就返回true，否则返回false</td>
+</tr>
+<tr>
+<td style="text-align:left">map</td>
+<td style="text-align:left">如果值存在，就对该值执行提供的mapping函数调用</td>
+</tr>
+<tr>
+<td style="text-align:left">of</td>
+<td style="text-align:left">将指定值用Optional封装之后返回，如果该值为null，则抛出一个NoSuchElementException异常</td>
+</tr>
+<tr>
+<td style="text-align:left">ofNullable</td>
+<td style="text-align:left">将指定值用Optional封装之后返回，如果该值为null，则返回一个空的Optional对象</td>
+</tr>
+<tr>
+<td style="text-align:left">orElse</td>
+<td style="text-align:left">如果有值则将其返回，否则返回一个默认值</td>
+</tr>
+<tr>
+<td style="text-align:left">orElseGet</td>
+<td style="text-align:left">如果有值则将其返回，否则返回一个由指定的Supplier接口生成的值</td>
+</tr>
+<tr>
+<td style="text-align:left">orElseThrow</td>
+<td style="text-align:left">如果有值则将其返回，否则抛出一个由指定的Supplier接口生成的异常</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="第五节-Optional实战"><a href="#第五节-Optional实战" class="headerlink" title="第五节 Optional实战"></a><strong>第五节 Optional实战</strong></h2><p>&emsp;&emsp;有效的使用Optional意味着我们需要直面潜在缺失值的处理，为了保持后向兼容性，很难对老版本的Java API进行改动，使其也使用Optional，但可以通过一些工具方法来修复或绕过这些问题。</p>
+<h3 id="用Optional封装可能为null的值"><a href="#用Optional封装可能为null的值" class="headerlink" title="用Optional封装可能为null的值"></a><strong>用Optional封装可能为null的值</strong></h3><p>&emsp;&emsp;Java API几乎都会以返回一个null来表示需要值的缺失，所以可以通过Optional封装返回值的方式进行优化。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;<span class="keyword">String</span>,<span class="keyword">Object</span>&gt; <span class="built_in">map</span> = <span class="keyword">new</span> <span class="keyword">HashMap</span>&lt;&gt;();</span><br><span class="line"><span class="comment">//当映射不包含键对应的值会返回null</span></span><br><span class="line"><span class="keyword">Object</span> value = <span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"key"</span>);</span><br><span class="line"><span class="comment">//Optional改写</span></span><br><span class="line">Optional&lt;<span class="keyword">Object</span>&gt; optValue = Optional.ofNullable(<span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"key"</span>));</span><br></pre></td></tr></table></figure>
+<h3 id="异常与Optional的对比"><a href="#异常与Optional的对比" class="headerlink" title="异常与Optional的对比"></a><strong>异常与Optional的对比</strong></h3><p>&emsp;&emsp;Java API中，因为一些原因函数无法返回某个值，这种情况除了返回null，比较常见的替代做法是抛出一个异常。比如Integer.parseInt(String)，如果String无法解析到对应的整形，就会抛出一个NumberFormatException异常。所以我们就需要用try/catch语句来处理异常情况。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Optional&lt;Integer&gt; stringToInt(<span class="keyword">String</span> s)&#123;</span><br><span class="line">    <span class="built_in">try</span> &#123;</span><br><span class="line">        <span class="built_in">return</span> Optional.of(Integer.<span class="built_in">parseInt</span>(s));</span><br><span class="line">    &#125;<span class="built_in">catch</span> (NumberFormatException ex)&#123;</span><br><span class="line">        <span class="built_in">return</span> Optional.empty();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;我们可以通过上述代码进行改写，通过空的Optional对象来对无法返回的值进行建模。虽然无法修改最初的Java方法，但无碍我们进行这些改进。建议把类似需要改进的方法封装到一个工具类中，称作OptionalUtily。直接调用OptionalUtily.stringToInt方法就将String转换为Optional<integer>对象。</integer></p>
+<h3 id="基础类型的Optional"><a href="#基础类型的Optional" class="headerlink" title="基础类型的Optional"></a><strong>基础类型的Optional</strong></h3><p>&emsp;&emsp;Optional和流一样也提供了基础类版本——OptionalInt、OptionalDouble、OptionalLong，对于流来说基础类版本在适合的场景可以有效的提高性能，但对于Optional因为对象最多只包含一个值，所以并不会有性能上的差异。基础类型Optional不支持map、flatMap和filter方法这些最有用的方法。基础类型的Optional也不能组合构成新的Optional。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -445,7 +567,7 @@
           
             <a href="/tags/java/" rel="tag"># java</a>
           
-            <a href="/tags/unfinished/" rel="tag"># unfinished</a>
+            <a href="/tags/optional/" rel="tag"># optional</a>
           
         </div>
       
@@ -573,7 +695,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-count">68</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -641,7 +763,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">1.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 引文</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Optional"><span class="nav-number">1.</span> <span class="nav-text">Optional</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 引文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-如何为缺失的值建模"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 如何为缺失的值建模</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Java中的null"><span class="nav-number">1.2.1.</span> <span class="nav-text">Java中的null</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他语言中null的替代品"><span class="nav-number">1.2.2.</span> <span class="nav-text">其他语言中null的替代品</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-Optional类"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 Optional类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-Optional应用"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 Optional应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Optional对象"><span class="nav-number">1.4.1.</span> <span class="nav-text">创建Optional对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用map从Optional对象中提取和转换值"><span class="nav-number">1.4.2.</span> <span class="nav-text">使用map从Optional对象中提取和转换值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用flatMap链接Optional对象"><span class="nav-number">1.4.3.</span> <span class="nav-text">使用flatMap链接Optional对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#默认行为及解引用Optional对象"><span class="nav-number">1.4.4.</span> <span class="nav-text">默认行为及解引用Optional对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个Optional对象的组合"><span class="nav-number">1.4.5.</span> <span class="nav-text">两个Optional对象的组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用filter剔除特定的值"><span class="nav-number">1.4.6.</span> <span class="nav-text">使用filter剔除特定的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.4.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-Optional实战"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 Optional实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用Optional封装可能为null的值"><span class="nav-number">1.5.1.</span> <span class="nav-text">用Optional封装可能为null的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常与Optional的对比"><span class="nav-number">1.5.2.</span> <span class="nav-text">异常与Optional的对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础类型的Optional"><span class="nav-number">1.5.3.</span> <span class="nav-text">基础类型的Optional</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
