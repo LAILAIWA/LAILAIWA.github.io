@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,date,time," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="介绍Java中的日期时间，内容包括：第一节——背景，第二节——LocalDate、LocalTime、Instant、Duration、Period（LocalDate和LocalTime、合并日期和时间 机器的日期和时间格式 定义Duration或Period），第三节——操纵、解析和格式化日期（TemporalAdjuster、打印输出及解析日期—时间对象、处理不同的时区和历法）等。">
+<meta name="keywords" content="java,date,time">
+<meta property="og:type" content="article">
+<meta property="og:title" content="日期时间">
+<meta property="og:url" content="http://linyishui.top/2019100101.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="介绍Java中的日期时间，内容包括：第一节——背景，第二节——LocalDate、LocalTime、Instant、Duration、Period（LocalDate和LocalTime、合并日期和时间 机器的日期和时间格式 定义Duration或Period），第三节——操纵、解析和格式化日期（TemporalAdjuster、打印输出及解析日期—时间对象、处理不同的时区和历法）等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-04T03:16:43.024Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="日期时间">
+<meta name="twitter:description" content="介绍Java中的日期时间，内容包括：第一节——背景，第二节——LocalDate、LocalTime、Instant、Duration、Period（LocalDate和LocalTime、合并日期和时间 机器的日期和时间格式 定义Duration或Period），第三节——操纵、解析和格式化日期（TemporalAdjuster、打印输出及解析日期—时间对象、处理不同的时区和历法）等。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019100101.html"/>
+
+
+
+
+
+  <title>日期时间 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019100101.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">日期时间</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-01T16:24:37+08:00">
+                2019-10-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,706
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  介绍Java中的日期时间，内容包括：第一节——背景，第二节——LocalDate、LocalTime、Instant、Duration、Period（LocalDate和LocalTime、合并日期和时间 机器的日期和时间格式 定义Duration或Period），第三节——操纵、解析和格式化日期（TemporalAdjuster、打印输出及解析日期—时间对象、处理不同的时区和历法）等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="日期时间"><a href="#日期时间" class="headerlink" title="日期时间"></a><strong>日期时间</strong></h1><h2 id="第一节-背景"><a href="#第一节-背景" class="headerlink" title="第一节 背景"></a><strong>第一节 背景</strong></h2><p>&emsp;&emsp;Java API提供了很多有用的组件，对于日期和时间上的支持如在Java 1.0时提供了java.util.Date类，这个类无法表示日期，只能以毫秒的精度表示时间。而且在设计上有很多缺陷，比如年份从1900开始，月份从0开始，又比如toString方法会返回时区，但Date类并不支持时区。</p>
+<p>&emsp;&emsp;在Java 1.1时就因此废弃了Date类的许多方法，并引入了java.util.Calendar类。但Calendar也有设计上的缺陷，导致写出的代码非常容易出错，比如月份依旧从0开始，并且同时存在Date类和Calendar类也让一些开发者困惑，二者具有各自的特性，比如Date类的DateFormat方法。</p>
+<p>&emsp;&emsp;这些问题导致开发者转投第三方的日期和时间库，比如Joda-Time。Java 8时Oracle希望在Java API中提供高质量的日期和时间支持，比如在java.time包中整合了Joda-Time的一些特性。</p>
+<hr>
+<h2 id="第二节-LocalDate、LocalTime、Instant、Duration、Period"><a href="#第二节-LocalDate、LocalTime、Instant、Duration、Period" class="headerlink" title="第二节 LocalDate、LocalTime、Instant、Duration、Period"></a><strong>第二节 LocalDate、LocalTime、Instant、Duration、Period</strong></h2><h3 id="2-1-LocalDate和LocalTime"><a href="#2-1-LocalDate和LocalTime" class="headerlink" title="2.1 LocalDate和LocalTime"></a><strong>2.1 LocalDate和LocalTime</strong></h3><p>&emsp;&emsp;LocalDate是一个final类，实现了Temporal, TemporalAdjuster, ChronoLocalDate, Serializable这四个接口，可以通过静态工厂of来创建实例。</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">LocalDate <span class="keyword">date</span> = LocalDate.of(<span class="number">2018</span>,<span class="number">4</span>,<span class="number">16</span>);<span class="comment">//2018-04-01</span></span><br><span class="line"><span class="keyword">int</span> year = <span class="keyword">date</span>.getYear();<span class="comment">//2018</span></span><br><span class="line">Month month = <span class="keyword">date</span>.getMonth();<span class="comment">//APRIL</span></span><br><span class="line"><span class="keyword">int</span> day = <span class="keyword">date</span>.getDayOfMonth();<span class="comment">//16</span></span><br><span class="line">DayOfWeek dow = <span class="keyword">date</span>.getDayOfWeek();<span class="comment">//MONDAY</span></span><br><span class="line"><span class="keyword">int</span> len = <span class="keyword">date</span>.lengthOfMonth();<span class="comment">//30</span></span><br><span class="line"><span class="keyword">boolean</span> leap = <span class="keyword">date</span>.isLeapYear();<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//今天</span></span><br><span class="line">LocalDate today = LocalDate.now();<span class="comment">//2019-10-01</span></span><br><span class="line"><span class="comment">//get(TemporalField field)获取时间信息，TemporalField接口定义了如何访问temporal对象某个字段的值，ChronoField枚举实现了接口</span></span><br><span class="line"><span class="keyword">int</span> yearFromField = today.get(ChronoField.YEAR);<span class="comment">//2019</span></span><br><span class="line"><span class="keyword">int</span> monthFromField = today.get(ChronoField.MONTH_OF_YEAR);<span class="comment">//10</span></span><br><span class="line"><span class="keyword">int</span> dayFromField = today.get(ChronoField.DAY_OF_MONTH);<span class="comment">//1</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;LocalTime也是一个final类，实现了Temporal, TemporalAdjuster, Comparable<localtime>, Serializable这四个接口。</localtime></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//LocalTime</span></span><br><span class="line">LocalTime <span class="keyword">time</span> = LocalTime<span class="variable">.of</span>(<span class="number">13</span>,<span class="number">45</span>,<span class="number">20</span>);<span class="comment">//13:45:20</span></span><br><span class="line"><span class="keyword">int</span> hour = <span class="keyword">time</span><span class="variable">.getHour</span>();<span class="comment">//13</span></span><br><span class="line"><span class="keyword">int</span> minute = <span class="keyword">time</span><span class="variable">.getMinute</span>();<span class="comment">//45</span></span><br><span class="line"><span class="keyword">int</span> second = <span class="keyword">time</span><span class="variable">.getSecond</span>();<span class="comment">//20</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//解析字符串构建实例</span></span><br><span class="line">LocalDate date1 = LocalDate<span class="variable">.parse</span>(<span class="string">"2019-06-06"</span>);</span><br><span class="line">LocalTime time1 = LocalTime<span class="variable">.parse</span>(<span class="string">"14:46:21"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-合并日期和时间"><a href="#2-2-合并日期和时间" class="headerlink" title="2.2 合并日期和时间"></a><strong>2.2 合并日期和时间</strong></h3><p>&emsp;&emsp;LocalDateTime是LocalDate和LocalTime的复合类，也是一个final类，实现了Temporal, TemporalAdjuster, ChronoLocalDateTime<localdate>, Serializable这四个接口。</localdate></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime dt1 = LocalDateTime.of(<span class="number">2014</span>,Month.MARCH,<span class="number">18</span>,<span class="number">13</span>,<span class="number">45</span>,<span class="number">20</span>);<span class="comment">//2014-03-18T13:45:20</span></span><br><span class="line">LocalDateTime dt2 = LocalDateTime.of(date,time);<span class="comment">//2018-04-01T13:45:20</span></span><br><span class="line">LocalDateTime dt3 = date.atTime(<span class="number">15</span>,<span class="number">47</span>,<span class="number">22</span>);<span class="comment">//2018-04-01T15:47:22</span></span><br><span class="line">LocalDateTime dt4 = date.atTime(time);<span class="comment">//2018-04-01T13:45:20</span></span><br><span class="line">LocalDateTime dt5 = time.atDate(date);<span class="comment">//2018-04-01T13:45:20</span></span><br><span class="line"><span class="comment">//由复合类拆回LocalDate和LocalTime</span></span><br><span class="line">LocalDate date2 = dt1.toLocalDate();</span><br><span class="line">LocalTime time2 = dt1.toLocalTime();</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-机器的日期和时间格式"><a href="#2-3-机器的日期和时间格式" class="headerlink" title="2.3 机器的日期和时间格式"></a><strong>2.3 机器的日期和时间格式</strong></h3><p>&emsp;&emsp;Instant类描述了计算机对时间的建模，表示一个持续时间段上某个点的单一大整型数，也是一个final类，实现了Temporal, TemporalAdjuster, Comparable<instant>, Serializable这四个接口。</instant></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Instant i1 = Instant.ofEpochSecond(<span class="number">3</span>);<span class="comment">//1970-01-01T00:00:03Z</span></span><br><span class="line">Instant i2 = Instant.ofEpochSecond(<span class="number">3</span>,<span class="number">0</span>);<span class="comment">//第二个参数用来调整纳秒，i1到i4应该几乎是相同的。</span></span><br><span class="line">Instant i3 = Instant.ofEpochSecond(<span class="number">2</span>,<span class="number">1</span>_000_000_000);</span><br><span class="line">Instant i4 = Instant.ofEpochSecond(<span class="number">4</span>,<span class="number">-1</span>_000_000_000);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Instant的now()方法可以帮你获取当前时刻的时间戳，但Instant是为机器使用而设计，包含的是由秒及纳秒构成的数字，所以它无法处理为开发者设计的时间单位。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> <span class="built_in">day</span> = Instant.now().<span class="built_in">get</span>(ChronoField.DAY_OF_MONTH);<span class="comment">//java.time.temporal.UnsupportedTemporalTypeException: Unsupported field: DayOfMonth</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-4-定义Duration或Period"><a href="#2-4-定义Duration或Period" class="headerlink" title="2.4 定义Duration或Period"></a><strong>2.4 定义Duration或Period</strong></h3><p>&emsp;&emsp;所有类都实现了接口Temporal，Temporal定义了如何读取和操纵为时间建模的对象的值。</p>
+<p>&emsp;&emsp;Duration类是为两个Temporal对象间duration而设计的，可以通过between方法接收两个相同类型参数进行实例化。也是一个final类，实现了TemporalAmount, Comparable<duration>, Serializable这三个接口。</duration></p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">LocalDate <span class="built_in">date</span> = LocalDate.of(<span class="number">2018</span>,<span class="number">4</span>,<span class="number">1</span>);<span class="comment">//2018-04-01</span></span><br><span class="line">LocalTime time1 = LocalTime.parse(<span class="string">"14:46:21"</span>);</span><br><span class="line">LocalTime time2 = LocalTime.parse(<span class="string">"15:46:21"</span>);</span><br><span class="line">LocalDateTime dt1 = time1.atDate(<span class="built_in">date</span>);<span class="comment">//2018-04-01T15:47:22</span></span><br><span class="line">LocalDateTime dt2 = time2.atDate(<span class="built_in">date</span>);<span class="comment">//2018-04-01T15:47:22</span></span><br><span class="line">Instant it1 = Instant.ofEpochSecond(<span class="number">3</span>);</span><br><span class="line">Instant it2 = Instant.ofEpochSecond(<span class="number">4</span>);</span><br><span class="line"><span class="built_in">Duration</span> d1 = <span class="built_in">Duration</span>.between(time1,time2);</span><br><span class="line"><span class="built_in">Duration</span> d2 = <span class="built_in">Duration</span>.between(dt1,dt2);</span><br><span class="line"><span class="built_in">Duration</span> d3 = <span class="built_in">Duration</span>.between(it1,it2);</span><br><span class="line"></span><br><span class="line"><span class="built_in">Duration</span> threeMinutes = <span class="built_in">Duration</span>.ofMinutes(<span class="number">3</span>);</span><br><span class="line"><span class="built_in">Duration</span> threeMinutes1 = <span class="built_in">Duration</span>.of(<span class="number">3</span>, ChronoUnit.MINUTES);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Period类可以对年月日的方式对多个时间单位建模。也是一个final类，实现了ChronoPeriod, Serializable这两个接口。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Period tenDays = Period.between(LocalDate.of(<span class="number">2014</span>,<span class="number">3</span>,<span class="number">8</span>),</span><br><span class="line">        LocalDate.of(<span class="number">2014</span>,<span class="number">3</span>,<span class="number">18</span>));</span><br><span class="line">Period tenDays1 = Period.ofDays(<span class="number">10</span>);</span><br><span class="line">Period threeWeeks = Period.ofWeeks(<span class="number">3</span>);</span><br><span class="line">Period twoYearsSixMonthsOneDay = Period.of(<span class="number">2</span>,<span class="number">6</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;下列表格记录日期—时间类中表示时间间隔的通用方法。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法名</th>
+<th style="text-align:left">是否是静态方法</th>
+<th style="text-align:left">方法描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">between</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">创建两个时间点之间的interval</td>
+</tr>
+<tr>
+<td style="text-align:left">from</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">由一个临时时间点创建interval</td>
+</tr>
+<tr>
+<td style="text-align:left">of</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">由它的组成部分创建interval的实例</td>
+</tr>
+<tr>
+<td style="text-align:left">parse</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">由字符串创建interval的实例</td>
+</tr>
+<tr>
+<td style="text-align:left">addTo</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">创建该interval的副本，并将其叠加到某个指定的temporal对象</td>
+</tr>
+<tr>
+<td style="text-align:left">get</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">读取该interval的状态</td>
+</tr>
+<tr>
+<td style="text-align:left">isNegative</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">检查该interval是否为负值，不包含零</td>
+</tr>
+<tr>
+<td style="text-align:left">isZero</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">检查该interval的时长是否为零</td>
+</tr>
+<tr>
+<td style="text-align:left">minus</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">通过减去一定的时间创建该interval的副本</td>
+</tr>
+<tr>
+<td style="text-align:left">multipliedBy</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">将interval的值乘以某个标量创建该interval的副本</td>
+</tr>
+<tr>
+<td style="text-align:left">nagated</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">以忽略某个时长的方式创建该interval的副本</td>
+</tr>
+<tr>
+<td style="text-align:left">plus</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">以增加某个时长的方式创建该interval的副本</td>
+</tr>
+<tr>
+<td style="text-align:left">subtractFrom</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">从指定的temporal对象中减去该interval</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;上述所有介绍到的日期时间对象都是不可修改的，为了更好地支持函数式编程，确保线程安全，保持领域模式一致性而做出的重大设计决定。为了应对一些需要变换的场景，日期时间API也额外提供了一些方法来创建可变版本。</p>
+<hr>
+<h2 id="第三节-操纵、解析和格式化日期"><a href="#第三节-操纵、解析和格式化日期" class="headerlink" title="第三节 操纵、解析和格式化日期"></a><strong>第三节 操纵、解析和格式化日期</strong></h2><p>&emsp;&emsp;通过方法withAttribute方法来创建LocalDate的修改版本，方法会创建一个对象的副本，并按照需要去修改它的属性。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LocalDate ld1 = LocalDate.of(<span class="number">2014</span>,<span class="number">3</span>,<span class="number">18</span>);<span class="comment">//2014-03-18</span></span><br><span class="line">LocalDate ld2 = ld1.withYear(<span class="number">2018</span>);<span class="comment">//2018-03-18</span></span><br><span class="line">LocalDate ld3 = ld2.withDayOfMonth(<span class="number">25</span>);<span class="comment">//2018-03-25</span></span><br><span class="line">LocalDate ld4 = ld3.with(ChronoField.MONTH_OF_YEAR,<span class="number">9</span>);<span class="comment">//2018-09-25</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;也可以使用重载方法接收一个TemporalField对象。这些方法都声明于Temporal接口，所有的日期时间API类都实现了这些方法，使用get和with方法我们可以将Temporal对象值得读取和修改区分开。若Temporal对象不支持请求访问的字段，它会抛出一个UnsupportedTemporalTypeException异常。</p>
+<p>&emsp;&emsp;我们能以声明的方式操纵LocalDate对象，通过plus和minus方法对TemporalUnit对象增加或减少一个数字从而前溯或回滚至某个时间段。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LocalDate date1 = LocalDate.of(<span class="number">2014</span>,<span class="number">3</span>,<span class="number">18</span>);<span class="comment">//2014-03-18</span></span><br><span class="line">LocalDate date2 = date1.plusWeeks(<span class="number">1</span>);<span class="comment">//2014-03-25</span></span><br><span class="line">LocalDate date3 = date2.minusYears(<span class="number">3</span>);<span class="comment">//2011-03-25</span></span><br><span class="line">LocalDate date4 = date3.plus(<span class="number">6</span>, ChronoUnit.MONTHS);<span class="comment">//2011-09-25</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;下列表格记录时间点的日期—时间类的通用方法。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法名</th>
+<th style="text-align:left">是否是静态方法</th>
+<th style="text-align:left">方法描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">from</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">依据传入的Temporal对象创建对象实例</td>
+</tr>
+<tr>
+<td style="text-align:left">now</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">依据系统时钟创建Temporal对象</td>
+</tr>
+<tr>
+<td style="text-align:left">of</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">由Temporal对象的某个部分创建该对象的实例</td>
+</tr>
+<tr>
+<td style="text-align:left">parse</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">由字符串创建Temporal对象的实例</td>
+</tr>
+<tr>
+<td style="text-align:left">atOffset</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">将Temporal对象和某个时区偏移相结合</td>
+</tr>
+<tr>
+<td style="text-align:left">atZone</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">将Temporal对象和某个时区相结合</td>
+</tr>
+<tr>
+<td style="text-align:left">format</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">使用某个指定的格式器将Temporal对象转换为字符串（Instant类不提供该方法）</td>
+</tr>
+<tr>
+<td style="text-align:left">get</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">读取Temporal对象的某一部分的值</td>
+</tr>
+<tr>
+<td style="text-align:left">minus</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">创建Temporal对象的一个副本，通过将当前Temporal对象的值减去一定的时长创建该副本</td>
+</tr>
+<tr>
+<td style="text-align:left">plus</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">创建Temporal对象的一个副本，通过将当前Temporal对象的值加上一定的时长创建该副本</td>
+</tr>
+<tr>
+<td style="text-align:left">with</td>
+<td style="text-align:left">否</td>
+<td style="text-align:left">以Temporal对象为模板，对某些状态进行修改创建该对象的副本</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-1-TemporalAdjuster"><a href="#3-1-TemporalAdjuster" class="headerlink" title="3.1 TemporalAdjuster"></a><strong>3.1 TemporalAdjuster</strong></h3><p>&emsp;&emsp;有时我们需要调整特定需求的时间间隔，如调整到下个周日、下个工作日、本月的最后一天等等。这时我们可以使用with的重载版本，接收一个TemporalAdjuster对象，可以更加灵活的处理日期。</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LocalDate date1 = LocalDate.<span class="keyword">of</span>(<span class="number">2014</span>,<span class="number">3</span>,<span class="number">18</span>);<span class="comment">//2014-03-18</span></span><br><span class="line">LocalDate date2 = date1.<span class="keyword">with</span>(nextOrSame(DayOfWeek.SUNDAY));<span class="comment">//2014-03-23</span></span><br><span class="line">LocalDate date3 = date2.<span class="keyword">with</span>(lastDayOfMonth());<span class="comment">//2014-03-31</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;下列表格记录TemporalAdjuster中包含的工厂方法。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法名</th>
+<th style="text-align:left">方法描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">dayOfWeekInMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为同一个月中每一周的第几天</td>
+</tr>
+<tr>
+<td style="text-align:left">firstDayOfMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为当月的第一天</td>
+</tr>
+<tr>
+<td style="text-align:left">firstDayOfNextMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为下月的第一天</td>
+</tr>
+<tr>
+<td style="text-align:left">firstDayOfNextYear</td>
+<td style="text-align:left">创建一个新的日期，它的值为明年的第一天</td>
+</tr>
+<tr>
+<td style="text-align:left">firstDayOfYear</td>
+<td style="text-align:left">创建一个新的日期，它的值为当年的第一天</td>
+</tr>
+<tr>
+<td style="text-align:left">firstInMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为同一个月中，第一个符合星期几要求的值</td>
+</tr>
+<tr>
+<td style="text-align:left">lastDayOfMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为当月的最后一天</td>
+</tr>
+<tr>
+<td style="text-align:left">lastDayOfNextMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为下月的最后一天</td>
+</tr>
+<tr>
+<td style="text-align:left">lastDayOfNextYear</td>
+<td style="text-align:left">创建一个新的日期，它的值为明年的最后一天</td>
+</tr>
+<tr>
+<td style="text-align:left">lastDayOfYear</td>
+<td style="text-align:left">创建一个新的日期，它的值为今年的最后一天</td>
+</tr>
+<tr>
+<td style="text-align:left">lastInMonth</td>
+<td style="text-align:left">创建一个新的日期，它的值为同一个月中，最后一个符合星期几要求的值</td>
+</tr>
+<tr>
+<td style="text-align:left">next/previous</td>
+<td style="text-align:left">创建一个新的日期，并将其值设定为日期调整后或者调整前，第一个符合指定星期几要求的日期</td>
+</tr>
+<tr>
+<td style="text-align:left">nextOfSame/previousOrSame</td>
+<td style="text-align:left">创建一个新的日期，并将其值设定为日期调整后或者调整前，第一个符合指定星期几要求的日期，如果该日期已符合要求，直接返回该对象</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;即使上述方法不能满足你的需求，还可以自定义自己的TemporalAdjuster。TemporalAdjuster是一个函数式接口，可以看作一个UnaryOperator<temporal>。</temporal></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TemporalAdjuster</span> </span>&#123;</span><br><span class="line">    <span class="function">Temporal <span class="title">adjustInto</span><span class="params">(Temporal temporal)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-1-1-自定义TemporalAdjuster"><a href="#3-1-1-自定义TemporalAdjuster" class="headerlink" title="3.1.1 自定义TemporalAdjuster"></a><strong>3.1.1 自定义TemporalAdjuster</strong></h4><p>&emsp;&emsp;可以实现类NextWorkingDay，并实现adjustInto方法。也可以直接通过方法参数化直接通过Lambda表达式来实现。推荐使用TemporalAdjusters的静态工厂方法ofDateAdjuster来实现。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//通过类实现</span></span><br><span class="line">        LocalDate ta1 = date1.with(<span class="keyword">new</span> NextWorkingDay());<span class="comment">//2014-03-19</span></span><br><span class="line">        <span class="comment">//通过Lambda表达式实现</span></span><br><span class="line">        LocalDate ta2 = date1.with(temporal -&gt; &#123;</span><br><span class="line">            DayOfWeek dow = DayOfWeek.of(temporal.get(ChronoField.DAY_OF_WEEK));</span><br><span class="line">            <span class="keyword">int</span> dayToAdd = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(dow == DayOfWeek.FRIDAY) dayToAdd = <span class="number">3</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(dow == DayOfWeek.SATURDAY) dayToAdd = <span class="number">2</span>;</span><br><span class="line">            <span class="function"><span class="keyword">return</span> temporal.<span class="title">plus</span><span class="params">(dayToAdd, ChronoUnit.DAYS)</span></span>;</span><br><span class="line">        &#125;);<span class="comment">//2014-03-19</span></span><br><span class="line">        <span class="comment">//推荐使用工厂方法ofDateAdjuster</span></span><br><span class="line">        TemporalAdjuster nextWorkingDay = TemporalAdjusters.ofDateAdjuster(</span><br><span class="line">                temporal -&gt; &#123;</span><br><span class="line">                    DayOfWeek dow = DayOfWeek.of(temporal.get(ChronoField.DAY_OF_WEEK));</span><br><span class="line">                    <span class="keyword">int</span> dayToAdd = <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">if</span>(dow == DayOfWeek.FRIDAY) dayToAdd = <span class="number">3</span>;</span><br><span class="line">                    <span class="keyword">else</span> <span class="keyword">if</span>(dow == DayOfWeek.SATURDAY) dayToAdd = <span class="number">2</span>;</span><br><span class="line">                    <span class="function"><span class="keyword">return</span> temporal.<span class="title">plus</span><span class="params">(dayToAdd, ChronoUnit.DAYS)</span></span>;</span><br><span class="line">                &#125;</span><br><span class="line">        );<span class="comment">//2014-03-19</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 计算明天的日期，同时过滤掉周六和周日这些节假日</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NextWorkingDay</span> <span class="keyword">implements</span> <span class="title">TemporalAdjuster</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function">Temporal <span class="title">adjustInto</span><span class="params">(Temporal temporal)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//读取当前日期</span></span><br><span class="line">        DayOfWeek dow = DayOfWeek.of(temporal.get(ChronoField.DAY_OF_WEEK));</span><br><span class="line">        <span class="comment">//正常情况加1天</span></span><br><span class="line">        <span class="keyword">int</span> dayToAdd = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//周五加3天</span></span><br><span class="line">        <span class="keyword">if</span>(dow == DayOfWeek.FRIDAY) dayToAdd = <span class="number">3</span>;</span><br><span class="line">        <span class="comment">//周六加2天</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(dow == DayOfWeek.SATURDAY) dayToAdd = <span class="number">2</span>;</span><br><span class="line">        <span class="comment">//返回修改的日期</span></span><br><span class="line">        <span class="function"><span class="keyword">return</span> temporal.<span class="title">plus</span><span class="params">(dayToAdd, ChronoUnit.DAYS)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-打印输出及解析日期—时间对象"><a href="#3-2-打印输出及解析日期—时间对象" class="headerlink" title="3.2 打印输出及解析日期—时间对象"></a><strong>3.2 打印输出及解析日期—时间对象</strong></h3><p>&emsp;&emsp;java.time.format为格式化和解析日期—时间对象而设计，最重要的类是DateTimeFormatter。可以利用DateTimeFormatter生成各种常用格式的日期—时间字符串，也可以解析字符串创建日期对象。相比老版本的DateFormat，所有DateTimeFormatter实例都是线程安全的。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = date1.<span class="keyword">format</span>(DateTimeFormatter.BASIC_ISO_DATE);<span class="comment">//20140318</span></span><br><span class="line"><span class="keyword">String</span> s2 = date1.<span class="keyword">format</span>(DateTimeFormatter.ISO_LOCAL_DATE);<span class="comment">//2014-03-18</span></span><br><span class="line"></span><br><span class="line">LocalDate lds1 = LocalDate.<span class="built_in">parse</span>(<span class="string">"20140318"</span>,DateTimeFormatter.BASIC_ISO_DATE);</span><br><span class="line">LocalDate lds2 = LocalDate.<span class="built_in">parse</span>(<span class="string">"2014-03-18"</span>,DateTimeFormatter.ISO_LOCAL_DATE);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过ofPattern指定日期—时间格式，当然可以根据需求自定义想要的格式，如果需要更加细粒度的控制，DateTimeFormatterBuilder类还提供了更复杂的格式器，可以区分大小写的解析、柔性解析（允许解析器使用启发式的机制去解析输入，不精确地匹配指定的模式）、填充，以及在格式器中指定可选节。</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//指定模式创建DateTimeFormatter</span></span><br><span class="line">DateTimeFormatter formatter = DateTimeFormatter.ofPattern(<span class="string">"dd/MM/yyyy"</span>);</span><br><span class="line"><span class="keyword">String</span> formattedDate = date1.<span class="keyword">format</span>(formatter);<span class="comment">//18/03/2014</span></span><br><span class="line">LocalDate fromFormattedDate = LocalDate.<span class="built_in">parse</span>(formattedDate,formatter);</span><br><span class="line"></span><br><span class="line"><span class="comment">//本地化DateTimeFormatter</span></span><br><span class="line">DateTimeFormatter formatterCN = DateTimeFormatter.ofPattern(<span class="string">"yyyy年 MMMM dd日"</span>, Locale.CHINA);</span><br><span class="line"><span class="keyword">String</span> formattedCNDate = date1.<span class="keyword">format</span>(formatterCN);<span class="comment">//2014年 三月 18日</span></span><br><span class="line">LocalDate fromFormattedCNDate = LocalDate.<span class="built_in">parse</span>(formattedCNDate,formatterCN);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//自定义DateTimeFormatter</span></span><br><span class="line">DateTimeFormatter CNFormatter = <span class="keyword">new</span> DateTimeFormatterBuilder()</span><br><span class="line">        .appendText(ChronoField.YEAR)</span><br><span class="line">        .appendLiteral(<span class="string">"年 "</span>)</span><br><span class="line">        .appendText(ChronoField.MONTH_OF_YEAR)</span><br><span class="line">        .appendLiteral(<span class="string">" "</span>)</span><br><span class="line">        .appendText(ChronoField.DAY_OF_MONTH)</span><br><span class="line">        .appendLiteral(<span class="string">"日 "</span>)</span><br><span class="line">        .toFormatter(Locale.CHINA);</span><br><span class="line"><span class="keyword">String</span> stringCNFormatter = date1.<span class="keyword">format</span>(CNFormatter);<span class="comment">//2014年 三月 18日</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-3-处理不同的时区和历法"><a href="#3-3-处理不同的时区和历法" class="headerlink" title="3.3 处理不同的时区和历法"></a><strong>3.3 处理不同的时区和历法</strong></h3><p>&emsp;&emsp;时区的处理是新版API新增的重要功能，java.time.ZoneId类替代了java.util.TimeZone，其设计目标就是让你无需操心时区处理的繁琐。</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//地区Id标识：&#123;区域&#125;/&#123;城市&#125;</span></span><br><span class="line">ZoneId romeZone = ZoneId.of(<span class="string">"Europe/Rome"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过方法toZoneId将旧的时区对象转换为ZoneId</span></span><br><span class="line">ZoneId zoneId = TimeZone.getDefault().toZoneId();</span><br><span class="line"></span><br><span class="line"><span class="comment">//有了ZoneId就可以和日期—时间对象结合成ZonedDateTime实例，代表了对应时区的时间点</span></span><br><span class="line">ZonedDateTime zdt1 = date1.atStartOfDay(romeZone);<span class="comment">//2014-03-18T00:00+01:00[Europe/Rome]</span></span><br><span class="line">LocalDateTime dateTime = date1.atTime(<span class="number">18</span>,<span class="number">13</span>,<span class="number">45</span>);</span><br><span class="line">ZonedDateTime zdt2 = dateTime.atZone(romeZone);<span class="comment">//2014-03-18T18:13:45+01:00[Europe/Rome]</span></span><br><span class="line">Instant instant = Instant.now();</span><br><span class="line">ZonedDateTime zdt3 = instant.atZone(romeZone);<span class="comment">//2019-10-01T03:37:34.201+01:00[Europe/Rome]</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;2014-03-18T18:13:45+01:00[Europe/Rome]可以理解为：LocalDate + LocalTime + ZoneId = LocalDateTime + ZoneId = ZonedDateTime</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过ZoneId将Instant转为LocalDateTime</span></span><br><span class="line">LocalDateTime timeFromInstant = LocalDateTime.ofInstant(instant,romeZone);<span class="comment">//2019-12-04T03:52:42.845</span></span><br><span class="line">System.out.println(<span class="string">"timeFromInstant "</span> + timeFromInstant);</span><br><span class="line"></span><br><span class="line"><span class="comment">//表示此时间和伦敦格林尼治子午线时间的差异</span></span><br><span class="line">ZoneOffset <span class="keyword">new</span><span class="type">YorkOffSet</span> = ZoneOffset.of(<span class="string">"-05:00"</span>);</span><br><span class="line"><span class="comment">//但上述方式并未考虑任何夏令时的影响，因此不推荐。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//ZoneOffset是ZoneId的子类，可以通过其创建OffsetDateTime</span></span><br><span class="line">OffsetDateTime dateTimeInNewYork = OffsetDateTime.of(dateTime,<span class="keyword">new</span><span class="type">YorkOffSet</span>);<span class="comment">//2014-03-18T18:13:45-05:00</span></span><br><span class="line">System.out.println(<span class="string">"dateTimeInNewYork "</span> + dateTimeInNewYork);</span><br><span class="line"></span><br><span class="line"><span class="comment">//可以直接生成Instant</span></span><br><span class="line">Instant fromOffsetLocalDateTime = dateTimeInNewYork.toInstant();</span><br><span class="line"><span class="comment">//LocalDateTime则需要ZoneOffset参数才能生成Instant</span></span><br><span class="line">Instant fromLocalDateTime = dateTime.toInstant(<span class="keyword">new</span><span class="type">YorkOffSet</span>);</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;除了ISO历法日历系统，Java 8还提供了4种其他日历系统分别对应一个类：ThaiBuddhisDate、MinguoDate、JapaneseDate、HijranDate。所有这些类以及LocalDate都实现了ChronoLocalDate接口，能够对公历的日期进行建模。</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//根据LocalDate（Temporal对象）创建实例</span></span><br><span class="line">JapaneseDate japaneseDate = JapaneseDate.from(date1);</span><br><span class="line"></span><br><span class="line"><span class="comment">//可以为某个Locale显式的创建日历系统</span></span><br><span class="line">Chronology japaneseChronology = Chronology.ofLocale(Locale.JAPAN);</span><br><span class="line">ChronoLocalDate now = japaneseChronology.dateNow();<span class="comment">//2019-10-01</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;API设计者建议避免使用ChronoLocalDate，原因是开发者可能会在代码中做一些假设，而这些假设在不同的日历系统中可能会不成立。比如假设一个月天数不会超过31天，一年12个月，或一年中月数是固定的，因为这些假设请使用LocalDate，包括存储、操作和业务规则的解读。如果是本地化的输出或输入场景，可以尝试使用ChronoLocalDate。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java8实战》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/date/" rel="tag"># date</a>
+          
+            <a href="/tags/time/" rel="tag"># time</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019092801.html" rel="next" title="CompletableFuture组合式异步编程">
+                <i class="fa fa-chevron-left"></i> CompletableFuture组合式异步编程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019111201.html" rel="prev" title="死亡会是解脱吗">
+                死亡会是解脱吗 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">140</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#日期时间"><span class="nav-number">1.</span> <span class="nav-text">日期时间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-背景"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-LocalDate、LocalTime、Instant、Duration、Period"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 LocalDate、LocalTime、Instant、Duration、Period</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-LocalDate和LocalTime"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 LocalDate和LocalTime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-合并日期和时间"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 合并日期和时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-机器的日期和时间格式"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 机器的日期和时间格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-定义Duration或Period"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 定义Duration或Period</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-操纵、解析和格式化日期"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 操纵、解析和格式化日期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-TemporalAdjuster"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 TemporalAdjuster</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-1-自定义TemporalAdjuster"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">3.1.1 自定义TemporalAdjuster</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-打印输出及解析日期—时间对象"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 打印输出及解析日期—时间对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-处理不同的时区和历法"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 处理不同的时区和历法</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

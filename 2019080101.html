@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍HTTPS技术背景和发展、通信流程、加密方式、合法验证、实战获取证书、Spring Boot配置HTTPS等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg">
-<meta property="og:updated_time" content="2019-08-14T10:20:16.018Z">
+<meta property="og:updated_time" content="2019-12-03T08:28:49.476Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HTTPS">
 <meta name="twitter:description" content="介绍HTTPS技术背景和发展、通信流程、加密方式、合法验证、实战获取证书、Spring Boot配置HTTPS等">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,985
+                  6,234
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  18
+                  23
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg" rel="gallery_ck3jmek6100dj5st7koc5wte6"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg" rel="gallery_ck3qq29tn00fu8ot76phllhx1"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg" itemprop="contentUrl"/>
               </a>
@@ -415,16 +415,17 @@
       
 
       
-        <h1 id="引文"><a href="#引文" class="headerlink" title="引文"></a><strong>引文</strong></h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a><strong>背景</strong></h2><p>&emsp;HTTPS实际上就是HTTP穿上了SSL/TLS的外套，在学习了计算机网络知识后我们了解了HTTP属于<strong>应用层</strong>的协议。<strong>HTTP协议</strong>全称Hyper Text Transfer Protocol，即超文本传输协议，位于TCP/IP四层模型当中的应用层。HTTP协议通过请求/响应的方式，在客户端和服务端之间进行通信。</p>
-<p>&emsp;而<strong>SSL</strong>（安全套接字）与<strong>TLS</strong>（运输层安全）都属于<strong>运输层</strong>协议。其实SSL与TLS都是上个世纪的产物，最新版本的TLS建立在SSL 3.0协议规范之上。</p>
-<p>&emsp;HTTP协议的信息传输是完全以明文方式，没有做任何加密，所以数据就是直接暴漏在整个网络中。可想而知如果在传输过程中被不怀好意的人员或程序窃听、劫持或篡改，我们是无能为力的，所以提高HTTP的安全性迫在眉睫。</p>
-<h2 id="发展"><a href="#发展" class="headerlink" title="发展"></a><strong>发展</strong></h2><p>&emsp;我们可以代入行业技术人员的角度，来思考一下HTTPS这种安全模式的发展过程，可以帮助我们更清晰的去理解其设计和针对性。</p>
-<p>&emsp;我们来解决HTTP的安全问题，首先最容易想到的就是加密，我们可以通过暗号的方式来交流信息，这样应该就不担心被别人轻易的读取到真实数据了。所以我们尝试着引入了一种<strong>对称加密方式</strong>，通信双方约定了一个随机生成的密钥。在后续的通信中，信息发送方都使用密钥对信息加密，而信息接收方通过同样的密钥对信息解密。</p>
-<p>&emsp;但问题出现了，虽然我们在后续的通信中对明文进行了加密，但是第一次约定加密方式和密钥的通信仍然是明文。如果第一次通信就已经被拦截了，那么密钥就会泄露给中间人，中间人仍然可以解密后续所有的通信内容。</p>
-<p>&emsp;为了解决这个问题，我们又想到了一项技术：<strong>非对称加密算法</strong>。我们可以使用非对称加密，为密钥的传输做一层额外的保护。非对称加密的一组秘钥对中，包含一个公钥和一个私钥。明文既可以用公钥加密，用私钥解密；也可以用私钥加密，用公钥解密。所以甲方首先把自己的公钥Key1发送给了乙方，乙方收到Key1后，自己生成一个用于对称加密的密钥Key2，结合Key1对Key2进行加密，然后讲加密后的Key2发送给甲方。甲方通过自己非对称加密的私钥解开公钥Key1的加密，从而获取了Key2的内容。自此甲乙就可以通过Key2进行对称加密通信了。</p>
-<p>&emsp;似乎非对称加密的引入解决了之前的问题，中间人即使在最开始便截获了公钥Key1，他也因为没有私钥从而无法直接解密出数据。但黑客除了窃听外，还可以劫持和篡改，所以新的黑客方式出现了：在甲方发出公钥Key1后，黑客劫持并生成自己的一对公钥和私钥，并发送公钥Key3给乙方。乙方依然加密后生成新的Key2发送出来，然后继续被黑客劫持，并用其私钥解开了自己Key3的加密获得了新的Key2内容。然后就用最初劫持的Key1进行加密并发送给甲方。这样一来，后续的通信过程甲乙就依然用Key来做对称加密，而黑客已然获取了Key2来进行解密。</p>
-<p>&emsp;到此我们就慢慢开始接近了HTTPS的设计思路，那么面对这时的方案，我们还可以如何去做改进来填补漏洞呢？首先漏洞来源于什么，来源自我们的通信不安全，能够通过技术手段来让通信无法被别人听到吗？好像近些年比较热的量子通信可以实现，但离实现还有未可预知的时间，所以我们其实是没办法保证这一点的。即我们对话的内容无法保证只有我们听到，那么就只好保证我们的对话只有我们能听懂，从而变相的实现了防窃听。既然我们双方确认暗号的过程会因为中间人的伪造而使我们无法信任对话者的身份，那么我们可以找一个有公信力可以被信任的机构来作第三方公信人啊！所以HTTPS引入了这一第三方来解决信任问题。</p>
-<h1 id="HTTPS介绍"><a href="#HTTPS介绍" class="headerlink" title="HTTPS介绍"></a><strong>HTTPS介绍</strong></h1><h2 id="HTTPS通信流程"><a href="#HTTPS通信流程" class="headerlink" title="HTTPS通信流程"></a><strong>HTTPS通信流程</strong></h2><p>&emsp;权威的证书颁发机构（CA）即被信任的第三方，其证书至少包含如下信息：颁发机构，服务端网址，机构私钥加密服务端公钥，机构私钥加密证书签名。</p>
+        <h1 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a><strong>HTTPS</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a><strong>背景</strong></h3><p>&emsp;&emsp;HTTPS实际上就是HTTP穿上了SSL/TLS的外套，在学习了计算机网络知识后我们了解了HTTP属于<strong>应用层</strong>的协议。<strong>HTTP协议</strong>全称Hyper Text Transfer Protocol，即超文本传输协议，位于TCP/IP四层模型当中的应用层。HTTP协议通过请求/响应的方式，在客户端和服务端之间进行通信。</p>
+<p>&emsp;&emsp;而<strong>SSL</strong>（安全套接字）与<strong>TLS</strong>（运输层安全）都属于<strong>运输层</strong>协议。其实SSL与TLS都是上个世纪的产物，最新版本的TLS建立在SSL 3.0协议规范之上。</p>
+<p>&emsp;&emsp;HTTP协议的信息传输是完全以明文方式，没有做任何加密，所以数据就是直接暴漏在整个网络中。可想而知如果在传输过程中被不怀好意的人员或程序窃听、劫持或篡改，我们是无能为力的，所以提高HTTP的安全性迫在眉睫。</p>
+<h3 id="发展"><a href="#发展" class="headerlink" title="发展"></a><strong>发展</strong></h3><p>&emsp;&emsp;我们可以代入行业技术人员的角度，来思考一下HTTPS这种安全模式的发展过程，可以帮助我们更清晰的去理解其设计和针对性。</p>
+<p>&emsp;&emsp;我们来解决HTTP的安全问题，首先最容易想到的就是加密，我们可以通过暗号的方式来交流信息，这样应该就不担心被别人轻易的读取到真实数据了。所以我们尝试着引入了一种<strong>对称加密方式</strong>，通信双方约定了一个随机生成的密钥。在后续的通信中，信息发送方都使用密钥对信息加密，而信息接收方通过同样的密钥对信息解密。</p>
+<p>&emsp;&emsp;但问题出现了，虽然我们在后续的通信中对明文进行了加密，但是第一次约定加密方式和密钥的通信仍然是明文。如果第一次通信就已经被拦截了，那么密钥就会泄露给中间人，中间人仍然可以解密后续所有的通信内容。</p>
+<p>&emsp;&emsp;为了解决这个问题，我们又想到了一项技术：<strong>非对称加密算法</strong>。我们可以使用非对称加密，为密钥的传输做一层额外的保护。非对称加密的一组秘钥对中，包含一个公钥和一个私钥。明文既可以用公钥加密，用私钥解密；也可以用私钥加密，用公钥解密。所以甲方首先把自己的公钥Key1发送给了乙方，乙方收到Key1后，自己生成一个用于对称加密的密钥Key2，结合Key1对Key2进行加密，然后讲加密后的Key2发送给甲方。甲方通过自己非对称加密的私钥解开公钥Key1的加密，从而获取了Key2的内容。自此甲乙就可以通过Key2进行对称加密通信了。</p>
+<p>&emsp;&emsp;似乎非对称加密的引入解决了之前的问题，中间人即使在最开始便截获了公钥Key1，他也因为没有私钥从而无法直接解密出数据。但黑客除了窃听外，还可以劫持和篡改，所以新的黑客方式出现了：在甲方发出公钥Key1后，黑客劫持并生成自己的一对公钥和私钥，并发送公钥Key3给乙方。乙方依然加密后生成新的Key2发送出来，然后继续被黑客劫持，并用其私钥解开了自己Key3的加密获得了新的Key2内容。然后就用最初劫持的Key1进行加密并发送给甲方。这样一来，后续的通信过程甲乙就依然用Key来做对称加密，而黑客已然获取了Key2来进行解密。</p>
+<p>&emsp;&emsp;到此我们就慢慢开始接近了HTTPS的设计思路，那么面对这时的方案，我们还可以如何去做改进来填补漏洞呢？首先漏洞来源于什么，来源自我们的通信不安全，能够通过技术手段来让通信无法被别人听到吗？好像近些年比较热的量子通信可以实现，但离实现还有未可预知的时间，所以我们其实是没办法保证这一点的。即我们对话的内容无法保证只有我们听到，那么就只好保证我们的对话只有我们能听懂，从而变相的实现了防窃听。既然我们双方确认暗号的过程会因为中间人的伪造而使我们无法信任对话者的身份，那么我们可以找一个有公信力可以被信任的机构来作第三方公信人啊！所以HTTPS引入了这一第三方来解决信任问题。</p>
+<hr>
+<h2 id="第二节-HTTPS介绍"><a href="#第二节-HTTPS介绍" class="headerlink" title="第二节 HTTPS介绍"></a><strong>第二节 HTTPS介绍</strong></h2><h3 id="2-1-HTTPS通信流程"><a href="#2-1-HTTPS通信流程" class="headerlink" title="2.1 HTTPS通信流程"></a><strong>2.1 HTTPS通信流程</strong></h3><p>&emsp;&emsp;权威的证书颁发机构（CA）即被信任的第三方，其证书至少包含如下信息：颁发机构，服务端网址，机构私钥加密服务端公钥，机构私钥加密证书签名。</p>
 <blockquote>
 <p>证书的获取和验证、服务端客户端的通信流程如下：</p>
 <ol>
@@ -436,9 +437,9 @@
 <li>最后，A用自己的私钥解开加密，得到对称加密密钥Key2。之后客户端与服务端可以用这个对称加密算法来加密和解密通信内容了。</li>
 </ol>
 </blockquote>
-<p>&emsp;证书的签名由服务端网址等信息生成，经过机构私钥加密，黑客无法进行篡改。我们知道TCP/IP模型包括：应用层(HTTP/FTP)-&gt;传输层(TCP/UDP)-&gt;网络层(IP/ARP)-&gt;数据链路层，HTTPS就是在HTTP基础上增加了SSL安全层，上述一系列认证过程就在这一层进行，即：HTTP-&gt;SSL-&gt;TCP-&gt;IP-&gt;数据链路层。注：最新推出的TLS协议，是SSL 3.0协议的升级版，和SSL协议的大体原理是相同的。</p>
-<p>&emsp;HTTPS涉及到加密，想要彻底的了解HTTPS，需要学习一下密码学相关的知识。</p>
-<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a><strong>加密</strong></h2><p>&emsp;可以参考<a href="../2019052001.html" title="Title">加密算法</a></p>
+<p>&emsp;&emsp;证书的签名由服务端网址等信息生成，经过机构私钥加密，黑客无法进行篡改。我们知道TCP/IP模型包括：应用层(HTTP/FTP)-&gt;传输层(TCP/UDP)-&gt;网络层(IP/ARP)-&gt;数据链路层，HTTPS就是在HTTP基础上增加了SSL安全层，上述一系列认证过程就在这一层进行，即：HTTP-&gt;SSL-&gt;TCP-&gt;IP-&gt;数据链路层。注：最新推出的TLS协议，是SSL 3.0协议的升级版，和SSL协议的大体原理是相同的。</p>
+<p>&emsp;&emsp;HTTPS涉及到加密，想要彻底的了解HTTPS，需要学习一下密码学相关的知识。</p>
+<h3 id="2-2-加密"><a href="#2-2-加密" class="headerlink" title="2.2 加密"></a><strong>2.2 加密</strong></h3><p>&emsp;&emsp;可以参考<a href="../2019052001.html" title="Title">加密算法</a></p>
 <blockquote>
 <ol>
 <li>密钥：通常是一个字符串或数字，进行加密/解密算法时使用。公钥和私钥都是密钥，只不过一般公钥是对外开放的，加密时使用；私钥是不公开的，解密时使用。</li>
@@ -450,7 +451,7 @@
 <li>证书链：证书是分级的，证书链由多个证书一级一级组成，拿到上级证书的公钥才能解密本级证书。只有最底层的证书是自签名的，自己颁发给自己。</li>
 </ol>
 </blockquote>
-<h2 id="HTTPS原理"><a href="#HTTPS原理" class="headerlink" title="HTTPS原理"></a><strong>HTTPS原理</strong></h2><h3 id="数字证书"><a href="#数字证书" class="headerlink" title="数字证书"></a><strong>数字证书</strong></h3><p>&emsp;HTTPS的安全性主要依赖于对数字证书的验证以及非对称加密机制，客户端具体是如何判断证书的合法性的？首先我们先看一下证书的主要内容。</p>
+<h3 id="2-3-HTTPS原理"><a href="#2-3-HTTPS原理" class="headerlink" title="2.3 HTTPS原理"></a><strong>2.3 HTTPS原理</strong></h3><h4 id="2-3-1-数字证书"><a href="#2-3-1-数字证书" class="headerlink" title="2.3.1 数字证书"></a><strong>2.3.1 数字证书</strong></h4><p>&emsp;&emsp;HTTPS的安全性主要依赖于对数字证书的验证以及非对称加密机制，客户端具体是如何判断证书的合法性的？首先我们先看一下证书的主要内容。</p>
 <blockquote>
 <p>数字证书内容：</p>
 <ol>
@@ -478,21 +479,21 @@
 </ol>
 <p>指纹和指纹算法会使用证书机构的私钥加密后和证书放在一起。主要用来保证证书的完整性，确保证书没有修改过。使用者在打开证书时根据指纹算法计算证书的hash值，和刚开始的值一样，则表示没有被修改过。</p>
 </blockquote>
-<h3 id="合法性验证"><a href="#合法性验证" class="headerlink" title="合法性验证"></a><strong>合法性验证</strong></h3><p>&emsp;那么客户端如何检测数字证书是合法的并是所要请求的公司的？</p>
-<p>&emsp;首先应用程序要读取证书中的Issuer（发布机构），然后会在操作系统或浏览器内置的受信任的发布机构中去找该机构的证书。如果找不到程序会有相应提醒，未必信任的证书来源。如果找到发布机构，或者未找到但用户确认使用该证书，就会拿到上级证书的公钥，解密本级证书，得到数字指纹。然后对本级证书的公钥进行数字摘要算法（证书中提供的指纹加密算法）计算结果，与解密得到的指纹对比。如果一样，说明证书没有被修改过。公钥可以放心使用，可以开始握手通信了。</p>
+<h4 id="2-3-2-合法性验证"><a href="#2-3-2-合法性验证" class="headerlink" title="2.3.2 合法性验证"></a><strong>2.3.2 合法性验证</strong></h4><p>&emsp;&emsp;那么客户端如何检测数字证书是合法的并是所要请求的公司的？</p>
+<p>&emsp;&emsp;首先应用程序要读取证书中的Issuer（发布机构），然后会在操作系统或浏览器内置的受信任的发布机构中去找该机构的证书。如果找不到程序会有相应提醒，未必信任的证书来源。如果找到发布机构，或者未找到但用户确认使用该证书，就会拿到上级证书的公钥，解密本级证书，得到数字指纹。然后对本级证书的公钥进行数字摘要算法（证书中提供的指纹加密算法）计算结果，与解密得到的指纹对比。如果一样，说明证书没有被修改过。公钥可以放心使用，可以开始握手通信了。</p>
 <blockquote>
 <p>操作系统为什么会有证书发布机构的证书？</p>
 <p>证书发布机构除了给别人发布证书外，自己也有自己的证书。在操作系统安装好时，受信任的证书发布机构的数字证书就已经被微软安装在操作系统中了，根据一些权威安全机构的评估，选取一些信誉很好并且通过一定安全认证的证书发布机构，把这些证书默认安装在操作系统中并设为信任的数字证书。发布机构持有与自己数字证书对应的私钥，会用这个私钥加密所有他发布的证书及指纹整体作为数字签名。</p>
 </blockquote>
 <blockquote>
-<p>&emsp;在获得公钥后，客户端会生成随机数并用公钥加密，让服务端用私钥解密来确保对方是否真的持有私钥。但是，黑客也可以发送字符串让服务器用私钥加密，并得到加密后的信息，从而找到规律，导致私钥的安全性下降。这种情况如何解决？</p>
-<p>&emsp;服务端并不是真的加密这个字符串，而是把字符串进行hash计算后再进行加密后发送给客户端。客户端收到后再解密这个hash值与原来字符串的hash值对比，从而确定对方是否持有私钥。</p>
+<p>&emsp;&emsp;在获得公钥后，客户端会生成随机数并用公钥加密，让服务端用私钥解密来确保对方是否真的持有私钥。但是，黑客也可以发送字符串让服务器用私钥加密，并得到加密后的信息，从而找到规律，导致私钥的安全性下降。这种情况如何解决？</p>
+<p>&emsp;&emsp;服务端并不是真的加密这个字符串，而是把字符串进行hash计算后再进行加密后发送给客户端。客户端收到后再解密这个hash值与原来字符串的hash值对比，从而确定对方是否持有私钥。</p>
 </blockquote>
 <blockquote>
-<p>&emsp;在通信的过程中，黑客可以截获加密内容，虽不能理解具体内容，但可以捣乱，修改内容或重复发送该内容，如何解决？</p>
-<p>&emsp;给通信的内容加版本号或随机值，如果接收到版本号或随机值不相同的信息，双方立刻停止通信。若一直捣乱就无法正常通信，因为有人控制了你的路由器，可以针对你。所以一些对于安全性较强的部门来说就不使用公网，而是内部网络，一般不会被破环通信。</p>
+<p>&emsp;&emsp;在通信的过程中，黑客可以截获加密内容，虽不能理解具体内容，但可以捣乱，修改内容或重复发送该内容，如何解决？</p>
+<p>&emsp;&emsp;给通信的内容加版本号或随机值，如果接收到版本号或随机值不相同的信息，双方立刻停止通信。若一直捣乱就无法正常通信，因为有人控制了你的路由器，可以针对你。所以一些对于安全性较强的部门来说就不使用公网，而是内部网络，一般不会被破环通信。</p>
 </blockquote>
-<h3 id="单向验证和双向验证"><a href="#单向验证和双向验证" class="headerlink" title="单向验证和双向验证"></a><strong>单向验证和双向验证</strong></h3><p>&emsp;https验证过程是分为单向验证和双向验证。</p>
+<h4 id="2-3-2-单向验证和双向验证"><a href="#2-3-2-单向验证和双向验证" class="headerlink" title="2.3.2 单向验证和双向验证"></a><strong>2.3.2 单向验证和双向验证</strong></h4><p>&emsp;&emsp;https验证过程是分为单向验证和双向验证。</p>
 <blockquote>
 <p>单向认证：</p>
 <ol>
@@ -509,44 +510,114 @@
 </ol>
 </blockquote>
 <p>总结：单向验证只需要客户端验证服务器证书即可，双向则需要双方都验证。</p>
-<h1 id="实战"><a href="#实战" class="headerlink" title="实战"></a><strong>实战</strong></h1><h2 id="获取证书"><a href="#获取证书" class="headerlink" title="获取证书"></a><strong>获取证书</strong></h2><h3 id="权威机构证书"><a href="#权威机构证书" class="headerlink" title="权威机构证书"></a><strong>权威机构证书</strong></h3><p>&emsp;可以通过阿里云等销售方来购买SSL证书，不过价格对于个人开发者和学生来说不是一笔小的费用，请根据自身情况酌情选购。</p>
-<h3 id="自行申请证书"><a href="#自行申请证书" class="headerlink" title="自行申请证书"></a><strong>自行申请证书</strong></h3><p>&emsp;各类证书的获取方式有很多，这里介绍通过Java的keytool数据证书工具生成证书的方法。</p>
-<p>&emsp;管理员身份执行CMD，执行以下命令。</p>
+<hr>
+<h2 id="第三节-实战"><a href="#第三节-实战" class="headerlink" title="第三节 实战"></a><strong>第三节 实战</strong></h2><h3 id="3-1-获取证书"><a href="#3-1-获取证书" class="headerlink" title="3.1 获取证书"></a><strong>3.1 获取证书</strong></h3><h4 id="3-1-1-权威机构证书"><a href="#3-1-1-权威机构证书" class="headerlink" title="3.1.1 权威机构证书"></a><strong>3.1.1 权威机构证书</strong></h4><p>&emsp;&emsp;可以通过阿里云等销售方来购买SSL证书，不过价格对于个人开发者和学生来说不是一笔小的费用，请根据自身情况酌情选购。</p>
+<p>&emsp;&emsp;可能我们已经拿到了SSL证书，可以将其直接导入密钥库，通过以下命令创建包含证书的新密钥库。</p>
 <blockquote>
-<p>keytool -genkeypair -alias server -keyalg RSA -keystore D:\server.keystore</p>
+<p>keytool -import -alias tomcat -file myCertificate.crt -keystore keystore.p12 -storepass password</p>
 </blockquote>
-<p>&emsp;<em>其中-alias是证书的别名，RSA是加密算法，-keystore后是输出证书的路径所在</em></p>
-<p>&emsp;执行后分别输入口令和一些个人信息，最后生成了文件server.keystore</p>
-<h2 id="Spring-Boot配置HTTPS"><a href="#Spring-Boot配置HTTPS" class="headerlink" title="Spring Boot配置HTTPS"></a><strong>Spring Boot配置HTTPS</strong></h2><p>&emsp;有了证书后，如何在Spring Boot项目中配置使用呢？</p>
+<h4 id="3-1-2-自行申请证书"><a href="#3-1-2-自行申请证书" class="headerlink" title="3.1.2 自行申请证书"></a><strong>3.1.2 自行申请证书</strong></h4><p>&emsp;&emsp;自行申请证书获得自签名证书，其用途只是为了开发和测试，在生产环境中应该使用由权威机构（Certificate Authority，CA）颁发的证书。</p>
+<p>&emsp;&emsp;获取证书的取方式有很多，这里介绍通过Java的keytool数据证书工具生成证书的方法，Keytool是与JDK一起提供的一个证书管理实用程序，因此如果安装了JDK，就应该已经有Keytool可用了。</p>
+<p>&emsp;&emsp;<strong>第一步，生成一对加密密钥，使用它们生成SSL证书并存储到密钥库（keystore）中</strong>。keytool文档中定义密钥库是一个加密密钥、X.509证书链、可信证书的数据库。为了启用HTTPS，我们需要提供一个Spring Boot应用程序，其密钥库包含SSL证书。密钥库最常用的两种格式是JKS（Java专用格式）和PKCS12（行业标准格式）。JKS是过去的默认格式，但如今Oracle建议采用后者。</p>
+<p>&emsp;&emsp;打开命令端执行以下命令，生成JKS证书。</p>
+<blockquote>
+<p>keytool -genkeypair -alias tomcat -keyalg RSA -keysize 2048 -keystore keystore.jks -validity 3650</p>
+</blockquote>
+<p>&emsp;&emsp;如果想要生成PKCS12证书，可以采用下个命令。</p>
+<blockquote>
+<p>keytool -genkeypair -alias tomcat -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore keystore.p12 -validity 3650</p>
+</blockquote>
+<p>&emsp;&emsp;<em>其中-alias是证书的别名，RSA是加密算法，-keystore后是输出证书的路径所在</em></p>
+<p>&emsp;&emsp;执行后分别输入密码（至少6位）和一些个人信息（可跳过），最后生成了包含SSL证书的keystore。</p>
+<p>&emsp;&emsp;我们可能想要查看keystore的内容，可以输入以下命令。</p>
+<blockquote>
+<p>keytool -list -v -keystore keystore.jks</p>
+</blockquote>
+<blockquote>
+<p>keytool -list -v -storetype pkcs12 -keystore keystore.p12</p>
+</blockquote>
+<p>&emsp;&emsp;如果已经有了一个JKS的密钥库，想要转换为PKCS12，可以输入以下命令。</p>
+<blockquote>
+<p>keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -deststoretype pkcs12</p>
+</blockquote>
+<h3 id="3-2-Spring-Boot配置HTTPS"><a href="#3-2-Spring-Boot配置HTTPS" class="headerlink" title="3.2 Spring Boot配置HTTPS"></a><strong>3.2 Spring Boot配置HTTPS</strong></h3><p>&emsp;&emsp;有了证书后，如何在Spring Boot项目中配置使用呢？</p>
 <ol>
 <li>将证书文件放置到项目根目录。</li>
-<li><p>在配置文件application.properties中添加如下内容。</p>
-<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 端口配置</span></span><br><span class="line">server.<span class="attribute">port</span>=8443</span><br><span class="line">server.port.<span class="attribute">http</span>=8080</span><br><span class="line"><span class="comment"># HTTPS SSL 配置</span></span><br><span class="line">server.ssl.<span class="attribute">key-store</span>=server.keystore</span><br><span class="line">server.ssl.<span class="attribute">key-alias</span>=server</span><br><span class="line">server.ssl.<span class="attribute">enabled</span>=<span class="literal">true</span></span><br><span class="line">server.ssl.<span class="attribute">key-store-password</span>=123456</span><br><span class="line">server.ssl.<span class="attribute">key-store-type</span>=JKS</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过配置类HttpsConfig来配置HTTPS访问，代码如下。</p>
+<li>在配置文件application.properties中添加如下内容。</li>
+</ol>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自定义端口配置</span></span><br><span class="line">server.<span class="attribute">port</span>=8443</span><br><span class="line">server.port.<span class="attribute">http</span>=8080</span><br><span class="line"></span><br><span class="line"><span class="comment"># Tell Spring Security (if used) to require requests over HTTPS，自动阻止HTTP请求</span></span><br><span class="line"><span class="comment"># security.require-ssl=true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># HTTPS SSL 配置</span></span><br><span class="line">server.ssl.<span class="attribute">enabled</span>=<span class="literal">true</span></span><br><span class="line"><span class="comment"># The format used for the keystore 密钥库格式</span></span><br><span class="line">server.ssl.<span class="attribute">key-store-type</span>=PKCS12</span><br><span class="line"><span class="comment"># The path to the keystore containing the certificate 指定密钥库文件路径</span></span><br><span class="line">server.ssl.<span class="attribute">key-store</span>=classpath:keystore.p12</span><br><span class="line"><span class="comment"># The password used to generate the certificate 证书密令</span></span><br><span class="line">server.ssl.<span class="attribute">key-store-password</span>=password</span><br><span class="line"><span class="comment"># The alias mapped to the certificate 证书别名</span></span><br><span class="line">server.ssl.<span class="attribute">key-alias</span>=tomcat</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>通过配置类HttpsConfig来配置HTTPS访问，重定向HTTP到HTTPS，代码如下。</li>
+</ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpsConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;server.port.http&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> serverPortHttp;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;server.port&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> serverPortHttps;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ServletWebServerFactory <span class="title">servletWebServerFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        TomcatServletWebServerFactory factory = <span class="keyword">new</span> TomcatServletWebServerFactory() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">postProcessContext</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">                SecurityConstraint securityConstraint = <span class="keyword">new</span> SecurityConstraint();</span><br><span class="line">                securityConstraint.setUserConstraint(<span class="string">"CONFIDENTIAL"</span>);</span><br><span class="line">                SecurityCollection securityCollection = <span class="keyword">new</span> SecurityCollection();</span><br><span class="line">                securityCollection.addPattern(<span class="string">"/*"</span>);</span><br><span class="line">                securityConstraint.addCollection(securityCollection);</span><br><span class="line">                context.addConstraint(securityConstraint);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        factory.addAdditionalTomcatConnectors(redirectConnector());</span><br><span class="line">        <span class="keyword">return</span> factory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Connector <span class="title">redirectConnector</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Connector connector = <span class="keyword">new</span> Connector(Http11NioProtocol.class.getName());</span><br><span class="line">        connector.setScheme(<span class="string">"http"</span>);</span><br><span class="line">        connector.setPort(serverPortHttp);</span><br><span class="line">        connector.setSecure(<span class="keyword">false</span>);</span><br><span class="line">        connector.setRedirectPort(serverPortHttps);</span><br><span class="line">        <span class="keyword">return</span> connector;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>启动项目，并访问对应URL：<a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a> 和 <a href="https://localhost:8443，观察结果。" target="_blank" rel="noopener">https://localhost:8443，观察结果。</a></li>
+</ol>
+<h3 id="3-3-分发SSL证书给客户端"><a href="#3-3-分发SSL证书给客户端" class="headerlink" title="3.3 分发SSL证书给客户端"></a><strong>3.3 分发SSL证书给客户端</strong></h3><p>&emsp;&emsp;自签名的SSL证书不会被浏览器信任，并会警告不安全。通过提供证书，可以使客户端信任您的应用程序。因为您将证书存储在密钥库中，所以需要提取它。通过以下命令通过密钥库生成crt证书。</p>
+<blockquote>
+<p>keytool -export -keystore keystore.p12 -alias tomcat -file myCertificate.crt</p>
+</blockquote>
+<p>&emsp;&emsp;有了证书后可以将其导入客户端，如果使用的是PKCS12格式的密钥库，应该可以直接使用它，而无需提取证书。如果在本地主机上部署应用程序，可能需要在浏览器上执行进一步的步骤：启用与本地主机的不安全链接。如在Chrome中通过在搜索栏编写此URL：chrome://flags/#allow-insecure-localhost 并激活relative选项。</p>
+<h4 id="3-3-1-在JRE密钥库中导入证书"><a href="#3-3-1-在JRE密钥库中导入证书" class="headerlink" title="3.3.1 在JRE密钥库中导入证书"></a><strong>3.3.1 在JRE密钥库中导入证书</strong></h4><p>&emsp;&emsp;要让JRE信任我们的证书，需要将其导入到cacerts中（负责保存证书的JRE密钥库）。首先找到JDK路径，我们先用$JDK_HOME来表示此路径。然后通过以下命令使JRE信任证书，需要输入JRE密钥库密码（默认为changeit或changeme），然后信任此证书。如果一切顺利，我们会看到证书被添加到密钥库的提示。</p>
+<blockquote>
+<p>keytool -importcert -file myCertificate.crt -alias tomcat -keystore $JDK_HOME/jre/lib/security/cacerts</p>
+</blockquote>
+<h3 id="3-4-SSL证书转换"><a href="#3-4-SSL证书转换" class="headerlink" title="3.4 SSL证书转换"></a><strong>3.4 SSL证书转换</strong></h3><h4 id="3-4-1-密钥库生成CRT和KEY"><a href="#3-4-1-密钥库生成CRT和KEY" class="headerlink" title="3.4.1 密钥库生成CRT和KEY"></a><strong>3.4.1 密钥库生成CRT和KEY</strong></h4><p>&emsp;&emsp;服务器端获得了JKS或PKCS12格式的密钥库，但对于一些如前端项目NodeJs等，需要用Crt证书和Key密钥来启用HTTPS，可以通过keytool和openssl工具来完成这一任务。</p>
+<ol>
+<li><p>获取已有JKS证书的文件和口令。</p>
 </li>
-<li><p>启动项目，并访问对应URL：<a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a> 和 <a href="https://localhost:8443，观察结果。" target="_blank" rel="noopener">https://localhost:8443，观察结果。</a></p>
+<li><p>通过keytool工具将JKS证书转换为P12格式，命令如下所示，分别输入新旧口令即可生成目标文件。</p>
 </li>
 </ol>
-<h2 id="SSL证书转换"><a href="#SSL证书转换" class="headerlink" title="SSL证书转换"></a><strong>SSL证书转换</strong></h2><h3 id="JKS证书转换CRT和KEY"><a href="#JKS证书转换CRT和KEY" class="headerlink" title="JKS证书转换CRT和KEY"></a><strong>JKS证书转换CRT和KEY</strong></h3><p>&emsp;服务器端获得了JKS证书，但对于前端项目如NodeJs，需要用Crt和Key格式的证书，可以通过keytool和openssl工具来完成这一任务。</p>
-<ol>
-<li>获取已有JKS证书的文件和口令。</li>
-<li>通过keytool工具将JKS证书转换为P12格式，命令如下所示，分别输入新旧口令即可生成目标文件。<blockquote>
+<blockquote>
 <p>keytool -importkeystore -srckeystore D:\server.keystore -destkeystore D:\server.p12 -srcstoretype jks -deststoretype pkcs12</p>
 </blockquote>
-</li>
-<li>通过openssl工具将P12格式证书转换为CRT证书，命令如下所示，在输入口令后即生成目标文件。<blockquote>
+<ol start="3">
+<li>通过openssl工具将P12格式证书转换为CRT证书，命令如下所示，在输入口令后即生成目标文件。</li>
+</ol>
+<blockquote>
 <p>openssl pkcs12 -in D:\server.p12 -nokeys -clcerts -out D:\server.crt</p>
 </blockquote>
-</li>
-<li>通过openssl工具将P12格式证书转换为非加密的key，命令如下所示，在输入口令后即生成目标文件。<blockquote>
+<ol start="4">
+<li>通过openssl工具将P12格式证书转换为非加密的key，命令如下所示，在输入口令后即生成目标文件。</li>
+</ol>
+<blockquote>
 <p>openssl pkcs12 -in D:\server.p12 -nocerts -nodes -out D:\server.key</p>
 </blockquote>
-</li>
+<h4 id="3-4-2-案例：客户只提供了CRT证书"><a href="#3-4-2-案例：客户只提供了CRT证书" class="headerlink" title="3.4.2 案例：客户只提供了CRT证书"></a><strong>3.4.2 案例：客户只提供了CRT证书</strong></h4><p>&emsp;&emsp;项目需要升级HTTPS，且我们只有云服务器的使用权，询问甲方后只拿到了CRT证书。</p>
+<p>&emsp;&emsp;首先尝试根据证书直接创建包含证书的新密钥库。</p>
+<blockquote>
+<p>keytool -import -alias tomcat -file myCertificate.crt -keystore keystore.p12 -storepass password</p>
+</blockquote>
+<p>&emsp;&emsp;分别生成了JKS和PKCS12格式的密钥库，然后直接把密钥库配置到Spring Boot应用，启动后报错。</p>
+<blockquote>
+<p>java.io.IOException Alias name not identifying a key entry</p>
+</blockquote>
+<blockquote>
+<p>错误原因：</p>
+<ol>
+<li>这个错误表示JVM中证书的别名与bitbucket.properties中指定的别名不匹配。默认情况下，bitbucket服务器查找别名tomcat。可以通过以下命令查看加载到密钥库中的别名列表：keytool -list -v -keystore {Path to Keystore File}</li>
+<li>如果密钥库缺少私钥，且导入的证书是一个trustedCertEntry而不是PrivateKeyEntry或KeyEntry会导致此错误。可以通过以下指令列出证书信息。</li>
 </ol>
+</blockquote>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">keytool -<span class="built_in">list</span> -v -keystore mykeystore.jks -<span class="built_in">alias</span> tomcat</span><br><span class="line">Enter keystore password:</span><br><span class="line">Alias <span class="built_in">name</span>: tomcat</span><br><span class="line">Creation <span class="built_in">date</span>: Jan <span class="number">22</span>, <span class="number">2018</span></span><br><span class="line">Entry type: trustedCertEntry</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过运行命令发现客户所给证书缺少私钥。</p>
+<blockquote>
+<p>解决方案：</p>
+<ol>
+<li>通过向bitbucket.properties添加以下属性来重写或指定正确的别名：server.ssl.key-alias={Alias Name}</li>
+<li>确保将证书导入为privatekey和certificate，而不仅仅是trustedcertificate。</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;最后和客户打嘴皮子很久终于要到了私钥和密令解决了问题。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p><a href="https://www.thomasvitale.com/https-spring-boot-ssl-certificate/" title="Title" target="_blank" rel="noopener">How to enable HTTPS in a Spring Boot Java application</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://confluence.atlassian.com/bitbucketserverkb/unable-to-start-tomcat-due-to-java-io-ioexception-alias-name-not-identifying-a-key-entry-943541751.html" title="Title" target="_blank" rel="noopener">Unable to start Tomcat due to java.io.IOException Alias name not identifying a key entry</a></p>
+</blockquote>
 <blockquote>
 <p><a href="https://zhuanlan.zhihu.com/p/60033345" title="Title" target="_blank" rel="noopener">让面试官膜拜你的HTTPS运行流程（超详细）</a></p>
 </blockquote>
@@ -701,7 +772,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">139</span>
+                  <span class="site-state-item-count">140</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -723,7 +794,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">68</span>
+                  <span class="site-state-item-count">70</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -791,7 +862,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引文"><span class="nav-number">1.</span> <span class="nav-text">引文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发展"><span class="nav-number">1.2.</span> <span class="nav-text">发展</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTPS介绍"><span class="nav-number">2.</span> <span class="nav-text">HTTPS介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS通信流程"><span class="nav-number">2.1.</span> <span class="nav-text">HTTPS通信流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加密"><span class="nav-number">2.2.</span> <span class="nav-text">加密</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS原理"><span class="nav-number">2.3.</span> <span class="nav-text">HTTPS原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数字证书"><span class="nav-number">2.3.1.</span> <span class="nav-text">数字证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#合法性验证"><span class="nav-number">2.3.2.</span> <span class="nav-text">合法性验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单向验证和双向验证"><span class="nav-number">2.3.3.</span> <span class="nav-text">单向验证和双向验证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实战"><span class="nav-number">3.</span> <span class="nav-text">实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取证书"><span class="nav-number">3.1.</span> <span class="nav-text">获取证书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权威机构证书"><span class="nav-number">3.1.1.</span> <span class="nav-text">权威机构证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自行申请证书"><span class="nav-number">3.1.2.</span> <span class="nav-text">自行申请证书</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Boot配置HTTPS"><span class="nav-number">3.2.</span> <span class="nav-text">Spring Boot配置HTTPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSL证书转换"><span class="nav-number">3.3.</span> <span class="nav-text">SSL证书转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JKS证书转换CRT和KEY"><span class="nav-number">3.3.1.</span> <span class="nav-text">JKS证书转换CRT和KEY</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTPS"><span class="nav-number">1.</span> <span class="nav-text">HTTPS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 引文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.1.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发展"><span class="nav-number">1.1.2.</span> <span class="nav-text">发展</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-HTTPS介绍"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 HTTPS介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-HTTPS通信流程"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 HTTPS通信流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-加密"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-HTTPS原理"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 HTTPS原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-数字证书"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">2.3.1 数字证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-合法性验证"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">2.3.2 合法性验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-单向验证和双向验证"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">2.3.2 单向验证和双向验证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-实战"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-获取证书"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 获取证书</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-1-权威机构证书"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">3.1.1 权威机构证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-2-自行申请证书"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">3.1.2 自行申请证书</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Spring-Boot配置HTTPS"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 Spring Boot配置HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-分发SSL证书给客户端"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 分发SSL证书给客户端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-在JRE密钥库中导入证书"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">3.3.1 在JRE密钥库中导入证书</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-SSL证书转换"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 SSL证书转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-密钥库生成CRT和KEY"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">3.4.1 密钥库生成CRT和KEY</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-案例：客户只提供了CRT证书"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">3.4.2 案例：客户只提供了CRT证书</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
