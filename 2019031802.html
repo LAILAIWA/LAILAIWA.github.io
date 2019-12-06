@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍Java中的Lambda表达式，内容包括：引文，函数，语法，函数式接口（函数描述符、Predicate、Consumer、Function、总结），类型检查、类型推断以及限制，方法引用、构造函数引用，变量作用域，使用Lambda表达式，复合Lambda表达式（比较器复合、谓词复合、函数复合），数学上的类似思想（扩展）等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg">
-<meta property="og:updated_time" content="2019-11-20T03:36:47.899Z">
+<meta property="og:updated_time" content="2019-12-05T03:15:51.441Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Lambda表达式">
 <meta name="twitter:description" content="介绍Java中的Lambda表达式，内容包括：引文，函数，语法，函数式接口（函数描述符、Predicate、Consumer、Function、总结），类型检查、类型推断以及限制，方法引用、构造函数引用，变量作用域，使用Lambda表达式，复合Lambda表达式（比较器复合、谓词复合、函数复合），数学上的类似思想（扩展）等。">
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg" rel="gallery_ck3r2zf3v00ft1gt7jdbgetnj"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg" rel="gallery_ck3tk7i4t00ex70t7ol4d075u"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg" itemprop="contentUrl"/>
               </a>
@@ -719,6 +719,7 @@
 </ol>
 </blockquote>
 <figure class="highlight moonscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="name">Class</span>::staticMethod == <span class="function"><span class="params">(x,y)</span> -&gt;</span> Class.staticMethod(x,y) //第一种</span><br><span class="line"><span class="name">Class</span>::instanceMethod == <span class="function"><span class="params">(x,y)</span> -&gt;</span> x.instanceMethod(y) //第二种</span><br><span class="line"><span class="name">object</span>::instanceMethod == <span class="function"><span class="params">(x,y)</span> -&gt;</span> object.instanceMethod(x,y) //第三种</span><br><span class="line"></span><br><span class="line">System.<span class="name">out</span>::println == <span class="function"><span class="params">(String s)</span> -&gt;</span> System.out.println(s)</span><br><span class="line"><span class="name">String</span>::substring == <span class="function"><span class="params">(<span class="built_in">string</span>,i)</span> -&gt;</span> str.substring(i)</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190901/201909010107.png" alt="为三种不同类型的Lambda表达式构建方法引用的方法"></p>
 <p>&emsp;&emsp;除了以上三种引用，其实还有构造函数、数组构造函数和父类调用这些特殊的方法引用。</p>
 <h3 id="构造函数引用"><a href="#构造函数引用" class="headerlink" title="构造函数引用"></a><strong>构造函数引用</strong></h3><p>&emsp;&emsp;构造器引用和方法引用的区别就是用<strong>new关键字</strong>代替方法名。</p>
 <p>&emsp;&emsp;构造器引用这种不实例化构造函数却可以引用它的方式可以产生一些有趣的应用。比如将一批构造函数对应的函数式引用存储到Map中，可以写一个函数根据不同条件选择不同的构造函数创建对象。</p>
@@ -778,8 +779,10 @@ Person[] people = stream.toArray(Person[]::new);//解决问题
 </ul>
 </blockquote>
 <figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">Function</span></span>&lt;<span class="keyword">Integer</span>, <span class="keyword">Integer</span>&gt; f = x -&gt; x + <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">Function</span></span>&lt;<span class="keyword">Integer</span>, <span class="keyword">Integer</span>&gt; g = x -&gt; x * <span class="number">2</span>;</span><br><span class="line">    </span><br><span class="line">//andThen，先应用前一个函数，再应用后一个函数</span><br><span class="line"><span class="function"><span class="keyword">Function</span></span>&lt;<span class="keyword">Integer</span>, <span class="keyword">Integer</span>&gt; h = f.andThen(g);//数学表示：g(f(x))或(g o f)(x)</span><br><span class="line"><span class="built_in">int</span> result1 = h.apply(<span class="number">1</span>);</span><br><span class="line">System.<span class="keyword">out</span>.println(result1);//输出<span class="number">4</span></span><br><span class="line"></span><br><span class="line">//compose，先应用后一个函数，再应用前一个函数</span><br><span class="line"><span class="function"><span class="keyword">Function</span></span>&lt;<span class="keyword">Integer</span>, <span class="keyword">Integer</span>&gt; i = f.compose(g);//数学表示：f(g(x))或(f o g)(x)</span><br><span class="line"><span class="built_in">int</span> result2 = i.apply(<span class="number">1</span>);</span><br><span class="line">System.<span class="keyword">out</span>.println(result2);//输出<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190901/201909010108.png" alt="andThen和compose"></p>
 <hr>
 <h2 id="第十节-数学上的类似思想（扩展）"><a href="#第十节-数学上的类似思想（扩展）" class="headerlink" title="第十节 数学上的类似思想（扩展）"></a><strong>第十节 数学上的类似思想（扩展）</strong></h2><h3 id="举例-积分"><a href="#举例-积分" class="headerlink" title="举例-积分"></a><strong>举例-积分</strong></h3><p>&emsp;&emsp;假设我们要求函数：f(x)=x+10在x处于(3,7)间的面积大小。因为函数是直线，所以可以根据梯形面积公式计算：1/2 <em> ((3+10) + (7+10)) </em> (7-3) = 60。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190901/201909010109.png" alt="函数f(x)=x+10"></p>
 <p>&emsp;&emsp;对于Java实现，我们可能第一步是想用编程语言替换数学符号。所以我们设计一个函数integrate(f, 3, 7)，f表示函数参数。</p>
 <p>&emsp;&emsp;有了Lambda表达式，我们可以这样写：integrate((double x) -&gt; x + 10, 3, 7) 或方法引用：integrate(C::f, 3, 7)。</p>
 <p>&emsp;&emsp;我们可以实现integrate，代码如下。</p>

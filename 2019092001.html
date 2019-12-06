@@ -96,10 +96,12 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="简单介绍了行为参数化这一概念，行为参数化的意义，在Java 8版本前如何实现行为参数化，Java 8又对行为参数化提供了哪些支持等。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-22T10:44:29.427Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190901/201909010106.png">
+<meta property="og:updated_time" content="2019-12-05T03:08:08.807Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="行为参数化">
 <meta name="twitter:description" content="简单介绍了行为参数化这一概念，行为参数化的意义，在Java 8版本前如何实现行为参数化，Java 8又对行为参数化提供了哪些支持等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190901/201909010106.png">
 
 
 
@@ -417,6 +419,7 @@
 <p>&emsp;&emsp;但匿名类仍存在一些缺点：1.它不太简洁。2.它让用户觉得难以理解。匿名类虽然解决了为ApplePredicate接口构建实体类的问题，但实际上仍需要创建这些对象，实际上并没有彻底的解决啰嗦的问题。</p>
 <h3 id="Lambda表达式"><a href="#Lambda表达式" class="headerlink" title="Lambda表达式"></a><strong>Lambda表达式</strong></h3><p>&emsp;&emsp;Lambda表达式的实现如下，彻底解决了啰嗦问题。</p>
 <figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; result = filterApples(<span class="name">inventory</span>, (<span class="name">Apple</span> a) -&gt; apple.getWeight() &gt; <span class="number">150</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190901/201909010106.png" alt="行为参数化与值参数化"></p>
 <h3 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a><strong>泛型</strong></h3><p>&emsp;&emsp;通过泛型进一步抽象，让filterApples()能够适用更多的对象。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="keyword">List</span>&lt;T&gt; filter(<span class="keyword">List</span>&lt;T&gt; <span class="keyword">list</span>, Predicate&lt;T&gt; p)&#123;</span><br><span class="line">    <span class="keyword">List</span>&lt;Student&gt; result = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span>(T e : <span class="keyword">list</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(p.test(e))&#123;</span><br><span class="line">            result.add(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>

@@ -96,10 +96,16 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍Java 8中引入的函数式编程，内容包括：第一节 引文，第二节 实现和维护系统（共享的可变数据、声明式编程、为什么要采用函数式编程），第三节 什么是函数式编程（函数式Java编程、引用透明性、面向对象编程和函数式编程的对比、函数式编程实战），第四节 递归和迭代等。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-04T09:04:23.346Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010106.png">
+<meta property="og:updated_time" content="2019-12-05T07:09:40.827Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="函数式的思考">
 <meta name="twitter:description" content="介绍Java 8中引入的函数式编程，内容包括：第一节 引文，第二节 实现和维护系统（共享的可变数据、声明式编程、为什么要采用函数式编程），第三节 什么是函数式编程（函数式Java编程、引用透明性、面向对象编程和函数式编程的对比、函数式编程实战），第四节 递归和迭代等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010102.png">
 
 
 
@@ -356,7 +362,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,341
+                  4,395
                 </span>
               
 
@@ -401,6 +407,8 @@
 <hr>
 <h2 id="第二节-实现和维护系统"><a href="#第二节-实现和维护系统" class="headerlink" title="第二节 实现和维护系统"></a><strong>第二节 实现和维护系统</strong></h2><p>&emsp;&emsp;假设我们需要接手一个不熟悉项目，如果我们比较有经验可能会先搜索一下代码中是否有使用synchronized关键字，如果有就意味着要面对修复并发导致的缺陷的可能。为了让程序易于使用，希望最好项目的类结构能直接反映出系统的结构，具有良好的<strong>耦合性</strong>（软件系统各组件之间是否相互独立）和<strong>内聚性</strong>（系统的各相关部分之间如何协作）。对于程序员来说，大部分日常工作应该是代码维护时的调试：代码遭遇无法预测的情况而崩溃，为什么这样？如何进入这种状态的？而函数式编程的<strong>无副作用</strong>和<strong>不变性</strong>对于这一问题大有裨益。</p>
 <h3 id="2-1-共享的可变数据"><a href="#2-1-共享的可变数据" class="headerlink" title="2.1 共享的可变数据"></a><strong>2.1 共享的可变数据</strong></h3><p>&emsp;&emsp;<strong>无法预知的变量修改问题</strong>源自于共享的数据结构被你所维护的代码中的多个方法读取和更新。正式由于使用了这种结构导致我们很难追踪到程序的各个组成部分所发生的变化。<strong>如果一个方法既不修改它内嵌类的状态，也不修改其他对象的状态，使用return返回所有的计算结果</strong>，那么我们就可以称其为<strong>纯粹的</strong>或<strong>无副作用的</strong>。</p>
+<p>&emsp;&emsp;多个类同时共享一个可变对象，很难说到底哪个类真正拥有对象，如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010102.png" alt="多个类同时共享一个可变对象，很难说到底哪个类真正拥有对象"></p>
 <blockquote>
 <p>副作用就是函数的效果超过了其自身的范畴，一些例子：</p>
 <ul>
@@ -414,10 +422,13 @@
 <h3 id="2-3-为什么要采用函数式编程"><a href="#2-3-为什么要采用函数式编程" class="headerlink" title="2.3 为什么要采用函数式编程"></a><strong>2.3 为什么要采用函数式编程</strong></h3><p>&emsp;&emsp;函数式编程具体实践了声明式编程和无副作用计算，可以使我们更容易的构建和维护系统。实现函数式编程必要的一些特性，如构造操作和传递行为可以使我们的程序更便于阅读、易于编写。</p>
 <hr>
 <h2 id="第三节-什么是函数式编程"><a href="#第三节-什么是函数式编程" class="headerlink" title="第三节 什么是函数式编程"></a><strong>第三节 什么是函数式编程</strong></h2><p>&emsp;&emsp;一种使用函数进行编程的方式。函数式编程中的函数对应一个数学函数，接收参数返回结果但不会有副作用，不同于Java中常见的函数，没有可变共享变量的参与。当我们定义函数式时，想要表达的是像数学函数那样没有副作用，我们能否在函数内部执行一些非函数式操作，只要其结果不会暴露出来？或者程序可以存在副作用但不会被其它调用者感知？为了准确的区别二者，我们称第一种为<strong>纯粹的函数式编程</strong>，第二种为<strong>函数式编程</strong>。</p>
-<p>&emsp;&emsp;我们可以把函数式编程看作一个<strong>黑盒模型</strong>：输入-&gt;函数-&gt;输出。</p>
+<p>&emsp;&emsp;我们可以把函数式编程看作一个<strong>黑盒模型</strong>：输入-&gt;函数-&gt;输出。下图分别为带有副作用的函数和没有副作用的函数。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010103.png" alt="带有副作用的函数"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010104.png" alt="没有副作用的函数"></p>
 <h3 id="3-1-函数式Java编程"><a href="#3-1-函数式Java编程" class="headerlink" title="3.1 函数式Java编程"></a><strong>3.1 函数式Java编程</strong></h3><p>&emsp;&emsp;实际Java编程中，我们无法以纯粹的函数式编程来实现一个程序，但可以为系统的核心组件编写接近纯粹式函数式的实现。首先，要确保代码的副作用不能被感知到。比如有一个函数在进入方法体执行时会对一个字段值+1，退出方法体前会对字段值-1。对于单线程来说，这个函数没有副作用。但多线程时，其他线程可以查看该字段的值，甚至并发调用它，那么此函数就不能称为函数式的实现了。当然我们可以通过加锁来对方法体进行封装，从而掩盖这一问题，但同时也失去了在多核处理器上的两个核并发执行两个方法调用的能力。虽然最终符合了函数式的定义，但实际上降低了运行效率。</p>
 <p>&emsp;&emsp;所以我们的准则是，<strong>被称为函数式的函数或方法都只能修改本地变量</strong>。除此之外，<strong>引用的对象都只能是不可修改的对象</strong>（期望所有字段都是final）。但<strong>实际上也会允许对方法中全新创建的对象中的字段进行更新</strong>，不过这些字段对于其他对象是不可见的，也不会因为保存而对后续调用造成影响。</p>
 <p>&emsp;&emsp;如果被称为函数式，<strong>函数或方法不能抛出任何异常</strong>。一旦抛出异常就意味着结果被终止了，但这点其实和数学函数也有冲突，这些数学操作可以被称作<strong>局部函数式</strong>，当输入正常返回确定的结果，但对于一些输入其结果是<strong>未定义的</strong>，甚至不返回结果（比如除法除数为0）。所以有些人认为通过抛出异常来对这类情况建模是合理的，但捕获异常是一种非函数式的控制流，这种操作违背了我们定义的黑盒模型，从而增加了一组代表异常处理的箭头：-&gt;异常。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010105.png" alt="抛出一个异常的方法"></p>
 <p>&emsp;&emsp;不使用异常的方案就是使用<strong>Optional<t></t></strong>类型，避免直接使用原始或引用类型作为函数返回值，而是Optional<t>包装返回值。当然我们需要检查函数返回值是否为一个空的Optional对象，这种方式似乎很繁琐，所以我们可以像非纯粹的函数式那样选择在本地局部地使用异常，避免通过接口将结果暴露给其他方法，这样既利用了函数式的优点，也不会过度的使代码膨胀。</t></p>
 <p>&emsp;&emsp;当我们实现的函数存在副作用时，请隐藏这些非函数式行为，否则就不要调用这些方法（换句话说，你要确保它们对数据结构的任何修改对于调用者都是不可见的，可以通过首次复制，或者捕获任何可能抛出的异常来实现这一目的）。如后续3.4的实战代码中我们隐藏了方法insertAll调用库函数List.add所产生的副作用。</p>
 <h3 id="3-2-引用透明性"><a href="#3-2-引用透明性" class="headerlink" title="3.2 引用透明性"></a><strong>3.2 引用透明性</strong></h3><p>&emsp;&emsp;<strong>没有可感知的副作用</strong>隐含着<strong>引用透明性</strong>，如果一个函数只要传递同样的参数值，必定会返回同样的结果，可以称这个函数是引用透明的。比如String.replace方法总是返回同样的结果，而不是更新它的this对象，就是引用透明的，可以被看作函数式。所以引用透明性可以看作是函数式的特征，相对的Random.nextInt方法就不会被看作函数式方法。</p>
@@ -441,6 +452,7 @@
 <p>&emsp;&emsp;函数式语言提供了一个方案来解决这个效率问题：<strong>尾—调优化</strong>（tail-call optimization），基本思想是你可以编写阶乘的一个迭代定义，不过迭代调用会发生在函数的最后，这种新型的迭代调用经过优化后的执行速度会快很多。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 递归式阶乘计算: 尾-调优化</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">long</span> <span class="title">factorialTailRecursive</span><span class="params">(<span class="keyword">long</span> n)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> factorialHelper(<span class="number">1</span>,n);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">long</span> <span class="title">factorialHelper</span><span class="params">(<span class="keyword">long</span> acc, <span class="keyword">long</span> n)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n == <span class="number">1</span> ? acc : factorialHelper(acc * n, n<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;factorialHelper是尾-递类型的函数，递归调用会发生在方法的最后。factorialRecursive递归会先进行递归，递归结果最后进行运算；而factorialHelper则先运算，将运算结果直接作为参数进行递归。factorialRecursive方法会每次调用创建一个栈帧，而factorialHelper不需要在不同的栈帧上保存每次递归运算的中间值，编译器能够自行决定复用某个栈帧进行计算，阶乘的中间值直接被用作参数传递给此方法，也就不用为每个递归调用分配单独的栈帧用于跟踪每次调用的中间值——通过方法的参数可以直接访问直接值。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010106.png" alt="栈帧和尾递阶乘的差异"></p>
 <p>&emsp;&emsp;但Java 8版本时还未能支持这种优化，而一些现代的语言如Scala或Groovy都支持了这种递归优化，最终的效果和迭代不相上下。这意味着坚持纯粹的函数式编程既能享受其好处，也不会损失执行的效率。所以在Java 8时，建议使用Stream代替迭代操作，如果采用递归能够不带来副作用且更容易实现那应该采用递归，毕竟开发的效率往往比执行的细微差异在大多数时候要更重要。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
