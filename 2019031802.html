@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍Java中的Lambda表达式，内容包括：引文，函数，语法，函数式接口（函数描述符、Predicate、Consumer、Function、总结），类型检查、类型推断以及限制，方法引用、构造函数引用，变量作用域，使用Lambda表达式，复合Lambda表达式（比较器复合、谓词复合、函数复合），数学上的类似思想（扩展）等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg">
-<meta property="og:updated_time" content="2019-12-05T03:15:51.441Z">
+<meta property="og:updated_time" content="2019-12-11T06:38:33.403Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Lambda表达式">
 <meta name="twitter:description" content="介绍Java中的Lambda表达式，内容包括：引文，函数，语法，函数式接口（函数描述符、Predicate、Consumer、Function、总结），类型检查、类型推断以及限制，方法引用、构造函数引用，变量作用域，使用Lambda表达式，复合Lambda表达式（比较器复合、谓词复合、函数复合），数学上的类似思想（扩展）等。">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5,982
+                  6,001
                 </span>
               
 
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg" rel="gallery_ck40rgxk700ft1st7kp2qqygo"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg" rel="gallery_ck4117cqc00ftsot7pazemam1"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___Bia65hQHpnO___.jpg" itemprop="contentUrl"/>
               </a>
@@ -723,22 +723,9 @@
 <p>&emsp;&emsp;除了以上三种引用，其实还有构造函数、数组构造函数和父类调用这些特殊的方法引用。</p>
 <h3 id="构造函数引用"><a href="#构造函数引用" class="headerlink" title="构造函数引用"></a><strong>构造函数引用</strong></h3><p>&emsp;&emsp;构造器引用和方法引用的区别就是用<strong>new关键字</strong>代替方法名。</p>
 <p>&emsp;&emsp;构造器引用这种不实例化构造函数却可以引用它的方式可以产生一些有趣的应用。比如将一批构造函数对应的函数式引用存储到Map中，可以写一个函数根据不同条件选择不同的构造函数创建对象。</p>
-<p><code></code><br>    ArrayList<string> names = …;<br>    Stream<person> stream = names.stream().map(Person::new);</person></string></p>
-<pre><code>Person::new == () -&gt; new Person()
-
-//无参构造器
-Supplier&lt;Apple&gt; c1 = Apple::new;
-//构造器Apple(int weight)
-Function&lt;Integer, Apple&gt; c2 = Apple::new; 
-</code></pre><p><code></code></p>
-<h3 id="数组构造函数引用"><a href="#数组构造函数引用" class="headerlink" title="数组构造函数引用"></a><strong>数组构造函数引用</strong></h3><p>&emsp;&emsp;Java无法构造泛型T数组，而数组构造函数引用可以跳过这个限制</p>
-<p><code></code><br>    //数组构造函数引用<br>    int[]::new == x -&gt; new int[x]</p>
-<pre><code>T[] list = new T[n];//Error
-
-Object[] list = stream.toArray();//需要Person数组而不是Object
-
-Person[] people = stream.toArray(Person[]::new);//解决问题
-</code></pre><p><code></code></p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;<span class="keyword">String</span>&gt; names = ...;</span><br><span class="line">Stream&lt;Person&gt; stream = names.stream().map(Person:<span class="type"></span>:<span class="keyword">new</span><span class="type"></span>);</span><br><span class="line"></span><br><span class="line">Person:<span class="type"></span>:<span class="keyword">new</span> <span class="type"></span>== () -&gt; <span class="keyword">new</span> <span class="type">Person</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment">//无参构造器</span></span><br><span class="line">Supplier&lt;Apple&gt; c1 = Apple:<span class="type"></span>:<span class="keyword">new</span><span class="type"></span>;</span><br><span class="line"><span class="comment">//构造器Apple(int weight)</span></span><br><span class="line">Function&lt;Integer, Apple&gt; c2 = Apple:<span class="type"></span>:<span class="keyword">new</span><span class="type"></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="数组构造函数引用"><a href="#数组构造函数引用" class="headerlink" title="数组构造函数引用"></a><strong>数组构造函数引用</strong></h3><p>&emsp;&emsp;Java无法构造泛型T数组，而数组构造函数引用可以跳过这个限制。</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数组构造函数引用</span></span><br><span class="line"><span class="built_in">int</span>[]::<span class="keyword">new</span> == x -&gt; <span class="keyword">new</span> <span class="built_in">int</span>[x]</span><br><span class="line"></span><br><span class="line">T[] <span class="built_in">list</span> = <span class="keyword">new</span> T[n];<span class="comment">//Error</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>[] <span class="built_in">list</span> = stream.toArray();<span class="comment">//需要Person数组而不是Object</span></span><br><span class="line"></span><br><span class="line">Person[] people = stream.toArray(Person[]::<span class="keyword">new</span>);<span class="comment">//解决问题</span></span><br></pre></td></tr></table></figure>
 <hr>
 <h2 id="第七节-变量作用域"><a href="#第七节-变量作用域" class="headerlink" title="第七节 变量作用域"></a><strong>第七节 变量作用域</strong></h2><blockquote>
 <p>lambda表达式包括三个部分：</p>
@@ -933,7 +920,7 @@ Person[] people = stream.toArray(Person[]::new);//解决问题
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">145</span>
+                  <span class="site-state-item-count">146</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

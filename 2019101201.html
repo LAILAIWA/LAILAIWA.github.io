@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="docker," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="简单介绍Docker（四）容器，内容包括：简介，详解（容器vs虚拟机、虚拟机的额外开销、检查Docker daemon、启动一个简单容器、容器进程、容器生命周期、优雅地停止容器、利用重启策略进行容器的自我修复、Web服务器示例、查看容器详情、快速清理），命令等。">
+<meta name="keywords" content="docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker（四）容器">
+<meta property="og:url" content="http://linyishui.top/2019101201.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍Docker（四）容器，内容包括：简介，详解（容器vs虚拟机、虚拟机的额外开销、检查Docker daemon、启动一个简单容器、容器进程、容器生命周期、优雅地停止容器、利用重启策略进行容器的自我修复、Web服务器示例、查看容器详情、快速清理），命令等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010126.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010127.png">
+<meta property="og:updated_time" content="2019-12-11T08:27:39.320Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker（四）容器">
+<meta name="twitter:description" content="简单介绍Docker（四）容器，内容包括：简介，详解（容器vs虚拟机、虚拟机的额外开销、检查Docker daemon、启动一个简单容器、容器进程、容器生命周期、优雅地停止容器、利用重启策略进行容器的自我修复、Web服务器示例、查看容器详情、快速清理），命令等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010126.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019101201.html"/>
+
+
+
+
+
+  <title>Docker（四）容器 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019101201.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Docker（四）容器</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-12T14:03:27+08:00">
+                2019-10-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6,844
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  26
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍Docker（四）容器，内容包括：简介，详解（容器vs虚拟机、虚拟机的额外开销、检查Docker daemon、启动一个简单容器、容器进程、容器生命周期、优雅地停止容器、利用重启策略进行容器的自我修复、Web服务器示例、查看容器详情、快速清理），命令等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Docker（四）容器"><a href="#Docker（四）容器" class="headerlink" title="Docker（四）容器"></a><strong>Docker（四）容器</strong></h1><h2 id="第一节-Docker容器"><a href="#第一节-Docker容器" class="headerlink" title="第一节 Docker容器"></a><strong>第一节 Docker容器</strong></h2><h3 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a><strong>1.1 简介</strong></h3><p>&emsp;&emsp;容器是镜像的运行时实例。正如从虚拟机模板上启动VM一样，用户也同样可以从单个镜像上启动一个或多个容器。虚拟机和容器最大的区别是容器更快并且更轻量级——与虚拟机运行在完整的操作系统之上相比，容器会共享其所在主机的操作系统/内核。</p>
+<p>&emsp;&emsp;启动容器的简便方式是使用docker container run命令。该命令可以携带很多参数，在其基础的格式docker container run \<image> \<app>中，指定了启动所需的镜像以及要运行的应用。docker container run -it ubuntu /bin/bash则会启动某个Ubuntu Linux容器，并运行Bash Shell作为其应用；如果想启动 PowerShell并运行一个应用，则可以使用命令docker container run -it microsoft- /powershell:nanoserver pwsh.exe。</app></image></p>
+<p>&emsp;&emsp;-it参数可以将当前终端连接到容器的Shell终端之上。</p>
+<p>&emsp;&emsp;容器随着其中运行应用的退出而终止。在上面两个示例中，Linux容器会在Bash Shell退出后终止，而Windows容器会在PowerShell进程终止后退出。一个简单的验证方法就是启动新的容器，并运行sleep命令休眠10s。容器会启动，然后运行休眠命令，在10s后退出。如果在Linux主机（或者在Linux容器模式下的Windows主机上）运行docker container run alpine:latest sleep 10命令，Shell会连接到容器Shell 10s的时间，然后退出；可以在Windows容器上运行docker container run microsoft/powershell:nanoserver StartSleep -s 10来验证这一点。可以使用docker container stop命令手动停止容器运行，并且使用docker container start再次启动该容器。如果再也不需要该容器，则使用docker container rm命令来删除容器。</p>
+<hr>
+<h3 id="1-2-详解"><a href="#1-2-详解" class="headerlink" title="1.2 详解"></a><strong>1.2 详解</strong></h3><h4 id="1-2-1-容器vs虚拟机"><a href="#1-2-1-容器vs虚拟机" class="headerlink" title="1.2.1 容器vs虚拟机"></a><strong>1.2.1 容器vs虚拟机</strong></h4><p>&emsp;&emsp;容器和虚拟机都依赖于宿主机才能运行。宿主机可以是笔记本，是数据中心的物理服务器，也可以是公有云的某个实例。假设宿主机是一台需要运行4个业务应用的物理服务器。在虚拟机模型中，首先要开启物理机并启动Hypervisor引导程序（跳过了BIOS和Bootloader代码等）。一旦Hypervisor启动，就会占有机器上的全部物理资源，如CPU、RAM、存储和NIC。Hypervisor接下来就会将这些物理资源划分为虚拟资源，并且看起来与真实物理资源完全一致。然后Hypervisor会将这些资源打包进一个叫作虚拟机（VM）的软件结构当中。这样用户就可以使用这些虚拟机，并在其中安装操作系统和应用。前面提到需要在物理机上运行4个应用，所以在Hypervisor之上需要创建4个虚拟机并安装4个操作系统，然后安装4个应用。当操作完成后，结构如图7.2所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010126.png" alt="运行4个业务应用的物理服务器"></p>
+<p>&emsp;&emsp;而容器模型则略有不同。服务器启动之后，所选择的操作系统会启动。在Docker世界中可以选择Linux，或者内核支持内核中的容器原语的新版本Windows。与虚拟机模型相同，OS也占用了全部硬件资源。在OS层之上，需要安装容器引擎（如Docker）。容器引擎可以获取系统资源，比如进程树、文件 系统以及网络栈，接着将资源分割为安全的互相隔离的资源结构，称之为容器。每个容器看起来就像一个真实的操作系统，在其内部可以运行应用。按照前面的假设，需要在物理机上运行4个应用。因此，需要划分出4个容器并在每个容器中运行一个应用，如图7.3所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010127.png" alt="划分4个容器"></p>
+<p>&emsp;&emsp;从更高层面上来讲，<strong>Hypervisor是硬件虚拟化</strong>（Hardware Virtualization）——Hypervisor将硬件物理资源划分为虚拟资源；另外，<strong>容器是操作系统虚拟化</strong>（OS Virtualization）——容器将系统资源划分为虚拟资源。</p>
+<h4 id="1-2-2-虚拟机的额外开销"><a href="#1-2-2-虚拟机的额外开销" class="headerlink" title="1.2.2 虚拟机的额外开销"></a><strong>1.2.2 虚拟机的额外开销</strong></h4><p>&emsp;&emsp;接下来着重探讨Hypervisor模型的一个主要问题。</p>
+<p>&emsp;&emsp;首先我们的目标是在一台物理机上运行4个业务相关应用。每种模型示例中都安装了一个操作系统或者Hypervisor（一种针对虚拟机高度优化后的操作系统）。截至目前，两个模型还很相似，但是也就到此为止了。</p>
+<p>&emsp;&emsp;虚拟机模型将底层硬件资源划分到虚拟机当中。每个虚拟机都是包含了虚拟CPU、虚拟RAM、虚拟磁盘等资源的一种软件结构。因此，每个虚拟机都需要有自己的操作系统来声明、初始化并管理这些虚拟资源。但不幸的是，操作系统本身是有其额外开销的。例如，每个操作系统都消耗一点CPU、一点RAM、一点存储空间等。每个操作系统都需要独立的许可证，并且都需要打补丁升级，每个操作系统也都面临被攻击的风险。通常将这种现象称作OS Tax或者VM Tax，<strong>每个操作系统都占用一定的资源</strong>。</p>
+<p>&emsp;&emsp;容器模型具有在宿主机操作系统中运行的单个内核。在一台主机上 运行数十个甚至数百个容器都是可能的，容器共享一个操作系统/内核，意味着只有一个操作系统消耗CPU、RAM和存储资源，只有一个操作系统需要授权，只有一个操作系统需要升级和打补丁，同时只有一个操作系统面临被攻击的风险。简言之就是只有一份OS损耗！</p>
+<p>&emsp;&emsp;因为容器并不是完整的操作系统，所以其启动要远比虚拟机快。在容器内部并不需要内核，也就没有定位、解压以及初始化的过程——更不用提在内核启动过程中对硬件的遍历和初始化了。唯一需要的是位于下层操作系统的共享内核是启动了的！最终结果就是，容器可以在1s内启动。唯一对容器启动时间有影响的就是容器内应用启动所花费的时间。</p>
+<p>&emsp;&emsp;这些就是容器模型要比虚拟机模型简洁并且高效的原因了。使用容器可以在更少的资源上运行更多的应用，启动更快，并且支付更少的授权和管理费用，同时面对未知攻击的风险也更小。</p>
+<h4 id="1-2-3-检查Docker-daemon"><a href="#1-2-3-检查Docker-daemon" class="headerlink" title="1.2.3 检查Docker daemon"></a><strong>1.2.3 检查Docker daemon</strong></h4><p>&emsp;&emsp;通常登录Docker主机后的第一件事情是检查Docker是否正在运行。当命令输出中包含Client和Server的内容时，可以继续下面的示例。如果在Server部分中包含了错误码，这表示Docker daemon很可能没有运行，或者当前用户没有权限访问。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker version</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如果在Linux中遇到无权限访问的问题，需要确认当前用户是否属于本地Docker UNIX组。如果不是，可以通过usermod -aG docker \<user>来添加，然后退出并重新登录Shell，改动即可生效。如果当前用户已经属于本地docker用户组，那么问题可能是Docker daemon没有运行导致。根据下列指令检查Docker daemon的状态。</user></p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用Systemd在Linux系统中执行该命令 </span></span><br><span class="line">$ service docker status docker start/<span class="built_in">running</span>, <span class="built_in">process</span> <span class="number">29393</span></span><br><span class="line"><span class="comment">//使用Systemd在Linux系统中执行该命令 </span></span><br><span class="line">$ systemctl is-active docker active</span><br></pre></td></tr></table></figure>
+<h4 id="1-2-4-启动一个简单容器"><a href="#1-2-4-启动一个简单容器" class="headerlink" title="1.2.4 启动一个简单容器"></a><strong>1.2.4 启动一个简单容器</strong></h4><p>&emsp;&emsp;启动容器的一个简单的方式是通过docker container run命令。下面的命令启动了一个简单的容器，其中运行了容器化版本的centos Linux。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker container run -it ubuntu:latest /bin/bash </span><br><span class="line">Unable <span class="keyword">to</span> <span class="keyword">find</span> image <span class="string">'ubuntu:latest'</span> locally</span><br><span class="line">lates<span class="variable">t:</span> Pulling from library/ubuntu </span><br><span class="line"><span class="number">952132</span>ac251<span class="variable">a:</span> Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">82659</span>f8f1b76:  Pull <span class="built_in">complete</span> </span><br><span class="line">c19118ca682d:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">8296858250</span>fe:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">24</span>e0251a0e2c:  Pull <span class="built_in">complete</span> </span><br><span class="line">Diges<span class="variable">t:</span> <span class="built_in">sha256</span>:f4691c96e6bbaa99d9...e95a60369c506dd6e6f6ab </span><br><span class="line">Statu<span class="variable">s:</span> Downloaded newer image <span class="keyword">for</span> ubuntu:latest </span><br><span class="line">root@<span class="number">3027</span>eb644874:/#</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;命令的基础格式为docker container run \<options> \<image>:\<tag> \<app>。</app></tag></image></options></p>
+<p>&emsp;&emsp;使用docker container run来启动容器，这也是启动新容器的标准命令。命令中使用了-it参数使容器具备交互性并与终端进行连接。接下来，命令中指定了具体镜像ubuntu:latest。最终，在命令中指定了运行在容器中的程序Bash Shell。</p>
+<p>&emsp;&emsp;当敲击回车键之后，Docker客户端选择合适的API来调用Docker daemon。Docker daemon接收到命令并搜索Docker本地缓存，观察是否有命令所请求的镜像。在上面引用的示例中，本地缓存并未包含该镜像，所以Docker接下来查询在Docker Hub中是否存在对应镜像。找到该镜像后，Docker将镜像拉取到本地，存储在本地缓存当中。</p>
+<p>&emsp;&emsp;一旦镜像拉取到本地，daemon就创建容器并在其中运行指定的应用。在上面的示例中，Shell提示符已经变为root@3027eb644874:/#，说明目前已经位于容器内部了。@之后的一长串数字就是容器唯一ID的前12个字符。</p>
+<p>&emsp;&emsp;若尝试在容器内执行一些基础命令，可能会发现某些指令无法正常工作。这是因为大部分容器镜像都是经过高度优化的。这意味着某些命令或者包可能没有安装。下面的示例展示了两个命令——一条执行成功，一条执行失败。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@3027eb644874:/# ls -l</span><br><span class="line">root@3027eb644874:/#<span class="built_in"> ping </span>www.docker.com</span><br></pre></td></tr></table></figure>
+<h4 id="1-2-5-容器进程"><a href="#1-2-5-容器进程" class="headerlink" title="1.2.5 容器进程"></a><strong>1.2.5 容器进程</strong></h4><p>&emsp;&emsp;启动Ubuntu容器之时，让容器运行Bash Shell（/bin/bash）。这使得Bash Shell成为容器中运行的且唯一运行的进程。可以通过ps -elf命令在容器内部查看（ps -elf进程在输出后即结束）。</p>
+<p>&emsp;&emsp;这意味着如果通过输入exit退出Bash Shell，那么容器也会退出（终止）。原因是容器如果不运行任何进程则无法存在——杀死Bash Shell即杀死了容器唯一运行的进程，导致这个容器也被杀死。</p>
+<p>&emsp;&emsp;按下Ctrl-PQ组合键则会退出容器但并不终止容器运行。这样做会切回到Docker主机的Shell，并保持容器在后台运行。可以使用docker container ls命令来观察当前系统正在运行的容器列表。</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">ls</span> </span><br><span class="line">CNTNR ID  IMAGE          COMMAND    CREATED   STATUS     NAMES </span><br><span class="line">302．<span class="string">..74</span>  ubuntu<span class="function">:latest</span>  <span class="string">/bin/bash</span>  6 mins    Up 6mins   sick_montalcini</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;当前容器仍然在运行，并且可以通过docker container exec命令将终端重新连接到Docker，理解这一点很重要。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>docker container exec -it <span class="number">3027</span>eb644874 bash </span><br><span class="line">root<span class="variable">@3027eb644874</span><span class="symbol">:/</span><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Shell提示符切换到了容器，如果再次运行ps命令，会看到两个Bash或者PowerShell进程，这是因为docker container exec命令创建了新的Bash或者PowerShell进程并且连接到容器。这意味着在当前Shell输入exit并不会导致容器终止，因为原Bash或者PowerShell进程还在运行当中。</p>
+<p>&emsp;&emsp;输入exit退出容器，并通过命令docker container ps来确认容器依然在运行中。如果在自己的Docker主机上运行示例，则需要使用下面两个命令来停止并删除容器。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker container stop 3027eb64487 </span></span><br><span class="line"><span class="meta">$</span><span class="bash"> docker container rm 3027eb64487</span></span><br></pre></td></tr></table></figure>
+<h4 id="1-2-6-容器生命周期"><a href="#1-2-6-容器生命周期" class="headerlink" title="1.2.6 容器生命周期"></a><strong>1.2.6 容器生命周期</strong></h4><p>&emsp;&emsp;通常会认为容器不擅长持久化工作或者持久化数据，很大程度上是因为容器在非持久化领域上表现得太出色。但是在一个领域做得很好并不意味着不擅长其他的领域。很多虚拟机管理员会记得微软或者Oracle告诉他们不能在虚拟机中运行他们的应用，至少他们不会支持这么做。</p>
+<p>&emsp;&emsp;容器的生命周期——从创建、运行、休眠，直至销毁的整个过程。</p>
+<p>&emsp;&emsp;新建容器，命名为“percy”，意指持久化（persistent）。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">run</span><span class="bash"> --name percy -it ubuntu:latest /bin/bash</span></span><br><span class="line"><span class="bash">root@9cb2d2fd1d65:/<span class="comment">#</span></span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;接下来将一部分数据写入容器中。在新容器内部Shell中，执行下面的步骤来将部分数据写入到tmp目录下的某个文件中，并确认数据是否写入成功。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/</span><span class="comment"># cd tmp</span></span><br><span class="line"></span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/tmp</span><span class="comment"># ls -l </span></span><br><span class="line">total <span class="number">0</span></span><br><span class="line"></span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/tmp</span><span class="comment"># echo "DevOps FTW" &gt; newfile</span></span><br><span class="line"></span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/tmp</span><span class="comment"># ls -l </span></span><br><span class="line">total <span class="number">4</span> </span><br><span class="line">-rw-r--r-- <span class="number">1</span> root root <span class="number">14</span> May <span class="number">23</span> <span class="number">11</span><span class="symbol">:</span><span class="number">22</span> newfile</span><br><span class="line"></span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/tmp</span><span class="comment"># cat newfile </span></span><br><span class="line">DevOps FTW</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;按Ctrl-PQ组合键退出当前容器。现在使用docker container stop命令来停止容器运行，切换到暂停（vacation）状态。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker container stop percy</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在运行docker container ls命令列出全部处于运行中状态的容器。</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="keyword">container</span> ls </span><br><span class="line"><span class="keyword">CONTAINER</span> ID   IMAGE   COMMAND   CREATED  STATUS  PORTS   NAMES</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;新建的容器没有列表中出现，原因是docker container stop命令使该容器停止运行。加上-a参数再次运行前面的命令，就会显示出全部的容器，包括处于停止状态的。</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">ls</span> -a </span><br><span class="line">CNTNR ID  IMAGE          COMMAND    CREATED   STATUS       NAMES </span><br><span class="line">9cb.<span class="string">..65</span>  ubuntu<span class="function">:latest</span>  <span class="string">/bin/bash</span>  4 mins    Exited <span class="params">(0)</span>   perc</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在可以看到该容器显示当前状态为Exited(0)。停止容器就像停止虚拟机一样。尽管已经停止运行，容器的全部配置和内容仍然保存在Docker主机的文件系统之中，并且随时可以重新启动。</p>
+<p>&emsp;&emsp;使用docker container start命令可以将容器重新启动。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">start</span> percy </span><br><span class="line">percy</span><br><span class="line"></span><br><span class="line">$ docker <span class="keyword">container</span> ls </span><br><span class="line"><span class="keyword">CONTAINER</span> <span class="keyword">ID</span>  IMAGE          COMMAND      CREATED  <span class="keyword">STATUS</span>     <span class="keyword">NAMES</span> </span><br><span class="line"><span class="number">9</span>cb2d2fd1d65  ubuntu:latest  <span class="string">"/bin/bash"</span>  <span class="number">4</span> mins   Up <span class="number">3</span> secs  percy</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在停止的容器已经重新启动了，此时可以确认之前创建的文件是否还存在。使用docker container exec命令连接到重启后的容器。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>docker container exec -it percy bash </span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/</span><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Shell提示符发生变化，提示正在容器内部空间进行操作。确认之前创建的文件依然存在，并且文件中仍包含之前写入的数据。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/</span><span class="comment"># cd tmp </span></span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/</span><span class="comment"># ls -l </span></span><br><span class="line">-rw-r--r-- <span class="number">1</span> root root <span class="number">14</span> Sep <span class="number">13</span> <span class="number">04</span><span class="symbol">:</span><span class="number">22</span> newfile </span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/</span><span class="comment"># </span></span><br><span class="line">root<span class="variable">@9cb2d2fd1d65</span><span class="symbol">:/</span><span class="comment"># cat newfile </span></span><br><span class="line">DevOps FTW</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;之前创建的文件依然存在，数据也是当时的状态，这证明停止容器运行并不会损毁容器或者其中的数据。</p>
+<p>&emsp;&emsp;尽管上面的示例阐明了容器的持久化特性，还是需要指出<strong>卷</strong>（volume）才是在容器中存储持久化数据的首选方式。到目前为止，我们应该对容器和虚拟机之间的主要区别有了深刻的印象。</p>
+<p>&emsp;&emsp;现在停止该容器并从系统中删除它。通过在docker container rm命令后面添加-f参数来一次性删除运行中的容器是可行的。但是，删除容器的最佳方式还是分两步，先停止容器然后删除。这样可以给容器中运行的应用/进程一个停止运行并清理残留数据的机会。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">stop</span> percy percy</span><br><span class="line"></span><br><span class="line">$ docker <span class="keyword">container</span> rm percy percy</span><br><span class="line"></span><br><span class="line">$ docker <span class="keyword">container</span> ls -a </span><br><span class="line"><span class="keyword">CONTAINER</span> <span class="keyword">ID</span>    IMAGE      COMMAND      CREATED   <span class="keyword">STATUS</span>   PORTS     <span class="keyword">NAME</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;总结一下容器的生命周期。可以根据需要多次停止、启动、暂停以及重启容器，并且这些操作执行得很快。但是容器及其数据是安全的。直至明确删除容器前，容器都不会丢弃其中的数据。就算容器被删除了，如果将容器数据存储在卷中，数据也会被保存下来。</p>
+<h4 id="1-2-7-优雅地停止容器"><a href="#1-2-7-优雅地停止容器" class="headerlink" title="1.2.7 优雅地停止容器"></a><strong>1.2.7 优雅地停止容器</strong></h4><p>&emsp;&emsp;Linux中的大部分容器都会运行单一进程；在Windows中可能运行若干个，但是下面的原则对于两者都适用。</p>
+<p>&emsp;&emsp;前面的示例中容器正在运行/bin/bash应用。当使用docker container rm \<container> -f来销毁运行中的容器时，不会发出任何告警。这个过程相当暴力，但是，docker container stop命令就有礼貌多了。该命令给容器内进程发送将要停止的警告信息，给进程机会来有序处理停止前要做的事情。一旦docker stop命令返回后，就可以使用docker container rm命令删除容器了。</container></p>
+<p>&emsp;&emsp;这背后的原理可以通过Linux/POSIX信号来解释。stop命令向容器内的PID 1进程发送了SIGTERM这样的信号。就像前文提到的一样，会为进程预留一个清理并优雅停止的机会。如果10s内进程没有终止，那么就会收到SIGKILL信号。这是致命一击。但是，进程起码有10s的时间来“解决”自己。而rm命令会直接发出SIGKILL。</p>
+<h4 id="1-2-8-利用重启策略进行容器的自我修复"><a href="#1-2-8-利用重启策略进行容器的自我修复" class="headerlink" title="1.2.8 利用重启策略进行容器的自我修复"></a><strong>1.2.8 利用重启策略进行容器的自我修复</strong></h4><p>&emsp;&emsp;通常建议在运行容器时配置好重启策略。这是容器的一种自我修复能力，可以在指定事件或者错误后重启来完成自我修复。</p>
+<p>&emsp;&emsp;重启策略应用于每个容器，可以作为参数被强制传入docker container run命令中，或者在Compose文件中声明（在使用Docker Compose以及Docker Stacks的情况下）。容器支持的重启策略包括always、unless stopped和on-failed。</p>
+<p>&emsp;&emsp;<strong>always策略</strong>是一种简单的方式。除非容器被明确停止，比如通过docker container stop命令，否则该策略会一直尝试重启处于停止状态的容器。</p>
+<p>&emsp;&emsp;一种简单的证明方式是启动一个新的交互式容器，并在命令后面指定–restart always策略，同时在命令中指定运行Shell进程。当容器启动的时候，会登录到该Shell。退出Shell时会杀死容器中PID为1的进程，并且杀死这个容器。但是因为指定了–restart always策略，所以容器会自动重启。如果运行docker container ls命令，就会看到容器的启动时间小于创建时间。下面请看示例。</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ docker container run <span class="params">--name</span> neversaydie -it <span class="params">--restart</span> always alpine sh</span><br><span class="line"></span><br><span class="line"><span class="string">//</span>等待几秒后输入exit</span><br><span class="line"></span><br><span class="line">/<span class="comment"># exit</span></span><br><span class="line"></span><br><span class="line">$ docker container <span class="keyword">ls</span> </span><br><span class="line">CONTAINER ID    IMAGE     COMMAND     CREATED           STATUS </span><br><span class="line">0901afb84439    alpine    <span class="string">"sh"</span>        35 seconds ago    Up 1 second</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注意，容器于35s前被创建，但却在1s前才启动。这是因为在容器中输入退出命令的时候，容器被杀死，然后Docker又重新启动了该容器。</p>
+<p>&emsp;&emsp;<strong>–restart always策略</strong>有一个很有意思的特性，当daemon重启的时候，停止的容器也会被重启。例如，新创建一个容器并指定-restart always策略，然后通过docker container stop命令停止该容器。现在容器处于Stopped (Exited)状态。但是，如果重启Docker daemon，当daemon启动完成时，该容器也会重新启动。</p>
+<p>&emsp;&emsp;always和unless-stopped的最大区别，就是那些指定了-restart unless-stopped并处于Stopped (Exited)状态的容器，不会在Docker daemon重启的时候被重启。</p>
+<p>&emsp;&emsp;下面创建两个新容器，其中“always”容器指定–restart always策略，另一个“unless- stopped”容器指定了–restart unlessstopped策略。两个容器均通过docker container stop命令停止，接着重启Docker。结果“always”容器会重启，但是“unless-stopped”容器不会。</p>
+<p>&emsp;&emsp;（1）创建两个新容器。</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ docker container run -d --<span class="built_in">name</span> always \  </span><br><span class="line">  --restart always \  </span><br><span class="line">  alpine <span class="built_in">sleep</span> <span class="number">1</span>d</span><br><span class="line"></span><br><span class="line">$ docker container run -d --<span class="built_in">name</span> unless-<span class="built_in">stopped</span> \  </span><br><span class="line">  --restart unless-<span class="built_in">stopped</span> \  </span><br><span class="line">  alpine <span class="built_in">sleep</span> <span class="number">1</span>d</span><br><span class="line"></span><br><span class="line">$ docker container ls </span><br><span class="line">CONTAINER ID   <span class="built_in">IMAGE</span>    COMMAND      STATUS        NAMES </span><br><span class="line"><span class="number">3142</span>bd91ecc4   alpine   <span class="string">"sleep 1d"</span>   Up <span class="number">2</span> secs     unless-<span class="built_in">stopped</span> </span><br><span class="line"><span class="number">4</span>f1b431ac729   alpine   <span class="string">"sleep 1d"</span>   Up <span class="number">17</span> secs    always</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在有两个运行的容器了。一个叫作“always”，另一个叫作“unlessstopped”。</p>
+<p>&emsp;&emsp;（2）停止两个容器。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">stop</span> <span class="keyword">always</span> unless-stopped</span><br><span class="line"></span><br><span class="line">$ docker <span class="keyword">container</span> ls -a </span><br><span class="line"><span class="keyword">CONTAINER</span> <span class="keyword">ID</span>   IMAGE     <span class="keyword">STATUS</span>                        <span class="keyword">NAMES</span></span><br><span class="line"><span class="number">3142</span>bd91ecc4   alpine    Exited (<span class="number">137</span>) <span class="number">3</span> seconds ago    unless-stopped </span><br><span class="line"><span class="number">4</span>f1b431ac729   alpine    Exited (<span class="number">137</span>) <span class="number">3</span> seconds ago    <span class="keyword">always</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;（3）重启Docker。重启Docker的过程在不同的操作系统上可能不同。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> systemlctl restart docker</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;（4）一旦Docker重启成功，检查两个容器的状态。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker container ls -a </span><br><span class="line">CONTAINER   CREATED           STATUS                        NAMES </span><br><span class="line"><span class="number">314</span>．.cc4    <span class="number">2</span> minutes ago    Exited (<span class="number">137</span>) <span class="number">2</span> minutes ago     unless-stoppe d </span><br><span class="line"><span class="number">4</span>f1.<span class="number">.729</span>    <span class="number">2</span> minutes ago    Up <span class="number">9</span> seconds                   always</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注意到“always”容器已经重启了，但是“unless-stopped”容器并没有重启。<strong>on-failure策略</strong>会在退出容器并且返回值不是0的时候，重启容器。就算容器处于stopped状态，在Docker daemon重启的时候，容器也会被重启。</p>
+<p>&emsp;&emsp;如果使用Docker Compose或者Docker Stack，可以在service对象中配置重启策略，示例如下。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">version:</span> <span class="string">"3.5"</span> </span><br><span class="line"><span class="symbol">services:</span>  </span><br><span class="line"><span class="symbol">  myservice:</span></span><br><span class="line">    <span class="params">&lt;Snip&gt;</span>    </span><br><span class="line"><span class="symbol">    restart_policy:</span>      </span><br><span class="line"><span class="symbol">      condition:</span> always | unless-stopped | on-failure</span><br></pre></td></tr></table></figure>
+<h4 id="1-2-9-Web服务器示例"><a href="#1-2-9-Web服务器示例" class="headerlink" title="1.2.9 Web服务器示例"></a><strong>1.2.9 Web服务器示例</strong></h4><p>&emsp;&emsp;在该示例中，会使用到作者用于Pluralsight视频教程网站中的一个镜像。这个镜像会在8080端口启动一个相当简单的Web服务。</p>
+<p>&emsp;&emsp;使用docker container stop以及docker container rm命令清理当前系统中的全部容器，然后运行下面的docker container run命令。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ docker container run -d --name webserver -<span class="keyword">p</span> <span class="number">80</span>:<span class="number">8080</span> \  </span><br><span class="line">  nigelpoulton/pluralsight-docker-ci</span><br><span class="line"></span><br><span class="line">Unable <span class="keyword">to</span> <span class="keyword">find</span> image <span class="string">'nigelpoulton/pluralsight-docker-ci:latest'</span> locally </span><br><span class="line">lates<span class="variable">t:</span> Pulling from nigelpoulton/pluralsight-docker-ci </span><br><span class="line">a3ed95caeb02: Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">3</span>b231ed5aa2f:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">7</span>e4f9cd54d46:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">929432235</span>e51:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">6899</span>ef41c594:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">0</span>b38fccd0da<span class="variable">b:</span>  Pull <span class="built_in">complete</span> </span><br><span class="line">Diges<span class="variable">t:</span> <span class="built_in">sha256</span>:<span class="number">7</span>a6b0125fe7893e70dc63b2...<span class="number">9</span>b12a28e2c38bd8d3d </span><br><span class="line">Statu<span class="variable">s:</span> Downloaded newer image <span class="keyword">for</span> nigelpoulton/plur...docker-ci:latest <span class="number">6</span>efa1838cd51b92a4817e0e7483d103bf72a7ba7ffb5855080128d85043fef21</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注意，当前Shell提示符并未发生变化。这是因为使用了-d参数启动容器，并在后台运行。这种后台启动的方式不会将当前终端连接到容器当中。</p>
+<p>&emsp;&emsp;该示例在docker container run命令中抛出了一些额外的参数，已知docker container run会启动一个新容器，但是这次使 用-d参数替换了-it。-d表示后台模式，告知容器在后台运行。然后为容器命名，并且指定了-p 80:8080。-p参数将Docker主机的端口映射到容器内。本例中，将Docker主机的80端口映射到了容器内的8080端口。这意味着当有流量访问主机的80端口的时候，流量会直接映射到容器内的8080端口。之所以如此是因为当前使用的镜像，其Web服务监听了8080端口。这意味着容器启动时会运行一个Web服务，监听8080端口。</p>
+<p>&emsp;&emsp;最终，命令中还指定Docker所使用的镜像：nigelpoulton/pluralsight-docker-ci。这个镜像不一定保持更新，并且可能存在缺陷。使用docker container ls命令可以查看当前运行的容器以及端口的映射情况。端口信息按照host-port:container-port的格式显 示，明确这一点很重要。</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker container ls </span><br><span class="line">CONTAINER ID  COMMAND         STATUS       PORTS               NAMES </span><br><span class="line"><span class="number">6</span>efa1838cd51  /bin/sh -c...   Up <span class="number">2</span> mins  <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">80</span>-&gt;<span class="number">8080</span>/tcp  webserver</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在容器已经运行，端口也映射成功，可以通过浏览器来访问该容器，需要在浏览器中指定Docker主机的IP地址或DNS名称，端口号是80。</p>
+<h4 id="1-2-10-查看容器详情"><a href="#1-2-10-查看容器详情" class="headerlink" title="1.2.10 查看容器详情"></a><strong>1.2.10 查看容器详情</strong></h4><p>&emsp;&emsp;在前面的示例当中，我们可能发现当运行docker container run命令的时候，并没有指定容器中的具体应用。但是容器却启动了一个简单的Web服务，这是如何发生的？</p>
+<p>&emsp;&emsp;当构建Docker镜像的时候，可以通过嵌入指令来列出希望容器运行时启动的默认应用。如果运行docker image inspect命令来查看运行容器时使用的镜像，就能看到容器启动时将要运行的应用列表了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker image inspect nigelpoulton/pluralsight-docker-ci</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Cmd一项中展示了容器将会执行的命令或应用，除非在启动的时候指定另外的应用。如果去掉示例脚本中的转义字符，可以得到这样的命令：/bin/sh -c “cd /src &amp;&amp; node ./app.js。这是基于该镜像的容器会默认运行的应用。在构建镜像时指定默认命令是一种很普遍的做法，因为这样可以简化容器的启动。这也为镜像指定了默认的行为，并且从侧面阐述了镜像的用途——可以通过Inspect镜像的方式来了解所要运行的应用。</p>
+<h4 id="1-2-11-快速清理"><a href="#1-2-11-快速清理" class="headerlink" title="1.2.11 快速清理"></a><strong>1.2.11 快速清理</strong></h4><p>&emsp;&emsp;接下来了解一种简单且快速的清理Docker主机上全部运行容器的方法。这种处理方式会强制删除所有的容器，并且不会给容器 完成清理的机会。<strong>这种操作一定不能在生产环境系统或者运行着重要容器的系统上执行</strong>。</p>
+<p>&emsp;&emsp;在Docker主机的Shell中运行下面的命令，可以删除全部容器。</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="keyword">container</span> rm $(docker <span class="keyword">container</span> <span class="keyword">ls</span> -aq) -f </span><br><span class="line"><span class="number">6</span>efa1838cd51</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在本例中，因为只有一个运行中的容器，所以只有一个容器被删除（6efa1838cd51）。如果将$(docker container ls -aq)作为参数传递给docker container rm命令，等价于将系统中每个容器的ID传给该命令。-f标识表示强制执行，所以即使是处于运行状态的容器也会被删除。</p>
+<hr>
+<h3 id="1-3-命令"><a href="#1-3-命令" class="headerlink" title="1.3 命令"></a><strong>1.3 命令</strong></h3><p>&emsp;&emsp;容器中常用命令。</p>
+<blockquote>
+<ul>
+<li>docker container run是启动新容器的命令。该命令的最简形式接收镜像和命令作为参数。镜像用于创建容器，而命令则是希望容器运行的应用。docker container run -it ubuntu /bin/bash命令会在前台启动一个Ubuntu容器，并运行Bash Shell。 </li>
+<li>Ctrl-PQ会断开Shell和容器终端之间的链接，并在退出后保持容器在后台处于运行（UP）状态。 </li>
+<li>docker container ls用于列出所有在运行（UP）状态的容器。如果使用-a标记，还可以看到处于停止（Exited）状态的容器。 </li>
+<li>docker container exec允许用户在运行状态的容器中，启动一个新进程。该命令在将Docker主机Shell连接到一个运行中容器终端时非常有用。docker container exec -it \<container-name or="" container-id=""> bash命令会在容器内部启动一个Bash Shell进程，并连接到该Shell。为了使该命令生效，用于创建容器的镜像必须包含Bash Shell。 </container-name></li>
+<li>docker container stop命令会停止运行中的容器，并将状态置为Exited(0)。该命令通过发送SIGTERM信号给容器内PID为1的进程达到目的。如果进程没有在10s之内得到清理并停止运行，那么会接着发送SIGKILL信号来强制停止该容器。docker container stop可以接收容器ID以及容器名称作为参数。 </li>
+<li>docker container start会重启处于停止（Exited）状态的容器。可以在docker container start命令中指定容器的名称或者ID。 </li>
+<li>docker container rm会删除停止运行的容器。可以通过容器名<br>称或者ID来指定要删除的容器。推荐首先使用docker container stop命令停止容器，然后使用docker container rm来完成删除。 </li>
+<li>docker container inspect命令会显示容器的配置细节和运行时信息。该命令接收容器名称和容器ID作为主要参数。</li>
+</ul>
+</blockquote>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《深入浅出Docker》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019101101.html" rel="next" title="Docker（三）镜像">
+                <i class="fa fa-chevron-left"></i> Docker（三）镜像
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019111201.html" rel="prev" title="死亡会是解脱吗">
+                死亡会是解脱吗 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">146</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker（四）容器"><span class="nav-number">1.</span> <span class="nav-text">Docker（四）容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-Docker容器"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 Docker容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-简介"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-详解"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-容器vs虚拟机"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.2.1 容器vs虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-虚拟机的额外开销"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">1.2.2 虚拟机的额外开销</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-检查Docker-daemon"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">1.2.3 检查Docker daemon</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-4-启动一个简单容器"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">1.2.4 启动一个简单容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-5-容器进程"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">1.2.5 容器进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-6-容器生命周期"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">1.2.6 容器生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-7-优雅地停止容器"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">1.2.7 优雅地停止容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-8-利用重启策略进行容器的自我修复"><span class="nav-number">1.1.2.8.</span> <span class="nav-text">1.2.8 利用重启策略进行容器的自我修复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-9-Web服务器示例"><span class="nav-number">1.1.2.9.</span> <span class="nav-text">1.2.9 Web服务器示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-10-查看容器详情"><span class="nav-number">1.1.2.10.</span> <span class="nav-text">1.2.10 查看容器详情</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-11-快速清理"><span class="nav-number">1.1.2.11.</span> <span class="nav-text">1.2.11 快速清理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-命令"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 命令</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
