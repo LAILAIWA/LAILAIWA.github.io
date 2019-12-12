@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010126.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010127.png">
-<meta property="og:updated_time" content="2019-12-11T08:27:39.320Z">
+<meta property="og:updated_time" content="2019-12-12T06:55:21.424Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker（四）容器">
 <meta name="twitter:description" content="简单介绍Docker（四）容器，内容包括：简介，详解（容器vs虚拟机、虚拟机的额外开销、检查Docker daemon、启动一个简单容器、容器进程、容器生命周期、优雅地停止容器、利用重启策略进行容器的自我修复、Web服务器示例、查看容器详情、快速清理），命令等。">
@@ -359,7 +359,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6,844
+                  6,857
                 </span>
               
 
@@ -401,7 +401,7 @@
 
       
         <h1 id="Docker（四）容器"><a href="#Docker（四）容器" class="headerlink" title="Docker（四）容器"></a><strong>Docker（四）容器</strong></h1><h2 id="第一节-Docker容器"><a href="#第一节-Docker容器" class="headerlink" title="第一节 Docker容器"></a><strong>第一节 Docker容器</strong></h2><h3 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a><strong>1.1 简介</strong></h3><p>&emsp;&emsp;容器是镜像的运行时实例。正如从虚拟机模板上启动VM一样，用户也同样可以从单个镜像上启动一个或多个容器。虚拟机和容器最大的区别是容器更快并且更轻量级——与虚拟机运行在完整的操作系统之上相比，容器会共享其所在主机的操作系统/内核。</p>
-<p>&emsp;&emsp;启动容器的简便方式是使用docker container run命令。该命令可以携带很多参数，在其基础的格式docker container run \<image> \<app>中，指定了启动所需的镜像以及要运行的应用。docker container run -it ubuntu /bin/bash则会启动某个Ubuntu Linux容器，并运行Bash Shell作为其应用；如果想启动 PowerShell并运行一个应用，则可以使用命令docker container run -it microsoft- /powershell:nanoserver pwsh.exe。</app></image></p>
+<p>&emsp;&emsp;启动容器的简便方式是使用docker container run命令。该命令可以携带很多参数，在其基础的格式docker container run \&lt; image&gt; \&lt; app&gt;中，指定了启动所需的镜像以及要运行的应用。docker container run -it ubuntu /bin/bash则会启动某个Ubuntu Linux容器，并运行Bash Shell作为其应用；如果想启动 PowerShell并运行一个应用，则可以使用命令docker container run -it microsoft- /powershell:nanoserver pwsh.exe。</p>
 <p>&emsp;&emsp;-it参数可以将当前终端连接到容器的Shell终端之上。</p>
 <p>&emsp;&emsp;容器随着其中运行应用的退出而终止。在上面两个示例中，Linux容器会在Bash Shell退出后终止，而Windows容器会在PowerShell进程终止后退出。一个简单的验证方法就是启动新的容器，并运行sleep命令休眠10s。容器会启动，然后运行休眠命令，在10s后退出。如果在Linux主机（或者在Linux容器模式下的Windows主机上）运行docker container run alpine:latest sleep 10命令，Shell会连接到容器Shell 10s的时间，然后退出；可以在Windows容器上运行docker container run microsoft/powershell:nanoserver StartSleep -s 10来验证这一点。可以使用docker container stop命令手动停止容器运行，并且使用docker container start再次启动该容器。如果再也不需要该容器，则使用docker container rm命令来删除容器。</p>
 <hr>
@@ -418,11 +418,11 @@
 <p>&emsp;&emsp;这些就是容器模型要比虚拟机模型简洁并且高效的原因了。使用容器可以在更少的资源上运行更多的应用，启动更快，并且支付更少的授权和管理费用，同时面对未知攻击的风险也更小。</p>
 <h4 id="1-2-3-检查Docker-daemon"><a href="#1-2-3-检查Docker-daemon" class="headerlink" title="1.2.3 检查Docker daemon"></a><strong>1.2.3 检查Docker daemon</strong></h4><p>&emsp;&emsp;通常登录Docker主机后的第一件事情是检查Docker是否正在运行。当命令输出中包含Client和Server的内容时，可以继续下面的示例。如果在Server部分中包含了错误码，这表示Docker daemon很可能没有运行，或者当前用户没有权限访问。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker version</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;如果在Linux中遇到无权限访问的问题，需要确认当前用户是否属于本地Docker UNIX组。如果不是，可以通过usermod -aG docker \<user>来添加，然后退出并重新登录Shell，改动即可生效。如果当前用户已经属于本地docker用户组，那么问题可能是Docker daemon没有运行导致。根据下列指令检查Docker daemon的状态。</user></p>
+<p>&emsp;&emsp;如果在Linux中遇到无权限访问的问题，需要确认当前用户是否属于本地Docker UNIX组。如果不是，可以通过usermod -aG docker \&lt; user&gt;来添加，然后退出并重新登录Shell，改动即可生效。如果当前用户已经属于本地docker用户组，那么问题可能是Docker daemon没有运行导致。根据下列指令检查Docker daemon的状态。</p>
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用Systemd在Linux系统中执行该命令 </span></span><br><span class="line">$ service docker status docker start/<span class="built_in">running</span>, <span class="built_in">process</span> <span class="number">29393</span></span><br><span class="line"><span class="comment">//使用Systemd在Linux系统中执行该命令 </span></span><br><span class="line">$ systemctl is-active docker active</span><br></pre></td></tr></table></figure>
 <h4 id="1-2-4-启动一个简单容器"><a href="#1-2-4-启动一个简单容器" class="headerlink" title="1.2.4 启动一个简单容器"></a><strong>1.2.4 启动一个简单容器</strong></h4><p>&emsp;&emsp;启动容器的一个简单的方式是通过docker container run命令。下面的命令启动了一个简单的容器，其中运行了容器化版本的centos Linux。</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker container run -it ubuntu:latest /bin/bash </span><br><span class="line">Unable <span class="keyword">to</span> <span class="keyword">find</span> image <span class="string">'ubuntu:latest'</span> locally</span><br><span class="line">lates<span class="variable">t:</span> Pulling from library/ubuntu </span><br><span class="line"><span class="number">952132</span>ac251<span class="variable">a:</span> Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">82659</span>f8f1b76:  Pull <span class="built_in">complete</span> </span><br><span class="line">c19118ca682d:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">8296858250</span>fe:  Pull <span class="built_in">complete</span> </span><br><span class="line"><span class="number">24</span>e0251a0e2c:  Pull <span class="built_in">complete</span> </span><br><span class="line">Diges<span class="variable">t:</span> <span class="built_in">sha256</span>:f4691c96e6bbaa99d9...e95a60369c506dd6e6f6ab </span><br><span class="line">Statu<span class="variable">s:</span> Downloaded newer image <span class="keyword">for</span> ubuntu:latest </span><br><span class="line">root@<span class="number">3027</span>eb644874:/#</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;命令的基础格式为docker container run \<options> \<image>:\<tag> \<app>。</app></tag></image></options></p>
+<p>&emsp;&emsp;命令的基础格式为docker container run \&lt; options&gt; \&lt; image&gt;:\&lt; tag&gt; \&lt; app&gt;。</p>
 <p>&emsp;&emsp;使用docker container run来启动容器，这也是启动新容器的标准命令。命令中使用了-it参数使容器具备交互性并与终端进行连接。接下来，命令中指定了具体镜像ubuntu:latest。最终，在命令中指定了运行在容器中的程序Bash Shell。</p>
 <p>&emsp;&emsp;当敲击回车键之后，Docker客户端选择合适的API来调用Docker daemon。Docker daemon接收到命令并搜索Docker本地缓存，观察是否有命令所请求的镜像。在上面引用的示例中，本地缓存并未包含该镜像，所以Docker接下来查询在Docker Hub中是否存在对应镜像。找到该镜像后，Docker将镜像拉取到本地，存储在本地缓存当中。</p>
 <p>&emsp;&emsp;一旦镜像拉取到本地，daemon就创建容器并在其中运行指定的应用。在上面的示例中，Shell提示符已经变为root@3027eb644874:/#，说明目前已经位于容器内部了。@之后的一长串数字就是容器唯一ID的前12个字符。</p>
@@ -462,7 +462,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">stop</span> percy percy</span><br><span class="line"></span><br><span class="line">$ docker <span class="keyword">container</span> rm percy percy</span><br><span class="line"></span><br><span class="line">$ docker <span class="keyword">container</span> ls -a </span><br><span class="line"><span class="keyword">CONTAINER</span> <span class="keyword">ID</span>    IMAGE      COMMAND      CREATED   <span class="keyword">STATUS</span>   PORTS     <span class="keyword">NAME</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;总结一下容器的生命周期。可以根据需要多次停止、启动、暂停以及重启容器，并且这些操作执行得很快。但是容器及其数据是安全的。直至明确删除容器前，容器都不会丢弃其中的数据。就算容器被删除了，如果将容器数据存储在卷中，数据也会被保存下来。</p>
 <h4 id="1-2-7-优雅地停止容器"><a href="#1-2-7-优雅地停止容器" class="headerlink" title="1.2.7 优雅地停止容器"></a><strong>1.2.7 优雅地停止容器</strong></h4><p>&emsp;&emsp;Linux中的大部分容器都会运行单一进程；在Windows中可能运行若干个，但是下面的原则对于两者都适用。</p>
-<p>&emsp;&emsp;前面的示例中容器正在运行/bin/bash应用。当使用docker container rm \<container> -f来销毁运行中的容器时，不会发出任何告警。这个过程相当暴力，但是，docker container stop命令就有礼貌多了。该命令给容器内进程发送将要停止的警告信息，给进程机会来有序处理停止前要做的事情。一旦docker stop命令返回后，就可以使用docker container rm命令删除容器了。</container></p>
+<p>&emsp;&emsp;前面的示例中容器正在运行/bin/bash应用。当使用docker container rm \&lt; container&gt; -f来销毁运行中的容器时，不会发出任何告警。这个过程相当暴力，但是，docker container stop命令就有礼貌多了。该命令给容器内进程发送将要停止的警告信息，给进程机会来有序处理停止前要做的事情。一旦docker stop命令返回后，就可以使用docker container rm命令删除容器了。</p>
 <p>&emsp;&emsp;这背后的原理可以通过Linux/POSIX信号来解释。stop命令向容器内的PID 1进程发送了SIGTERM这样的信号。就像前文提到的一样，会为进程预留一个清理并优雅停止的机会。如果10s内进程没有终止，那么就会收到SIGKILL信号。这是致命一击。但是，进程起码有10s的时间来“解决”自己。而rm命令会直接发出SIGKILL。</p>
 <h4 id="1-2-8-利用重启策略进行容器的自我修复"><a href="#1-2-8-利用重启策略进行容器的自我修复" class="headerlink" title="1.2.8 利用重启策略进行容器的自我修复"></a><strong>1.2.8 利用重启策略进行容器的自我修复</strong></h4><p>&emsp;&emsp;通常建议在运行容器时配置好重启策略。这是容器的一种自我修复能力，可以在指定事件或者错误后重启来完成自我修复。</p>
 <p>&emsp;&emsp;重启策略应用于每个容器，可以作为参数被强制传入docker container run命令中，或者在Compose文件中声明（在使用Docker Compose以及Docker Stacks的情况下）。容器支持的重启策略包括always、unless stopped和on-failed。</p>
@@ -508,7 +508,7 @@
 <li>docker container run是启动新容器的命令。该命令的最简形式接收镜像和命令作为参数。镜像用于创建容器，而命令则是希望容器运行的应用。docker container run -it ubuntu /bin/bash命令会在前台启动一个Ubuntu容器，并运行Bash Shell。 </li>
 <li>Ctrl-PQ会断开Shell和容器终端之间的链接，并在退出后保持容器在后台处于运行（UP）状态。 </li>
 <li>docker container ls用于列出所有在运行（UP）状态的容器。如果使用-a标记，还可以看到处于停止（Exited）状态的容器。 </li>
-<li>docker container exec允许用户在运行状态的容器中，启动一个新进程。该命令在将Docker主机Shell连接到一个运行中容器终端时非常有用。docker container exec -it \<container-name or="" container-id=""> bash命令会在容器内部启动一个Bash Shell进程，并连接到该Shell。为了使该命令生效，用于创建容器的镜像必须包含Bash Shell。 </container-name></li>
+<li>docker container exec允许用户在运行状态的容器中，启动一个新进程。该命令在将Docker主机Shell连接到一个运行中容器终端时非常有用。docker container exec -it \&lt; container-name or container-id&gt; bash命令会在容器内部启动一个Bash Shell进程，并连接到该Shell。为了使该命令生效，用于创建容器的镜像必须包含Bash Shell。 </li>
 <li>docker container stop命令会停止运行中的容器，并将状态置为Exited(0)。该命令通过发送SIGTERM信号给容器内PID为1的进程达到目的。如果进程没有在10s之内得到清理并停止运行，那么会接着发送SIGKILL信号来强制停止该容器。docker container stop可以接收容器ID以及容器名称作为参数。 </li>
 <li>docker container start会重启处于停止（Exited）状态的容器。可以在docker container start命令中指定容器的名称或者ID。 </li>
 <li>docker container rm会删除停止运行的容器。可以通过容器名<br>称或者ID来指定要删除的容器。推荐首先使用docker container stop命令停止容器，然后使用docker container rm来完成删除。 </li>
@@ -573,8 +573,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019111201.html" rel="prev" title="死亡会是解脱吗">
-                死亡会是解脱吗 <i class="fa fa-chevron-right"></i>
+              <a href="/2019101301.html" rel="prev" title="Docker（五）应用的容器化">
+                Docker（五）应用的容器化 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -656,7 +656,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">146</span>
+                  <span class="site-state-item-count">147</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

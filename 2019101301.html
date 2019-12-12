@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="docker," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="简单介绍Docker（五）应用的容器化，内容包括：简介，详解（单体应用容器化、生产环境中的多阶段构建、最佳实践/优化），命令等。">
+<meta name="keywords" content="docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker（五）应用的容器化">
+<meta property="og:url" content="http://linyishui.top/2019101301.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍Docker（五）应用的容器化，内容包括：简介，详解（单体应用容器化、生产环境中的多阶段构建、最佳实践/优化），命令等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010128.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010129.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010130.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010131.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010132.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010133.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010134.png">
+<meta property="og:updated_time" content="2019-12-12T07:39:11.154Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker（五）应用的容器化">
+<meta name="twitter:description" content="简单介绍Docker（五）应用的容器化，内容包括：简介，详解（单体应用容器化、生产环境中的多阶段构建、最佳实践/优化），命令等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010128.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019101301.html"/>
+
+
+
+
+
+  <title>Docker（五）应用的容器化 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019101301.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Docker（五）应用的容器化</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-13T16:40:00+08:00">
+                2019-10-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7,095
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  28
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍Docker（五）应用的容器化，内容包括：简介，详解（单体应用容器化、生产环境中的多阶段构建、最佳实践/优化），命令等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Docker（五）应用的容器化"><a href="#Docker（五）应用的容器化" class="headerlink" title="Docker（五）应用的容器化"></a><strong>Docker（五）应用的容器化</strong></h1><h2 id="第一节-应用的容器化"><a href="#第一节-应用的容器化" class="headerlink" title="第一节 应用的容器化"></a><strong>第一节 应用的容器化</strong></h2><p>&emsp;&emsp;Docker的核心思想就是如何将应用整合到容器中，并且能在容器中实际运行。将应用整合到容器中并且运行起来的这个过程，称为“容器化”（Containerizing），有时也叫作“Docker化”（Dockerizing）。</p>
+<p>&emsp;&emsp;本节将逐步介绍容器化一个简单的Linux Web应用的过程。如果没有一个Linux的Docker环境来跟进练习，那么可以免费使用Play With Docker。只需使用浏览器打开Play With Docker的页面，并启动若干Linux Docker节点即可。</p>
+<h3 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a><strong>1.1 简介</strong></h3><p>&emsp;&emsp;容器是为应用而生！具体来说，<strong>容器能够简化应用的构建、部署和运行过程</strong>。</p>
+<blockquote>
+<p>完整的应用容器化过程主要分为以下几个步骤。</p>
+<ol>
+<li>编写应用代码。</li>
+<li>创建一个Dockerfile，其中包括当前应用的描述、依赖以及该如何运行这个应用。</li>
+<li>对该Dockerfile执行docker image build命令。</li>
+<li>等待Docker将应用程序构建到Docker镜像中。</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;一旦应用容器化完成（即应用被打包为一个Docker镜像），就能以镜像的形式交付并以容器的方式运行了。图8.1展示了上述步骤。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010128.png" alt="容器化的基本过程"></p>
+<hr>
+<h3 id="1-2-详解"><a href="#1-2-详解" class="headerlink" title="1.2 详解"></a><strong>1.2 详解</strong></h3><h4 id="1-2-1-单体应用容器化"><a href="#1-2-1-单体应用容器化" class="headerlink" title="1.2.1 单体应用容器化"></a><strong>1.2.1 单体应用容器化</strong></h4><p>&emsp;&emsp;接下来逐步展示如何将一个简单的单节点Node.js Web应用容器化。本部分主要完成单节点应用的容器化，采用Docker Compose去完成多节点应用容器化，使用Docker Stack去处理更复杂应用的容器化场景。接下来通过以下几个步骤，来介绍具体的过程。</p>
+<h5 id="（1）获取应用代码"><a href="#（1）获取应用代码" class="headerlink" title="（1）获取应用代码"></a><strong>（1）获取应用代码</strong></h5><p>&emsp;&emsp;应用代码可以从作者的GitHub主页获取，将代码克隆到本地，创建一个名为psweb的文件夹。（本人直接用PC端DFW克隆到本地，后续环境即Windows 10）</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="keyword">clone</span> <span class="title">https</span>://github.com/nigelpoulton/psweb.git</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;跳转项目根目录，查看项目文件结构。</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ cd psweb</span><br><span class="line"></span><br><span class="line">$ ls -l </span><br><span class="line">total<span class="number"> 28 </span></span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root <span class="number"> 341 </span>Sep<span class="number"> 29 </span>16:26 app.js </span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root <span class="number"> 216 </span>Sep<span class="number"> 29 </span>16:26 circle.yml </span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root <span class="number"> 338 </span>Sep<span class="number"> 29 </span>16:26 Dockerfile </span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root <span class="number"> 421 </span>Sep<span class="number"> 29 </span>16:26 package.json </span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root <span class="number"> 370 </span>Sep<span class="number"> 29 </span>16:26 README.md </span><br><span class="line">drwxr-xr-x<span class="number"> 2 </span>root root<span class="number"> 4096 </span>Sep<span class="number"> 29 </span>16:26 test/</span><br><span class="line">drwxr-xr-x<span class="number"> 2 </span>root root<span class="number"> 4096 </span>Sep<span class="number"> 29 </span>16:26 views/</span><br></pre></td></tr></table></figure>
+<h5 id="（2）分析Dockerfile"><a href="#（2）分析Dockerfile" class="headerlink" title="（2）分析Dockerfile"></a><strong>（2）分析Dockerfile</strong></h5><p>&emsp;&emsp;在代码目录当中，有个名称为Dockerfile的文件。这个文件包含了对当前应用的描述，并且能指导Docker完成镜像的构建。<br>在Docker当中，包含应用文件的目录通常被称为构建上下文（Build Context）。通常将Dockerfile放到构建上下文的根目录下。</p>
+<p>&emsp;&emsp;另外很重要的一点是，文件开头字母是大写D，这里是一个单词。 像“dockerfile”或者“Docker file”这种写法都是不允许的。</p>
+<p>&emsp;&emsp;接下来了解一下Dockerfile文件当中都包含哪些具体内容。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Test web-app to use with Pluralsight courses and Docker Deep Dive book</span></span><br><span class="line"><span class="comment"># Linux x64</span></span><br><span class="line"><span class="keyword">FROM</span> alpine</span><br><span class="line"></span><br><span class="line"><span class="keyword">LABEL</span><span class="bash"> maintainer=<span class="string">"nigelpoulton@hotmail.com"</span></span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash"><span class="comment"># Install Node and NPM</span></span></span><br><span class="line"><span class="bash">RUN apk add --update nodejs nodejs-npm</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash"><span class="comment"># Copy app to /src</span></span></span><br><span class="line"><span class="bash">COPY . /src</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">WORKDIR /src</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash"><span class="comment"># Install dependencies</span></span></span><br><span class="line"><span class="bash">RUN  npm install</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">EXPOSE 8080</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">ENTRYPOINT [<span class="string">"node"</span>, <span class="string">"./app.js"</span>]</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Dockerfile主要包括两个用途：</p>
+<ul>
+<li>对当前应用的描述。 </li>
+<li>指导Docker完成应用的容器化（创建一个包含当前应用的镜像）。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;Dockerfile能实现开发和部署两个过程的无缝切换。同时Dockerfile还能帮助新手快速熟悉这个项目。Dockerfile对当前的应用及其依赖有一个清晰准确的描述，并且非常容易阅读和理解。因此，要像重视你的代码一样重视这个文件，并且将它纳入到源控制系统当中。</p>
+<p>&emsp;&emsp;下面是这个文件中的一些关键步骤概述：以alpine镜像作为当前镜像基础，指定维护者（maintainer）为“<a href="mailto:nigelpoultion@hotmail.com" target="_blank" rel="noopener">nigelpoultion@hotmail.com</a>”，安装Node.js和NPM，将应用的代码复制到镜像当中，设置新的工作目录，安装依赖包，记录应用的网络端口，最后将app.js设置为默认运行的应用。</p>
+<p>&emsp;&emsp;具体分析一下每一步的作用：每个Dockerfile文件第一行都是FROM指令。FROM指令指定的镜像，会作为当前镜像的一个基础镜像层，当前应用的剩余内容会作为新增镜像层添加到基础镜像层之上。本例中的应用基于Linux操作系统，所以在FROM指令当中所引用的也是一个Linux基础镜像；如果要容器化的应用是一个基于Windows操作系统的应用，就需要指定一个像microsoft/aspnetcore-build这样的Windows基础镜像了。当前基础镜像的结构如图8.2所示</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010129.png" alt="基础镜像的结构"></p>
+<p>&emsp;&emsp;接下来，Dockerfile中通过标签（LABLE）方式指定了当前镜像的维护者为“<a href="mailto:nigelpoulton@hotmail.com" target="_blank" rel="noopener">nigelpoulton@hotmail.com</a>”。每个标签其实是一个键值对（Key-Value），在一个镜像当中可以通过增加标签的方式来为镜像添加自定义元数据。备注维护者信息有助于为该镜像的潜在使用者提供沟通途径，这是一种值得提倡的做法。</p>
+<p>&emsp;&emsp;RUN apk add –update nodejs nodejs-npm指令使用alpine的apk包管理器将nodejs和nodejs-npm安装到当前镜像之中。RUN指令会在FROM指定的alpine基础镜像之上，新建一个镜像层来存储这些安装内容。当前镜像的结构如图8.3所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010130.png" alt="当前镜像的结构"></p>
+<p>&emsp;&emsp;COPY. / src指令将应用相关文件从构建上下文复制到了当前镜像中，并且新建一个镜像层来存储。COPY执行结束之后，当前镜像共包含3层，如图8.4所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010131.png" alt="当前的3层镜像"></p>
+<p>&emsp;&emsp;下一步，Dockerfile通过WORKDIR指令，为Dockerfile中尚未执行的指令设置工作目录。该目录与镜像相关，并且会作为元数据记录到镜像配置中，但不会创建新的镜像层。</p>
+<p>&emsp;&emsp;然后，RUN npm install指令会根据package.json中的配置信息，使用npm来安装当前应用的相关依赖包。npm命令会在前文设置的工作目录中执行，并且在镜像中新建镜像层来保存相应的依赖文件。目前镜像一共包含4层，如图8.5所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010132.png" alt="当前的4层镜像"></p>
+<p>&emsp;&emsp;因为当前应用需要通过TCP端口8080对外提供一个Web服务，所以在Dockerfile中通过EXPOSE 8080指令来完成相应端口的设置。这个配置信息会作为镜像的元数据被保存下来，并不会产生新的镜像层。</p>
+<p>&emsp;&emsp;最终，通过ENTRYPOINT指令来指定当前镜像的入口程序。ENTRYPOINT指定的配置信息也是通过镜像元数据的形式保存下来，而不是新增镜像层。</p>
+<h5 id="（3）构建应用镜像"><a href="#（3）构建应用镜像" class="headerlink" title="（3）构建应用镜像"></a><strong>（3）构建应用镜像</strong></h5><p>&emsp;&emsp;下面的命令会构建并生成一个名为web:latest的镜像。命令最后的点（.）表示Docker在进行构建的时候，使用当前目录作为构建上下文。一定要在命令最后包含这个点，并且在执行命令前，要确认当前目录是psweb（包含Dockerfile和应用代码的目录）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker image build -t web:latest .</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;命令执行结束后，检查本地Docker镜像库是否包含了刚才构建的镜像。可以通过docker image inspect web:latest来确认刚刚构 建的镜像配置是否正确。这个命令会列出Dockerfile中设置的所有配置 项。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker image ls </span><br><span class="line">REPO    <span class="keyword">TAG</span>       <span class="title">IMAGE</span> ID          CREATED              SIZE </span><br><span class="line">web     latest    fc69fdc4c18e      <span class="number">10</span> seconds ago       <span class="number">64.4M</span>B</span><br></pre></td></tr></table></figure>
+<h5 id="（4）推送镜像到仓库"><a href="#（4）推送镜像到仓库" class="headerlink" title="（4）推送镜像到仓库"></a><strong>（4）推送镜像到仓库</strong></h5><p>&emsp;&emsp;在创建一个镜像之后，将其保存在一个镜像仓库服务是一个不错的方式。这样存储镜像会比较安全，并且可以被其他人访问使用。Docker Hub就是这样的一个开放的公共镜像仓库服务，并且这也是docker image push命令默认的推送地址。</p>
+<p>&emsp;&emsp;在推送镜像之前，需要先使用Docker ID登录Docker Hub（xxx表示docker id）。除此之外，还需要为待推送的镜像打上合适的标签。因为Docker在镜像推送的过程中需要如下信息：Registry（镜像仓库服务），Repository（镜像仓库），Tag（镜像标签）。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker login </span><br><span class="line">Login <span class="keyword">with</span> **your** Docker ID <span class="keyword">to</span> push <span class="keyword">and</span> pull images <span class="keyword">from</span> Docker Hub... </span><br><span class="line">Username: xxx </span><br><span class="line">Password: Login Succeeded</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Docker会默认Registry=docker.io、Tag=latest。但是 Docker并没有给Repository提供默认值，而是从被推送镜像中的REPOSITORY属性值获取。</p>
+<p>&emsp;&emsp;执行docker image push命令，会尝试将镜像推送到docker.io/web:latest中。但是xxx用户并没有web这个镜像仓库的访问权限，所以只能尝试推送到xxx这个二级命名空间（Namespace）之下。因此需要使用xxx这个ID，为当前镜像重新打一个标签。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker image <span class="keyword">tag</span> <span class="title">web</span>:latest nigelpoulton/web:latest</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;再次执行docker image ls命令，可以看到这个镜像现在有了两个标签，其中一个包含Docker ID nigelpoulton。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker image ls </span><br><span class="line">REPO                TAG       IMAGE ID        CREATED       SIZE </span><br><span class="line">web                 latest    fc69fdc4c18e    <span class="number">10</span> secs ago   <span class="number">64.4</span>MB </span><br><span class="line">xxx/web             latest    fc69fdc4c18e    <span class="number">10</span> secs ago   <span class="number">64.4</span>MB</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在将该镜像推送到Docker Hub。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="built_in">image</span> <span class="built_in">push</span> xxx/web:latest</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;图8.6展示了Docker如何确定镜像所要推送的目的仓库。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010133.png" alt="确定镜像所要推送的目的仓库"></p>
+<h5 id="（5）运行该应用"><a href="#（5）运行该应用" class="headerlink" title="（5）运行该应用"></a><strong>（5）运行该应用</strong></h5><p>&emsp;&emsp;前文中容器化的这个应用程序其实很简单，从app.js这个文件内容中可以看出，这其实就是一个在8080端口提供Web服务的应用程序。下面的命令会基于web:latest这个镜像，启动一个名为c1的容器。该容器将内部的8080端口与Docker主机的80端口进行映射。这意味我们可以打开一个浏览器，在地址栏输入Docker主机的DNS名称或者IP地址，然后就能直接访问这个Web应用了。</p>
+<blockquote>
+<p>如果Docker主机已经运行了某个使用80端口的应用程序，可以在执行docker container run命令时指定一个不同的映射端口。例如，可以使用-p 5000:8000参数，将Docker内部应用程序的8080端口映射到主机的5000端口。</p>
+</blockquote>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker container <span class="keyword">run</span><span class="bash"> -d --name c1 \  </span></span><br><span class="line"><span class="bash">  -p 80:8080 \  </span></span><br><span class="line"><span class="bash">  web:latest</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;接下来验证一下程序是否真的成功运行，并且对外提供服务的端口是否正常工作。</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker container ls</span><br><span class="line"></span><br><span class="line">ID    IMAGE       COMMAND           STATUS      PORTS </span><br><span class="line"><span class="number">49</span>．.  web:latest  <span class="string">"node ./app.js"</span>   <span class="meta">UP</span> <span class="number">6</span> secs   <span class="number">0.0</span><span class="meta">.0</span><span class="meta">.0</span>:<span class="number">80</span>-&gt;<span class="number">8080</span>/tcp</span><br></pre></td></tr></table></figure>
+<h5 id="（6）测试应用"><a href="#（6）测试应用" class="headerlink" title="（6）测试应用"></a><strong>（6）测试应用</strong></h5><p>&emsp;&emsp;打开浏览器，在地址栏输入DNS名称或者IP地址，就能访问到正在运行的应用程序了。</p>
+<p>&emsp;&emsp;如果没有出现正常的界面，尝试执行下面的检查来确认原因所在。</p>
+<blockquote>
+<ul>
+<li>使用docker container ls指令来确认容器已经启动并且正常运行。容器名称是c1，并且从输出内容中能看到0.0.0.0:80&gt;8080/tcp。 </li>
+<li>确认防火墙或者其他网络安全设置没有阻止访问Docker主机的80端口。</li>
+</ul>
+</blockquote>
+<h5 id="（7）容器应用化细节"><a href="#（7）容器应用化细节" class="headerlink" title="（7）容器应用化细节"></a><strong>（7）容器应用化细节</strong></h5><p>&emsp;&emsp;一些细节部分的回顾和总结。</p>
+<p>&emsp;&emsp;Dockerfile中的注释行，都是以#开头的。除注释之外，每一行都是一条指令（Instruction）。指令的参数格式如下：INSTRUCTION argument，指令是不区分大小写的，但是通常都采用大写的方式，这样Dockerfile的可读性会高一些。</p>
+<p>&emsp;&emsp;Docker image build命令会按行来解析Dockerfile中的指令并顺序执行。部分指令会在镜像中创建新的镜像层，其他指令只会增加或修改镜像的元数据信息。在上面的例子当中，新增镜像层的指令包括FROM、RUN以及COPY，而新增元数据的指令包括EXPOSE、WORKDIR、ENV以及ENTERPOINT。 关于如何区分命令是否会新建镜像层，一个基本的原则是，如果指令的作用是向镜像中增添新的文件或者程序，那么这条指令就会新建镜像层；如果只是告诉Docker如何完成构建或者如何运行应用程序，那么就只会增加镜像的元数据。</p>
+<p>&emsp;&emsp;可以通过docker image history来查看在构建镜像的过程中都执行了哪些指令。</p>
+<figure class="highlight leaf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ docker image history web:latest</span><br><span class="line"></span><br><span class="line">IMAGE     CREATED BY                                       SIZE </span><br><span class="line">fc6..18e  /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span>  ENTRYPOINT ["node" "./a...    0B </span><br><span class="line">334．.bf0  /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span>  EXPOSE 8080/tcp               0B </span><br><span class="line">b27..eae  /bin/sh -c npm install                           14.1MB </span><br><span class="line">932．.749  /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span> WORKDIR /src                   0B </span><br><span class="line">052．.2dc  /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span> COPY dir:2a6ed1703749e80...    22.5kB </span><br><span class="line">c1d..81f  /bin/sh -c apk add --update nodejs nodejs-npm    46.1MB </span><br><span class="line">336．.b92  /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span>  LABEL maintainer=nigelp...    0B</span><br><span class="line">3fd..f02  /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span>  CMD ["/bin/sh"]               0B </span><br><span class="line"> /bin/sh -c <span class="function"><span class="keyword">#</span><span class="params">(<span class="variable">nop</span>)</span></span> ADD file:093f0723fa46f6c...    4.15MB</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在上面的输出内容当中，有两点是需要注意的。首先，每行内容都对应了Dockerfile中的一条指令（顺序是自下而上）。CREATE BY这一列中还展示了当前行具体对应Dockerfile中的哪条指令。其次，从这个输出内容中，可以观察到只有4条指令会新建镜像层 （就是那些SIZE列对应的数值不为零的指令），分别对应Dockerfile中的FROM、RUN以及COPY指令。虽然其他指令看上去跟这些新建镜像层的指令并无区别，但实际上它们只在镜像中新增了元数据信息。这些指令之所以看起来没有区别，是因为Docker对之前构建镜像层方式的兼容。</p>
+<p>&emsp;&emsp;可以通过执行docker image inspect指令来确认确实只有4个层被创建了。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker image inspect we<span class="variable">b:latest</span> </span><br><span class="line"><span class="symbol">&lt;Snip&gt;</span> </span><br><span class="line">&#125;, <span class="string">"RootFS"</span>: &#123;    </span><br><span class="line">    <span class="string">"Type"</span>: <span class="string">"layers"</span>,    </span><br><span class="line">    <span class="string">"Layers"</span>: [        </span><br><span class="line">        <span class="string">"sha256:cd7100...1882bd56d263e02b6215"</span>,        </span><br><span class="line">        <span class="string">"sha256:b3f88e...cae0e290980576e24885"</span>,        </span><br><span class="line">        <span class="string">"sha256:3cfa21...cc819ef5e3246ec4fe16"</span>,        </span><br><span class="line">        <span class="string">"sha256:4408b4...d52c731ba0b205392567"</span>    </span><br><span class="line">    ] </span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;使用FROM指令引用官方基础镜像是一个很好的习惯，官方的镜像通常会遵循一些最佳实践，并且能帮助使用者规避一些已知的问<br>题。除此之外，使用FROM的时候选择一个相对较小的镜像文件通常也能避免一些潜在的问题。</p>
+<p>&emsp;&emsp;我们也可以观察docker image build命令具体的输出内容，了解镜像构建的过程。在下面的片段中，可以看到基本的构建过程是，运行临时容器&gt;在该容器中运行Dockerfile中的指令&gt;将指令运行结果保存为 一个新的镜像层&gt;删除临时容器。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Step <span class="number">3</span>/<span class="number">8</span> : RUN apk add --update nodejs nodejs-npm </span><br><span class="line"> ---&gt; Running <span class="keyword">in</span> e690ddca785f    &lt;&lt; Run inside of temp container </span><br><span class="line">fetch <span class="string">http:</span><span class="comment">//dl-cdn...APKINDEX.tar.gz </span></span><br><span class="line">fetch <span class="string">http:</span><span class="comment">//dl-cdn...APKINDEX.tar.gz </span></span><br><span class="line">(<span class="number">1</span>/<span class="number">10</span>) Installing ca-certificates (<span class="number">20171114</span>-r0) </span><br><span class="line">&lt;Snip&gt; </span><br><span class="line"><span class="string">OK:</span> <span class="number">61</span> MiB <span class="keyword">in</span> <span class="number">21</span> packages ---&gt; c1d31d36b81f                &lt;&lt; Create <span class="keyword">new</span> layer </span><br><span class="line">Removing intermediate container   &lt;&lt; Remove temp container </span><br><span class="line">Step <span class="number">4</span><span class="regexp">/8 : COPY . /</span>src</span><br></pre></td></tr></table></figure>
+<h4 id="1-2-2-生产环境中的多阶段构建"><a href="#1-2-2-生产环境中的多阶段构建" class="headerlink" title="1.2.2 生产环境中的多阶段构建"></a><strong>1.2.2 生产环境中的多阶段构建</strong></h4><p>&emsp;&emsp;对于Docker镜像来说，体积越大则越慢，就意味着更难使用，而且可能更加脆弱，更容易遭受攻击。对于生产环境镜像来说，目标是将其缩小到仅包含运行应用所必需的内容即可，但生成较小的镜像并非易事。</p>
+<p>&emsp;&emsp;例如，不同的Dockerfile写法就会对镜像的大小产生显著影响。常见的例子是，每一个RUN指令会新增一个镜像层。因此，通过使用 &amp;&amp; 连接多个命令以及使用反斜杠（\）换行的方法，将多个命令包含在一个RUN指令中，通常来说是一种值得提倡的方式。这并不难掌握，多加练习即可。</p>
+<p>&emsp;&emsp;另一个问题是开发者通常不会在构建完成后进行清理。当使用RUN执行一个命令时，可能会拉取一些构建工具，这些工具会留在镜像中移交至生产环境。这是不合适的！</p>
+<p>&emsp;&emsp;有多种方式来改善这一问题——比如常见的是采用<strong>建造者模式</strong>（Builder Pattern）。但无论采用哪种方式，通常都需要额外的培训，并且会增加构建的复杂度。建造者模式需要至少两个Dockerfile——一个用于开发环境，一个用于生产环境。首先需要编写Dockerfile.dev，它基于一个大型基础镜像（Base Image），拉取所需的构建工具，并构建应用。接下来，需要基于Dockerfile.dev构建一个镜像，并用这个镜像创建一个容器。这时再编写Dockerfile.prod，它基于一个较小的基础镜像开始构建，并从刚才创建的容器中将应用程序相关的部分复制过来。整个过程需要编写额外的脚本才能串联起来。这种方式是可行的，但是比较复杂。</p>
+<p>&emsp;&emsp;<strong>多阶段构建</strong>（Multi-Stage Build）是一种更好的方式！多阶段构建是随Docker 17.05版本新增的一个特性，用于构建精简的生产环境镜像。多阶段构建能够在不增加复杂性的情况下优化构建过程。多阶段构建方式使用一个Dockerfile，其中包含多个FROM指令。每一个FROM指令都是一个新的构建阶段（Build Stage），并且可以方便地复制之前阶段的构件。示例源码可从作者GitHub主页中atsea-sample-shopapp仓库获得，Dockerfile位于app目录。这是一个基于Linux系统的应用，因此只能运行在Linux容器环境上。</p>
+<p>&emsp;&emsp;Dockerfile如下所示。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node:latest AS storefront </span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/src/atsea/app/react-app </span></span><br><span class="line"><span class="bash">COPY react-app . </span></span><br><span class="line"><span class="bash">RUN npm install </span></span><br><span class="line"><span class="bash">RUN npm run build</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">FROM maven:latest AS appserver </span></span><br><span class="line"><span class="bash">WORKDIR /usr/src/atsea </span></span><br><span class="line"><span class="bash">COPY pom.xml . </span></span><br><span class="line"><span class="bash">RUN mvn -B -f pom.xml -s /usr/share/maven/ref/settings-docker.xml dependen </span></span><br><span class="line"><span class="bash">cy </span></span><br><span class="line"><span class="bash">\:resolve </span></span><br><span class="line"><span class="bash">COPY . . </span></span><br><span class="line"><span class="bash">RUN mvn -B -s /usr/share/maven/ref/settings-docker.xml package -DskipTests</span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">FROM java:8-jdk-alpine AS production </span></span><br><span class="line"><span class="bash">RUN adduser -Dh /home/gordon gordon </span></span><br><span class="line"><span class="bash">WORKDIR /static </span></span><br><span class="line"><span class="bash">COPY --from=storefront /usr/src/atsea/app/react-app/build/ . </span></span><br><span class="line"><span class="bash">WORKDIR /app </span></span><br><span class="line"><span class="bash">COPY --from=appserver /usr/src/atsea/target/AtSea-0.0.1-SNAPSHOT.jar . </span></span><br><span class="line"><span class="bash">ENTRYPOINT [<span class="string">"java"</span>, <span class="string">"-jar"</span>, <span class="string">"/app/AtSea-0.0.1-SNAPSHOT.jar"</span>] </span></span><br><span class="line"><span class="bash">CMD [<span class="string">"--spring.profiles.active=postgres"</span>]</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;首先注意到，Dockerfile中有3个FROM指令。每一个FROM指令构成一个单独的构建阶段。各个阶段在内部从0开始编号。不过，示例中针对每个阶段都定义了便于理解的名字。阶段0叫作storefront，阶段1叫作appserver，阶段2叫作production。</p>
+<p>&emsp;&emsp;storefront阶段拉取了大小超过600MB的node:latest镜像，然后设置了工作目录，复制一些应用代码进去，然后使用2个RUN指令来执行npm操作。这会生成3个镜像层并显著增加镜像大小。指令执行结束后会得到一个比原镜像大得多的镜像，其中包含许多构建工具和少量应用程序代码。</p>
+<p>&emsp;&emsp;appserver阶段拉取了大小超过700MB的maven:latest镜像。然后通过2个COPY指令和2个RUN指令生成了4个镜像层。这个阶段同样会构建出一个非常大的包含许多构建工具和非常少量应用程序代码的镜像。</p>
+<p>&emsp;&emsp;production阶段拉取java:8-jdk-alpine镜像，这个镜像大约150MB，明显小于前两个构建阶段用到的node和maven镜像。这个阶段会创建一个用户，设置工作目录，从storefront阶段生成的镜像中复制一些应用代码过来。之后，设置一个不同的工作目录，然后从 appserver阶段生成的镜像中复制应用相关的代码。最后，production设置当前应用程序为容器启动时的主程序。</p>
+<p>&emsp;&emsp;重点在于COPY –from指令，它从之前的阶段构建的镜像中仅复制生产环境相关的应用代码，而不会复制生产环境不需要的构件。</p>
+<p>&emsp;&emsp;还有一点也很重要，多阶段构建这种方式仅用到了一个Dockerfile，并且docker image build命令不需要增加额外参数。</p>
+<p>&emsp;&emsp;下面就进行一下构建，首先克隆代码库并切换到app目录，并确保其中有Dockerfile。</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ cd atsea-sample-shop-app/app</span><br><span class="line"></span><br><span class="line">$ ls -l </span><br><span class="line">total<span class="number"> 24 </span></span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root <span class="number"> 682 </span>Oct<span class="number"> 1 </span>22:03 Dockerfile </span><br><span class="line">-rw-r--r--<span class="number"> 1 </span>root root<span class="number"> 4365 </span>Oct<span class="number"> 1 </span>22:03 pom.xml </span><br><span class="line">drwxr-xr-x<span class="number"> 4 </span>root root<span class="number"> 4096 </span>Oct<span class="number"> 1 </span>22:03 react-app </span><br><span class="line">drwxr-xr-x<span class="number"> 4 </span>root root<span class="number"> 4096 </span>Oct<span class="number"> 1 </span>22:03 src</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;执行构建（这可能会花费几分钟）。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ docker image build -t multi:stage .</span><br><span class="line"></span><br><span class="line">Sending build context to Docker daemon <span class="number">3.658M</span>B </span><br><span class="line">Step <span class="number">1</span>/<span class="number">19</span> : FROM <span class="keyword">node</span><span class="title">:latest</span> AS storefront </span><br><span class="line">latest: Pulling from library/<span class="keyword">node</span> <span class="title"></span></span><br><span class="line"><span class="title">aa18ad1a0d33</span>: Pull complete </span><br><span class="line"><span class="number">15</span>a33158a136: Pull complete </span><br><span class="line"><span class="tag">&lt;Snip&gt;</span> </span><br><span class="line">Step <span class="number">19</span>/<span class="number">19</span> : CMD --spring.profiles.<span class="attr">active=</span>postgres </span><br><span class="line"> ---&gt; Running <span class="keyword">in</span> b4df9850f7ed </span><br><span class="line"> ---&gt; <span class="number">3</span>dc0d5e6223e </span><br><span class="line">Removing intermediate container b4df9850f7ed </span><br><span class="line">Successfully built <span class="number">3</span>dc0d5e6223e </span><br><span class="line">Successfully tagged multi:stage</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;执行docker image ls命令查看由构建命令拉取和生成的镜像。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ docker image ls</span><br><span class="line"></span><br><span class="line">REPO    TAG            IMAGE ID         CREATED        SIZE </span><br><span class="line">node    latest         <span class="number">9</span>ea1c3e33a0b     <span class="number">4</span> days ago     <span class="number">673</span>MB </span><br><span class="line">&lt;none&gt;  &lt;none&gt;         <span class="number">6598</span>db3cefaf     <span class="number">3</span> mins ago     <span class="number">816</span>MB </span><br><span class="line">maven   latest         cbf114925530     <span class="number">2</span> weeks ago    <span class="number">750</span>MB </span><br><span class="line">&lt;none&gt;  &lt;none&gt;         d5b619b83d9e     <span class="number">1</span> min ago      <span class="number">891</span>MB </span><br><span class="line">java    <span class="number">8</span>-jdk-alpine   <span class="number">3</span>fd9dd82815c     <span class="number">7</span> months ago   <span class="number">145</span>MB </span><br><span class="line">multi   stage          <span class="number">3</span>dc0d5e6223e     <span class="number">1</span> min ago      <span class="number">210</span>MB</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;第一行显示了在storefront阶段拉取的node:latest镜像，第二行内容为该阶段生成的镜像（通过添加代码，执行npm安装和构建操作生成该镜像）。这两个都包含许多的构建工具，因此镜像体积非常大。</p>
+<p>&emsp;&emsp;第3～4行是在appserver阶段拉取和生成的镜像，它们也都因为包含许多构建工具而导致体积较大。</p>
+<p>&emsp;&emsp;最后一行是Dockerfile中的最后一个构建阶段（stage2/production）生成的multi:stage镜像。可见它明显比之前阶段拉取和生成的镜像要小。这是因为该镜像是基于相对精简的java:8-jdk-alpine镜像构建的，并且仅添加了用于生产环境的应用程序文件。</p>
+<p>&emsp;&emsp;最终，无须额外的脚本，仅对一个单独的Dockerfile执行docker image build命令，就创建了一个精简的生产环境镜像。</p>
+<h4 id="1-2-3-最佳实践"><a href="#1-2-3-最佳实践" class="headerlink" title="1.2.3 最佳实践"></a><strong>1.2.3 最佳实践</strong></h4><h5 id="（1）利用构建缓存"><a href="#（1）利用构建缓存" class="headerlink" title="（1）利用构建缓存"></a><strong>（1）利用构建缓存</strong></h5><p>&emsp;&emsp;Docker的构建过程利用了<strong>缓存机制</strong>。观察缓存效果的一个方法，就是在一个干净的Docker主机上构建一个新的镜像，然后再重复同样的构建。第一次构建会拉取基础镜像，并构建镜像层，构建过程需要花费一定时间；第二次构建几乎能够立即完成。这就是因为第一次构建的内容（如镜像层）能够被缓存下来，并被后续的构建过程复用。</p>
+<p>&emsp;&emsp;docker image build命令会从顶层开始解析Dockerfile中的指令并逐行执行。而对每一条指令，Docker都会检查缓存中是否已经有与该指令对应的镜像层。如果有，即为<strong>缓存命中</strong>（Cache Hit），并且会使用这个镜像层；如果没有，则是<strong>缓存未命中</strong>（Cache Miss），Docker会基于该指令构建新的镜像层。缓存命中能够显著加快构建过程。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">--告诉Docker使用alpine:latest作为基础镜像，如果镜像不存在，会从Docker Hub（docker.io）拉取。</span><br><span class="line"><span class="keyword">FROM</span> alpine </span><br><span class="line"></span><br><span class="line">--对镜像执行一条命令，Docker会检查构建缓存中是否存在基于同一基础镜像，并且执行了相同指令的镜像层</span><br><span class="line">--如果找到该镜像层，Docker会跳过这条指令，并链接到这个已经存在的镜像层，然后继续构建；</span><br><span class="line">--如果无法找到符合要求的镜像层，则设置缓存无效（后续不再取缓存）并构建该镜像层</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apk add --update nodejs nodejs-npm </span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">--假设Docker已经在缓存中找到了该指令对应的镜像层（缓存命中），并且假设这个镜像层的ID是AAA</span></span><br><span class="line"><span class="bash">--下一条指令会复制一些代码到镜像中</span></span><br><span class="line"><span class="bash">--因为上一条指令命中了缓存，Docker会继续查找是否有一个缓存的镜像层也是基于AAA层并执行了COPY . /src命令。</span></span><br><span class="line"><span class="bash">--如果有，Docker会链接到这个缓存的镜像层并继续执行后续指令；</span></span><br><span class="line"><span class="bash">--如果没有，则构建镜像层，并对后续的构建操作设置缓存无效。</span></span><br><span class="line"><span class="bash">COPY . /src </span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">WORKDIR /src </span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">RUN npm install </span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">EXPOSE 8080 </span></span><br><span class="line"><span class="bash"></span></span><br><span class="line"><span class="bash">ENTRYPOINT [<span class="string">"node"</span>, <span class="string">"./app.js"</span>]</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;一旦有指令在缓存中未命中（没有该指令对应的镜像层），则后续的整个构建过程将不再使用缓存。在编写Dockerfile时须特别注意这一点，尽量将易于发生变化的指令置于Dockerfile文件的后方执行。通过对docker image build命令加入–nocache=true参数可以强制忽略对缓存的使用。</p>
+<p>&emsp;&emsp;COPY和ADD指令会检查复制到镜像中的内容自上一次构建之后是否发生了变化。例如，有可能Dockerfile中的COPY . /src指令没有发生变化，但是被复制的目录中的内容已经发生变化了。为了应对这一问题，Docker会计算每一个被复制文件的Checksum值，并与缓存镜像层中同一文件的checksum进行对比。如果不匹配，那么就认为缓存无效并构建新的镜像层。</p>
+<h5 id="（2）合并镜像"><a href="#（2）合并镜像" class="headerlink" title="（2）合并镜像"></a><strong>（2）合并镜像</strong></h5><p>&emsp;&emsp;合并镜像并非一个最佳实践，因为这种方式利弊参半。总体来说，Docker会遵循正常的方式构建镜像，但之后会增加一个额外的步骤，将所有的内容合并到一个镜像层中。当镜像中层数太多时，合并是一个不错的优化方式。例如，当创建一个新的基础镜像，以便基于它来构建其他镜像的时候，这个基础镜像就最好被合并为一层。缺点是，合并的镜像将无法共享镜像层。这会导致存储空间的低效利用，而且push和pull操作的镜像体积更大。</p>
+<p>&emsp;&emsp;执行docker image build命令时，可以通过增加–squash参数来创建一个合并的镜像。</p>
+<p>&emsp;&emsp;图8.8阐释了合并镜像层带来的存储空间低效利用的问题。两个镜像的内容是完全一样的，区别在于是否进行了合并。在使用docker image push命令发送镜像到Docker Hub时，合并的镜像需要发送全部字节，而不合并的镜像只需要发送不同的镜像层即可。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191001/201910010134.png" alt="合并的与不合并的镜像"></p>
+<h5 id="（3）使用no-install-recommends"><a href="#（3）使用no-install-recommends" class="headerlink" title="（3）使用no-install-recommends"></a><strong>（3）使用no-install-recommends</strong></h5><p>&emsp;&emsp;在构建Linux镜像时，若使用的是APT包管理器，则应该在执行apt-get install命令时增加no-install-recommends参数。这能够确保APT仅安装核心依赖（Depends中定义）包，而不是推荐和建议的包。这样能够显著减少不必要包的下载数量。</p>
+<h5 id="（4）不要安装MSI包（Windows）"><a href="#（4）不要安装MSI包（Windows）" class="headerlink" title="（4）不要安装MSI包（Windows）"></a><strong>（4）不要安装MSI包（Windows）</strong></h5><p>&emsp;&emsp;在构建Windows镜像时，尽量避免使用MSI包管理器。因其对空间的利用率不高，会大幅增加镜像的体积。</p>
+<hr>
+<h3 id="1-3-命令"><a href="#1-3-命令" class="headerlink" title="1.3 命令"></a><strong>1.3 命令</strong></h3><blockquote>
+<ul>
+<li>docker image build命令会读取Dockerfile，并将应用程序容器化。使用-t参数为镜像打标签，使用-f参数指定Dockerfile的路径和名称，使用-f参数可以指定位于任意路径下的任意名称的Dockerfile。构建上下文是指应用文件存放的位置，可能是本地Docker主机上的一个目录或一个远程的Git库。 </li>
+<li>Dockerfile中的FROM指令用于指定要构建的镜像的基础镜像。它通常是Dockerfile中的第一条指令。 </li>
+<li>Dockerfile中的RUN指令用于在镜像中执行命令，这会创建新的镜像层。每个RUN指令创建一个新的镜像层。 </li>
+<li>Dockerfile中的COPY指令用于将文件作为一个新的层添加到镜像中。通常使用COPY指令将应用代码赋值到镜像中。 </li>
+<li>Dockerfile中的EXPOSE指令用于记录应用所使用的网络端口。 </li>
+<li>Dockerfile中的ENTRYPOINT指令用于指定镜像以容器方式启动后默认运行的程序。 </li>
+<li>其他的Dockerfile指令还有LABEL、ENV、ONBUILD、HEALTHCHECK、CMD等。</li>
+</ul>
+</blockquote>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《深入浅出Docker》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019101201.html" rel="next" title="Docker（四）容器">
+                <i class="fa fa-chevron-left"></i> Docker（四）容器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019111201.html" rel="prev" title="死亡会是解脱吗">
+                死亡会是解脱吗 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">147</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker（五）应用的容器化"><span class="nav-number">1.</span> <span class="nav-text">Docker（五）应用的容器化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-应用的容器化"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 应用的容器化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-简介"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-详解"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-单体应用容器化"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.2.1 单体应用容器化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#（1）获取应用代码"><span class="nav-number">1.1.2.1.1.</span> <span class="nav-text">（1）获取应用代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（2）分析Dockerfile"><span class="nav-number">1.1.2.1.2.</span> <span class="nav-text">（2）分析Dockerfile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（3）构建应用镜像"><span class="nav-number">1.1.2.1.3.</span> <span class="nav-text">（3）构建应用镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（4）推送镜像到仓库"><span class="nav-number">1.1.2.1.4.</span> <span class="nav-text">（4）推送镜像到仓库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（5）运行该应用"><span class="nav-number">1.1.2.1.5.</span> <span class="nav-text">（5）运行该应用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（6）测试应用"><span class="nav-number">1.1.2.1.6.</span> <span class="nav-text">（6）测试应用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（7）容器应用化细节"><span class="nav-number">1.1.2.1.7.</span> <span class="nav-text">（7）容器应用化细节</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-生产环境中的多阶段构建"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">1.2.2 生产环境中的多阶段构建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-最佳实践"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">1.2.3 最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#（1）利用构建缓存"><span class="nav-number">1.1.2.3.1.</span> <span class="nav-text">（1）利用构建缓存</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（2）合并镜像"><span class="nav-number">1.1.2.3.2.</span> <span class="nav-text">（2）合并镜像</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（3）使用no-install-recommends"><span class="nav-number">1.1.2.3.3.</span> <span class="nav-text">（3）使用no-install-recommends</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（4）不要安装MSI包（Windows）"><span class="nav-number">1.1.2.3.4.</span> <span class="nav-text">（4）不要安装MSI包（Windows）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-命令"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 命令</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
