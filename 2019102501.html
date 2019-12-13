@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Q&A," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="整理面试中常问的算法相关问题，持续更新中。">
+<meta name="keywords" content="Q&amp;A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试整理——算法">
+<meta property="og:url" content="http://linyishui.top/2019102501.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="整理面试中常问的算法相关问题，持续更新中。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-13T02:51:12.166Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="面试整理——算法">
+<meta name="twitter:description" content="整理面试中常问的算法相关问题，持续更新中。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019102501.html"/>
+
+
+
+
+
+  <title>面试整理——算法 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019102501.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">面试整理——算法</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-25T16:23:37+08:00">
+                2019-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/面试整理/" itemprop="url" rel="index">
+                    <span itemprop="name">面试整理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,422
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  整理面试中常问的算法相关问题，持续更新中。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="未归类"><a href="#未归类" class="headerlink" title="未归类"></a><strong>未归类</strong></h2><hr>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a><strong>数据结构</strong></h2><h3 id="问：讲讲红黑树、二叉树的算法？红黑树了解么，时间复杂度"><a href="#问：讲讲红黑树、二叉树的算法？红黑树了解么，时间复杂度" class="headerlink" title="问：讲讲红黑树、二叉树的算法？红黑树了解么，时间复杂度?"></a><strong>问：讲讲红黑树、二叉树的算法？红黑树了解么，时间复杂度?</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：讲下跳表怎么实现的-哈夫曼编码是怎么回事？非递归且不用额外空间（不用栈），如何遍历二叉树？"><a href="#问：讲下跳表怎么实现的-哈夫曼编码是怎么回事？非递归且不用额外空间（不用栈），如何遍历二叉树？" class="headerlink" title="问：讲下跳表怎么实现的?哈夫曼编码是怎么回事？非递归且不用额外空间（不用栈），如何遍历二叉树？"></a><strong>问：讲下跳表怎么实现的?哈夫曼编码是怎么回事？非递归且不用额外空间（不用栈），如何遍历二叉树？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：讲下常见的排序算法及其复杂度？怎么实现一个快排？树一般怎么实现，链表怎么实现？"><a href="#问：讲下常见的排序算法及其复杂度？怎么实现一个快排？树一般怎么实现，链表怎么实现？" class="headerlink" title="问：讲下常见的排序算法及其复杂度？怎么实现一个快排？树一般怎么实现，链表怎么实现？"></a><strong>问：讲下常见的排序算法及其复杂度？怎么实现一个快排？树一般怎么实现，链表怎么实现？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：堆是怎么实现？小根堆如何插入数据，讲一下过程？"><a href="#问：堆是怎么实现？小根堆如何插入数据，讲一下过程？" class="headerlink" title="问：堆是怎么实现？小根堆如何插入数据，讲一下过程？"></a><strong>问：堆是怎么实现？小根堆如何插入数据，讲一下过程？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<hr>
+<h2 id="算法题"><a href="#算法题" class="headerlink" title="算法题"></a><strong>算法题</strong></h2><h3 id="问：使用O-N-复杂度完成GBDT分裂？"><a href="#问：使用O-N-复杂度完成GBDT分裂？" class="headerlink" title="问：使用O(N)复杂度完成GBDT分裂？"></a><strong>问：使用O(N)复杂度完成GBDT分裂？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：找出无序数组中相隔距离最长的逆序对？"><a href="#问：找出无序数组中相隔距离最长的逆序对？" class="headerlink" title="问：找出无序数组中相隔距离最长的逆序对？"></a><strong>问：找出无序数组中相隔距离最长的逆序对？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：给出一个rand5-，实现一个分布均匀的rand7-生成器？"><a href="#问：给出一个rand5-，实现一个分布均匀的rand7-生成器？" class="headerlink" title="问：给出一个rand5()，实现一个分布均匀的rand7()生成器？"></a><strong>问：给出一个rand5()，实现一个分布均匀的rand7()生成器？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：有一个点，向北走5公里、东走10km、向南走5公里，回到原点。这样的点有几个，证明？"><a href="#问：有一个点，向北走5公里、东走10km、向南走5公里，回到原点。这样的点有几个，证明？" class="headerlink" title="问：有一个点，向北走5公里、东走10km、向南走5公里，回到原点。这样的点有几个，证明？"></a><strong>问：有一个点，向北走5公里、东走10km、向南走5公里，回到原点。这样的点有几个，证明？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：有一个n克的物体、一个天平和若干砝码，这个天平没有刻度，试问最少用多少个什么样的砝码可以将这个物体的质量称出。砝码的质量和个数自行指定。"><a href="#问：有一个n克的物体、一个天平和若干砝码，这个天平没有刻度，试问最少用多少个什么样的砝码可以将这个物体的质量称出。砝码的质量和个数自行指定。" class="headerlink" title="问：有一个n克的物体、一个天平和若干砝码，这个天平没有刻度，试问最少用多少个什么样的砝码可以将这个物体的质量称出。砝码的质量和个数自行指定。"></a><strong>问：有一个n克的物体、一个天平和若干砝码，这个天平没有刻度，试问最少用多少个什么样的砝码可以将这个物体的质量称出。砝码的质量和个数自行指定。</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：实现堆排序"><a href="#问：实现堆排序" class="headerlink" title="问：实现堆排序"></a><strong>问：实现堆排序</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：给了长度为N的有重复元素的数组，要求输出第10大的数。需要在2小时内完成"><a href="#问：给了长度为N的有重复元素的数组，要求输出第10大的数。需要在2小时内完成" class="headerlink" title="问：给了长度为N的有重复元素的数组，要求输出第10大的数。需要在2小时内完成"></a><strong>问：给了长度为N的有重复元素的数组，要求输出第10大的数。需要在2小时内完成</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：手写一个对象池"><a href="#问：手写一个对象池" class="headerlink" title="问：手写一个对象池"></a><strong>问：手写一个对象池</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<hr>
+<h2 id="手撕"><a href="#手撕" class="headerlink" title="手撕"></a><strong>手撕</strong></h2><h3 id="问：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。"><a href="#问：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。" class="headerlink" title="问：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。"></a><strong>问：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。</strong></h3><details><br><br>&emsp;&emsp;一开始以为这道题是道动态规划的题目，但是老想不出递推关系式。问了下是不是贪心的思路，面试官说是贪心，然后给了个例子以及一波暗示，我才终于发现其实每次都跳到加血的蘑菇位置就行了。然后赶紧写了波代码，就这样过去了<br><br></details>
+
+<h3 id="问：leetcode原题，买卖股票。给一组股票价格，只进行一次交易，最大利润是多少？如果可以进行多次交易，利润又是多少呢？"><a href="#问：leetcode原题，买卖股票。给一组股票价格，只进行一次交易，最大利润是多少？如果可以进行多次交易，利润又是多少呢？" class="headerlink" title="问：leetcode原题，买卖股票。给一组股票价格，只进行一次交易，最大利润是多少？如果可以进行多次交易，利润又是多少呢？"></a><strong>问：leetcode原题，买卖股票。给一组股票价格，只进行一次交易，最大利润是多少？如果可以进行多次交易，利润又是多少呢？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：有大量已知的url网址，以及一个新的url网址，如何高效的判断新网址是否和已知网址重复？"><a href="#问：有大量已知的url网址，以及一个新的url网址，如何高效的判断新网址是否和已知网址重复？" class="headerlink" title="问：有大量已知的url网址，以及一个新的url网址，如何高效的判断新网址是否和已知网址重复？"></a><strong>问：有大量已知的url网址，以及一个新的url网址，如何高效的判断新网址是否和已知网址重复？</strong></h3><details><br><br>&emsp;&emsp;答：用字典树来做，省略100字。<br><br></details>
+
+<h3 id="问：url很长，字典树很占空间怎么办？"><a href="#问：url很长，字典树很占空间怎么办？" class="headerlink" title="问：url很长，字典树很占空间怎么办？"></a><strong>问：url很长，字典树很占空间怎么办？</strong></h3><details><br><br>&emsp;&emsp;答：对url进行分段哈希，然后再放到树节点中，而不是直接把每一个字符作为一个树节点。<br><br></details>
+
+<h3 id="问：你刚才提到了哈希，那说一下哈希的实现？"><a href="#问：你刚才提到了哈希，那说一下哈希的实现？" class="headerlink" title="问：你刚才提到了哈希，那说一下哈希的实现？"></a><strong>问：你刚才提到了哈希，那说一下哈希的实现？</strong></h3><details><br><br>&emsp;&emsp;答：说了下STL里面unordered_map的大概实现原理，哈希函数，二次探测，开链，省略100字。<br><br>&emsp;&emsp;哈希在什么情况下需要扩容？怎么扩容？<br><br>&emsp;&emsp;答：说了下饱和度过大时需要扩容，每次容量翻一倍。<br><br>&emsp;&emsp;为什么扩容时是翻一倍呢？而不是两倍，三倍？<br><br>&emsp;&emsp;答：（这我就真不知道了😖，一顿乱猜）于是说了下STL内存分配器的特点以及里面内存池的结构可能更适合这样分配，才算糊弄过去😅。<br><br>&emsp;&emsp;服务器中有大量数据需要迁移，如何在不停止对外服务的情况下安全的迁移数据？<br><br>&emsp;&emsp;答：一开始没明白意思，说这个直接复制就行噻😃，<br><br>&emsp;&emsp;然后面试官提醒要是复制的过程中数据被改动了怎么办？<br><br>&emsp;&emsp;答：需要对数据加锁。<br><br>&emsp;&emsp;加锁了不就没法对外服务了吗？<br><br>&emsp;&emsp;答：可以把数据分成许多段，复制某一段的时候就把这一段数据加锁。<br><br>&emsp;&emsp;面试官觉得我越扯越远，就没继续问了。😌<br><br>&emsp;&emsp;谈一下你的职业规划？答略<br><br></details>
+
+
+<h3 id="问：找出数组中只出现一次的那个数，其他都出现两次；-异或"><a href="#问：找出数组中只出现一次的那个数，其他都出现两次；-异或" class="headerlink" title="问：找出数组中只出现一次的那个数，其他都出现两次；(异或)"></a><strong>问：找出数组中只出现一次的那个数，其他都出现两次；(异或)</strong></h3><details><br><br>&emsp;&emsp;接上面，如果数组中有两个数只出现一次呢？<br><br></details>
+
+<h3 id="问：BST中任意两个节点差的最小值"><a href="#问：BST中任意两个节点差的最小值" class="headerlink" title="问：BST中任意两个节点差的最小值"></a><strong>问：BST中任意两个节点差的最小值</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：判断二叉树是否中心对称"><a href="#问：判断二叉树是否中心对称" class="headerlink" title="问：判断二叉树是否中心对称"></a><strong>问：判断二叉树是否中心对称</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：大数相乘"><a href="#问：大数相乘" class="headerlink" title="问：大数相乘"></a><strong>问：大数相乘</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：给我一张纸，画了一个九方格，都填了数字，给一个MN矩阵，从1开始逆时针打印这MN个数，要求时间复杂度尽可能低，可以先说下思路"><a href="#问：给我一张纸，画了一个九方格，都填了数字，给一个MN矩阵，从1开始逆时针打印这MN个数，要求时间复杂度尽可能低，可以先说下思路" class="headerlink" title="问：给我一张纸，画了一个九方格，都填了数字，给一个MN矩阵，从1开始逆时针打印这MN个数，要求时间复杂度尽可能低，可以先说下思路"></a><strong>问：给我一张纸，画了一个九方格，都填了数字，给一个MN矩阵，从1开始逆时针打印这MN个数，要求时间复杂度尽可能低，可以先说下思路</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：数组A，2-n个元素，n个奇数、n个偶数，设计一个算法，使得数组奇数下标位置放置的都是奇数，偶数下标位置放置的都是偶数。先说下你的思路"><a href="#问：数组A，2-n个元素，n个奇数、n个偶数，设计一个算法，使得数组奇数下标位置放置的都是奇数，偶数下标位置放置的都是偶数。先说下你的思路" class="headerlink" title="问：数组A，2*n个元素，n个奇数、n个偶数，设计一个算法，使得数组奇数下标位置放置的都是奇数，偶数下标位置放置的都是偶数。先说下你的思路"></a><strong>问：数组A，2*n个元素，n个奇数、n个偶数，设计一个算法，使得数组奇数下标位置放置的都是奇数，偶数下标位置放置的都是偶数。先说下你的思路</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：统计一个字符串的字符出现字数并打印-除了这个还有别的办法吗"><a href="#问：统计一个字符串的字符出现字数并打印-除了这个还有别的办法吗" class="headerlink" title="问：统计一个字符串的字符出现字数并打印?除了这个还有别的办法吗?"></a><strong>问：统计一个字符串的字符出现字数并打印?除了这个还有别的办法吗?</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：全排列"><a href="#问：全排列" class="headerlink" title="问：全排列?"></a><strong>问：全排列?</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：假如你正在做淘宝的后台，如何快速查询出1000-2000价格的商品？"><a href="#问：假如你正在做淘宝的后台，如何快速查询出1000-2000价格的商品？" class="headerlink" title="问：假如你正在做淘宝的后台，如何快速查询出1000-2000价格的商品？"></a><strong>问：假如你正在做淘宝的后台，如何快速查询出1000-2000价格的商品？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：有一个场景，一个背包里，多个线程往里面移走东西如何保证线程安全？加锁加在什么地方，让你来写代码你怎么写？"><a href="#问：有一个场景，一个背包里，多个线程往里面移走东西如何保证线程安全？加锁加在什么地方，让你来写代码你怎么写？" class="headerlink" title="问：有一个场景，一个背包里，多个线程往里面移走东西如何保证线程安全？加锁加在什么地方，让你来写代码你怎么写？"></a><strong>问：有一个场景，一个背包里，多个线程往里面移走东西如何保证线程安全？加锁加在什么地方，让你来写代码你怎么写？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：判断数组里是否有和为指定值的两个数？"><a href="#问：判断数组里是否有和为指定值的两个数？" class="headerlink" title="问：判断数组里是否有和为指定值的两个数？"></a><strong>问：判断数组里是否有和为指定值的两个数？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：对笔试题进行提问？有没找到更好的解法吗？"><a href="#问：对笔试题进行提问？有没找到更好的解法吗？" class="headerlink" title="问：对笔试题进行提问？有没找到更好的解法吗？"></a><strong>问：对笔试题进行提问？有没找到更好的解法吗？</strong></h3><details><br><br>&emsp;&emsp;(题目大概是一个数组里除了一个数字出现一次，其它数字都出现了两次，给一个最优解法？我说可以用map，key为数字，value为该数字出现次数？面试官给了一个异或的方法，提示两次异或是本身）<br><br></details>
+
+
+<hr>
+<p><em>参考内容均来自网络中网友分享，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Q-A/" rel="tag"># Q&A</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019102401.html" rel="next" title="面试整理——JVM">
+                <i class="fa fa-chevron-left"></i> 面试整理——JVM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019102601.html" rel="prev" title="面试整理——网络">
+                面试整理——网络 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">159</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#未归类"><span class="nav-number">1.</span> <span class="nav-text">未归类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据结构"><span class="nav-number">2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲讲红黑树、二叉树的算法？红黑树了解么，时间复杂度"><span class="nav-number">2.1.</span> <span class="nav-text">问：讲讲红黑树、二叉树的算法？红黑树了解么，时间复杂度?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲下跳表怎么实现的-哈夫曼编码是怎么回事？非递归且不用额外空间（不用栈），如何遍历二叉树？"><span class="nav-number">2.2.</span> <span class="nav-text">问：讲下跳表怎么实现的?哈夫曼编码是怎么回事？非递归且不用额外空间（不用栈），如何遍历二叉树？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲下常见的排序算法及其复杂度？怎么实现一个快排？树一般怎么实现，链表怎么实现？"><span class="nav-number">2.3.</span> <span class="nav-text">问：讲下常见的排序算法及其复杂度？怎么实现一个快排？树一般怎么实现，链表怎么实现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：堆是怎么实现？小根堆如何插入数据，讲一下过程？"><span class="nav-number">2.4.</span> <span class="nav-text">问：堆是怎么实现？小根堆如何插入数据，讲一下过程？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法题"><span class="nav-number">3.</span> <span class="nav-text">算法题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：使用O-N-复杂度完成GBDT分裂？"><span class="nav-number">3.1.</span> <span class="nav-text">问：使用O(N)复杂度完成GBDT分裂？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：找出无序数组中相隔距离最长的逆序对？"><span class="nav-number">3.2.</span> <span class="nav-text">问：找出无序数组中相隔距离最长的逆序对？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：给出一个rand5-，实现一个分布均匀的rand7-生成器？"><span class="nav-number">3.3.</span> <span class="nav-text">问：给出一个rand5()，实现一个分布均匀的rand7()生成器？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：有一个点，向北走5公里、东走10km、向南走5公里，回到原点。这样的点有几个，证明？"><span class="nav-number">3.4.</span> <span class="nav-text">问：有一个点，向北走5公里、东走10km、向南走5公里，回到原点。这样的点有几个，证明？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：有一个n克的物体、一个天平和若干砝码，这个天平没有刻度，试问最少用多少个什么样的砝码可以将这个物体的质量称出。砝码的质量和个数自行指定。"><span class="nav-number">3.5.</span> <span class="nav-text">问：有一个n克的物体、一个天平和若干砝码，这个天平没有刻度，试问最少用多少个什么样的砝码可以将这个物体的质量称出。砝码的质量和个数自行指定。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：实现堆排序"><span class="nav-number">3.6.</span> <span class="nav-text">问：实现堆排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：给了长度为N的有重复元素的数组，要求输出第10大的数。需要在2小时内完成"><span class="nav-number">3.7.</span> <span class="nav-text">问：给了长度为N的有重复元素的数组，要求输出第10大的数。需要在2小时内完成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：手写一个对象池"><span class="nav-number">3.8.</span> <span class="nav-text">问：手写一个对象池</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#手撕"><span class="nav-number">4.</span> <span class="nav-text">手撕</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。"><span class="nav-number">4.1.</span> <span class="nav-text">问：一个人从起点出发，初始生命值为n，每次可以向前跳k步并消耗k点生命值，路上的每一个位置都有恢复生命值的好蘑菇，和扣除生命值的坏蘑菇，人的生命值不能为0。问该人到达终点时的最大剩余生命值是多少？如果不能到达终点，返回-1。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：leetcode原题，买卖股票。给一组股票价格，只进行一次交易，最大利润是多少？如果可以进行多次交易，利润又是多少呢？"><span class="nav-number">4.2.</span> <span class="nav-text">问：leetcode原题，买卖股票。给一组股票价格，只进行一次交易，最大利润是多少？如果可以进行多次交易，利润又是多少呢？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：有大量已知的url网址，以及一个新的url网址，如何高效的判断新网址是否和已知网址重复？"><span class="nav-number">4.3.</span> <span class="nav-text">问：有大量已知的url网址，以及一个新的url网址，如何高效的判断新网址是否和已知网址重复？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：url很长，字典树很占空间怎么办？"><span class="nav-number">4.4.</span> <span class="nav-text">问：url很长，字典树很占空间怎么办？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：你刚才提到了哈希，那说一下哈希的实现？"><span class="nav-number">4.5.</span> <span class="nav-text">问：你刚才提到了哈希，那说一下哈希的实现？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：找出数组中只出现一次的那个数，其他都出现两次；-异或"><span class="nav-number">4.6.</span> <span class="nav-text">问：找出数组中只出现一次的那个数，其他都出现两次；(异或)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：BST中任意两个节点差的最小值"><span class="nav-number">4.7.</span> <span class="nav-text">问：BST中任意两个节点差的最小值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：判断二叉树是否中心对称"><span class="nav-number">4.8.</span> <span class="nav-text">问：判断二叉树是否中心对称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：大数相乘"><span class="nav-number">4.9.</span> <span class="nav-text">问：大数相乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：给我一张纸，画了一个九方格，都填了数字，给一个MN矩阵，从1开始逆时针打印这MN个数，要求时间复杂度尽可能低，可以先说下思路"><span class="nav-number">4.10.</span> <span class="nav-text">问：给我一张纸，画了一个九方格，都填了数字，给一个MN矩阵，从1开始逆时针打印这MN个数，要求时间复杂度尽可能低，可以先说下思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：数组A，2-n个元素，n个奇数、n个偶数，设计一个算法，使得数组奇数下标位置放置的都是奇数，偶数下标位置放置的都是偶数。先说下你的思路"><span class="nav-number">4.11.</span> <span class="nav-text">问：数组A，2*n个元素，n个奇数、n个偶数，设计一个算法，使得数组奇数下标位置放置的都是奇数，偶数下标位置放置的都是偶数。先说下你的思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：统计一个字符串的字符出现字数并打印-除了这个还有别的办法吗"><span class="nav-number">4.12.</span> <span class="nav-text">问：统计一个字符串的字符出现字数并打印?除了这个还有别的办法吗?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：全排列"><span class="nav-number">4.13.</span> <span class="nav-text">问：全排列?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：假如你正在做淘宝的后台，如何快速查询出1000-2000价格的商品？"><span class="nav-number">4.14.</span> <span class="nav-text">问：假如你正在做淘宝的后台，如何快速查询出1000-2000价格的商品？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：有一个场景，一个背包里，多个线程往里面移走东西如何保证线程安全？加锁加在什么地方，让你来写代码你怎么写？"><span class="nav-number">4.15.</span> <span class="nav-text">问：有一个场景，一个背包里，多个线程往里面移走东西如何保证线程安全？加锁加在什么地方，让你来写代码你怎么写？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：判断数组里是否有和为指定值的两个数？"><span class="nav-number">4.16.</span> <span class="nav-text">问：判断数组里是否有和为指定值的两个数？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：对笔试题进行提问？有没找到更好的解法吗？"><span class="nav-number">4.17.</span> <span class="nav-text">问：对笔试题进行提问？有没找到更好的解法吗？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
