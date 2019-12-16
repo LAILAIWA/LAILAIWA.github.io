@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="整理面试中常问的Java基础相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-12T14:38:32.471Z">
+<meta property="og:updated_time" content="2019-12-13T07:51:34.677Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Java基础">
 <meta name="twitter:description" content="整理面试中常问的Java基础相关问题，持续更新中。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  700
+                  1,040
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  4
                 </span>
               
             </div>
@@ -411,15 +411,20 @@
 
 <h3 id="问：讲一下重载和重写"><a href="#问：讲一下重载和重写" class="headerlink" title="问：讲一下重载和重写?"></a><strong>问：讲一下重载和重写?</strong></h3><details><br><br>&emsp;&emsp;答：重载是：同一类中，用相同的方法名，但参数个数或数据类型不同，返回值、访问修饰和抛出异常可以相同也可以不同，<br><br>&emsp;&emsp;重写则是：不同类中，子类继承父类方法，有相同的方法描述，但会受限于父类的访问修饰类型，且子类的访问修饰要更大。<br><br></details>
 
-<h3 id="问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？"><a href="#问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？" class="headerlink" title="问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？"></a><strong>问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？</strong></h3><details><br><br>&emsp;&emsp;哈希值相等的两个对象未必是相等的（哈希冲突），并不是百分百可靠，而equals方法则默认判断引用地址，重写后则根据实现进行相等性判断。所以hashcode相等，equals未必相等。因为hashcode进行比较效率较高，所以可以先判断hashcode，<br><br>&emsp;&emsp;但equals相等应该让hashcode也相等，否则会在许多场景下出错（Set或HashMap取值），所以重写equals时也要重写hashcode。<br><br>&emsp;&emsp;<a href="../2018123101.html" title="Title">equals和hashCode异同</a><br><br></details>
+<h3 id="问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？"><a href="#问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？" class="headerlink" title="问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？"></a><strong>问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？</strong></h3><details><br><br>&emsp;&emsp;hashcode方法用于创建散列表时获取对象的哈希码值，equals则用于对象的等值判断。<br><br>&emsp;&emsp;equals相等则hashcode必定相等，hashcode相等equals未必相等。前者是散列表取值时需要先判断hashcode（hashcode比较效率较高），所以只有hashcode相等才能取到正确的值。哈希值相等的两个对象未必是相等的（哈希冲突），因为哈希码并不是百分百可靠。<br><br>&emsp;&emsp;重写equals方法时还要重写hashcode方法是因为，重写equals后很可能导致equals相等时hashcode却不相同，会在许多散列表的使用场景下出错（Set或HashMap取值），所以重写equals时也要重写hashcode。<br><br>&emsp;&emsp;<a href="../2018123101.html" title="Title">equals和hashCode异同</a><br><br></details>
 
-<h3 id="问：说下如何操控文件-（输入输出）怎么关闭呢-（在finally关闭），发生异常怎么办"><a href="#问：说下如何操控文件-（输入输出）怎么关闭呢-（在finally关闭），发生异常怎么办" class="headerlink" title="问：说下如何操控文件?（输入输出）怎么关闭呢?（在finally关闭），发生异常怎么办?"></a><strong>问：说下如何操控文件?（输入输出）怎么关闭呢?（在finally关闭），发生异常怎么办?</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+<h3 id="问：说下如何操控文件-（输入输出）怎么关闭呢-发生异常怎么办"><a href="#问：说下如何操控文件-（输入输出）怎么关闭呢-发生异常怎么办" class="headerlink" title="问：说下如何操控文件?（输入输出）怎么关闭呢? 发生异常怎么办?"></a><strong>问：说下如何操控文件?（输入输出）怎么关闭呢? 发生异常怎么办?</strong></h3><details><br><br>&emsp;&emsp;答：通过I/O流来对文件进行操作，为了确保流的关闭会在finally语句块中进行close，Java 7后增加了带资源的try语句，try块退出后会自动关闭资源。这样即使发生异常，也能确保不会因为流未关闭而造成内存泄漏或一直占用文件的情况。<br><br></details>
 
-<h3 id="问：讲讲序列化？"><a href="#问：讲讲序列化？" class="headerlink" title="问：讲讲序列化？"></a><strong>问：讲讲序列化？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+<h3 id="问：讲讲序列化？"><a href="#问：讲讲序列化？" class="headerlink" title="问：讲讲序列化？"></a><strong>问：讲讲序列化？</strong></h3><details><br><br>&emsp;&emsp;Java通过序列化把对象写入和读出流，也就是转为字节序列，方便在网络中传输或者传递对象。Java序列化基于两个接口：Serializable和Externalizable，Serializable接口有默认序列化机制。序列化也可以用来实现深拷贝。<br><br>&emsp;&emsp;<a href="../2019032101.html" title="Title">对象流和序列化</a><br><br></details>
 
-<h3 id="问：深拷贝与浅拷贝？"><a href="#问：深拷贝与浅拷贝？" class="headerlink" title="问：深拷贝与浅拷贝？"></a><strong>问：深拷贝与浅拷贝？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+<h3 id="问：深拷贝与浅拷贝？"><a href="#问：深拷贝与浅拷贝？" class="headerlink" title="问：深拷贝与浅拷贝？"></a><strong>问：深拷贝与浅拷贝？</strong></h3><details><br><br>&emsp;&emsp;深拷贝和浅拷贝主要区别在是否支持引用类型的拷贝，浅拷贝对于可变对象无法保证数据安全，深拷贝会把对象里面嵌套对象这种结构完整的拷贝下来。<br><br>&emsp;&emsp;<a href="../2018083001.html" title="Title">Java对象克隆</a><br><br></details>
 
-<h3 id="问：java8有了解吗？"><a href="#问：java8有了解吗？" class="headerlink" title="问：java8有了解吗？"></a><strong>问：java8有了解吗？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+<h3 id="问：java8有了解吗？"><a href="#问：java8有了解吗？" class="headerlink" title="问：java8有了解吗？"></a><strong>问：java8有了解吗？</strong></h3><details><br><br>&emsp;&emsp;有了解，Lambda表达式，函数式编程，流这些都有用过。<br><br>&emsp;&emsp;<a href="../2019091901.html" title="Title">Java8的新特性</a><br><br></details>
+
+<h3 id="问：讲讲Lambda表达式？使用场景？优点？"><a href="#问：讲讲Lambda表达式？使用场景？优点？" class="headerlink" title="问：讲讲Lambda表达式？使用场景？优点？"></a><strong>问：讲讲Lambda表达式？使用场景？优点？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
+<h3 id="问：谈谈流？和集合对比？"><a href="#问：谈谈流？和集合对比？" class="headerlink" title="问：谈谈流？和集合对比？"></a><strong>问：谈谈流？和集合对比？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+
 
 <hr>
 <p><em>参考内容均来自网络中网友分享，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
@@ -558,7 +563,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">159</span>
+                  <span class="site-state-item-count">160</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -648,7 +653,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类型"><span class="nav-number">1.</span> <span class="nav-text">数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：java的基本类型有哪几个？各自占了多少位？"><span class="nav-number">1.1.</span> <span class="nav-text">问：java的基本类型有哪几个？各自占了多少位？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：货币用哪种数据类型？"><span class="nav-number">1.2.</span> <span class="nav-text">问：货币用哪种数据类型？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串"><span class="nav-number">2.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：String是不是java的基本类型？"><span class="nav-number">2.1.</span> <span class="nav-text">问：String是不是java的基本类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：String为什么要是final类型的？"><span class="nav-number">2.2.</span> <span class="nav-text">问：String为什么要是final类型的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未归类"><span class="nav-number">3.</span> <span class="nav-text">未归类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：面向对象的三大特性-分别是怎么使用的，给个例子"><span class="nav-number">3.1.</span> <span class="nav-text">问：面向对象的三大特性?分别是怎么使用的，给个例子?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲一下重载和重写"><span class="nav-number">3.2.</span> <span class="nav-text">问：讲一下重载和重写?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？"><span class="nav-number">3.3.</span> <span class="nav-text">问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：说下如何操控文件-（输入输出）怎么关闭呢-（在finally关闭），发生异常怎么办"><span class="nav-number">3.4.</span> <span class="nav-text">问：说下如何操控文件?（输入输出）怎么关闭呢?（在finally关闭），发生异常怎么办?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲讲序列化？"><span class="nav-number">3.5.</span> <span class="nav-text">问：讲讲序列化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：深拷贝与浅拷贝？"><span class="nav-number">3.6.</span> <span class="nav-text">问：深拷贝与浅拷贝？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：java8有了解吗？"><span class="nav-number">3.7.</span> <span class="nav-text">问：java8有了解吗？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类型"><span class="nav-number">1.</span> <span class="nav-text">数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：java的基本类型有哪几个？各自占了多少位？"><span class="nav-number">1.1.</span> <span class="nav-text">问：java的基本类型有哪几个？各自占了多少位？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：货币用哪种数据类型？"><span class="nav-number">1.2.</span> <span class="nav-text">问：货币用哪种数据类型？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串"><span class="nav-number">2.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：String是不是java的基本类型？"><span class="nav-number">2.1.</span> <span class="nav-text">问：String是不是java的基本类型？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：String为什么要是final类型的？"><span class="nav-number">2.2.</span> <span class="nav-text">问：String为什么要是final类型的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未归类"><span class="nav-number">3.</span> <span class="nav-text">未归类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问：面向对象的三大特性-分别是怎么使用的，给个例子"><span class="nav-number">3.1.</span> <span class="nav-text">问：面向对象的三大特性?分别是怎么使用的，给个例子?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲一下重载和重写"><span class="nav-number">3.2.</span> <span class="nav-text">问：讲一下重载和重写?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？"><span class="nav-number">3.3.</span> <span class="nav-text">问：谈下hashcode和equals的用法及区别？为什么重写equals方法时还要重写hashcode方法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：说下如何操控文件-（输入输出）怎么关闭呢-发生异常怎么办"><span class="nav-number">3.4.</span> <span class="nav-text">问：说下如何操控文件?（输入输出）怎么关闭呢? 发生异常怎么办?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲讲序列化？"><span class="nav-number">3.5.</span> <span class="nav-text">问：讲讲序列化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：深拷贝与浅拷贝？"><span class="nav-number">3.6.</span> <span class="nav-text">问：深拷贝与浅拷贝？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：java8有了解吗？"><span class="nav-number">3.7.</span> <span class="nav-text">问：java8有了解吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：讲讲Lambda表达式？使用场景？优点？"><span class="nav-number">3.8.</span> <span class="nav-text">问：讲讲Lambda表达式？使用场景？优点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问：谈谈流？和集合对比？"><span class="nav-number">3.9.</span> <span class="nav-text">问：谈谈流？和集合对比？</span></a></li></ol></li></ol></div>
             
 
           </div>
