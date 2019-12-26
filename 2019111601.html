@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="The OAuth 2.0 Protocol Framework文档翻译，内容包括：引文（符号规范、技术术语、概述、访问许可），Client Profiles（Web Server、User-Agent、原生程序、自治态），客户端私有证书（客户端密码证书、客户端断言证书），获得终端用户授权（授权请求、授权响应、错误响应），获取访问令牌（访问许可类型、访问令牌响应、错误响应），访问受保护资源（访问令">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-25T03:43:45.151Z">
+<meta property="og:updated_time" content="2019-12-25T06:30:59.939Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OAuth2协议框架">
 <meta name="twitter:description" content="The OAuth 2.0 Protocol Framework文档翻译，内容包括：引文（符号规范、技术术语、概述、访问许可），Client Profiles（Web Server、User-Agent、原生程序、自治态），客户端私有证书（客户端密码证书、客户端断言证书），获得终端用户授权（授权请求、授权响应、错误响应），获取访问令牌（访问许可类型、访问令牌响应、错误响应），访问受保护资源（访问令">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  14,785
+                  14,796
                 </span>
               
 
@@ -397,17 +397,18 @@
       
 
       
-        <h1 id="OAuth2"><a href="#OAuth2" class="headerlink" title="OAuth2"></a><strong>OAuth2</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><p>&emsp;&emsp;随着分布式Web服务和云计算的流行，一些第三方应用常常要访问一些服务器托管资源。这些资源通常都是受保护的，需要请求者携带资源持有者允许的私有证书进行身份验证。</p>
+        <h1 id="OAuth2"><a href="#OAuth2" class="headerlink" title="OAuth2"></a><strong>OAuth2</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><p>&emsp;&emsp;随着分布式Web服务和云计算的流行，一些第三方应用常常要访问一些服务器托管资源。这些资源通常都是受保护的，需要请求者携带资源拥有者允许的私有证书进行身份验证。</p>
 <p>&emsp;&emsp;在传统的基于客户端-服务器的身份验证模型中，客户端为了访问服务器的受保护资源，通过私有证书来做身份验证。而现在这个私有证书往往要同时提供给第三方，这就带来了很多的问题，也存在着很多的局限性。</p>
 <blockquote>
+<p><strong>传统身份验证模型的问题：</strong></p>
 <ul>
 <li>第三方应用需要用明文保存私有证书，以便持续的使用，这种对称的密码验证方式会带来安全隐患。</li>
-<li>第三方应用对受保护资源获得了过多的使用权限，但资源持有者却没办法来限制到具体的资源子集，比如限制权限的时间，或是限制支持的访问方式等。</li>
-<li>资源持有者无法在不影响第三方应用的前提下撤销某个第三方的访问权限，只能通过修改密码的方法来回收权限。</li>
+<li>第三方应用对受保护资源获得了过多的使用权限，但资源拥有者却没办法来限制到具体的资源子集，比如限制权限的时间，或是限制支持的访问方式等。</li>
+<li>资源拥有者无法在不影响第三方应用的前提下撤销某个第三方的访问权限，只能通过修改密码的方法来回收权限。</li>
 </ul>
 </blockquote>
-<p>&emsp;&emsp;OAuth通过将客户端和资源持有者的<strong>角色分离</strong>来解决这些问题，在OAuth中，客户端提出请求访问由资源持有者控制，并由资源服务区托管的资源，然后会得到与资源持有者不同的一套私有证书。客户端不会像以前那样直接使用资源持有者的证书来访问，而是得到了一个<strong>访问令牌</strong>：一个代表着某一特定作用域、持续时间和其它属性的字符串（access token）。</p>
-<p>&emsp;&emsp;访问令牌由<strong>授权服务器</strong>在资源持有者的授意下分发给第三方客户端，客户端携带访问令牌访问由<strong>资源服务器</strong>托管的受保护资源。</p>
+<p>&emsp;&emsp;OAuth通过将客户端和资源拥有者的<strong>角色分离</strong>来解决这些问题，在OAuth中，客户端提出请求访问由资源拥有者控制，并由资源服务器托管的资源，然后会得到与资源拥有者不同的一套私有证书。客户端不会像以前那样直接使用资源拥有者的证书来访问，而是得到了一个<strong>访问令牌</strong>（access token）：一个代表着某一特定作用域、持续时间和其它属性的字符串。</p>
+<p>&emsp;&emsp;访问令牌由<strong>授权服务器</strong>在资源拥有者的授意下分发给第三方客户端，客户端携带访问令牌访问由<strong>资源服务器</strong>托管的受保护资源。</p>
 <h3 id="1-1-符号规范"><a href="#1-1-符号规范" class="headerlink" title="1.1 符号规范"></a><strong>1.1 符号规范</strong></h3><p>&emsp;&emsp;这篇文档中的关键词“必须”、“一定不能”、“要求”、“会”、“不会”、“应该”、“不应该”、“建议”、“可以”、“可选的”，遵从<a href="https://tools.ietf.org/id/draft-ietf-oauth-v2-11.html#RFC2119" title="Title" target="_blank" rel="noopener">[RFC2119]</a>中的解释。</p>
 <p>&emsp;&emsp;这篇文档使用出自<a href="https://tools.ietf.org/id/draft-ietf-oauth-v2-11.html#I-D.ietf-httpbis-p1-messaging" title="Title" target="_blank" rel="noopener">[I-D.ietf-httpbis-p1-messaging]</a>的增强型巴科斯范式（ABNF）标记法。另外，介绍一些规则定义的出处：URI-Reference出自<a href="https://tools.ietf.org/id/draft-ietf-oauth-v2-11.html#RFC3986" title="Title" target="_blank" rel="noopener">[RFC3986]</a>；OWS、RWS和quoted-string出自<a href="https://tools.ietf.org/id/draft-ietf-oauth-v2-11.html#I-D.ietf-httpbis-p1-messaging" title="Title" target="_blank" rel="noopener">[I-D.ietf-httpbis-p1-messaging]</a>。</p>
 <p>&emsp;&emsp;除非特别提到，否则所有协议参数的名字和值都是大小写敏感的。</p>
@@ -731,6 +732,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019111701.html" rel="prev" title="Spring Security OAuth2">
+                Spring Security OAuth2 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -810,7 +815,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">169</span>
+                  <span class="site-state-item-count">170</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -832,7 +837,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">75</span>
+                  <span class="site-state-item-count">76</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
