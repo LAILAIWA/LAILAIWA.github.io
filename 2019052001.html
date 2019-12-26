@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="介绍Cookie，Session，Token。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-11T08:49:20.209Z">
+<meta property="og:updated_time" content="2019-12-26T08:11:26.977Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="加密算法（未完成）">
 <meta name="twitter:description" content="介绍Cookie，Session，Token。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  943
+                  1,533
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  5
                 </span>
               
             </div>
@@ -397,7 +397,11 @@
       
 
       
-        <h1 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a><strong>加密算法</strong></h1><hr>
+        <h1 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a><strong>加密算法</strong></h1><h2 id="第一节-常见加密算法"><a href="#第一节-常见加密算法" class="headerlink" title="第一节 常见加密算法"></a><strong>第一节 常见加密算法</strong></h2><h3 id="1-1-对称和非对称加密"><a href="#1-1-对称和非对称加密" class="headerlink" title="1.1 对称和非对称加密"></a><strong>1.1 对称和非对称加密</strong></h3><p>&emsp;&emsp;加密技术通常分为两大类:”对称式”和”非对称式”。</p>
+<p>对称性加密算法：对称式加密就是加密和解密使用同一个密钥。信息接收双方都需事先知道密匙和加解密算法且其密匙是相同的，之后便是对数据进行加解密了。对称加密算法用来对敏感数据等信息进行加密。</p>
+<p>非对称算法：非对称式加密就是加密和解密所使用的不是同一个密钥，通常有两个密钥，称为”公钥”和”私钥”，它们两个必需配对使用，否则不能打开加密文件。发送双方A,B事先均生成一堆密匙，然后A将自己的公有密匙发送给B，B将自己的公有密匙发送给A，如果A要给B发送消 息，则先需要用B的公有密匙进行消息加密，然后发送给B端，此时B端再用自己的私有密匙进行消息解密，B向A发送消息时为同样的道理。</p>
+<p>散列算法：散列算法，又称哈希函数，是一种单向加密算法。在信息安全技术中，经常需要验证消息的完整性，散列(Hash)函数提供了这一服务，它对不同长度的输入消息，产生固定长度的输出。这个固定长度的输出称为原输入消息的”散列”或”消息摘要”(Message digest)。散列算法不算加密算法，因为其结果是不可逆的，既然是不可逆的，那么当然不是用来加密的，而是签名。</p>
+<hr>
 <h2 id="第一节-哈希加密"><a href="#第一节-哈希加密" class="headerlink" title="第一节 哈希加密"></a><strong>第一节 哈希加密</strong></h2><h3 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a><strong>1 介绍</strong></h3><p>&emsp;&emsp;防止密码泄露，通过散列的方法对口令进行一次性的加密，加密过程不可逆，从哈希值无法直接还原到原密码。</p>
 <p>&emsp;&emsp;但哈希加密很快就被破解了，可以通过如<strong>字典破解</strong>，<strong>暴力破解</strong>等效率很低的破解方法，也可以通过<strong>查表法</strong>，<strong>反向查表法</strong>，<strong>彩虹表</strong>等方式来高效破解。</p>
 <h3 id="2-原理"><a href="#2-原理" class="headerlink" title="2 原理"></a><strong>2 原理</strong></h3><p>&emsp;&emsp;单向散列算法，通过算法H将较大集合P映射到一个较小集合Q，即Q=H(P)</p>
@@ -413,10 +417,27 @@
 <p>&emsp;&emsp;后台开发时常用Hash值的形式来存储用户密码，当后台被攻击时，哈希值泄露，黑客仍可以通过如彩虹表等方式破解用户密码。通过加盐可以提高密码的破解难度。</p>
 <h3 id="2-原理-1"><a href="#2-原理-1" class="headerlink" title="2 原理"></a><strong>2 原理</strong></h3><p>&emsp;&emsp;由哈希加密的H(P)变为H(P+Salt)，每次哈希计算所选用的盐值都是随机数。因为H发生变化，所以已有的彩虹表数据就会失效，需要根据新的H重新生成，所以破解难度就提高了。</p>
 <h3 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a><strong>3 实现</strong></h3><hr>
-<h2 id="第三节-MD5"><a href="#第三节-MD5" class="headerlink" title="第三节 MD5"></a><strong>第三节 MD5</strong></h2><hr>
+<h2 id="第三节-MD5"><a href="#第三节-MD5" class="headerlink" title="第三节 MD5"></a><strong>第三节 MD5</strong></h2><p>Message Algorithm</p>
+<p>散列函数（哈希算法）</p>
+<p>不可逆</p>
+<p>压缩性</p>
+<hr>
 <h2 id="第四节-becrypt"><a href="#第四节-becrypt" class="headerlink" title="第四节 becrypt"></a><strong>第四节 becrypt</strong></h2><hr>
-<h2 id="第五节-RSA"><a href="#第五节-RSA" class="headerlink" title="第五节 RSA"></a><strong>第五节 RSA</strong></h2><hr>
-<h2 id="第六节-oauth"><a href="#第六节-oauth" class="headerlink" title="第六节 oauth"></a><strong>第六节 oauth</strong></h2>
+<h2 id="第五节-DES"><a href="#第五节-DES" class="headerlink" title="第五节 DES"></a><strong>第五节 DES</strong></h2><p>Data Encrytion Standard（数据加密标准），对应算法是DEA</p>
+<pre><code>特点：1. 对称加密 2. 同一个SK
+</code></pre><hr>
+<h2 id="第六节-AES"><a href="#第六节-AES" class="headerlink" title="第六节 AES"></a><strong>第六节 AES</strong></h2><p>AES：Advanced Encrytion Standard（高级加密标准）</p>
+<pre><code>特点：1. 对称加密 2. 一个SK扩展成多个子SK，轮加密
+</code></pre><p>&emsp;&emsp;<a href="../2019111801.html" title="Title">AES加密</a></p>
+<hr>
+<h2 id="第七节-RSA"><a href="#第七节-RSA" class="headerlink" title="第七节 RSA"></a><strong>第七节 RSA</strong></h2><p>RSA：特点： 1. 非对称加密，即：PK与SK不是同一个</p>
+<pre><code>2. PK用于加密，SK用于解密
+
+3. PK决定SK，但是PK很难算出SK（数学原理：两个大质数相乘，积很难因式分解）
+
+4. 速度慢，只对少量数据加密
+</code></pre><hr>
+<h2 id="第八节-oauth"><a href="#第八节-oauth" class="headerlink" title="第八节 oauth"></a><strong>第八节 oauth</strong></h2>
       
     </div>
     
@@ -555,7 +576,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">170</span>
+                  <span class="site-state-item-count">171</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -645,7 +666,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#加密算法"><span class="nav-number">1.</span> <span class="nav-text">加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-哈希加密"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 哈希加密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-介绍"><span class="nav-number">1.1.1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理"><span class="nav-number">1.1.2.</span> <span class="nav-text">2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-低效破解"><span class="nav-number">1.1.3.</span> <span class="nav-text">3 低效破解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-高效破解"><span class="nav-number">1.1.4.</span> <span class="nav-text">4 高效破解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-加盐"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 加盐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-介绍-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现"><span class="nav-number">1.2.3.</span> <span class="nav-text">3 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-MD5"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 MD5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-becrypt"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 becrypt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-RSA"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 RSA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-oauth"><span class="nav-number">1.6.</span> <span class="nav-text">第六节 oauth</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#加密算法"><span class="nav-number">1.</span> <span class="nav-text">加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-常见加密算法"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 常见加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-对称和非对称加密"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 对称和非对称加密</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-哈希加密"><span class="nav-number">1.2.</span> <span class="nav-text">第一节 哈希加密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-介绍"><span class="nav-number">1.2.1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理"><span class="nav-number">1.2.2.</span> <span class="nav-text">2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-低效破解"><span class="nav-number">1.2.3.</span> <span class="nav-text">3 低效破解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-高效破解"><span class="nav-number">1.2.4.</span> <span class="nav-text">4 高效破解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-加盐"><span class="nav-number">1.3.</span> <span class="nav-text">第二节 加盐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-介绍-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现"><span class="nav-number">1.3.3.</span> <span class="nav-text">3 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-MD5"><span class="nav-number">1.4.</span> <span class="nav-text">第三节 MD5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-becrypt"><span class="nav-number">1.5.</span> <span class="nav-text">第四节 becrypt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-DES"><span class="nav-number">1.6.</span> <span class="nav-text">第五节 DES</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-AES"><span class="nav-number">1.7.</span> <span class="nav-text">第六节 AES</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第七节-RSA"><span class="nav-number">1.8.</span> <span class="nav-text">第七节 RSA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第八节-oauth"><span class="nav-number">1.9.</span> <span class="nav-text">第八节 oauth</span></a></li></ol></li></ol></div>
             
 
           </div>
