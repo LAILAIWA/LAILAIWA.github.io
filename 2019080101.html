@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍安全协议HTTPS，内容包括：第一节 引文（背景、发展），第二节 HTTPS介绍（HTTPS通信流程、加密、HTTPS原理），第三节 实战（获取证书、Spring Boot配置HTTPS、分发SSL证书给客户端、SSL证书转换）等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg">
-<meta property="og:updated_time" content="2019-12-04T09:19:54.995Z">
+<meta property="og:updated_time" content="2019-12-26T14:21:01.163Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HTTPS">
 <meta name="twitter:description" content="介绍安全协议HTTPS，内容包括：第一节 引文（背景、发展），第二节 HTTPS介绍（HTTPS通信流程、加密、HTTPS原理），第三节 实战（获取证书、Spring Boot配置HTTPS、分发SSL证书给客户端、SSL证书转换）等">
@@ -358,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6,238
+                  6,447
                 </span>
               
 
@@ -374,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  23
+                  24
                 </span>
               
             </div>
@@ -402,7 +402,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg" rel="gallery_ck4mi51hn00iby8t7xw6q1zwo"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg" rel="gallery_ck4mtfxx900ihikt7qsbt5ijs"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/darkSouls4.jpg" itemprop="contentUrl"/>
               </a>
@@ -425,7 +425,8 @@
 <p>&emsp;&emsp;似乎非对称加密的引入解决了之前的问题，中间人即使在最开始便截获了公钥Key1，他也因为没有私钥从而无法直接解密出数据。但黑客除了窃听外，还可以劫持和篡改，所以新的黑客方式出现了：在甲方发出公钥Key1后，黑客劫持并生成自己的一对公钥和私钥，并发送公钥Key3给乙方。乙方依然加密后生成新的Key2发送出来，然后继续被黑客劫持，并用其私钥解开了自己Key3的加密获得了新的Key2内容。然后就用最初劫持的Key1进行加密并发送给甲方。这样一来，后续的通信过程甲乙就依然用Key来做对称加密，而黑客已然获取了Key2来进行解密。</p>
 <p>&emsp;&emsp;到此我们就慢慢开始接近了HTTPS的设计思路，那么面对这时的方案，我们还可以如何去做改进来填补漏洞呢？首先漏洞来源于什么，来源自我们的通信不安全，能够通过技术手段来让通信无法被别人听到吗？好像近些年比较热的量子通信可以实现，但离实现还有未可预知的时间，所以我们其实是没办法保证这一点的。即我们对话的内容无法保证只有我们听到，那么就只好保证我们的对话只有我们能听懂，从而变相的实现了防窃听。既然我们双方确认暗号的过程会因为中间人的伪造而使我们无法信任对话者的身份，那么我们可以找一个有公信力可以被信任的机构来作第三方公信人啊！所以HTTPS引入了这一第三方来解决信任问题。</p>
 <hr>
-<h2 id="第二节-HTTPS介绍"><a href="#第二节-HTTPS介绍" class="headerlink" title="第二节 HTTPS介绍"></a><strong>第二节 HTTPS介绍</strong></h2><h3 id="2-1-HTTPS通信流程"><a href="#2-1-HTTPS通信流程" class="headerlink" title="2.1 HTTPS通信流程"></a><strong>2.1 HTTPS通信流程</strong></h3><p>&emsp;&emsp;权威的证书颁发机构（CA）即被信任的第三方，其证书至少包含如下信息：颁发机构，服务端网址，机构私钥加密服务端公钥，机构私钥加密证书签名。</p>
+<h2 id="第二节-HTTPS介绍"><a href="#第二节-HTTPS介绍" class="headerlink" title="第二节 HTTPS介绍"></a><strong>第二节 HTTPS介绍</strong></h2><p>&emsp;&emsp;HTTPS（全称：Hypertext Transfer Protocol over Secure Socket Layer），是以安全为目标的HTTP通道，简单讲是HTTP的安全版。即HTTP下加入SSL层，HTTPS的安全基础是SSL(SSL使用40 位关键字作为RC4流加密算法，这对于商业信息的加密是合适的。)，因此加密的详细内容就需要SSL。https:URL表明它使用了HTTP，但HTTPS存在不同于HTTP的默认端口及一个加密/身份验证层（在HTTP与TCP之间），提供了身份验证与加密通讯方法，现在它被广泛用于万维网上安全敏感的通讯，例如交易支付方面。它的主要作用可以分为两种：一种是建立一个信息安全通道，来保证数据传输的安全；另一种就是确认网站的真实性。</p>
+<h3 id="2-1-HTTPS通信流程"><a href="#2-1-HTTPS通信流程" class="headerlink" title="2.1 HTTPS通信流程"></a><strong>2.1 HTTPS通信流程</strong></h3><p>&emsp;&emsp;权威的证书颁发机构（CA）即被信任的第三方，其证书至少包含如下信息：颁发机构，服务端网址，机构私钥加密服务端公钥，机构私钥加密证书签名。</p>
 <blockquote>
 <p>证书的获取和验证、服务端客户端的通信流程如下：</p>
 <ol>
@@ -774,7 +775,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">171</span>
+                  <span class="site-state-item-count">173</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
