@@ -88,14 +88,15 @@
 
 
 
-<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
+<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器（三）内存分配与回收策略，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
 <meta name="keywords" content="java,jvm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="垃圾收集器（三）内存分配与回收策略">
 <meta property="og:url" content="http://linyishui.top/2019091301.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
+<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器（三）内存分配与回收策略，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091301_%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010128.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010129.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010130.png">
@@ -104,11 +105,11 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010133.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010134.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010135.png">
-<meta property="og:updated_time" content="2019-11-11T08:39:53.647Z">
+<meta property="og:updated_time" content="2020-01-03T10:09:20.107Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器（三）内存分配与回收策略">
-<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
-<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010128.png">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器（三）内存分配与回收策略，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091301_%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5.png">
 
 
 
@@ -365,7 +366,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,918
+                  2,940
                 </span>
               
 
@@ -381,7 +382,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  12
                 </span>
               
             </div>
@@ -389,7 +390,7 @@
 
           
               <div class="post-description">
-                  简单介绍Java虚拟机中的垃圾收集器，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。
+                  简单介绍Java虚拟机中的垃圾收集器（三）内存分配与回收策略，包括：对象优先在Eden分配，大对象直接进入老年代，长期存活的对象将进入老年代，动态对象年龄判定，空间分配担保等。
               </div>
           
 
@@ -406,10 +407,11 @@
       
 
       
-        <h1 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a><strong>内存分配与回收策略</strong></h1><h2 id="前文"><a href="#前文" class="headerlink" title="前文"></a><strong>前文</strong></h2><p>&emsp;&emsp;自动内存管理可以总结为自动化的处理两个问题：<strong>给对象分配内存</strong>和<strong>回收分配给对象的内存</strong>。给对象分配内存，宏观的看就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接的栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况下也可能会直接分配在老年代中，分配的规则也并非百分百固定，细节由当前所使用的收集器组合决定，以及虚拟机中与内存相关的参数的设置。</p>
+        <h1 id="垃圾收集器（二）内存分配与回收策略"><a href="#垃圾收集器（二）内存分配与回收策略" class="headerlink" title="垃圾收集器（二）内存分配与回收策略"></a><strong>垃圾收集器（二）内存分配与回收策略</strong></h1><h2 id="前文"><a href="#前文" class="headerlink" title="前文"></a><strong>前文</strong></h2><p>&emsp;&emsp;自动内存管理可以总结为自动化的处理两个问题：<strong>给对象分配内存</strong>和<strong>回收分配给对象的内存</strong>。给对象分配内存，宏观的看就是在堆上分配（但也可能经过JIT编译后被拆散为标量类型并间接的栈上分配），对象主要分配在新生代的Eden区上，如果启动了本地线程分配缓冲，将按线程优先在TLAB上分配。少数情况下也可能会直接分配在老年代中，分配的规则也并非百分百固定，细节由当前所使用的收集器组合决定，以及虚拟机中与内存相关的参数的设置。</p>
 <p>&emsp;&emsp;接下来会介绍几个最常见的内存分配规则，并通过代码去验证这些规则。所有代码在测试时使用Client模式虚拟机运行，没有手工的指定收集器组合，验证的是在使用Serial/Serial Old收集器下的内存分配和回收的策略（ParNew / Serial Old收集器组合的规则也基本一致）。</p>
+<h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a><strong>思维导图</strong></h2><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091301_%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5.png" alt="2019091301_内存分配和回收策略"></p>
 <hr>
-<h2 id="5-1-对象优先在Eden分配"><a href="#5-1-对象优先在Eden分配" class="headerlink" title="5.1 对象优先在Eden分配"></a><strong>5.1 对象优先在Eden分配</strong></h2><p>&emsp;&emsp;大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够空间进行分配时，虚拟机将发起一次Minor GC。</p>
+<h2 id="第五节-内存分配与回收策略"><a href="#第五节-内存分配与回收策略" class="headerlink" title="第五节 内存分配与回收策略"></a><strong>第五节 内存分配与回收策略</strong></h2><h3 id="5-1-对象优先在Eden分配"><a href="#5-1-对象优先在Eden分配" class="headerlink" title="5.1 对象优先在Eden分配"></a><strong>5.1 对象优先在Eden分配</strong></h3><p>&emsp;&emsp;大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够空间进行分配时，虚拟机将发起一次Minor GC。</p>
 <p>&emsp;&emsp;虚拟机提供了<strong>-XX:+PrintGCDetails</strong>这个收集器日志参数，使虚拟机在发生垃圾收集时打印内存回收日志，并且在进程退出时输出当前内存各区域的分配情况。在应用中内存回收日志一般是打印到文件后通过日志工具进行分析。</p>
 <p>&emsp;&emsp;下列代码中testAllocation()方法中，尝试分配3个2MB大小和1个4MB大小的对象，在运行时通过-Xms20M、-Xmx20M、-Xmn10M这三个参数限制了Java堆大小为20MB，不可扩展，其中10MB分配给新生代，剩下的10MB分配给老年代。-XX:SurvivorRatio=8决定了新生代中Eden区与一个Survivor区的空间比例是8:1，从输出的结果可以清晰的看到“eden space 8192K、from space 1024K、to space 1024K”的信息，新生代总可用空间为9216KB（Eden区+1个Survivor区的总容量）。</p>
 <p>&emsp;&emsp;执行testAllocation()中分配allocation4对象的语句时会发生一次Minor GC，这次GC的结果是新生代6651KB变为148KB，而总内存占用量则几乎没有减少（因为allocation1、allocation2、allocation3三个对象都是存活的，虚拟机几乎没有找到可回收的对象）。这次GC发生的原因是给allocation4分配内存的时候，发现Eden已经被占用了6MB，剩余空间已不足以分配allocation4所需的4MB内存，因此发生Minor GC。GC期间虚拟机又发现已有的3个2MB大小的对象全部无法放入Survivor空间（Survivor空间只有1MB大小），所以只能通过分配担保机制提前转移到老年代。</p>
@@ -448,7 +450,7 @@
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010133.png" alt="运行结果"></p>
 <hr>
 <h3 id="5-5-空间分配担保"><a href="#5-5-空间分配担保" class="headerlink" title="5.5 空间分配担保"></a><strong>5.5 空间分配担保</strong></h3><p>&emsp;&emsp;在发生Minor GC之前，虚拟机会检查老年代最大可用连续空间是否大于新生代所有对象总空间，如果成立则可以保证此Minor GC是安全的。如果不成立，虚拟机会查看<strong>HandlePromotionFailure</strong>设置值是否允许担保失败。如果允许，那么会继续检查老年代最大可用连续空间是否大于历次晋升到老年代对象的平均大小，如果大于则会尝试进行一次Minor GC，尽管这次是承担着风险的。如果HandlePromotionFailure值设置不允许，或者小于平均大小，则改为进行一次Full GC。</p>
-<p>&emsp;&emsp;“冒险”是在承担什么风险？我们知道新生代使用复制收集算法，为了内存利用率，只使用其中一个Survivor空间来作为轮换备份，因此当出现大量对象Minor GC后仍然存活的情况，就需要老年代进行分配担保，把Survivor无法容纳的对象直接进入老年代。但老年代能进行担保的前提是其自身有足够的空间可以容纳这些对象，有多少对象在GC后会活下来是无法提前知道的，所以只好取每次回收晋升到老年代对象容量的平均大小值作为经验值，与老年代的剩余空间进行比较，决定是否进行Full GC来让老年代腾出更多空间。</p>
+<p>&emsp;&emsp;“冒险”是在承担什么风险？我们知道新生代使用复制收集算法，为了内存利用率，只使用其中一个Survivor空间来作为轮换备份，因此当出现大量对象Minor GC后仍然存活的情况，就需要老年代进行分配担保，把Survivor无法容纳的对象直接进入老年代。但老年代能进行担保的前提是其自身有足够的空间可以容纳这些对象，有多少对象在GC后会活下来是无法提前知道的，所以只好取每次回收晋升到老年代对象容量的平均大小值作为<strong>经验值</strong>，与老年代的剩余空间进行比较，决定是否进行Full GC来让老年代腾出更多空间。</p>
 <p>&emsp;&emsp;取平均值进行比较其实是一种动态概率的手段，如果某次Minor GC后存活的对象突然激增，依然会导致担保失败（HandlePromotionFailure）。如果出现了HandlePromotionFailure失败，就只好在失败后再发动一次Full GC。虽然担保失败时最麻烦，但大部分情况下都还会将HandlePromotionFailure开关打开，避免Full GC太过频繁，参考下列代码，在JDK 6 Update 24之前的版本中运行测试。</p>
 <figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> _1MB = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:HandlePromotionFailure</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarning</span>(<span class="string">"unused"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">testHandlePromotion</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] allocation1, allocation2, allocation3, allocation4, allocation5, allocation6, allocation7;</span><br><span class="line">    allocation1 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation2 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation3 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation1 = <span class="keyword">null</span>;</span><br><span class="line">    allocation4 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation5 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation6 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">    allocation4 = <span class="keyword">null</span>;</span><br><span class="line">    allocation5 = <span class="keyword">null</span>;</span><br><span class="line">    allocation6 = <span class="keyword">null</span>;</span><br><span class="line">    allocation7 = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * _1MB];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010134.png" alt="运行结果"></p>
@@ -598,7 +600,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">174</span>
+                  <span class="site-state-item-count">175</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -688,7 +690,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存分配与回收策略"><span class="nav-number">1.</span> <span class="nav-text">内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前文"><span class="nav-number">1.1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-对象优先在Eden分配"><span class="nav-number">1.2.</span> <span class="nav-text">5.1 对象优先在Eden分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-大对象直接进入老年代"><span class="nav-number">1.2.1.</span> <span class="nav-text">5.2 大对象直接进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-长期存活的对象将进入老年代"><span class="nav-number">1.2.2.</span> <span class="nav-text">5.3 长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-动态对象年龄判定"><span class="nav-number">1.2.3.</span> <span class="nav-text">5.4 动态对象年龄判定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-空间分配担保"><span class="nav-number">1.2.4.</span> <span class="nav-text">5.5 空间分配担保</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#垃圾收集器（二）内存分配与回收策略"><span class="nav-number">1.</span> <span class="nav-text">垃圾收集器（二）内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前文"><span class="nav-number">1.1.</span> <span class="nav-text">前文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思维导图"><span class="nav-number">1.2.</span> <span class="nav-text">思维导图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-内存分配与回收策略"><span class="nav-number">1.3.</span> <span class="nav-text">第五节 内存分配与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-对象优先在Eden分配"><span class="nav-number">1.3.1.</span> <span class="nav-text">5.1 对象优先在Eden分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-大对象直接进入老年代"><span class="nav-number">1.3.2.</span> <span class="nav-text">5.2 大对象直接进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-长期存活的对象将进入老年代"><span class="nav-number">1.3.3.</span> <span class="nav-text">5.3 长期存活的对象将进入老年代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-动态对象年龄判定"><span class="nav-number">1.3.4.</span> <span class="nav-text">5.4 动态对象年龄判定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-空间分配担保"><span class="nav-number">1.3.5.</span> <span class="nav-text">5.5 空间分配担保</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

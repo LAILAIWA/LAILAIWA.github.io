@@ -88,13 +88,13 @@
 
 
 
-<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
+<meta name="description" content="简单介绍Java虚拟机中的垃圾收集器（二）垃圾收集算法，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
 <meta name="keywords" content="java,jvm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="垃圾收集器（二）垃圾收集算法">
 <meta property="og:url" content="http://linyishui.top/2019091201.html">
 <meta property="og:site_name" content="沂水博客">
-<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
+<meta property="og:description" content="简单介绍Java虚拟机中的垃圾收集器（二）垃圾收集算法，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091201_%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091201_%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.png">
@@ -113,10 +113,10 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010125.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010126.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010127.png">
-<meta property="og:updated_time" content="2020-01-03T03:57:11.762Z">
+<meta property="og:updated_time" content="2020-01-03T10:13:33.861Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="垃圾收集器（二）垃圾收集算法">
-<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的垃圾收集器（二）垃圾收集算法，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091201_%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95.png">
 
 
@@ -398,7 +398,7 @@
 
           
               <div class="post-description">
-                  简单介绍Java虚拟机中的垃圾收集器，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。
+                  简单介绍Java虚拟机中的垃圾收集器（二）垃圾收集算法，包括：垃圾收集算法(标记-清除算法、复制算法、标记-整理算法、分代收集算法)，枚举根节点，安全点，安全区域，垃圾收集器(Serial收集器、ParNew收集器、Parallel Scavenge收集器、Serial Old收集器、Parallel Old收集器、CMS收集器、G1收集器)，理解GC日志，参数总结等。
               </div>
           
 
@@ -417,18 +417,16 @@
       
         <h1 id="垃圾收集器（二）垃圾收集算法"><a href="#垃圾收集器（二）垃圾收集算法" class="headerlink" title="垃圾收集器（二）垃圾收集算法"></a><strong>垃圾收集器（二）垃圾收集算法</strong></h1><h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a><strong>思维导图</strong></h2><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091201_%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95.png" alt="2019091201_垃圾收集算法"></p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/mindmapping/2019091201_%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.png" alt="2019091201_垃圾收集器"></p>
+<hr>
 <h2 id="第二节-垃圾收集算法"><a href="#第二节-垃圾收集算法" class="headerlink" title="第二节 垃圾收集算法"></a><strong>第二节 垃圾收集算法</strong></h2><h3 id="2-1-标记-清除算法"><a href="#2-1-标记-清除算法" class="headerlink" title="2.1 标记-清除算法"></a><strong>2.1 标记-清除算法</strong></h3><p>&emsp;&emsp;<strong>最基础</strong>的收集算法是“标记-清除”算法(Mark-Sweep)算法，算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象，它的标记过程其实在前一节讲述对象标记判定时已经介绍过了。最基础是因为后续的收集算法都是基于此思路改进而来。主要有两点不足：<strong>一是效率问题，标记和清除过程都不高效</strong>；<strong>另一个是空间问题，标记和清除之后会产生大量不连续的内存碎片，会导致以后在程序需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作</strong>。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010114.png" alt="“标记-清除”算法示意图"></p>
-<hr>
 <h3 id="2-2-复制算法"><a href="#2-2-复制算法" class="headerlink" title="2.2 复制算法"></a><strong>2.2 复制算法</strong></h3><p>&emsp;&emsp;复制算法是为了解决效率问题而设计，将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这块的内存用完了，就将还存活的对象复制到另一块上，然后将已使用过的内存空间一次清理掉。这样的做法使每次都是对整个半区进行内存回收，内存分配时就不用考虑到内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。但此算法的代价是会将内存空间缩小一半，代价实在太高。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010115.png" alt="复制算法示意图"></p>
 <p>&emsp;&emsp;<strong>当前的商业虚拟机都采用此算法来回收新生代</strong>，IBM研究表示新生代中对象98%都是“朝生夕死”，所以不需要对半划分内存空间，而是划分为一块大的Eden空间和两块较小的Survivor空间。每次使用Eden和其中一块Survivor。当回收时，将Eden和Survivor中还存活着的对象一次性的复制到另外一块Survivor空间上，最后清理掉Eden和用过的Survivor空间。(HotSpot默认Eden和Survivor空间大小比例为8:1，即每次新生代可用内存空间为整体的90%)。当Survivor空间不够用时，需要依赖其他内存(老年代)进行<strong>分配担保</strong>(Handle Promotion)。</p>
 <p>&emsp;&emsp;分配担保类似于银行的担保人，如果一块Survivor空间没有足够的空间存放上次新生代收集下的存活对象，可以通过分配担保机制进入老年代，只要新生代有很好的“信誉”。具体实现此处不作详细描述。</p>
-<hr>
 <h3 id="2-3-标记-整理算法"><a href="#2-3-标记-整理算法" class="headerlink" title="2.3 标记-整理算法"></a><strong>2.3 标记-整理算法</strong></h3><p>&emsp;&emsp;复制算法在对象存活率较高时需要进行较多的复制操作，会降低其运行效率。还有就是如果预留空间较小就需要额外的空间进行分配担保，以应对对象存活率极高的情况，所以老年代不会选用复制算法。</p>
 <p>&emsp;&emsp;根据<strong>老年代</strong>的特点，有了标记-整理算法，标记过程等同于标记-清除算法，但后续步骤不是直接对可回收对象进行清理，而是让所有存活对象都向一端移动，然后直接清理掉端边界以外的内存。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010116.png" alt="“标记-整理”算法示意图"></p>
-<hr>
 <h3 id="2-4-分代收集算法"><a href="#2-4-分代收集算法" class="headerlink" title="2.4 分代收集算法"></a><strong>2.4 分代收集算法</strong></h3><p>&emsp;&emsp;<strong>当前的商业虚拟机的垃圾收集都采用分代收集算法</strong>，就是根据对象的存活周期的不同将内存划分为几块。一般把Java堆划分为新生代和老年代，可以根据各个代的特点采用最适合的收集算法。<strong>新生代中，每次垃圾收集会有大量对象被清理，仅有少量存活，就采用复制算法</strong>；<strong>老年代中对象存活率较高，没有额外的内存空间作分配担保，就采用标记-清除算法或标记-整理算法</strong>。</p>
 <hr>
 <h2 id="第三节-HotSpot算法实现"><a href="#第三节-HotSpot算法实现" class="headerlink" title="第三节 HotSpot算法实现"></a><strong>第三节 HotSpot算法实现</strong></h2><h3 id="3-1-枚举根节点"><a href="#3-1-枚举根节点" class="headerlink" title="3.1 枚举根节点"></a><strong>3.1 枚举根节点</strong></h3><p>&emsp;&emsp;可达性分析中从GC Roots节点找引用链这个操作为例，可以作为GC Roots的节点主要在<strong>全局性的引用</strong>(如常量或类静态属性)与<strong>执行上下文</strong>(如栈帧中的本地变量表)中，有些应用仅方法区就有数百兆，逐个检查这里面的引用是不现实的。</p>
@@ -436,7 +434,6 @@
 <p>&emsp;&emsp;主流的Java虚拟机都是<strong>准确式GC</strong>(虚拟机可以知道内存中某个位置的数据类型具体是什么类型，如内存中有一个32位整数123456，虚拟机可以得知其是一个reference类型指向123456内存地址或者是一个数值为123456的整数，这样虚拟机才能在GC时判断堆上的数据是否还能被使用)。所以当执行系统停顿下来，并不需要一个不漏的检查完所有<strong>执行上下文</strong>和<strong>全局的引用设置</strong>，虚拟机有办法知道哪些地方存放着对象引用。在HotSpot的实现中，是通过一组被称为<strong>OopMap</strong>的数据结构来达到此目的，在<strong>类加载完成</strong>时，HotSpot就把对象内什么偏移量上是什么类型的数据计算出来，在<strong>JIT编译过程</strong>中，也会在特定的位置记录下栈和寄存器中哪些位置是引用。所以GC在扫描时就可以直接得知这些信息了。</p>
 <p>&emsp;&emsp;下列代码是HotSpot Client VM生成的一段String.hashCode()方法的本地代码，可以看到在0x026eb7a9处的call指令有OopMap记录，它指明了EBX寄存器和栈中偏移量为16的内存区域中各有一个<strong>普通对象指针</strong>的引用，有效范围从call指令开始直到0x026eb730（指令流的起始位置）+142（OopMap记录的偏移量）=0x026eb7be，即hlt指令为止。</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Verified Entry Point]</span><br><span class="line"><span class="number">0x026eb730</span>: <span class="keyword">mov</span>    %eax,-<span class="number">0x8000</span>(%esp)</span><br><span class="line">......</span><br><span class="line"><span class="comment">;; ImplicitNullCheckStub slow case</span></span><br><span class="line"><span class="number">0x026eb7a9</span>: <span class="keyword">call</span>   <span class="number">0x026e83e0</span>         <span class="comment">; OopMap&#123;ebx=Oop [16]=Oop off=142&#125;</span></span><br><span class="line">                                        <span class="comment">;*caload</span></span><br><span class="line">                                        <span class="comment">; - java.lang.String::hashCode@48 (line 1489)</span></span><br><span class="line">                                        <span class="comment">;    &#123;runtime_call&#125;</span></span><br><span class="line">  <span class="number">0x026eb7ae</span>: <span class="keyword">push</span>   <span class="number">$0</span>x83c5c18         <span class="comment">;    &#123;external_word&#125;</span></span><br><span class="line">  <span class="number">0x026eb7b3</span>: <span class="keyword">call</span>   <span class="number">0x026eb7b8</span></span><br><span class="line">  <span class="number">0x026eb7b8</span>: <span class="keyword">pusha</span></span><br><span class="line">  <span class="number">0x026eb7b9</span>: <span class="keyword">call</span>   <span class="number">0x0822bec0</span>         <span class="comment">;    &#123;runtime_call&#125;  </span></span><br><span class="line">  <span class="number">0x026eb7be</span>: <span class="keyword">hlt</span></span><br></pre></td></tr></table></figure>
-<hr>
 <h3 id="3-2-安全点"><a href="#3-2-安全点" class="headerlink" title="3.2 安全点"></a><strong>3.2 安全点</strong></h3><p>&emsp;&emsp;在OopMap的帮助下，HotSpot可以快速且准确地完成GC Roots枚举，但随之而来的一个现实的问题：可能导致引用关系变化，或者说OopMap内容变化的指令非常多，如果为每一条指令都生成对应的OopMap，那将会需要大量的额外空间，这样会导致GC的空间成本变得很高。</p>
 <p>&emsp;&emsp;HotSpot实际上并没有为每条指令都生成OopMap，只是在“特定的位置”记录了这些信息，这些位置称为<strong>安全点</strong>（Safepoint），即程序执行时并非在所有地方都能停顿下来开始GC，只会在安全点暂停。Safepoint的选定既不能太少以致于让GC等待时间太长，也不能过于频繁以致于过分增大运行时的负荷。所以安全点的选定基本上是以程序“<strong>是否具有让程序长时间执行的特征</strong>”为标准进行选定的——因为每条指令的执行时间都非常短暂，程序不会因为指令流长度太长这个原因而过长时间运行，“<strong>长时间执行</strong>”的最明显特征就是<strong>指令序列复用</strong>，例如方法调用、循环跳转、异常跳转等，所以具有这些功能的指令才会产生Safepoint。</p>
 <p>&emsp;&emsp;关于Safepoint，另外一个需要考虑的问题是如何在GC发生时让所有线程（不包括执行JNI调用的线程）都“跑”到最近的安全点上再停顿下来。有两种实现方案：<strong>抢先式中断</strong>（Preemptive Suspension）和<strong>主动式中断</strong>（Voluntary Suspension）。</p>
@@ -444,7 +441,6 @@
 <p>&emsp;&emsp;主动式中断的思想是当GC需要中断线程的时候，不直接对线程操作，而只是简单地设置一个标志，各个线程执行时主动去轮询这个标志，发现中断标志为真时就自己中断挂起。轮询标志的地方和安全点是重合的，另外再加上创建对象需要分配内存的地方。</p>
 <p>&emsp;&emsp;下面代码中的test指令是HotSpot生成的轮询指令，当需要暂停线程时，虚拟机把0x160100的内存页设置为不可读，线程执行到test指令时就会产生一个自陷异常信号，在预先注册的异常处理器中暂停线程实现等待，这样一条汇编指令便完成安全点轮询和触发线程中断。</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x01b6d627</span>: <span class="keyword">call</span>   <span class="number">0x01b2b210</span>         <span class="comment">; OopMap&#123;[60]=Oop off=460&#125;</span></span><br><span class="line">                                        <span class="comment">;*invokeinterface size</span></span><br><span class="line">                                        <span class="comment">; - Client::main@113 (line 23)</span></span><br><span class="line">                                        <span class="comment">;    &#123;virtual_call&#125;</span></span><br><span class="line">  <span class="number">0x01b6d62c</span>: <span class="keyword">nop</span>                       <span class="comment">; OopMap&#123;[60]=Oop off=461&#125;</span></span><br><span class="line">                                        <span class="comment">;*if_icmplt</span></span><br><span class="line">                                        <span class="comment">; - Client::main@118 (line 23)</span></span><br><span class="line">  <span class="number">0x01b6d62d</span>: <span class="keyword">test</span>   %eax,<span class="number">0x160100</span>      <span class="comment">;   &#123;poll&#125;</span></span><br><span class="line">  <span class="number">0x01b6d633</span>: <span class="keyword">mov</span>    <span class="number">0x50</span>(%esp),%esi</span><br><span class="line">  <span class="number">0x01b6d637</span>: <span class="keyword">cmp</span>    %eax,%esi</span><br></pre></td></tr></table></figure>
-<hr>
 <h3 id="3-3-安全区域"><a href="#3-3-安全区域" class="headerlink" title="3.3 安全区域"></a><strong>3.3 安全区域</strong></h3><p>&emsp;&emsp;Safepoint并没有完美地解决了如何进入GC的问题。Safepoint机制保证了程序执行时，在不久的时间内就会遇到可进入GC的Safepoint，但程序“不执行”的时候呢？所谓的程序不执行就是没有分配CPU时间，典型的例子就是线程处于Sleep状态或者Blocked状态，这时候线程无法响应JVM的中断请求，“走”到安全的地方去中断挂起，JVM显然不太可能等待线程重新被分配CPU时间。对于这种情况，就需要<strong>安全区域</strong>（Safe Region）来解决。</p>
 <p>&emsp;&emsp;安全区域是指在一段代码片段之中，引用关系不会发生变化。在这个区域中的任意地方开始GC都是安全的。也可以把Safe Region看做是被扩展了的Safepoint。</p>
 <p>&emsp;&emsp;在线程执行到Safe Region中的代码时，首先标识自己已经进入了Safe Region，那样，当在这段时间里JVM要发起GC时，就不用管标识自己为Safe Region状态的线程了，在线程需要离开Safe Region时，它就要检查系统是否已经完成了根节点枚举（或者是整个GC过程），如果完成了，那线程就继续执行，否则它就必须等待直到收到可以安全离开Safe Region的信号为止。</p>
@@ -458,7 +454,6 @@
 <p>&emsp;&emsp;对于“Stop The World”带给用户的不良体验，虚拟机设计者的苦衷是“你妈妈在给你打扫房间的时候，肯定也会让你老老实实地在椅子上或者房间外待着，如果她一边打扫，你一边乱扔纸屑，这房间还能打扫完？”这确实是一个合情合理的矛盾，但垃圾收集是比打扫房间要复杂的多。</p>
 <p>&emsp;&emsp;从JDK 1.3 开始，一直到现在HotSpot开发团队仍在致力于消除或减少工作线程因内存回收而导致停顿的努力一直在进行着，从Serial收集器到Parallel收集器，再到Concurrent Mark Sweep（CMS）乃至GC收集器的最前沿成果Garbage First（G1）收集器，一个个越来越优秀也越来越复杂的收集器的不断出现，用户线程的停顿时间在不断缩短，但是仍无法完全消除。</p>
 <p>&emsp;&emsp;Serial收集器到现在仍是虚拟机运行在Client模式下的默认新生代收集器，它还有相比于其他收集器的优点：<strong>简单而高效</strong>（单线程下）。对于限定单线程环境下，Serial收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程收集效率。在用户的桌面应用场景中，分配给虚拟机管理的内存一般来说不会很大，收集几十兆甚至一两百兆的新生代，停顿时间完全可以控制在几十毫秒最多一百多毫秒以内，只要不是频繁发生，这点停顿是可以接受的。所以对于运行在Client模式下的虚拟机来说Serial收集器是很好的选择。</p>
-<hr>
 <h3 id="4-2-ParNew收集器"><a href="#4-2-ParNew收集器" class="headerlink" title="4.2 ParNew收集器"></a><strong>4.2 ParNew收集器</strong></h3><p>&emsp;&emsp;ParNew收集器其实就是Serial收集器的<strong>多线程版本</strong>，除了使用多条线程进行垃圾收集之外，其余行为包括Serial收集器可用的所有控制参数（例如：-XX:SurvivorRatio、-XX:PretenureSizeThreshold、-XX:HandlePromotionFailure等）、收集算法、Stop The World、对象分配规则、回收策略等都与Serial收集器一样，在实现上，这两种收集器也共用了很多相当多的代码。ParNew收集器的工作过程如下图所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010119.png" alt="ParNew / Serial Old 收集器运行示意图"></p>
 <p>&emsp;&emsp;ParNew收集器除了多线程收集以外并没有其他创新之处，但它是许多运行在Server模式下的虚拟机中首选的新生代收集器，其中有一个与性能无关但很重要的原因是，除了Serial收集器外，<strong>目前只有它能与CMS收集器配合工作</strong>。在JDK 1.5时期，HotSpot推出了一款在强交互应用中几乎可认为有划时代意义的垃圾收集器——CMS收集器（Concurrent Mark Sweep，稍后详细介绍），这款收集器是HotSpot虚拟机中第一款真正意义上的并发（Concurrent）收集器，它第一次实现了让垃圾收集线程与用户线程基本上同时工作。</p>
@@ -471,7 +466,6 @@
 <li>并发（Concurrent）：指用户线程与垃圾收集线程同时执行（但不一定是并行的，可能会交替执行），用户程序在继续运行，而垃圾收集程序运行在另一个CPU上。</li>
 </ul>
 </blockquote>
-<hr>
 <h3 id="4-3-Parallel-Scavenge收集器"><a href="#4-3-Parallel-Scavenge收集器" class="headerlink" title="4.3 Parallel Scavenge收集器"></a><strong>4.3 Parallel Scavenge收集器</strong></h3><p>&emsp;&emsp;Parallel Scavenge收集器是一个新生代收集器，使用复制算法，还是并行的多线程收集器，似乎和ParNew收集器没什么区别。Parallel Scavenge收集器的特点是它的关注点和其他收集器不同，<strong>CMS等收集器的关注点是尽可能的缩短垃圾收集时用户线程的停顿时间，而Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量</strong>（Throughput）。吞吐量就是CPU用于运行用户代码的时间与CPU总消耗时间的比值，即吞吐量 = 运行用户代码时间 / (运行用户代码时间 + 垃圾收集时间)，如果虚拟机运行了100分钟，其中垃圾收集花费了1分钟，吞吐量就是99%。</p>
 <p>&emsp;&emsp;停顿时间短意味着有较快的响应速度可以提升用户体验，适合与用户交互的程序；高吞吐量则可以高效率的利用CPU时间，尽快的完成程序的运算任务，适合在后台运算而不需要太多交互的任务。</p>
 <p>&emsp;&emsp;Parallel Scavenge收集器提供了两个参数用于精确控制吞吐量，-XX:MaxGCPauseMills，-XX:GCTimeRatio。</p>
@@ -485,15 +479,12 @@
 </blockquote>
 <p>&emsp;&emsp;如果开发者能力不足以进行优化工作，使用Parallel Scavenge收集器搭配自适应调节策略，把优化任务交给虚拟机来完成会是一个不错的选择。只需要把基本的内存数据设置好（-Xmx设置最大堆等），然后MaxGCPauseMills（关注最大停顿时间）或GCTimeRatio（关注最大吞吐量）参数给虚拟机设置一个优化目标，具体调节就由虚拟机去完成了。</p>
 <p>&emsp;&emsp;自适应调节策略是Parallel Scavenge收集器和ParNew收集器的一个重要区别。</p>
-<hr>
 <h3 id="4-4-Serial-Old收集器"><a href="#4-4-Serial-Old收集器" class="headerlink" title="4.4 Serial Old收集器"></a><strong>4.4 Serial Old收集器</strong></h3><p>&emsp;&emsp;Serial Old收集器是Serial收集器的老年代版本，同样是一个单线程收集器，使用“标记-整理”算法。此收集器的主要意义同样是在于给Client模式下的虚拟机使用。但在Server模式下，它还有两大用途：一种用途是在JDK 1.5 以及之前的版本中与Parallel Scavenge收集器搭配使用，另一种用途就是作为CMS收集器的后备预案，在并发收集发生Concurrent Mode Failure时使用。</p>
 <p>&emsp;&emsp;Serial Old收集器工作过程如下图。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010118.png" alt="Serial / Serial Old 收集器运行示意图"></p>
-<hr>
 <h3 id="4-5-Parallel-Old收集器"><a href="#4-5-Parallel-Old收集器" class="headerlink" title="4.5 Parallel Old收集器"></a><strong>4.5 Parallel Old收集器</strong></h3><p>&emsp;&emsp;Parallel Old收集器是Parallel Scavenge收集器的老年代版本，使用多线程和“标记-整理”算法。此收集器从JDK 1.6开始提供，在此之前新生代的Parallel Scavenge收集器只能搭配老年代的Serial Old收集器，因为它无法与CMS收集器配合。Serial Old收集器在服务端应用性能上并不可靠，使用了Parallel Scavenge收集器也未必能够在整体应用上获得最大吞吐量的效果，由于单线程的老年代收集中无法充分利用服务器多CPU的处理能力，在老年大很大而且硬件比较高级的环境中，这种组合甚至不一定比ParNew+CMS的组合更好。</p>
 <p>&emsp;&emsp;Parallel Old收集器出现完善了“吞吐量优先”收集器有了合适的组合，在注重吞吐量以及CPU资源敏感的场合，可以优先考虑Parallel Scavenge收集器+Parallel Old收集器的搭配。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010120.png" alt="Parallel Scavenge / Parallel Old 收集器运行示意图"></p>
-<hr>
 <h3 id="4-6-CMS收集器"><a href="#4-6-CMS收集器" class="headerlink" title="4.6 CMS收集器"></a><strong>4.6 CMS收集器</strong></h3><p>&emsp;&emsp;CMS（Concurrent Mark Sweep）收集器是一种以获取最短回收停顿时间为目标的收集器。目前很大一部分的Java应用集中在互联网站或B/S系统的服务端上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，从而给用户带来较好的体验，CMS收集器非常适合这种需求。</p>
 <p>&emsp;&emsp;从名字Mark Sweep便可以得知CMS收集器是基于“标记-清除”算法实现的，其运作过程相比前几个收集器相对复杂。</p>
 <blockquote>
@@ -516,7 +507,6 @@
 <p>&emsp;&emsp;3. <strong>生成大量的空间碎片</strong>。因为CMS收集器基于“标记-清除”算法，所以自然会在收集结束后产生大量的空间碎片，给大对象的分配造成困难，经常老年代仍有大量空间未使用，却无法找到足够大的连续空间来分配当前对象，不得不提前触发一次Full GC。</p>
 <p>&emsp;&emsp;为了解决这个问题，CMS收集器提供了一个-XX:+UseCMSCompactAtFullCollection开关参数（默认开启），用于在CMS收集器顶不住要进行Full GC时开启内存碎片的合并整理过程，此过程无法并发，解决了空间碎片问题，但代价是延长了停顿时间。</p>
 <p>&emsp;&emsp;虚拟机还提供了另外一个参数-XX:CMSFullGCsBeforeCompaction，此参数用来设置执行多少次不压缩Full GC后，跟着来一次带压缩的（默认为0，表示每次进入Full GC时都进行碎片整理）</p>
-<hr>
 <h3 id="4-7-G1收集器"><a href="#4-7-G1收集器" class="headerlink" title="4.7 G1收集器"></a><strong>4.7 G1收集器</strong></h3><p>&emsp;&emsp;G1（Garbage-First）收集器是当今收集器技术发展的最前沿成果之一，早在JDK 1.7时就有了进化特征，在JDK 6u14时有了Early Access版本提供实验、使用。直到JDK 7u4时达到成熟阶段。G1是一款面向服务端应用的垃圾收集器，其使命是替换掉JDK 1.5发布的CMS收集器。</p>
 <blockquote>
 <p>G1相比其它收集器的特点：</p>
@@ -564,7 +554,6 @@
 <p>&emsp;&emsp;吞吐量测试中，测试数据取3次SPECjbb和15次telco的平均结果，如下图所示。在SPECjbb应用下，各种配置下的G1表现了一致的行为，吞吐量看起来只与允许最大GC时间成正比关系，而telco应用下，不同配置对于吞吐量的影响则显得很微弱。与CMS收集器的吞吐量对比可以看到，在SPECjbb测试中，在堆容量超过768MB时，CMS收集器有5% ~ 10%的优势，而在telco测试中，优势要小一些，只有3% ~ 4%左右。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010124.png" alt="吞吐量测试结果"></p>
 <p>&emsp;&emsp;如果你的应用追求低停顿，且对现有的收集器不够满意，可以尝试使用G1收集器，否则没有必要。</p>
-<hr>
 <h3 id="4-8-理解GC日志"><a href="#4-8-理解GC日志" class="headerlink" title="4.8 理解GC日志"></a><strong>4.8 理解GC日志</strong></h3><p>&emsp;&emsp;阅读GC日志是处理Java内存问题的基础技能，每种收集器的日志的形式都由其自身实现决定，虚拟机设计者为了方便用户阅读，是有对收集器维护一些共性。如下图所示两段GC日志，“33.125”和“100.667”表示GC发生时间，数字来源于虚拟机启动后经过的秒数。“[GC”和“[Full GC”表示了这次垃圾收集的停顿类型，而不是用来区分新生代GC还是老年代GC（比如新生代收集器ParNew的日志也会出现Full GC）。如果有Full表示这次GC发生了Stop-The-World。如果是调用System.gc()方法触发的收集，会显示“[Full GC(System)”。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010125.png" alt="GC日志"></p>
 <p>&emsp;&emsp;“[DefNew”，“[Tenured”，“[Perm”表示GC发生的区域，区域名和收集器密切相关。如上述是Serial收集器，新生代名为“Def New Generation”，所以显示DefNew。如果是ParNew收集器，新生代名为“Parallel New Generation”，就显示“[ParNew”。如果是Parallel Scavenge收集器，新生代叫“PSYoungGen”。老年代和新生代一样也由收集器起名决定。</p>
@@ -573,7 +562,6 @@
 <blockquote>
 <p>CPU时间和墙钟时间的区别是：墙钟时间包括各种非运算的等待耗时，如等待磁盘I/O、等待线程阻塞，而CPU时间不包括这些耗时。</p>
 </blockquote>
-<hr>
 <h3 id="4-9-垃圾收集器参数总结"><a href="#4-9-垃圾收集器参数总结" class="headerlink" title="4.9 垃圾收集器参数总结"></a><strong>4.9 垃圾收集器参数总结</strong></h3><p>&emsp;&emsp;整理了一下垃圾收集相关的常用参数。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010126.png" alt="垃圾收集相关的常用参数"></p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010127.png" alt="垃圾收集相关的常用参数"></p>
@@ -720,7 +708,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">174</span>
+                  <span class="site-state-item-count">175</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
