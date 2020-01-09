@@ -108,7 +108,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010110.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010111.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010113.png">
-<meta property="og:updated_time" content="2020-01-06T15:30:40.939Z">
+<meta property="og:updated_time" content="2020-01-08T02:21:24.804Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="虚拟机调优案例分析与实战">
 <meta name="twitter:description" content="简单介绍Java虚拟机中的虚拟机调优案例分析与实战，包括：概述，案例分析（高性能硬件上的程序部署策略、集群间同步导致的内存溢出、堆外内存导致的溢出错误、外部命令导致系统缓慢、服务器JVM进程崩溃、不恰当数据结构导致内存占用过大、由Windows虚拟内存导致的长时间停顿），实战：Eclipse运行速度调优（调优前的程序运行状态、升级JDK 1.6的性能变化及兼容问题、编译时间和类加载时间的优化、调整">
@@ -369,7 +369,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  14,832
+                  14,844
                 </span>
               
 
@@ -410,7 +410,7 @@
       
 
       
-        <h1 id="虚拟机调优案例分析与实战"><a href="#虚拟机调优案例分析与实战" class="headerlink" title="虚拟机调优案例分析与实战"></a><strong>虚拟机调优案例分析与实战</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><p>&emsp;&emsp;前面介绍了处理Java虚拟机内存问题的知识与工具，在处理实际项目的问题时，除了知识与工具外，经验也是一个很重要的因素。因此本章将分享几个比较有代表性的实际案例。考虑到虚拟机故障处理和调优主要面向各类服务端应用，而大部分Java程序员较少有机会直接接触生产环境的服务器，因此本章还准备了一个所有开发人员都能够进行“亲身实战”的练习，希望通过实践使读者获得故障处理和调优的经验。</p>
+        <h1 id="虚拟机调优案例分析与实战"><a href="#虚拟机调优案例分析与实战" class="headerlink" title="虚拟机调优案例分析与实战"></a><strong>虚拟机调优案例分析与实战</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><p>&emsp;&emsp;<a href="../2019112501.html" title="Title">虚拟机性能监控和故障处理工具</a>介绍了处理Java虚拟机内存问题的知识与工具，在处理实际项目的问题时，除了知识与工具外，经验也是一个很重要的因素。因此本章将分享几个比较有代表性的实际案例。考虑到虚拟机故障处理和调优主要面向各类服务端应用，而大部分Java程序员较少有机会直接接触生产环境的服务器，因此本章还准备了一个所有开发人员都能够进行“亲身实战”的练习，希望通过实践使读者获得故障处理和调优的经验。</p>
 <hr>
 <h2 id="第二节-案例分析"><a href="#第二节-案例分析" class="headerlink" title="第二节 案例分析"></a><strong>第二节 案例分析</strong></h2><p>&emsp;&emsp;本章中的案例大部分来源于作者处理过的一些问题，还有一小部分来源于网上有特色和代表性的案例总结。出于对客户商业信息保护的目的，在不影响前后逻辑的前提下，作者对实际环境和用户业务做了一些屏蔽和精简。</p>
 <h3 id="2-1-高性能硬件上的程序部署策略"><a href="#2-1-高性能硬件上的程序部署策略" class="headerlink" title="2.1 高性能硬件上的程序部署策略"></a><strong>2.1 高性能硬件上的程序部署策略</strong></h3><p>&emsp;&emsp;例如一个15万PV/天左右的在线文档类型网站最近更换了硬件系统，新的硬件为4个CPU、16GB物理内存，操作系统为64位CentOS 5.4，Resin作为Web服务器。整个服务器暂时没有部署别的应用，所有硬件资源都可以提供给访问量并不算太大的网站使用。管理员为了尽量利用硬件资源选用了64位的JDK 1.5，并通过-Xmx和-Xms参数将Java堆固定在12GB。使用一段时间后发现使用效果并不理想，网站经常不定期出现长时间没有响应的现象。</p>
@@ -423,7 +423,7 @@
 <li>使用若干个32位虚拟机建立逻辑集群来利用硬件资源。</li>
 </ul>
 </blockquote>
-<p>&emsp;&emsp;此案例中的管理员采用了第一种部署方式。对于用户交互性强、对停顿时间敏感的系统，可以给Java虚拟机分配超大堆的前提是有把握把应用程序的Full GC频率控制得足够低，至少要低到不会影响用户使用，譬如十几个小时乃至一天才出现一次Full GC，这样可以通过在深夜执行定时任务的方式触发Full GC甚至自动重启应用服务器来将内存可用空间保持在一个稳定的水平。</p>
+<p>&emsp;&emsp;此案例中的管理员采用了第一种部署方式。对于用户交互性强、对停顿时间敏感的系统，可以给Java虚拟机分配超大堆的前提是有把握把应用程序的Full GC频率控制得足够低，至少要低到不会影响用户使用，譬如十几个小时乃至一天才出现一次Full GC，这样可以<strong>通过在深夜执行定时任务的方式触发Full GC甚至自动重启应用服务器来将内存可用空间保持在一个稳定的水平</strong>。</p>
 <p>&emsp;&emsp;控制Full GC频率的关键是看应用中绝大多数对象能否符合“朝生夕灭”的原则，即大多数对象的生存时间不应当太长，尤其是不能产生成批量的、长生存时间的大对象，这样才能保障老年代空间的稳定。</p>
 <p>&emsp;&emsp;在大多数网站形式的应用里，主要对象的生存周期都应该是请求级或页面级的，会话级和全局级的长生命对象相对很少。只要代码写得合理，应当都能实现在超大堆中正常使用而没有Full GC，这样的话，使用超大堆内存时，网站响应的速度才比较有保证。除此之外，如果读者计划使用64位JDK来管理大内存，还需要考虑下面可能面临的问题：</p>
 <blockquote>
@@ -431,10 +431,10 @@
 <li>内存回收导致的长时间停顿。</li>
 <li>现阶段，64位JDK的性能测试结果普遍低于32位JDK。</li>
 <li>需要保证程序足够稳定，因为这种应用要是产生堆溢出几乎就无法产生堆转储快照 （因为要产生十几GB乃至更大的dump文件），哪怕产生了快照也几乎无法进行分 析。</li>
-<li>相同的程序在64位JDK中消耗的内存一般比32位JDK大，这是由指针膨胀及数据类型 对齐补白等因素导致的。</li>
+<li>相同的程序在64位JDK中消耗的内存一般比32位JDK大，这是由指针膨胀及数据类型对齐补白等因素导致的。</li>
 </ul>
 </blockquote>
-<p>&emsp;&emsp;上面的问题听起来有点吓人，所以现阶段不少管理员还是选择第二种方式：使用若干个32位虚拟机建立逻辑集群来利用硬件资源。具体做法是在一台物理机器上启动多个应用服务器进程，给每个服务器进程分配不同的端口，然后在前端搭建一个负载均衡器，以反向代理的方式来分配访问请求。读者不需要太在意均衡器转发所消耗的性能，即使使用64位JDK，许多应用也不止有一台服务器，因此在许多应用中前端的均衡器总是要存在的。</p>
+<p>&emsp;&emsp;上面的问题听起来有点吓人，所以现阶段不少管理员还是选择第二种方式：使用若干个32位虚拟机建立逻辑集群来利用硬件资源。具体做法是<strong>在一台物理机器上启动多个应用服务器进程，给每个服务器进程分配不同的端口，然后在前端搭建一个负载均衡器，以反向代理的方式来分配访问请求</strong>。读者不需要太在意均衡器转发所消耗的性能，即使使用64位JDK，许多应用也不止有一台服务器，因此在许多应用中前端的均衡器总是要存在的。</p>
 <p>&emsp;&emsp;考虑到在一台物理机器上建立逻辑集群的目的仅仅是尽可能地利用硬件资源，并不需要关心状态保留、热转移之类的高可用性需求，也不需要保证每个虚拟机进程有绝对准确的均衡负载，因此使用无Session复制的亲合式集群是一个相当不错的选择。我们仅仅需要保障集群具备亲和性，也就是均衡器按一定的规则算法（一般根 据SessionID分配）将一个固定的用户请求永远分配到固定的一个集群节点进行处理即可，这样程序开发阶段就基本不用为集群环境做什么特别的考虑。</p>
 <p>&emsp;&emsp;当然，很少有没有缺点的方案，如果读者计划使用逻辑集群的方式来部署程序，可能会遇到下面一些问题：</p>
 <blockquote>
@@ -494,7 +494,7 @@
 <p>&emsp;&emsp;为了与调优后的结果进行量化对比，调优开始前作者先做了一次初始数据测试。测试用例很简单，就是收集从Eclipse启动开始，直到所有插件加载完成为止的总耗时及运行状态数据，虚拟机的运行数据通过VisualVM及其扩展插件VisualGC进行采集。测试过程中反复启动Eclipse数次直到测试结果稳定后，取最后一次运行的结果作为数据样本（为了避免操作系统未能及时进行磁盘缓存而产生的影响），数据样本如图5-2所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010102.png" alt="Eclipse原始运行数据"></p>
 <p>&emsp;&emsp;Eclipse启动的总耗时没有办法从监控工具中直接获得，因为VisualVM不可能知道Eclipse运行到什么阶段才算是启动完成。为了保证测试的准确性，作者写了一个简单的Eclipse插件，用于统计Eclipse的启动耗时。由于代码很简单，并且本书不是Eclispe RCP的开发教程，所以只列出代码清单5-4供读者参考，不再延伸讲解。</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">--代码清单<span class="number">5</span><span class="number">-4</span> Eclipse启动耗时统计插件ShowTime.java代码：</span><br><span class="line"></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.jface.dialogs.MessageDialog;</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.swt.widgets.Display;</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.swt.widgets.Shell;</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.ui.IStartup;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*统计Eclipse启动耗时</span></span><br><span class="line"><span class="comment">*@author zzm</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShowTime</span> <span class="keyword">implements</span> <span class="title">IStartup</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> earlyStartup()&#123;</span><br><span class="line">        Display.getDefault().syncExec(<span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> run()&#123;</span><br><span class="line">                long eclipseStartTime = Long.parseLong(System.getProperty(<span class="string">"eclipse.startTime"</span>));</span><br><span class="line">                long costTime = System.currentTimeMillis()-eclipseStartTime;</span><br><span class="line">                Shell shell = Display.getDefault().getActiveShell();</span><br><span class="line">                String message = <span class="string">"Eclipse启动耗时："</span>+costTime+<span class="string">"ms"</span>;</span><br><span class="line">                MessageDialog.openInformation(shell，<span class="string">"Information"</span>，message);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">--plugin.xml代码：</span><br><span class="line">&lt;?xml version=<span class="string">"1.0"</span>encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;?eclipse version=<span class="string">"3.4"</span>?&gt;</span><br><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;extension point=<span class="string">"org.eclipse.ui.startup"</span>&gt;</span><br><span class="line">        &lt;startup <span class="class"><span class="keyword">class</span>="<span class="title">eclipsestarttime</span>.<span class="title">actions</span>.<span class="title">ShowTime</span>"/&gt;</span></span><br><span class="line"><span class="class">    &lt;/<span class="title">extension</span>&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">--代码清单<span class="number">5</span><span class="number">-4</span> Eclipse启动耗时统计插件ShowTime.java代码：</span><br><span class="line"></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.jface.dialogs.MessageDialog;</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.swt.widgets.Display;</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.swt.widgets.Shell;</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">import</span> org.eclipse.ui.IStartup;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*统计Eclipse启动耗时</span></span><br><span class="line"><span class="comment">*@author zzm</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShowTime</span> <span class="keyword">implements</span> <span class="title">IStartup</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> earlyStartup()&#123;</span><br><span class="line">        Display.getDefault().syncExec(<span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> run()&#123;</span><br><span class="line">                long eclipseStartTime = Long.parseLong(System.getProperty(<span class="string">"eclipse.startTime"</span>));</span><br><span class="line">                long costTime = System.currentTimeMillis() - eclipseStartTime;</span><br><span class="line">                Shell shell = Display.getDefault().getActiveShell();</span><br><span class="line">                String message = <span class="string">"Eclipse启动耗时："</span> + costTime+<span class="string">"ms"</span>;</span><br><span class="line">                MessageDialog.openInformation(shell, <span class="string">"Information"</span>, message);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">--plugin.xml代码：</span><br><span class="line">&lt;?xml version=<span class="string">"1.0"</span>encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;?eclipse version=<span class="string">"3.4"</span>?&gt;</span><br><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;extension point=<span class="string">"org.eclipse.ui.startup"</span>&gt;</span><br><span class="line">        &lt;startup <span class="class"><span class="keyword">class</span>="<span class="title">eclipsestarttime</span>.<span class="title">actions</span>.<span class="title">ShowTime</span>"/&gt;</span></span><br><span class="line"><span class="class">    &lt;/<span class="title">extension</span>&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;上述代码打包成jar后放到Eclipse的plugins目录中，反复启动几次后，插件显示的平均时间稳定在15秒左右，如图5-3所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010103.png" alt="耗时统计插件运行效果"></p>
 <p>&emsp;&emsp;根据VisualGC和Eclipse插件收集到的信息，总结原始配置下的测试结果如下：</p>
@@ -636,6 +636,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019120301.html" rel="prev" title="类文件结构">
+                类文件结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -715,7 +719,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">176</span>
+                  <span class="site-state-item-count">184</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,jvm," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="简单介绍Java虚拟机中的类文件结构，包括：概述，无关性的基石，Class类文件的结构，字节码指令简介，公有设计和私有实现，Class文件结构的发展，总结等内容。">
+<meta name="keywords" content="java,jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类文件结构">
+<meta property="og:url" content="http://linyishui.top/2019120301.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍Java虚拟机中的类文件结构，包括：概述，无关性的基石，Class类文件的结构，字节码指令简介，公有设计和私有实现，Class文件结构的发展，总结等内容。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010114.png">
+<meta property="og:updated_time" content="2020-01-09T08:06:37.016Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="类文件结构">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的类文件结构，包括：概述，无关性的基石，Class类文件的结构，字节码指令简介，公有设计和私有实现，Class文件结构的发展，总结等内容。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010114.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019120301.html"/>
+
+
+
+
+
+  <title>类文件结构 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019120301.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">类文件结构</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-03T10:17:54+08:00">
+                2020-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,475
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍Java虚拟机中的类文件结构，包括：概述，无关性的基石，Class类文件的结构，字节码指令简介，公有设计和私有实现，Class文件结构的发展，总结等内容。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a><strong>类文件结构</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><p>&emsp;&emsp;记得在第一节计算机程序课上老师就讲过：“计算机只认识0和1，所以我们写的程序需要被编译器翻译成由0和1构成的二进制格式才能被计算机执行”。10多年的时间过去了，今天的计算机仍然只能识别0和1，但由于最近10年内虚拟机及建立在虚拟机之上的大量程序语言如雨后春笋般出现并蓬勃发展，将我们编写的<strong>程序编译成二进制本地机器码（Native Code）已不再是唯一的选择</strong>，越来越多的程序语言选择了与操作系统和机器指令集无关的、平台中立的格式作为程序编译后的存储格式。</p>
+<hr>
+<h2 id="第二节-无关性的基石"><a href="#第二节-无关性的基石" class="headerlink" title="第二节 无关性的基石"></a><strong>第二节 无关性的基石</strong></h2><p>&emsp;&emsp;如果计算机的CPU指令集就只有x86一种，操作系统就只有Windows一种，那也许就不会有Java语言的出现。Java在刚刚诞生之时曾经提出过一个非常著名的宣传口号：“一次编写，到处运行（Write Once, Run Anywhere）”，这句话充分表达了软件开发人员对冲破平台界限的渴求。在无时无刻不充满竞争的IT领域，不可能只有Wintel存在，我们也不希望只有Wintel存在，各种不同的硬件体系结构和不同的操作系统定将会长期并存发展。“与平台无关”的理想最终实现在操作系统的应用层上：<strong>Sun公司及其他虚拟机提供商发布了许多可以运行在各种不同平台上的虚拟机，这些虚拟机都可以载入和执行同一种平台无关的字节码</strong>，从而实现程序的“一次编写，到处运行”。</p>
+<p>&emsp;&emsp;各种不同平台的虚拟机与所有平台都统一使用的程序存储格式—<strong>字节码</strong>（ByteCode）是构成平台无关性的基石，但本节标题中刻意省略了“平台”二字，那是因为笔者注意到虚拟机的另外一种中立的特性—如今语言无关性越来越被开发者所重视。到今天为止，或许大部分程序员都还认为Java虚拟机执行Java程序是一件理所当然和天经地义的事情。但在Java发展之初，设计者们就曾经考虑过并实现了让其他语言运行在Java虚拟机之上的可能性，他们在发布规范文档的时候，也刻意把Java的规范拆分成了Java语言规范《The Java Language Specification》及Java虚拟机规范《The Java Virtual Machine Specification》。并且在1997年发布的第一版Java虚拟机规范中就曾经承诺过：“In the future,we will consider bounded extensions to the Java virtual machine to provide better support for other languages”（在未来，我们会对Java虚拟机进行适当的扩展，以便更好地支持其他语言运行于JVM之上），<strong>当Java虚拟机发展到JDK 1.7~1.8的时候，JVM设计者通过JSR-292基本兑现了这个承诺</strong>。</p>
+<p>&emsp;&emsp;时至今日，商业机构和开源机构已经在Java语言之外发展出一大批在Java虚拟机之上运行的语言，如Clojure、Groovy、JRuby、Jython、Scala，等等。使用过这些语言的开发者可能还不是非常多，但是听说过的人肯定已经不少，随着时间的推移，谁能保证日后Java虚拟机在语言无关性上的优势不会赶上甚至超越它在平台无关性上的优势呢？</p>
+<p>&emsp;&emsp;<strong>实现语言无关性的基础仍然是虚拟机和字节码存储格式</strong>，使用Java编译器可以把Java代码编译为存储字节码的Class文件，使用JRuby等其他语言的编译器一样可以把程序代码编译成Class文件，虚拟机并不关心Class的来源是什么语言，只要它符合Class文件应有的结构就可以在Java虚拟机中运行，如图6-1所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010114.png" alt="Java虚拟机提供的语言无关性"></p>
+<p>&emsp;&emsp;<strong>Java语言中的各种变量、关键字和运算符号的语义最终都是由多条字节码命令组合而成的</strong>，因此字节码命令所能提供的语义描述能力肯定会比Java语言本身更强大。因此，有一些Java语言本身无法有效支持的语言特性并不代表字节码本身无法有效支持，这也为其他语言实现一些有别于Java的语言特性提供了基础。</p>
+<hr>
+<h2 id="第三节-Class类文件的结构"><a href="#第三节-Class类文件的结构" class="headerlink" title="第三节 Class类文件的结构"></a><strong>第三节 Class类文件的结构</strong></h2><p>&emsp;&emsp;<a href="../2019120401.html" title="Title">类文件结构-Class类文件的结构</a></p>
+<hr>
+<h2 id="第四节-字节码指令简介"><a href="#第四节-字节码指令简介" class="headerlink" title="第四节 字节码指令简介"></a><strong>第四节 字节码指令简介</strong></h2><p>&emsp;&emsp;<a href="../2019120501.html" title="Title">类文件结构-字节码指令简介</a></p>
+<hr>
+<h2 id="第五节-公有设计和私有实现"><a href="#第五节-公有设计和私有实现" class="headerlink" title="第五节 公有设计和私有实现"></a><strong>第五节 公有设计和私有实现</strong></h2><p>&emsp;&emsp;Java虚拟机规范描绘了Java虚拟机应有的共同程序存储格式：<strong>Class文件格式</strong>以及<strong>字节码指令集</strong>。这些内容与硬件、操作系统及具体的Java虚拟机实现之间是完全独立的，虚拟机实现者可能更愿意把它们看做是程序在各种Java平台实现之间互相安全地交互的手段。</p>
+<p>&emsp;&emsp;理解公有设计与私有实现之间的分界线是非常有必要的，Java虚拟机实现必须能够读取 Class文件并精确实现包含在其中的Java虚拟机代码的语义。拿着Java虚拟机规范一成不变地 逐字实现其中要求的内容当然是一种可行的途径，但一个优秀的虚拟机实现，在满足虚拟机 规范的约束下对具体实现做出修改和优化也是完全可行的，并且虚拟机规范中明确鼓励实现 者这样做。只要优化后Class文件依然可以被正确读取，并且包含在其中的语义能得到完整的 保持，那实现者就可以选择任何方式去实现这些语义，虚拟机后台如何处理Class文件完全是 实现者自己的事情，只要它在外部接口上看起来与规范描述的一致即可[1]。 </p>
+<p>&emsp;&emsp;虚拟机实现者可以使用这种伸缩性来让Java虚拟机获得更高的性能、更低的内存消耗或 者更好的可移植性，选择哪种特性取决于Java虚拟机实现的目标和关注点是什么。虚拟机实 现的方式主要有以下两种： </p>
+<blockquote>
+<ul>
+<li>将输入的Java虚拟机代码在加载或执行时翻译成另外一种虚拟机的指令集。 </li>
+<li>将输入的Java虚拟机代码在加载或执行时翻译成宿主机CPU的本地指令集（即JIT代码生 成技术）。 </li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;精确定义的虚拟机和目标文件格式不应当对虚拟机实现者的创造性产生太多的限制，Java虚拟机应被设计成可以允许有众多不同的实现，并且各种实现可以在保持兼容性的 同时提供不同的、新的、有趣的解决方案。 </p>
+<hr>
+<h2 id="第六节-Class文件结构的发展"><a href="#第六节-Class文件结构的发展" class="headerlink" title="第六节 Class文件结构的发展"></a><strong>第六节 Class文件结构的发展</strong></h2><p>&emsp;&emsp;Class文件结构自Java虚拟机规范第1版订立以来，已经有十多年的历史。这十多年 间，Java技术体系有了翻天覆地的改变，JDK的版本号已经从1.0提升到了1.7。相对于语言、 API以及Java技术体系中其他方面的变化，Class文件结构一直处于比较稳定的状态，Class文 件的主体结构、字节码指令的语义和数量几乎没有出现过变动[1]，所有对Class文件格式的改 进，都集中在向访问标志、属性表这些在设计上就可扩展的数据结构中添加内容。 </p>
+<p>&emsp;&emsp;如果以《Java虚拟机规范（第2版）》为基准进行比较的话，那么在后续Class文件格式 的发展过程中，访问标志里新加入了ACC_SYNTHETIC、ACC_ANNOTATION、 ACC_ENUM、ACC_BRIDGE、ACC_VARARGS共5个标志。而属性表集合中，在JDK 1.5到 JDK 1.7版本之间一共增加了12项新的属性，这些属性大部分用于支持Java中许多新出现的语 言特性，如枚举、变长参数、泛型、动态注解等。还有一些是为了支持性能改进和调试信 息，譬如JDK 1.6的新类型校验器的StackMapTable属性和对非Java代码调试中用到的 SourceDebugExtension属性。</p>
+<p>&emsp;&emsp;Class文件格式所具备的平台中立（不依赖于特定硬件及操作系统）、紧凑、稳定和可扩 展的特点，是Java技术体系实现平台无关、语言无关两项特性的重要支柱。 </p>
+<hr>
+<h2 id="第七节-总结"><a href="#第七节-总结" class="headerlink" title="第七节 总结"></a><strong>第七节 总结</strong></h2><p>&emsp;&emsp;Class文件是Java虚拟机执行引擎的数据入口，也是Java技术体系的基础构成之一。了解 Class文件的结构对后面进一步了解虚拟机执行引擎有很重要的意义。 </p>
+<p>&emsp;&emsp;本章详细讲解了Class文件结构中的各个组成部分，以及每个部分的定义、数据结构和使 用方法。通过代码清单6-1的Java代码与它的Class文件样例，以实战的方式演示了Class的数 据是如何存储和访问的。从第7章开始，我们将以动态的、运行时的角度去看看字节码流在 虚拟机执行引擎中是怎样被解释执行的。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《深入理解Java虚拟机》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019120101.html" rel="next" title="虚拟机调优案例分析与实战">
+                <i class="fa fa-chevron-left"></i> 虚拟机调优案例分析与实战
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019120401.html" rel="prev" title="类文件结构-Class类文件的结构">
+                类文件结构-Class类文件的结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">184</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#类文件结构"><span class="nav-number">1.</span> <span class="nav-text">类文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-无关性的基石"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 无关性的基石</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-Class类文件的结构"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 Class类文件的结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-字节码指令简介"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 字节码指令简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-公有设计和私有实现"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 公有设计和私有实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-Class文件结构的发展"><span class="nav-number">1.6.</span> <span class="nav-text">第六节 Class文件结构的发展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第七节-总结"><span class="nav-number">1.7.</span> <span class="nav-text">第七节 总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

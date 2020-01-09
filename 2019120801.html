@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,jvm," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="简单介绍Java虚拟机中的虚拟机类加载机制-类加载过程，包括：加载，验证（文件格式验证、元数据验证、字节码验证、符号引用验证），准备，解析（类或接口的解析、字段解析、类方法解析、接口方法解析），初始化等内容。">
+<meta name="keywords" content="java,jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟机类加载机制-类加载过程">
+<meta property="og:url" content="http://linyishui.top/2019120801.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍Java虚拟机中的虚拟机类加载机制-类加载过程，包括：加载，验证（文件格式验证、元数据验证、字节码验证、符号引用验证），准备，解析（类或接口的解析、字段解析、类方法解析、接口方法解析），初始化等内容。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/1111111111.png">
+<meta property="og:updated_time" content="2020-01-08T15:21:14.947Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="虚拟机类加载机制-类加载过程">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的虚拟机类加载机制-类加载过程，包括：加载，验证（文件格式验证、元数据验证、字节码验证、符号引用验证），准备，解析（类或接口的解析、字段解析、类方法解析、接口方法解析），初始化等内容。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/1111111111.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019120801.html"/>
+
+
+
+
+
+  <title>虚拟机类加载机制-类加载过程 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019120801.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">虚拟机类加载机制-类加载过程</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-08T18:06:32+08:00">
+                2020-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  8,325
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍Java虚拟机中的虚拟机类加载机制-类加载过程，包括：加载，验证（文件格式验证、元数据验证、字节码验证、符号引用验证），准备，解析（类或接口的解析、字段解析、类方法解析、接口方法解析），初始化等内容。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="虚拟机类加载机制-类加载过程"><a href="#虚拟机类加载机制-类加载过程" class="headerlink" title="虚拟机类加载机制-类加载过程"></a><strong>虚拟机类加载机制-类加载过程</strong></h1><h2 id="第三节-类加载的过程"><a href="#第三节-类加载的过程" class="headerlink" title="第三节 类加载的过程"></a><strong>第三节 类加载的过程</strong></h2><p>&emsp;&emsp;接下来我们详细讲解一下Java虚拟机中类加载的全过程，也就是加载、验证、准备、解析和初始化这5个阶段所执行的具体动作。 </p>
+<h3 id="3-1-加载"><a href="#3-1-加载" class="headerlink" title="3.1 加载"></a><strong>3.1 加载</strong></h3><p>&emsp;&emsp;<strong>加载</strong>是<strong>类加载</strong>（Class Loading）过程的一个阶段，希望读者没有混淆这两个看起来很相似的名词。在加载阶段，虚拟机需要完成以下3件事情： </p>
+<blockquote>
+<ol>
+<li>通过一个类的全限定名来<strong>获取</strong>定义此类的<strong>二进制字节流</strong>。 </li>
+<li>将这个字节流所代表的<strong>静态存储结构</strong>转化为方法区的<strong>运行时数据结构</strong>。</li>
+<li>在内存中<strong>生成</strong>一个代表这个类的<strong>java.lang.Class对象</strong>，作为方法区这个类的各种数据的访问入口。 </li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;虚拟机规范的这3点要求其实并不算具体，因此虚拟机实现与具体应用的灵活度都是相当大的。例如“通过一个类的全限定名来获取定义此类的二进制字节流”这条，它没有指明二进制字节流要从一个Class文件中获取，准确地说是根本没有指明要从哪里获取、怎样获取。虚拟机设计团队在加载阶段搭建了一个相当开放的、广阔的“舞台”，Java发展历程中，充满创造力的开发人员则在这个“舞台”上玩出了各种花样，许多举足轻重的Java技术都建立在这一基础之上，例如：</p>
+<blockquote>
+<ul>
+<li><strong>从ZIP包中读取</strong>，这很常见，最终成为日后JAR、EAR、WAR格式的基础。</li>
+<li><strong>从网络中获取</strong>，这种场景最典型的应用就是Applet。 </li>
+<li><strong>运行时计算生成</strong>，这种场景使用得最多的就是动态代理技术，在java.lang.reflect.Proxy中，就是用了ProxyGenerator.generateProxyClass来为特定接口生成形式为“*$Proxy”的代理类的二进制字节流。 </li>
+<li><strong>由其他文件生成</strong>，典型场景是JSP应用，即由JSP文件生成对应的Class类。 </li>
+<li><strong>从数据库中读取</strong>，这种场景相对少见些，例如有些中间件服务器（如SAP Netweaver）可以选择把程序安装到数据库中来完成程序代码在集群间的分发。</li>
+<li>……</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;相对于类加载过程的其他阶段，一个非数组类的加载阶段（准确地说，是加载阶段中<strong>获取类的二进制字节流的动作</strong>）是开发人员可控性最强的，因为加载阶段既可以使用系统提供的引导类加载器来完成，也可以由用户自定义的类加载器去完成，开发人员可以通过定义自己的类加载器去控制字节流的获取方式（即重写一个类加载器的loadClass()方法）。 </p>
+<p>&emsp;&emsp;对于数组类而言，情况就有所不同，<strong>数组类本身不通过类加载器创建</strong>，它是<strong>由Java虚拟机直接创建</strong>的。但数组类与类加载器仍然有很密切的关系，因为数组类的元素类型（ElementType，指的是数组去掉所有维度的类型）最终是要靠类加载器去创建，一个数组类（下面简称为C）创建过程就遵循以下规则：</p>
+<blockquote>
+<ul>
+<li>如果数组的组件类型（Component Type，指的是数组去掉一个维度的类型）是引用类型，那就递归采用本节中定义的加载过程去加载这个组件类型，数组C将在加载该组件类型的类加载器的类名称空间上被标识（这点很重要，在第四节会介绍到，<strong>一个类必须与类加载器一起确定唯一性</strong>）。 </li>
+<li>如果数组的组件类型不是引用类型（例如int[]数组），Java虚拟机将会把数组C标记为与引导类加载器关联。 </li>
+<li>数组类的可见性与它的组件类型的可见性一致，如果组件类型不是引用类型，那数组类的可见性将默认为public。 </li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;加载阶段完成后，虚拟机外部的二进制字节流就按照虚拟机所需的格式存储在方法区之中，方法区中的数据存储格式由虚拟机实现自行定义，虚拟机规范未规定此区域的具体数据结构。然后在内存中实例化一个java.lang.Class类的对象（并没有明确规定是在Java堆中，对于HotSpot虚拟机而言，<strong>Class对象比较特殊，它虽然是对象，但是存放在方法区里面</strong>），这个对象将<strong>作为程序访问方法区中的这些类型数据的外部接口</strong>。 </p>
+<p>&emsp;&emsp;加载阶段与连接阶段的部分内容（如一部分字节码文件格式验证动作）是交叉进行的，加载阶段尚未完成，连接阶段可能已经开始，但这些夹在加载阶段之中进行的动作，仍然属于连接阶段的内容，这两个阶段的开始时间仍然保持着固定的先后顺序。</p>
+<h3 id="3-2-验证"><a href="#3-2-验证" class="headerlink" title="3.2 验证"></a><strong>3.2 验证</strong></h3><p>&emsp;&emsp;验证是连接阶段的第一步，这一阶段的目的是为了<strong>确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全</strong>。 </p>
+<p>&emsp;&emsp;Java语言本身是相对安全的语言（依然是相对于C/C++来说），使用纯粹的Java代码无法做到诸如访问数组边界以外的数据、将一个对象转型为它并未实现的类型、跳转到不存在的代码行之类的事情，如果这样做了，编译器将拒绝编译。但前面已经说过，Class文件并不一定要求用Java源码编译而来，可以使用任何途径产生，甚至包括用十六进制编辑器直接编写来产生Class文件。在字节码语言层面上，上述Java代码无法做到的事情都是可以实现的，至少语义上是可以表达出来的。虚拟机如果不检查输入的字节流，对其完全信任的话，很可能会因为载入了有害的字节流而导致系统崩溃，所以验证是虚拟机对自身保护的一项重要工作。 </p>
+<p>&emsp;&emsp;验证阶段是非常重要的，这个阶段是否严谨，直接决定了Java虚拟机是否能承受恶意代码的攻击，从执行性能的角度上讲，验证阶段的工作量在虚拟机的类加载子系统中又占了相当大的一部分。《Java虚拟机规范（第2版）》对这个阶段的限制、指导还是比较笼统的，规范中列举了一些Class文件格式中的静态和结构化约束，如果验证到输入的字节流不符合Class文件格式的约束，虚拟机就应抛出一个java.lang.VerifyError异常或其子类异常，但具体应当检查哪些方面，如何检查，何时检查，都没有足够具体的要求和明确的说明。直到2011年发布的《Java虚拟机规范（Java SE 7版）》，大幅增加了描述验证过程的篇幅（从不到10页增加到130页），这时约束和验证规则才变得具体起来。受篇幅所限无法逐条规则去讲解，但从整体上看，验证阶段大致上会完成下面4个阶段的检验动作：文件格式验证、元数据验证、字节码验证、符号引用验证。 </p>
+<h4 id="3-2-1-文件格式验证"><a href="#3-2-1-文件格式验证" class="headerlink" title="3.2.1 文件格式验证"></a><strong>3.2.1 文件格式验证</strong></h4><p>&emsp;&emsp;第一阶段要<strong>验证字节流是否符合Class文件格式的规范，并且能被当前版本的虚拟机处理</strong>。这一阶段可能包括下面这些验证点： </p>
+<blockquote>
+<ul>
+<li>是否以魔数0xCAFEBABE开头。 </li>
+<li>主、次版本号是否在当前虚拟机处理范围之内。 </li>
+<li>常量池的常量中是否有不被支持的常量类型（检查常量tag标志）。 </li>
+<li>指向常量的各种索引值中是否有指向不存在的常量或不符合类型的常量。 </li>
+<li>CONSTANT_Utf8_info型的常量中是否有不符合UTF8编码的数据。</li>
+<li>Class文件中各个部分及文件本身是否有被删除的或附加的其他信息。 </li>
+<li>……</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;实际上，第一阶段的验证点还远不止这些，上面这些只是从HotSpot虚拟机源码中摘抄的一小部分内容，该验证阶段的主要目的是<strong>保证输入的字节流能正确地解析并存储于方法区之内，格式上符合描述一个Java类型信息的要求</strong>。这阶段的验证是基于二进制字节流进行的，只有通过了这个阶段的验证后，字节流才会进入内存的方法区中进行存储，所以<strong>后面的3个验证阶段全部是基于方法区的存储结构进行的，不会再直接操作字节流</strong>。</p>
+<h4 id="3-2-2-元数据验证"><a href="#3-2-2-元数据验证" class="headerlink" title="3.2.2 元数据验证"></a><strong>3.2.2 元数据验证</strong></h4><p>&emsp;&emsp;第二阶段是<strong>对字节码描述的信息进行语义分析，以保证其描述的信息符合Java语言规范的要求</strong>，这个阶段可能包括的验证点如下：</p>
+<blockquote>
+<ul>
+<li>这个类是否有父类（除了java.lang.Object之外，所有的类都应当有父类）。 </li>
+<li>这个类的父类是否继承了不允许被继承的类（被final修饰的类）。 </li>
+<li>如果这个类不是抽象类，是否实现了其父类或接口之中要求实现的所有方法。 </li>
+<li>类中的字段、方法是否与父类产生矛盾（例如覆盖了父类的final字段，或者出现不符合规则的方法重载，例如方法参数都一致，但返回值类型却不同等）。 </li>
+<li>……</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;第二阶段的主要目的是<strong>对类的元数据信息进行语义校验，保证不存在不符合Java语言规范的元数据信息</strong>。 </p>
+<h4 id="3-2-3-字节码验证"><a href="#3-2-3-字节码验证" class="headerlink" title="3.2.3 字节码验证"></a><strong>3.2.3 字节码验证</strong></h4><p>&emsp;&emsp;第三阶段是整个验证过程中最复杂的一个阶段，主要目的是<strong>通过数据流和控制流分析，确定程序语义是合法的、符合逻辑的</strong>。在第二阶段对元数据信息中的数据类型做完校验后，这个阶段将对类的方法体进行校验分析，保证被校验类的方法在运行时不会做出危害虚拟机安全的事件，例如： </p>
+<blockquote>
+<ul>
+<li>保证任意时刻操作数栈的数据类型与指令代码序列都能配合工作，例如不会出现类似这样的情况：在操作栈放置了一个int类型的数据，使用时却按long类型来加载入本地变量表中。 </li>
+<li>保证跳转指令不会跳转到方法体以外的字节码指令上。 </li>
+<li>保证方法体中的类型转换是有效的，例如可以把一个子类对象赋值给父类数据类型，这是安全的，但是把父类对象赋值给子类数据类型，甚至把对象赋值给与它毫无继承关系、完全不相干的一个数据类型，则是危险和不合法的。 </li>
+<li>……</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;如果一个类方法体的字节码没有通过字节码验证，那肯定是有问题的；但如果一个方法体通过了字节码验证，也不能说明其一定就是安全的。即使字节码验证之中进行了大量的检查，也不能保证这一点。这里涉及了离散数学中一个很著名的问题“Halting Problem”：通俗一点的说法就是，通过程序去校验程序逻辑是无法做到绝对准确的——不能通过程序准确地检查出程序是否能在有限的时间之内结束运行。</p>
+<p>&emsp;&emsp;由于数据流验证的高复杂性，虚拟机设计团队为了避免过多的时间消耗在字节码验证阶段，在JDK 1.6之后的Javac编译器和Java虚拟机中进行了一项优化，给方法体的Code属性的属性表中增加了一项名为“StackMapTable”的属性，这项属性描述了方法体中所有的基本块（Basic Block，按照控制流拆分的代码块）开始时本地变量表和操作栈应有的状态，在字节码验证期间，就不需要根据程序推导这些状态的合法性，只需要检查StackMapTable属性中的记录是否合法即可。这样<strong>将字节码验证的类型推导转变为类型检查从而节省一些时间</strong>。 </p>
+<p>&emsp;&emsp;理论上StackMapTable属性也存在错误或被篡改的可能，所以是否有可能在恶意篡改了Code属性的同时，也生成相应的StackMapTable属性来骗过虚拟机的类型校验则是虚拟机设计者值得思考的问题。 </p>
+<p>&emsp;&emsp;在JDK 1.6的HotSpot虚拟机中提供了-XX:-UseSplitVerifier选项来关闭这项优化，或者使用参数-XX:+FailOverToOldVerifier要求在类型校验失败的时候退回到旧的类型推导方式进行校验。而在JDK 1.7之后，对于主版本号大于50的Class文件，<strong>使用类型检查来完成数据流分析校验则是唯一的选择，不允许再退回到类型推导的校验方式</strong>。 </p>
+<h4 id="3-2-4-符号引用验证"><a href="#3-2-4-符号引用验证" class="headerlink" title="3.2.4 符号引用验证"></a><strong>3.2.4 符号引用验证</strong></h4><p>&emsp;&emsp;最后一个阶段的校验发生<strong>在虚拟机将符号引用转化为直接引用的时候</strong>，这个转化动作将在连接的第三阶段——<strong>解析阶段</strong>中发生。符号引用验证可以看做是对类自身以外（常量池中的各种符号引用）的信息进行匹配性校验，通常需要校验下列内容： </p>
+<blockquote>
+<ul>
+<li>符号引用中通过字符串描述的全限定名是否能找到对应的类。 </li>
+<li>在指定类中是否存在符合方法的字段描述符以及简单名称所描述的方法和字段。 </li>
+<li>符号引用中的类、字段、方法的访问性（private、protected、public、default）是否可被当前类访问。 </li>
+<li>……</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;符号引用验证的目的是确保解析动作能正常执行，如果无法通过符号引用验证，那么将会抛出一个java.lang.IncompatibleClassChangeError异常的子类，如java.lang.IllegalAccessError、java.lang.NoSuchFieldError、java.lang.NoSuchMethodError等。 </p>
+<p>&emsp;&emsp;对于虚拟机的类加载机制来说，验证阶段是一个非常重要的、但<strong>不是一定必要</strong>（因为对程序运行期没有影响）的阶段。如果所运行的全部代码（包括自己编写的及第三方包中的代码）都已经被反复使用和验证过，那么<strong>在实施阶段就可以考虑使用-Xverify:none参数来关闭大部分的类验证措施，以缩短虚拟机类加载的时间</strong>。</p>
+<h3 id="3-3-准备"><a href="#3-3-准备" class="headerlink" title="3.3 准备"></a><strong>3.3 准备</strong></h3><p>&emsp;&emsp;准备阶段是<strong>正式为类变量分配内存并设置类变量初始值的阶段</strong>，这些<strong>变量所使用的内存都将在方法区中进行分配</strong>。这个阶段中有两个容易产生混淆的概念需要强调一下，首先，这时候进行内存分配的<strong>仅包括类变量</strong>（被static修饰的变量），而不包括实例变量，<strong>实例变量将会在对象实例化时随着对象一起分配在Java堆中</strong>。其次，这里所说的初始值“通常情况”下是<strong>数据类型的零值</strong>，假设一个类变量的定义为：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="keyword">value</span> = <span class="number">123</span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;那变量value在准备阶段过后的初始值为0而不是123，因为这时候尚未开始执行任何Java方法，而把value赋值为123的putstatic指令是程序被编译后，存放于类构造器＜clinit＞()方法之中，所以把value赋值为123的动作将在初始化阶段才会执行。表7-1列出了Java中所有基本数据类型的零值。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/1111111111.png" alt="基本数据类型的零值"></p>
+<p>&emsp;&emsp;上面提到，在“通常情况”下初始值是零值，那相对的会有一些“特殊情况”：如果类字段的字段属性表中存在ConstantValue属性，那在准备阶段变量value就会被初始化为ConstantValue属性所指定的值，假设上面类变量value的定义变为：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> value = <span class="number">123</span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;编译时Javac将会为value生成ConstantValue属性，在准备阶段虚拟机就会根据ConstantValue的设置将value赋值为123。</p>
+<h3 id="3-4-解析"><a href="#3-4-解析" class="headerlink" title="3.4 解析"></a><strong>3.4 解析</strong></h3><p>&emsp;&emsp;解析阶段是虚拟机<strong>将常量池内的符号引用替换为直接引用的过程</strong>，符号引用在前一章讲解Class文件格式的时候已经出现过多次，在Class文件中它以CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info等类型的常量出现，那解析阶段中所说的直接引用与符号引用又有什么关联呢？ </p>
+<p>&emsp;&emsp;符号引用（Symbolic References）：<strong>符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可</strong>。符号引用与虚拟机实现的内存布局无关，引用的目标并不一定已经加载到内存中。各种虚拟机实现的内存布局可以各不相同，但是它们能接受的符号引用必须都是一致的，因为符号引用的字面量形式明确定义在Java虚拟机规范的Class文件格式中。 </p>
+<p>&emsp;&emsp;直接引用（Direct References）：<strong>直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄</strong>。直接引用是和虚拟机实现的内存布局相关的，同一个符号引用在不同虚拟机实例上翻译出来的直接引用一般不会相同。如果有了直接引用，那引用的目标必定已经在内存中存在。 </p>
+<p>&emsp;&emsp;虚拟机规范之中并未规定解析阶段发生的具体时间，只要求了在执行anewarray、checkcast、getfield、getstatic、instanceof、invokedynamic、invokeinterface、invokespecial、 invokestatic、invokevirtual、ldc、ldc_w、multianewarray、new、putfield和putstatic这16个<strong>用于操作符号引用的字节码指令之前，先对它们所使用的符号引用进行解析</strong>。所以虚拟机实现可以根据需要来判断到底是在类被加载器加载时就对常量池中的符号引用进行解析，还是等到一个符号引用将要被使用前才去解析它。 </p>
+<p>&emsp;&emsp;对同一个符号引用进行多次解析请求是很常见的事情，除invokedynamic指令以外，虚拟机实现可以对第一次解析的结果进行缓存（在运行时常量池中记录直接引用，并把常量标识为已解析状态）从而避免解析动作重复进行。无论是否真正执行了多次解析动作，虚拟机<strong>需要保证的是在同一个实体中，如果一个符号引用之前已经被成功解析过，那么后续的引用解析请求就应当一直成功</strong>；同样的，如果第一次解析失败了，那么其他指令对这个符号的解析请求也应该收到相同的异常。 </p>
+<p>&emsp;&emsp;对于<strong>invokedynamic指令</strong>，上面规则则不成立。当碰到某个前面已经由invokedynamic指令触发过解析的符号引用时，并不意味着这个解析结果对于其他invokedynamic指令也同样生效。因为invokedynamic指令的目的本来就是用于动态语言支持（目前仅使用Java语言不会生成这条字节码指令），它所对应的引用称为“动态调用点限定符”（Dynamic Call Site Specifier），这里“动态”的含义就是<strong>必须等到程序实际运行到这条指令的时候，解析动作才能进行</strong>。相对的，其余可触发解析的指令都是“静态”的，可以在刚刚完成加载阶段，还没有开始执行代码时就进行解析。 </p>
+<p>&emsp;&emsp;解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行，分别对应于常量池的CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、 CONSTANT_MethodHandle_info和CONSTANT_InvokeDynamic_info 7种常量类型。下面将讲解前面4种引用的解析过程，对于后面3种，与JDK 1.7新增的动态语言支持息息相关，由于Java语言是一门静态类型语言，因此在没有介绍invokedynamic指令的语义之前，没有办法将它们和现在的Java语言对应上，作者将在<a href="../2019121001.html" title="Title">字节码执行引擎</a>介绍动态语言调用时一起分析讲解。 </p>
+<h4 id="3-4-1-类或接口的解析"><a href="#3-4-1-类或接口的解析" class="headerlink" title="3.4.1 类或接口的解析"></a><strong>3.4.1 类或接口的解析</strong></h4><p>&emsp;&emsp;假设当前代码所处的类为D，如果要把一个从未解析过的符号引用N解析为一个类或接口C的直接引用，那虚拟机完成整个解析的过程需要以下3个步骤： </p>
+<blockquote>
+<ol>
+<li>如果C不是一个数组类型，那虚拟机将会把代表N的全限定名传递给D的类加载器去加载这个类C。在加载过程中，由于元数据验证、字节码验证的需要，又可能触发其他相关 类的加载动作，例如加载这个类的父类或实现的接口。一旦这个加载过程出现了任何异常，解析过程就宣告失败。 </li>
+<li>如果C是一个数组类型，并且数组的元素类型为对象，也就是N的描述符会是类似“[Ljava/lang/Integer”的形式，那将会按照第1点的规则加载数组元素类型。如果N的描述符如前面所假设的形式，需要加载的元素类型就是“java.lang.Integer”，接着由虚拟机生成一个代表此数组维度和元素的数组对象。 </li>
+<li>如果上面的步骤没有出现任何异常，那么C在虚拟机中实际上已经成为一个有效的类或接口了，但在解析完成之前还要进行符号引用验证，确认D是否具备对C的访问权限。如果发现不具备访问权限，将抛出java.lang.IllegalAccessError异常。 </li>
+</ol>
+</blockquote>
+<h4 id="3-4-2-字段解析"><a href="#3-4-2-字段解析" class="headerlink" title="3.4.2 字段解析"></a><strong>3.4.2 字段解析</strong></h4><p>&emsp;&emsp;要解析一个未被解析过的字段符号引用，首先将会对字段表内class_index项中索引的CONSTANT_Class_info符号引用进行解析，也就是字段所属的类或接口的符号引用。如果在解析这个类或接口符号引用的过程中出现了任何异常，都会导致字段符号引用解析的失败。如果解析成功完成，那将这个字段所属的类或接口用C表示，虚拟机规范要求按照如下步骤对C进行后续字段的搜索。 </p>
+<blockquote>
+<ol>
+<li>如果C本身就包含了简单名称和字段描述符都与目标相匹配的字段，则返回这个字段的直接引用，查找结束。 </li>
+<li>否则，如果在C中实现了接口，将会按照继承关系从下往上递归搜索各个接口和它的 父接口，如果接口中包含了简单名称和字段描述符都与目标相匹配的字段，则返回这个字段的直接引用，查找结束。 </li>
+<li>否则，如果C不是java.lang.Object的话，将会按照继承关系从下往上递归搜索其父类，如果在父类中包含了简单名称和字段描述符都与目标相匹配的字段，则返回这个字段的直接引用，查找结束。 </li>
+<li>否则，查找失败，抛出java.lang.NoSuchFieldError异常。</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;如果查找过程成功返回了引用，将会对这个字段进行权限验证，如果发现不具备对字段的访问权限，将抛出java.lang.IllegalAccessError异常。 </p>
+<p>&emsp;&emsp;在实际应用中，虚拟机的编译器实现可能会比上述规范要求得更加严格一些，如果有一个同名字段同时出现在C的接口和父类中，或者同时在自己或父类的多个接口中出现，那编译器将可能拒绝编译。在代码清单7-4中，如果注释了Sub类中的“public static int A = 4;”，接口与父类同时存在字段A，那编译器将提示“The field Sub.A is ambiguous”，并且拒绝编译这段代码。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代码清单7-4　字段解析</span></span><br><span class="line"><span class="keyword">package</span> org.fenixsoft.classloading; </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FieldResolution</span> </span>&#123; </span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Interface0</span> </span>&#123; </span><br><span class="line">        <span class="keyword">int</span> A = <span class="number">0</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Interface1</span> <span class="keyword">extends</span> <span class="title">Interface0</span> </span>&#123; </span><br><span class="line">        <span class="keyword">int</span> A = <span class="number">1</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Interface2</span> </span>&#123; </span><br><span class="line">        <span class="keyword">int</span> A = <span class="number">2</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> <span class="keyword">implements</span> <span class="title">Interface1</span> </span>&#123; </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> A = <span class="number">3</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sub</span> <span class="keyword">extends</span> <span class="title">Parent</span> <span class="keyword">implements</span> <span class="title">Interface2</span> </span>&#123; </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> A = <span class="number">4</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[]args)</span> </span>&#123; </span><br><span class="line">        System.out.println(Sub.A); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-4-3-类方法解析"><a href="#3-4-3-类方法解析" class="headerlink" title="3.4.3 类方法解析"></a><strong>3.4.3 类方法解析</strong></h4><p>&emsp;&emsp;类方法解析的第一个步骤与字段解析一样，也需要先解析出类方法表的class_index项中索引的方法所属的类或接口的符号引用，如果解析成功，我们依然用C表示这个类，接下来虚拟机将会按照如下步骤进行后续的类方法搜索。 </p>
+<blockquote>
+<ol>
+<li>类方法和接口方法符号引用的常量类型定义是分开的，如果在类方法表中发现class_index中索引的C是个接口，那就直接抛出java.lang.IncompatibleClassChangeError异常。 </li>
+<li>如果通过了第1步，在类C中查找是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。 </li>
+<li>否则，在类C的父类中递归查找是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。 </li>
+<li>否则，在类C实现的接口列表及它们的父接口之中递归查找是否有简单名称和描述符都与目标相匹配的方法，如果存在匹配的方法，说明类C是一个抽象类，这时查找结束，抛出java.lang.AbstractMethodError异常。 </li>
+<li>否则，宣告方法查找失败，抛出java.lang.NoSuchMethodError。 </li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;最后，如果查找过程成功返回了直接引用，将会对这个方法进行权限验证，如果发现不具备对此方法的访问权限，将抛出java.lang.IllegalAccessError异常。 </p>
+<h4 id="3-4-4-接口方法解析"><a href="#3-4-4-接口方法解析" class="headerlink" title="3.4.4 接口方法解析"></a><strong>3.4.4 接口方法解析</strong></h4><p>&emsp;&emsp;接口方法也需要先解析出接口方法表的class_index项中索引的方法所属的类或接口的符号引用，如果解析成功，依然用C表示这个接口，接下来虚拟机将会按照如下步骤进行后续的接口方法搜索。</p>
+<blockquote>
+<ol>
+<li>与类方法解析不同，如果在接口方法表中发现class_index中的索引C是个类而不是接口，那就直接抛出java.lang.IncompatibleClassChangeError异常。 </li>
+<li>否则，在接口C中查找是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。 </li>
+<li>否则，在接口C的父接口中递归查找，直到java.lang.Object类（查找范围会包括Object类）为止，看是否有简单名称和描述符都与目标相匹配的方法，如果有则返回这个方法的直接引用，查找结束。 </li>
+<li>否则，宣告方法查找失败，抛出java.lang.NoSuchMethodError异常。</li>
+</ol>
+</blockquote>
+<p>&emsp;&emsp;由于接口中的所有方法默认都是public的，所以不存在访问权限的问题，因此接口方法的符号解析应当不会抛出java.lang.IllegalAccessError异常。 </p>
+<h3 id="3-5-初始化"><a href="#3-5-初始化" class="headerlink" title="3.5 初始化"></a><strong>3.5 初始化</strong></h3><p>&emsp;&emsp;类初始化阶段是类加载过程的最后一步，前面的类加载过程中，除了在加载阶段用户应用程序可以通过自定义类加载器参与之外，其余动作完全由虚拟机主导和控制。<strong>到了初始化阶段，才真正开始执行类中定义的Java程序代码</strong>（或者说是字节码）。 </p>
+<p>&emsp;&emsp;在准备阶段，变量已经赋过一次系统要求的初始值，而在初始化阶段，则根据程序员通过程序制定的主观计划去初始化类变量和其他资源，或者可以从另外一个角度来表达：初始化阶段是执行类构造器＜clinit＞()方法的过程。我们在下文会讲解＜clinit＞()方法是怎么生成的，在这里，我们先看一下＜clinit＞()方法执行过程中一些可能会影响程序运行行为的特点和细节，这部分相对更贴近于普通的程序开发人员。 </p>
+<p>&emsp;&emsp;＜clinit＞()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块（static{}块）中的语句合并产生的，<strong>编译器收集的顺序是由语句在源文件中出现的顺序所决定的</strong>，<strong>静态语句块中只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问</strong>，如代码清单7-5中的例子所示。 </p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代码清单7-5　非法向前引用变量</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> &#123; </span><br><span class="line">    <span class="keyword">static</span> &#123; </span><br><span class="line">        i = <span class="number">0</span>; <span class="comment">//给变量赋值可以正常编译通过 </span></span><br><span class="line">        System.<span class="keyword">out</span>.print（i）; <span class="comment">//这句编译器会提示"非法向前引用" </span></span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;＜clinit＞()方法与类的构造函数（或者说实例构造器＜init＞()方法）不同，它不需要显式地调用父类构造器，虚拟机会保证在子类的＜clinit＞()方法执行之前，父类的＜clinit＞()方法已经执行完毕。因此在<strong>虚拟机中第一个被执行的＜clinit＞()方法的类肯定是java.lang.Object</strong>。 </p>
+<p>&emsp;&emsp;由于父类的＜clinit＞()方法先执行，也就意味着<strong>父类中定义的静态语句块要优先于子类的变量赋值操作</strong>，如在代码清单7-6中，字段B的值将会是2而不是1。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代码清单7-6＜clinit＞()方法执行顺序</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> A = <span class="number">1</span>; </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span>&#123; </span><br><span class="line">        A = <span class="number">2</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sub</span> <span class="keyword">extends</span> <span class="title">Parent</span> </span>&#123; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> B = A; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123; </span><br><span class="line">    System.out.println(Sub.B); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;＜clinit＞()方法对于类或接口来说并不是必需的，如果一个类中没有静态语句块，也没有对变量的赋值操作，那么编译器可以不为这个类生成＜clinit＞()方法。 </p>
+<p>&emsp;&emsp;接口中不能使用静态语句块，但仍然有变量初始化的赋值操作，因此接口与类一样都会生成＜clinit＞()方法。但接口与类不同的是，执行接口的＜clinit＞()方法不需要先执行父接口的＜clinit＞()方法。<strong>只有当父接口中定义的变量使用时，父接口才会初始化</strong>。另外，接口的实现类在初始化时也一样不会执行接口的＜clinit＞()方法。</p>
+<p>&emsp;&emsp;虚拟机会保证一个类的＜clinit＞()方法在多线程环境中被正确地加锁、同步，如果多个线程同时去初始化一个类，那么只会有一个线程去执行这个类的＜clinit＞()方法，其他线程都需要阻塞等待，直到活动线程执行＜clinit＞()方法完毕。如果在一个类的＜clinit＞ ()方法中有耗时很长的操作，就可能造成多个进程阻塞，在实际应用中这种阻塞往往是很隐蔽的。代码清单7-7演示了这种场景。 </p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代码清单7-7　字段解析</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title">DeadLoopClass</span> &#123; </span><br><span class="line">    <span class="keyword">static</span> &#123; </span><br><span class="line">        <span class="comment">/*如果不加上这个if语句，编译器将提示"Initializer does not complete normally"并拒绝编译 */</span> </span><br><span class="line">        <span class="keyword">if</span>(<span class="literal">true</span>) &#123; </span><br><span class="line">            System.<span class="keyword">out</span>.println(Thread.currentThread() + <span class="string">"init DeadLoopClass"</span>);</span><br><span class="line">            <span class="keyword">while</span>(<span class="literal">true</span>) &#123; </span><br><span class="line"></span><br><span class="line">            &#125; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] args</span>) </span>&#123; </span><br><span class="line">    Runnable script=<span class="keyword">new</span> Runnable() &#123; </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">            System.<span class="keyword">out</span>.println(Thread.currentThread() + <span class="string">"start"</span>)；</span><br><span class="line">            DeadLoopClass dlc = <span class="keyword">new</span> DeadLoopClass();</span><br><span class="line">            System.<span class="keyword">out</span>.println(Thread.currentThread() + <span class="string">"run over"</span>);</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    Thread thread1 = <span class="keyword">new</span> Thread(script);</span><br><span class="line">    Thread thread2 = <span class="keyword">new</span> Thread(script);</span><br><span class="line">    thread1.start();</span><br><span class="line">    thread2.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;运行结果如下，即一条线程在死循环以模拟长时间操作，另外一条线程在阻塞等待。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thread[Thread-0, 5, main]<span class="keyword">start</span> </span><br><span class="line"><span class="keyword">Thread</span>[<span class="keyword">Thread</span><span class="number">-1</span>, <span class="number">5</span>, <span class="keyword">main</span>]<span class="keyword">start</span> </span><br><span class="line"><span class="keyword">Thread</span>[<span class="keyword">Thread</span><span class="number">-0</span>, <span class="number">5</span>, <span class="keyword">main</span>]init DeadLoopClass</span><br></pre></td></tr></table></figure>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《深入理解Java虚拟机》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019120701.html" rel="next" title="虚拟机类加载机制">
+                <i class="fa fa-chevron-left"></i> 虚拟机类加载机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019121001.html" rel="prev" title="字节码执行引擎">
+                字节码执行引擎 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">184</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#虚拟机类加载机制-类加载过程"><span class="nav-number">1.</span> <span class="nav-text">虚拟机类加载机制-类加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-类加载的过程"><span class="nav-number">1.1.</span> <span class="nav-text">第三节 类加载的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-加载"><span class="nav-number">1.1.1.</span> <span class="nav-text">3.1 加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-验证"><span class="nav-number">1.1.2.</span> <span class="nav-text">3.2 验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-文件格式验证"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">3.2.1 文件格式验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-元数据验证"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">3.2.2 元数据验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-字节码验证"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">3.2.3 字节码验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-符号引用验证"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">3.2.4 符号引用验证</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-准备"><span class="nav-number">1.1.3.</span> <span class="nav-text">3.3 准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-解析"><span class="nav-number">1.1.4.</span> <span class="nav-text">3.4 解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-类或接口的解析"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">3.4.1 类或接口的解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-字段解析"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">3.4.2 字段解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-类方法解析"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">3.4.3 类方法解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-接口方法解析"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">3.4.4 接口方法解析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-初始化"><span class="nav-number">1.1.5.</span> <span class="nav-text">3.5 初始化</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
