@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="java,jvm," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="简单介绍Java虚拟机中的编译期优化-Javac编译器，包括：Javac的源码与调试，解析与填充符号表（词法、语法分析、填充符号表），注解处理器，语义分析与字节码生成（标注检查、数据及控制流分析、解语法糖、字节码生成）等内容。">
+<meta name="keywords" content="java,jvm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编译期优化-Javac编译器">
+<meta property="og:url" content="http://linyishui.top/2019122002.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="简单介绍Java虚拟机中的编译期优化-Javac编译器，包括：Javac的源码与调试，解析与填充符号表（词法、语法分析、填充符号表），注解处理器，语义分析与字节码生成（标注检查、数据及控制流分析、解语法糖、字节码生成）等内容。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010207.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010208.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010209.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010210.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010211.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010212.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010213.png">
+<meta property="og:updated_time" content="2020-01-14T03:23:09.108Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编译期优化-Javac编译器">
+<meta name="twitter:description" content="简单介绍Java虚拟机中的编译期优化-Javac编译器，包括：Javac的源码与调试，解析与填充符号表（词法、语法分析、填充符号表），注解处理器，语义分析与字节码生成（标注检查、数据及控制流分析、解语法糖、字节码生成）等内容。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010207.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2019122002.html"/>
+
+
+
+
+
+  <title>编译期优化-Javac编译器 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2019122002.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">编译期优化-Javac编译器</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-20T18:27:38+08:00">
+                2019-12-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,169
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单介绍Java虚拟机中的编译期优化-Javac编译器，包括：Javac的源码与调试，解析与填充符号表（词法、语法分析、填充符号表），注解处理器，语义分析与字节码生成（标注检查、数据及控制流分析、解语法糖、字节码生成）等内容。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="编译期优化-Javac编译器"><a href="#编译期优化-Javac编译器" class="headerlink" title="编译期优化-Javac编译器"></a><strong>编译期优化-Javac编译器</strong></h1><h2 id="第二节-Javac编译器"><a href="#第二节-Javac编译器" class="headerlink" title="第二节 Javac编译器"></a><strong>第二节 Javac编译器</strong></h2><p>&emsp;&emsp;分析源码是了解一项技术的实现内幕最有效的手段，Javac编译器不像HotSpot虚拟机那样使用C++语言（包含少量C语言）实现，它本身就是一个由Java语言编写的程序，这为纯Java的程序员了解它的编译过程带来了很大的便利。</p>
+<h3 id="2-1-Javac的源码与调试"><a href="#2-1-Javac的源码与调试" class="headerlink" title="2.1 Javac的源码与调试"></a><strong>2.1 Javac的源码与调试</strong></h3><p>&emsp;&emsp;Javac的源码存放在JDK_SRC_HOME/langtools/src/share/classes/com/sun/tools/javac中[1]，除了JDK自身的API外，就只引用了JDK_SRC_HOME/langtools/src/share/classes/com/sun/*里面的代码，调试环境建立起来简单方便，因为基本上不需要处理依赖关系。</p>
+<p>&emsp;&emsp;以Eclipse IDE环境为例，先建立一个名为“Compiler_javac”的Java工程，然后把JDK_SRC_HOME/langtools/src/share/classes/com/sun/*目录下的源文件全部复制到工程的源码目录中，如图10-1所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010207.png" alt="Eclipse中的Javac工程"></p>
+<p>&emsp;&emsp;导入代码期间，源码文件“AnnotationProxyMaker.java”可能会提示“Access Restriction”，被Eclipse拒绝编译，如图10-2所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010208.png" alt="AnnotationProxyMaker被拒绝编译"></p>
+<p>&emsp;&emsp;这是由于Eclipse的JRE System Library中默认包含了一系列的代码访问规则（Access Rules），如果代码中引用了这些访问规则所禁止引用的类，就会提示这个错误。可以通过添加一条允许访问JAR包中所有类的访问规则来解决这个问题，如图10-3所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010209.png" alt="设置访问规则"></p>
+<p>&emsp;&emsp;导入了Javac的源码后，就可以运行com.sun.tools.javac.Main的main()方法来执行编译了，与命令行中使用Javac的命令没有什么区别，编译的文件与参数在Eclipse的“Debug Configurations”面板中的“Arguments”页签中指定。</p>
+<p>&emsp;&emsp;虚拟机规范严格定义了Class文件的格式，但是《Java虚拟机规范（第2版）》中，虽然有专门的一章“Compiling for the Java Virtual Machine”，但都是以举例的形式描述，并没有对如何把Java源码文件转变为Class文件的编译过程进行十分严格的定义，这导致Class文件编译 在某种程度上是与具体JDK实现相关的，在一些极端情况，可能出现一段代码Javac编译器可以编译，但是ECJ编译器就不可以编译的问题（10.3.1节中将会给出这样的例子）。从Sun Javac的代码来看，编译过程大致可以分为3个过程，分别是：</p>
+<blockquote>
+<ul>
+<li>解析与填充符号表过程。</li>
+<li>插入式注解处理器的注解处理过程。</li>
+<li>分析与字节码生成过程。</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;这3个步骤之间的关系与交互顺序如图10-4所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010210.png" alt="Javac的编译过程"></p>
+<p>&emsp;&emsp;Javac编译动作的入口是com.sun.tools.javac.main.JavaCompiler类，上述3个过程的代码逻辑集中在这个类的compile()和compile2()方法中，其中主体代码如图10-5所示，整个编译最关键的处理就由图中标注的8个方法来完成，下面我们具体看一下这8个方法实现了什么功能。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010211.png" alt="Javac编译过程的主体代码"></p>
+<h3 id="2-2-解析与填充符号表"><a href="#2-2-解析与填充符号表" class="headerlink" title="2.2 解析与填充符号表"></a><strong>2.2 解析与填充符号表</strong></h3><p>&emsp;&emsp;解析步骤由图10-5中的parseFiles()方法（图10-5中的过程1.1）完成，解析步骤包括了经典程序编译原理中的词法分析和语法分析两个过程。</p>
+<h4 id="2-2-1-词法、语法分析"><a href="#2-2-1-词法、语法分析" class="headerlink" title="2.2.1 词法、语法分析"></a><strong>2.2.1 词法、语法分析</strong></h4><p>&emsp;&emsp;词法分析是将源代码的字符流转变为标记（Token）集合，单个字符是程序编写过程的最小元素，而标记则是编译过程的最小元素，关键字、变量名、字面量、运算符都可以成为标记，如“int a = b + 2”这句代码包含了6个标记，分别是int、a、=、b、+、2，虽然关键字int由3个字符构成，但是它只是一个Token，不可再拆分。在Javac的源码中，词法分析过程由com.sun.tools.javac.parser.Scanner类来实现。</p>
+<p>&emsp;&emsp;语法分析是根据Token序列构造抽象语法树的过程，抽象语法树（Abstract Syntax Tree,AST）是一种用来描述程序代码语法结构的树形表示方式，语法树的每一个节点都代表着程序代码中的一个语法结构（Construct），例如包、类型、修饰符、运算符、接口、返回值甚至代码注释等都可以是一个语法结构。</p>
+<p>&emsp;&emsp;图10-6是根据Eclipse AST View插件分析出来的某段代码的抽象语法树视图，读者可以通过这张图对抽象语法树有一个直观的认识。在Javac的源码中，语法分析过程由com.sun.tools.javac.parser.Parser类实现，这个阶段产出的抽象语法树由com.sun.tools.javac.tree.JCTree类表示，经过这个步骤之后，编译器就基本不会再对源码文件进行操作了，后续的操作都建立在抽象语法树之上。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010212.png" alt="抽象语法树结构视图"></p>
+<h4 id="2-2-2-填充符号表"><a href="#2-2-2-填充符号表" class="headerlink" title="2.2.2 填充符号表"></a><strong>2.2.2 填充符号表</strong></h4><p>&emsp;&emsp;完成了语法分析和词法分析之后，下一步就是填充符号表的过程，也就是图10-5中enterTrees()方法（图10-5中的过程1.2）所做的事情。符号表（Symbol Table）是由一组符号地址和符号信息构成的表格，读者可以把它想象成哈希表中K-V值对的形式（实际上符号表不一定是哈希表实现，可以是有序符号表、树状符号表、栈结构符号表等）。符号表中所登记的信息在编译的不同阶段都要用到。在语义分析中，符号表所登记的内容将用于语义检查（如检查一个名字的使用和原先的说明是否一致）和产生中间代码。在目标代码生成阶段，当对符号名进行地址分配时，符号表是地址分配的依据。</p>
+<p>&emsp;&emsp;在Javac源代码中，填充符号表的过程由com.sun.tools.javac.comp.Enter类实现，此过程的出口是一个待处理列表（To Do List），包含了每一个编译单元的抽象语法树的顶级节点，以及package-info.java（如果存在的话）的顶级节点。</p>
+<h3 id="2-3-注解处理器"><a href="#2-3-注解处理器" class="headerlink" title="2.3 注解处理器"></a><strong>2.3 注解处理器</strong></h3><p>&emsp;&emsp;在JDK1.5之后，Java语言提供了对注解（Annotation）的支持，这些注解与普通的Java代码一样，是在运行期间发挥作用的。在JDK 1.6中实现了JSR-269规范[1]，提供了一组插入式注解处理器的标准API在编译期间对注解进行处理，我们可以把它看做是一组编译器的插件，在这些插件里面，可以读取、修改、添加抽象语法树中的任意元素。如果这些插件在处理注解期间对语法树进行了修改，编译器将回到解析及填充符号表的过程重新处理，直到所有插入式注解处理器都没有再对语法树进行修改为止，每一次循环称为一个Round，也就是图10-4中的回环过程。</p>
+<p>&emsp;&emsp;有了编译器注解处理的标准API后，我们的代码才有可能干涉编译器的行为，由于语法树中的任意元素，甚至包括代码注释都可以在插件之中访问到，所以通过插入式注解处理器实现的插件在功能上有很大的发挥空间。只要有足够的创意，程序员可以使用插入式注解处理器来实现许多原本只能在编码中完成的事情，本章最后会给出一个使用插入式注解处理器的简单实战。</p>
+<p>&emsp;&emsp;在Javac源码中，插入式注解处理器的初始化过程是在initPorcessAnnotations()方法中完成的，而它的执行过程则是在processAnnotations()方法中完成的，这个方法判断是否还有新的注解处理器需要执行，如果有的话，通过com.sun.tools.javac.processing.JavacProcessingEnvironment类的doProcessing()方法生成一个新的JavaCompiler对象对编译的后续步骤进行处理。</p>
+<h3 id="2-4-语义分析与字节码生成"><a href="#2-4-语义分析与字节码生成" class="headerlink" title="2.4 语义分析与字节码生成"></a><strong>2.4 语义分析与字节码生成</strong></h3><p>&emsp;&emsp;语法分析之后，编译器获得了程序代码的抽象语法树表示，语法树能表示一个结构正确的源程序的抽象，但无法保证源程序是符合逻辑的。而语义分析的主要任务是对结构上正确的源程序进行上下文有关性质的审查，如进行类型审查。举个例子，假设有如下的3个变量定义语句：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">int a</span>=1; </span><br><span class="line"><span class="attribute">boolean b</span> = false; </span><br><span class="line"><span class="attribute">char c</span>=2;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;后续可能出现的赋值运算：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">int d</span> = a + c; </span><br><span class="line"><span class="attribute">int d</span> = b + c; </span><br><span class="line"><span class="attribute">char d</span> = a + c;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;后续代码中如果出现了如上3种赋值运算的话，那它们都能构成结构正确的语法树，但是只有第1种的写法在语义上是没有问题的，能够通过编译，其余两种在Java语言中是不合逻辑的，无法编译（是否合乎语义逻辑必须限定在具体的语言与具体的上下文环境之中才有意义。如在C语言中，a、b、c的上下文定义不变，第2、3种写法都是可以正确编译）。</p>
+<h4 id="2-4-1-标注检查"><a href="#2-4-1-标注检查" class="headerlink" title="2.4.1 标注检查"></a><strong>2.4.1 标注检查</strong></h4><p>&emsp;&emsp;Javac的编译过程中，语义分析过程分为标注检查以及数据及控制流分析两个步骤，分别由图10-5中所示的attribute()和flow()方法（分别对应图10-5中的过程3.1和过程3.2）完成。</p>
+<p>&emsp;&emsp;标注检查步骤检查的内容包括诸如变量使用前是否已被声明、变量与赋值之间的数据类型是否能够匹配等。在标注检查步骤中，还有一个重要的动作称为常量折叠，如果我们在代码中写了如下定义：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">int a</span> = 1 + 2;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;那么在语法树上仍然能看到字面量“1”、“2”以及操作符“+”，但是在经过常量折叠之后，它们将会被折叠为字面量“3”，如图10-7所示，这个插入式表达式（Infix Expression）的值已经在语法树上标注出来了（ConstantExpressionValue：3）。由于编译期间进行了常量折叠，所以在代码里面定义“a=1+2”比起直接定义“a=3”，并不会增加程序运行期哪怕仅仅一个CPU指令的运算量。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010213.png" alt="常量折叠"></p>
+<p>&emsp;&emsp;标注检查步骤在Javac源码中的实现类是com.sun.tools.javac.comp.Attr类和com.sun.tools.javac.comp.Check类。</p>
+<h4 id="2-4-2-数据及控制流分析"><a href="#2-4-2-数据及控制流分析" class="headerlink" title="2.4.2 数据及控制流分析"></a><strong>2.4.2 数据及控制流分析</strong></h4><p>&emsp;&emsp;数据及控制流分析是对程序上下文逻辑更进一步的验证，它可以检查出诸如程序局部变量在使用前是否有赋值、方法的每条路径是否都有返回值、是否所有的受查异常都被正确处理了等问题。编译时期的数据及控制流分析与类加载时的数据及控制流分析的目的基本上是一致的，但校验范围有所区别，有一些校验项只有在编译期或运行期才能进行。下面举一个关于final修饰符的数据及控制流分析的例子，见代码清单10-1。</p>
+<p>&emsp;&emsp;代码清单10-1　final语义校验</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方法一带有final修饰 </span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> arg)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> var=<span class="number">0</span>; </span><br><span class="line">    <span class="comment">//do something </span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//方法二没有final修饰 </span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">int</span> var=<span class="number">0</span>; </span><br><span class="line">    <span class="comment">//do something </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在这两个foo()方法中，第一种方法的参数和局部变量定义使用了final修饰符，而第二种方法则没有，在代码编写时程序肯定会受到final修饰符的影响，不能再改变arg和var变量的值，但是这两段代码编译出来的Class文件是没有任何一点区别的，通过第6章的讲解我们已经知道，局部变量与字段（实例变量、类变量）是有区别的，它在常量池中没有CONSTANT_Fieldref_info的符号引用，自然就没有访问标志（Access_Flags）的信息，甚至可能连名称都不会保留下来（取决于编译时的选项），自然在Class文件中不可能知道一个局部变量是不是声明为final了。因此，将局部变量声明为final，对运行期是没有影响的，变量的不变性仅仅由编译器在编译期间保障。在Javac的源码中，数据及控制流分析的入口是图10-5中的flow()方法（对应图10-5中的过程3.2），具体操作由com.sun.tools.javac.comp.Flow类来完成。</p>
+<h4 id="2-4-3-解语法糖"><a href="#2-4-3-解语法糖" class="headerlink" title="2.4.3 解语法糖"></a><strong>2.4.3 解语法糖</strong></h4><p>&emsp;&emsp;语法糖（Syntactic Sugar），也称糖衣语法，是由英国计算机科学家彼得·约翰·兰达（Peter J.Landin）发明的一个术语，指在计算机语言中添加的某种语法，这种语法对语言的功能并没有影响，但是更方便程序员使用。通常来说，使用语法糖能够增加程序的可读性，从而减少程序代码出错的机会。</p>
+<p>&emsp;&emsp;Java在现代编程语言之中属于“低糖语言”（相对于C#及许多其他JVM语言来说），尤其是JDK 1.5之前的版本，“低糖”语法也是Java语言被怀疑已经“落后”的一个表面理由。Java中最常用的语法糖主要是前面提到过的泛型（泛型并不一定都是语法糖实现，如C#的泛型就是直接由CLR支持的）、变长参数、自动装箱/拆箱等，虚拟机运行时不支持这些语法，它们在编译阶段还原回简单的基础语法结构，这个过程称为解语法糖。Java的这些语法糖被解除后是什么样子，将在10.3节中详细讲述。</p>
+<p>&emsp;&emsp;在Javac的源码中，解语法糖的过程由desugar()方法触发，在com.sun.tools.javac.comp.TransTypes类和com.sun.tools.javac.comp.Lower类中完成。</p>
+<h4 id="2-4-4-字节码生成"><a href="#2-4-4-字节码生成" class="headerlink" title="2.4.4 字节码生成"></a><strong>2.4.4 字节码生成</strong></h4><p>&emsp;&emsp;字节码生成是Javac编译过程的最后一个阶段，在Javac源码里面由com.sun.tools.javac.jvm.Gen类来完成。字节码生成阶段不仅仅是把前面各个步骤所生成的信息（语法树、符号表）转化成字节码写到磁盘中，编译器还进行了少量的代码添加和转换工作。</p>
+<p>&emsp;&emsp;例如，前面章节中多次提到的实例构造器＜init＞()方法和类构造器＜clinit＞()方法就是在这个阶段添加到语法树之中的（注意，这里的实例构造器并不是指默认构造函数，如果用户代码中没有提供任何构造函数，那编译器将会添加一个没有参数的、访问性（public、protected或private）与当前类一致的默认构造函数，这个工作在填充符号表阶段就已经完成），这两个构造器的产生过程实际上是一个代码收敛的过程，编译器会把语句块（对于实例构造器而言是“{}”块，对于类构造器而言是“static{}”块）、变量初始化（实例变量和类变量）、调用父类的实例构造器（仅仅是实例构造器，＜clinit＞()方法中无须调用父类的＜clinit＞()方法，虚拟机会自动保证父类构造器的执行，但在＜clinit＞()方法中经常会生成调用java.lang.Object的＜init＞()方法的代码）等操作收敛到＜init＞()和＜clinit＞()方法之中，并且保证一定是按先执行父类的实例构造器，然后初始化变量，最后执行语句块的顺序进行，上面所述的动作由Gen.normalizeDefs()方法来实现。除了生成构造器以外，还有其他的一些代码替换工作用于优化程序的实现逻辑，如把字符串的加操作替换为StringBuffer或StringBuilder（取决于目标代码的版本是否大于或等于JDK1.5）的append()操作等。</p>
+<p>&emsp;&emsp;完成了对语法树的遍历和调整之后，就会把填充了所有所需信息的符号表交给com.sun.tools.javac.jvm.ClassWriter类，由这个类的writeClass()方法输出字节码，生成最终的Class文件，到此为止整个编译过程宣告结束。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《深入理解Java虚拟机》</p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/jvm/" rel="tag"># jvm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019122001.html" rel="next" title="编译期优化">
+                <i class="fa fa-chevron-left"></i> 编译期优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019122201.html" rel="prev" title="编译期优化-实战">
+                编译期优化-实战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">193</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#编译期优化-Javac编译器"><span class="nav-number">1.</span> <span class="nav-text">编译期优化-Javac编译器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-Javac编译器"><span class="nav-number">1.1.</span> <span class="nav-text">第二节 Javac编译器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Javac的源码与调试"><span class="nav-number">1.1.1.</span> <span class="nav-text">2.1 Javac的源码与调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-解析与填充符号表"><span class="nav-number">1.1.2.</span> <span class="nav-text">2.2 解析与填充符号表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-词法、语法分析"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">2.2.1 词法、语法分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-填充符号表"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">2.2.2 填充符号表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-注解处理器"><span class="nav-number">1.1.3.</span> <span class="nav-text">2.3 注解处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-语义分析与字节码生成"><span class="nav-number">1.1.4.</span> <span class="nav-text">2.4 语义分析与字节码生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-1-标注检查"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">2.4.1 标注检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-2-数据及控制流分析"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">2.4.2 数据及控制流分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-3-解语法糖"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">2.4.3 解语法糖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-4-字节码生成"><span class="nav-number">1.1.4.4.</span> <span class="nav-text">2.4.4 字节码生成</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

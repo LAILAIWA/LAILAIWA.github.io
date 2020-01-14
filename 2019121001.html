@@ -104,7 +104,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010169.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010170.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20191201/201912010171.png">
-<meta property="og:updated_time" content="2020-01-10T03:11:59.129Z">
+<meta property="og:updated_time" content="2020-01-10T09:41:48.239Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="字节码执行引擎">
 <meta name="twitter:description" content="简单介绍Java虚拟机中的字节码执行引擎，包括：概述，运行时栈帧结构，方法调用，基于栈的字节码解释执行引擎（解释执行、基于栈的指令集与基于寄存器的指令集、基于栈的解释器执行过程），总结等内容。">
@@ -406,7 +406,7 @@
       
 
       
-        <h1 id="虚拟机字节码执行引擎"><a href="#虚拟机字节码执行引擎" class="headerlink" title="虚拟机字节码执行引擎 "></a><strong>虚拟机字节码执行引擎 </strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><p>&emsp;&emsp;代码编译的结果从本地机器码转变为字节码，是存储格式发展的一小步，却是编程语言发展的一大步。</p>
+        <h1 id="虚拟机字节码执行引擎"><a href="#虚拟机字节码执行引擎" class="headerlink" title="虚拟机字节码执行引擎"></a><strong>虚拟机字节码执行引擎</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><p>&emsp;&emsp;代码编译的结果从本地机器码转变为字节码，是存储格式发展的一小步，却是编程语言发展的一大步。</p>
 <p>&emsp;&emsp;执行引擎是Java虚拟机最核心的组成部分之一。“虚拟机”是一个相对于“物理机”的概念，这两种机器都有代码执行能力，其区别是物理机的执行引擎是直接建立在处理器、硬件、指令集和操作系统层面上的，而虚拟机的执行引擎则是由自己实现的，因此可以自行制定指令集与执行引擎的结构体系，并且能够执行那些不被硬件直接支持的指令集格式。</p>
 <p>&emsp;&emsp;在Java虚拟机规范中制定了虚拟机字节码执行引擎的概念模型，这个概念模型成为各种虚拟机执行引擎的统一外观（Facade）。在不同的虚拟机实现里面，执行引擎在执行Java代码的时候可能会有解释执行（通过解释器执行）和编译执行（通过即时编译器产生本地代码执行）两种选择[1]，也可能两者兼备，甚至还可能会包含几个不同级别的编译器执行引擎。但从外观上看起来，所有的Java虚拟机的执行引擎都是一致的：输入的是字节码文件，处理过程是字节码解析的等效过程，输出的是执行结果，本章将主要从概念模型的角度来讲解虚拟机的方法调用和字节码执行。</p>
 <hr>
@@ -591,7 +591,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">186</span>
+                  <span class="site-state-item-count">193</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -681,7 +681,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#虚拟机字节码执行引擎"><span class="nav-number">1.</span> <span class="nav-text">虚拟机字节码执行引擎 </span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-运行时栈帧结构"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 运行时栈帧结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-方法调用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 方法调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-基于栈的字节码解释执行引擎"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 基于栈的字节码解释执行引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-解释执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 解释执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-基于栈的指令集与基于寄存器的指令集"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 基于栈的指令集与基于寄存器的指令集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-基于栈的解释器执行过程"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 基于栈的解释器执行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-总结"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#虚拟机字节码执行引擎"><span class="nav-number">1.</span> <span class="nav-text">虚拟机字节码执行引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-运行时栈帧结构"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 运行时栈帧结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-方法调用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 方法调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-基于栈的字节码解释执行引擎"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 基于栈的字节码解释执行引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-解释执行"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 解释执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-基于栈的指令集与基于寄存器的指令集"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 基于栈的指令集与基于寄存器的指令集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-基于栈的解释器执行过程"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 基于栈的解释器执行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-总结"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 总结</span></a></li></ol></li></ol></div>
             
 
           </div>
