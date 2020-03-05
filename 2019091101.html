@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="GitLab。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-09T02:37:25.817Z">
+<meta property="og:updated_time" content="2020-02-28T03:25:03.362Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GitLab（未完成）">
 <meta name="twitter:description" content="GitLab。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  945
+                  972
                 </span>
               
 
@@ -400,19 +400,19 @@
         <h1 id="GitLab"><a href="#GitLab" class="headerlink" title="GitLab"></a><strong>GitLab</strong></h1><h2 id="第一节-介绍"><a href="#第一节-介绍" class="headerlink" title="第一节 介绍"></a><strong>第一节 介绍</strong></h2><p>&emsp;&emsp;GitLab是由GitLab Inc.开发，使用MIT许可证的基于网络的Git仓库管理工具。它由 Ruby 写成。后来一些部分用 Go 语言重写。</p>
 <h3 id="github和github区别"><a href="#github和github区别" class="headerlink" title="github和github区别"></a><strong>github和github区别</strong></h3><p>&emsp;&emsp;github和github都是基于git的web代码仓库管理软件。区别主要在于github上的仓库基本上都是开源的，当然也可以创建私有的代码仓库，但是费用比较昂贵。而gitlab是可以在企业内部搭建，可以创建私有的代码仓库，除此之外，gitlab还有一些其他的高级特性。相同之处是他们都是基于版本管理系统git，都使用git的命令进行操作。</p>
 <hr>
-<h2 id="第二节-安装"><a href="#第二节-安装" class="headerlink" title="第二节 安装"></a><strong>第二节 安装</strong></h2><h3 id="选择版本"><a href="#选择版本" class="headerlink" title="选择版本"></a><strong>选择版本</strong></h3><p>&emsp;&emsp;GitLab是建立在开放核心模型之上的。这意味着GitLab有两个版本: <strong>社区版</strong>和<strong>企业版</strong>。</p>
+<h2 id="第二节-安装"><a href="#第二节-安装" class="headerlink" title="第二节 安装"></a><strong>第二节 安装</strong></h2><h3 id="2-1-选择版本"><a href="#2-1-选择版本" class="headerlink" title="2.1 选择版本"></a><strong>2.1 选择版本</strong></h3><p>&emsp;&emsp;GitLab是建立在开放核心模型之上的。这意味着GitLab有两个版本: <strong>社区版</strong>和<strong>企业版</strong>。</p>
 <p>&emsp;&emsp;社区版是开放源码的，拥有MIT的外籍许可证。企业版构建在社区版之上，使用相同的核心，但在此基础上添加了其他特性和功能，这是在专有许可下进行的。</p>
 <p>&emsp;&emsp;对于这两个版本: GitLab中的所有javascript代码都是开源的。所有由GitLab编写的javascript代码都在同一个MIT许可下。</p>
 <p>&emsp;&emsp;社区版升级到企业版的过程中需要停机，如果没有许可证企业版不会和社区版有明显差异。</p>
 <p><a href="https://about.gitlab.com/installation" title="Title" target="_blank" rel="noopener">Install GitLab Enterprise Edition.</a></p>
 <p><a href="https://about.gitlab.com/install/?version=ce" title="Title" target="_blank" rel="noopener">Install GitLab Community Edition.</a></p>
-<h3 id="过程"><a href="#过程" class="headerlink" title="过程"></a><strong>过程</strong></h3><p>&emsp;&emsp;安装环境是CentOS</p>
+<h3 id="2-2-过程"><a href="#2-2-过程" class="headerlink" title="2.2 过程"></a><strong>2.2 过程</strong></h3><p>&emsp;&emsp;此次安装的环境是CentOS，首先键入以下命令调整防火墙。</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y curl policycoreutils-python openssh-server</span><br><span class="line">sudo systemctl enable sshd</span><br><span class="line">sudo systemctl start sshd</span><br><span class="line">sudo firewall-<span class="keyword">cmd</span><span class="bash"> --permanent --add-service=http</span></span><br><span class="line"><span class="bash">sudo firewall-cmd --permanent --add-service=https</span></span><br><span class="line"><span class="bash">sudo systemctl reload firewalld</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;安装curl（系统一般默认会安装）</p>
+<p>&emsp;&emsp;然后安装curl（系统一般默认会安装）</p>
 <blockquote>
 <p>yum -y install curl</p>
 </blockquote>
-<p>&emsp;&emsp;通过systemctl status firewalld查看firewalld状态，发现当前是dead状态，即防火墙未开启</p>
+<p>&emsp;&emsp;再通过systemctl status firewalld查看firewalld状态，发现当前是dead状态，即防火墙未开启</p>
 <blockquote>
 <p>sudo systemctl status firewalld</p>
 </blockquote>
@@ -426,11 +426,11 @@
 <blockquote>
 <p>sudo journalctl -xe</p>
 </blockquote>
-<p>&emsp;&emsp;postfix[5181]: fatal: parameter inet_interfaces: no local     interface found for ::1</p>
+<p>&emsp;&emsp;提示：postfix[5181]: fatal: parameter inet_interfaces: no local     interface found for ::1</p>
 <p>&emsp;&emsp;修改/etc/postfix/main.cf文件中  inet_interfaces = localhost 为 inet_interfaces = all</p>
 <figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/postfix/</span><br><span class="line">vi main.cf</span><br><span class="line">-<span class="ruby">-查询关键字</span></span><br><span class="line"><span class="ruby">/inet_interfaces</span></span><br><span class="line"><span class="ruby">--进入编辑模式</span></span><br><span class="line"><span class="ruby">i</span></span><br><span class="line"><span class="ruby">--修改后恢复命令模式</span></span><br><span class="line"><span class="ruby">[ESC]</span></span><br><span class="line"><span class="ruby">--保存并退出</span></span><br><span class="line"><span class="ruby"><span class="symbol">:wq</span></span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;再次启动postfix服务正常</p>
-<p>&emsp;&emsp;添加GitLab package repository。</p>
+<p>&emsp;&emsp;然后添加GitLab package repository。</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https:<span class="regexp">//</span>packages.gitlab.com<span class="regexp">/install/</span>repositories<span class="regexp">/gitlab/gi</span>tlab-ee<span class="regexp">/script.rpm.sh | sudo bash</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;接下来安装GitLab包，将<a href="https://gitlab.example.com更改为要访问gitlab实例的URL。安装将自动配置并在该URL启动GitLab。" target="_blank" rel="noopener">https://gitlab.example.com更改为要访问gitlab实例的URL。安装将自动配置并在该URL启动GitLab。</a></p>
 <p>&emsp;&emsp;对于<a href="https://URLs，GitLab将自动请求一个带有Let&#39;s" target="_blank" rel="noopener">https://URLs，GitLab将自动请求一个带有Let&#39;s</a> Encrypt的证书，该证书需要入站HTTP访问和有效的主机名。您也可以使用自己的证书或只使用http://。</p>
@@ -602,7 +602,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">224</span>
+                  <span class="site-state-item-count">225</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -692,7 +692,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab"><span class="nav-number">1.</span> <span class="nav-text">GitLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#github和github区别"><span class="nav-number">1.1.1.</span> <span class="nav-text">github和github区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-安装"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#选择版本"><span class="nav-number">1.2.1.</span> <span class="nav-text">选择版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-使用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 使用</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab"><span class="nav-number">1.</span> <span class="nav-text">GitLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#github和github区别"><span class="nav-number">1.1.1.</span> <span class="nav-text">github和github区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-安装"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-选择版本"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 选择版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-使用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 使用</span></a></li></ol></li></ol></div>
             
 
           </div>
