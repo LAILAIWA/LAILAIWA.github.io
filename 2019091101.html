@@ -96,10 +96,13 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="GitLab。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-02-28T03:25:03.362Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png">
+<meta property="og:updated_time" content="2020-03-06T02:27:25.270Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GitLab（未完成）">
 <meta name="twitter:description" content="GitLab。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010103.png">
 
 
 
@@ -356,7 +359,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  972
+                  3,895
                 </span>
               
 
@@ -372,7 +375,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  15
                 </span>
               
             </div>
@@ -440,7 +443,1026 @@
 <p>&emsp;&emsp;排查问题，尝试开放端口号6725，（阿里云还要在控制台安全组开放端口），再次测试访问成功。</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-<span class="keyword">cmd</span><span class="bash"> -add-port=6725/tcp --permanent</span></span><br><span class="line"><span class="bash">sudo firewall-cmd --reload</span></span><br><span class="line"><span class="bash">sudo firewall-cmd --list-ports</span></span><br></pre></td></tr></table></figure>
 <hr>
-<h2 id="第三节-使用"><a href="#第三节-使用" class="headerlink" title="第三节 使用"></a><strong>第三节 使用</strong></h2><p>&emsp;&emsp;未完待续…</p>
+<h2 id="第三节-使用"><a href="#第三节-使用" class="headerlink" title="第三节 使用"></a><strong>第三节 使用</strong></h2><h3 id="3-新增用户"><a href="#3-新增用户" class="headerlink" title="3. 新增用户"></a><strong>3. 新增用户</strong></h3><p>&emsp;&emsp;管理员身份登录GitLab，扳手图标【Admin Area】-&gt;【users】-&gt;【填写基本信息】</p>
+<h3 id="3-管理工作组"><a href="#3-管理工作组" class="headerlink" title="3. 管理工作组"></a><strong>3. 管理工作组</strong></h3><p>&emsp;&emsp;<strong>新增工作组</strong>：管理员身份登录GitLab，【Groups】-&gt;【new group】-&gt;【填写基本信息】</p>
+<p>&emsp;&emsp;<strong>为工作组配置成员</strong>：【Admin Area】-&gt;【Groups】-&gt;【点击工作组】-&gt;【选择用户和身份】-&gt;【add users to group】</p>
+<h3 id="3-成员权限"><a href="#3-成员权限" class="headerlink" title="3. 成员权限"></a><strong>3. 成员权限</strong></h3><p>&emsp;&emsp;用户具有不同的能力，具体取决于他们在特定组或项目中的访问级别。如果用户同时在组的项目和项目本身中，则使用最高权限级别。在公共和内部项目中，不会强制实施Guest角色。所有用户都可以创建问题，发表评论，克隆或下载项目代码。当成员离开团队时， 将自动取消分配所有分配的问题和合并请求。GitLab 管理员获得所有权限。</p>
+<blockquote>
+<p>项目成员角色</p>
+<ul>
+<li>Guest - 游客，可以创建issue、发表评论，不能读写版本库</li>
+<li>Reporter - 产品经理，可以克隆代码，不能提交，可以赋予测试</li>
+<li>Developer - 开发者，可以克隆代码、开发、提交、push</li>
+<li>Master (11.0版本中已重命名为 Maintainer) - 维护者，可以创建项目、添加tag、保护分支、添加项目成员、编辑项目，一般GitLab管理员或者CTO才有此权限</li>
+<li>Owner - 所有者</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;项目成员权限</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Action</th>
+<th style="text-align:center">Guest</th>
+<th style="text-align:center">Reporter</th>
+<th style="text-align:center">Developer</th>
+<th style="text-align:center">Maintainer</th>
+<th style="text-align:center">Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">创建新问题</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建机密问题</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看机密问题</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">留言</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看相关问题</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看工作列表</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看工作日志</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">下载并浏览作业工件</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看维基页面</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看许可证管理报告</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看安全报告</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看项目代码</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">拉项目代码</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">下载项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">分配问题</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">分配合并请求</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">标签问题</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">标签合并请求</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建代码段</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理问题跟踪器</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理标签</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看提交状态</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看容器注册表</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看环境</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看合并请求列表</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理相关问题</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">锁定问题讨论</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从漏洞创建问题</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看错误跟踪列表</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">锁定合并请求讨论</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建新环境</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">停止环境</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理/接受合并请求</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建新的合并请求</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建新分支</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">推送到未受保护的分支机构</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">强制推送到不受保护的分支机构</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除未受保护的分支</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">添加标签</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">写一个维基</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">取消并重试作业</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建或更新提交状态</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">更新容器注册表</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除容器注册表图像</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建/编辑/删除项目里程碑</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看已批准/列入黑名单的许可</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">使用安全仪表板</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">解除漏洞</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">应用代码更改建议</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">使用环境终端</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">运行Web IDE的交互式Web终端</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">添加新的团队成员</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">推送到受保护的分支</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">启用/禁用分支保护</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">为开发人员打开/关闭受保护的分支推送</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">启用/禁用标签保护</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">重写/删除Git标签</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">将部署密钥添加到项目中</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">配置项目挂钩</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理跑步者</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理工作触发器</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理变量</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理GitLab页面</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理GitLab Pages域和证书</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除GitLab页面</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看受访问控制保护的GitLab页面</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理集群</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理许可证政策</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">编辑评论（由任何用户发布）</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理错误跟踪</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">切换可见性级别</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">将项目转移到另一个名称空</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除问题</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除页面</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">强行推动受保护的分支机构                    </td>
+</tr>
+<tr>
+<td style="text-align:left">删除受保护的分支                    </td>
+</tr>
+<tr>
+<td style="text-align:left">查看项目审核事件</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;组成员权限</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Action</th>
+<th style="text-align:center">Guest</th>
+<th style="text-align:center">Reporter</th>
+<th style="text-align:center">Developer</th>
+<th style="text-align:center">Maintainer</th>
+<th style="text-align:center">Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">浏览组</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">编辑组</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建子组</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">在组中创建项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理小组成员</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除组</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理组标签</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建/编辑/删除组里程碑</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看组史诗</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建/编辑组史诗</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除组史诗</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看组审核事件</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;GitLab CI / CD权限</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Action</th>
+<th style="text-align:center">Guest,Reporter</th>
+<th style="text-align:center">Developer</th>
+<th style="text-align:center">Maintainer</th>
+<th style="text-align:center">Admin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">查看提交和工作</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">重试或取消工作</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">擦除作业工件和跟踪</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">删除项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">创建项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">更改项目配置</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">添加特定的跑步者</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">添加共享的运行者</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">查看系统中的事件</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">管理界面</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;工作权限</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Action</th>
+<th style="text-align:center">Guest, Reporter</th>
+<th style="text-align:center">Developer</th>
+<th style="text-align:center">Maintainer</th>
+<th style="text-align:center">Admin </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">运行CI作业</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从当前项目克隆源和LFS</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从公共项目克隆源和LFS</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从内部项目克隆源和LFS</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">私有项目的克隆源和LFS</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">推送源和LFS</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:left">从当前项目中提取容器图像</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从公共项目中提取容器图像</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从内部项目中提取容器图像</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">从私人项目中提取容器图像</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">将容器图像推送到当前项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td style="text-align:left">将容器图像推送到其他项目</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">✓</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-项目管理"><a href="#3-项目管理" class="headerlink" title="3. 项目管理"></a><strong>3. 项目管理</strong></h3><p>&emsp;&emsp;<strong>新建项目</strong>：填写项目基本信息。</p>
+<p>&emsp;&emsp;<strong>配置项目成员</strong>：【项目】-&gt;【Settings】-&gt;【Members】-&gt;【添加成员或添加小组】</p>
+<h3 id="3-配置SSH"><a href="#3-配置SSH" class="headerlink" title="3. 配置SSH"></a><strong>3. 配置SSH</strong></h3><p>&emsp;&emsp;通过HTTP和SSH可以去做克隆和提交代码，HTTP需要每次提交的时候输入邮箱号和密码，SSH则比较方便，通过生成一个密钥和一个公钥，这个公钥可以使用在GitHub，GItLab，内网GitLab中。</p>
+<p>&emsp;&emsp;大多数 Git 服务器都会选择使用 SSH 公钥来进行授权。系统中的每个用户都必须提供一个公钥用于授权，没有的话就要生成一个。</p>
+<p>&emsp;&emsp;生成公钥的过程在所有操作系统上都差不多。首先你要确认一下本机是否已经有一个公钥。</p>
+<p>&emsp;&emsp;SSH 公钥默认储存在账户的主目录下的 ~/.ssh 目录。</p>
+<p>&emsp;&emsp;id_rsa和id_rsa.pub(或者是id_dsa和id_dsa.pub之类成对的文件)，有 .pub 后缀的文件就是公钥，另一个文件则是密钥。</p>
+<p>&emsp;&emsp;假如没有这些文件，甚至连 .ssh 目录都没有，可以用 ssh-keygen 来创建。在 Linux/Mac 系统上由 SSH 包提供，而在 Windows 上则包含在 GitBash 里面里：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh-keygen -t rsa -C <span class="string">"xxx@xxx.com"</span></span></span><br><span class="line"></span><br><span class="line">--查看生成的公钥</span><br><span class="line">vim id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;登陆GitLab，【点击用户图像】-&gt;【Settings】-&gt;【左栏 SSH keys】</p>
+<h3 id="3-分支管理"><a href="#3-分支管理" class="headerlink" title="3. 分支管理"></a><strong>3. 分支管理</strong></h3><p>&emsp;&emsp;<strong>新增分支</strong>：【项目】-&gt;【Repository】-&gt;【Branches】-&gt;【新增分支】</p>
+<p>&emsp;&emsp;一般情况下，一个项目会包含以下四种分支：</p>
+<blockquote>
+<ul>
+<li>master：主分支，有且只有一个，主干</li>
+<li>release：线上分支，一般为线上版本，当线上版本发布后会将release分支合并到master</li>
+<li>develop：开发分支，通产给测试部署环境或者打包的分支，每个人在自己的分支上开发完成后，向develop分支合并</li>
+<li>feature：通常是一个功能分支或者个人分支，每个公司的用法不一样，feature分支一般会有很多个，通常merge完成后会删除</li>
+</ul>
+</blockquote>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010103.png" alt="Git分支图"></p>
+<h3 id="3-CI-CD管理"><a href="#3-CI-CD管理" class="headerlink" title="3. CI/CD管理"></a><strong>3. CI/CD管理</strong></h3><h4 id="3-x-1-简介"><a href="#3-x-1-简介" class="headerlink" title="3.x.1 简介"></a><strong>3.x.1 简介</strong></h4><p>&emsp;&emsp;<a href="../2020020501.html" title="Title">CI/CD-持续集成和持续交付</a></p>
+<h4 id="3-x-2-特性"><a href="#3-x-2-特性" class="headerlink" title="3.x.2 特性"></a><strong>3.x.2 特性</strong></h4><blockquote>
+<p>gitlab ci/cd具有以下特性：</p>
+<ul>
+<li>跨平台支持：只要支持go语言的平台均可以在上面进行ci,目前基本涵盖了大部分的操作系统．</li>
+<li>多语言支持：构建时是通过脚本触发，因此基本上支持所有的语言．</li>
+<li>Pipeline：可以通过不同的阶段形成工作流</li>
+<li>支持docker：可以构建docker镜像，同时也支持触发在Kubernetes允许．</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;所有特性：<a href="https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/" title="Title" target="_blank" rel="noopener">GitLab Continuous Integration (CI) &amp; Continuous Delivery (CD)</a></p>
+<h4 id="3-x-3-结构"><a href="#3-x-3-结构" class="headerlink" title="3.x.3 结构"></a><strong>3.x.3 结构</strong></h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png" alt="CI/CD架构"></p>
+<p>&emsp;&emsp;gitlab ci/cd是由独立的runner程序完成，runner采用go语言编写，因此可以很好的进行跨平台，通常可以将runner部署到任何gitlab server之外的服务器，从而避免对gitlab server的影响．</p>
+<p>&emsp;&emsp;runner项目：<a href="https://gitlab.com/gitlab-org/gitlab-runner" title="Title" target="_blank" rel="noopener">gitlab-runner</a></p>
+<h4 id="3-x-4-流程"><a href="#3-x-4-流程" class="headerlink" title="3.x.4 流程"></a><strong>3.x.4 流程</strong></h4><p>&emsp;&emsp;gitlab通过在项目的根目录放置.gitlab-ci.yml文件来触发pipline，文件书写遵循yml语法，因此，概括来说gitlab ci/cd只需要两步。</p>
+<blockquote>
+<ul>
+<li>写好.gitlab-ci.yml文件，并放置到项目根目录</li>
+<li>配置好gitlab runner．完成后，提交代码时会自动根据gitlab-ci.yml的触发条件进行执行相应的stage.</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;gitlab-ci.yml文件</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">stage<span class="variable">s:</span></span><br><span class="line">  - test</span><br><span class="line">  - build</span><br><span class="line">  - deploy</span><br><span class="line"></span><br><span class="line">tes<span class="variable">t:</span></span><br><span class="line">  stage: test</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span> <span class="keyword">echo</span> <span class="string">"Running tests"</span></span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br><span class="line"></span><br><span class="line">build:</span><br><span class="line">  stage: build</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span> <span class="keyword">echo</span> <span class="string">"Building the app"</span></span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br><span class="line"></span><br><span class="line">deploy_stagin<span class="variable">g:</span></span><br><span class="line">  stage: deploy</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span></span><br><span class="line">    - <span class="keyword">echo</span> <span class="string">"Deploy to staging server"</span></span><br><span class="line">  environmen<span class="variable">t:</span></span><br><span class="line">    name: staging</span><br><span class="line">    ur<span class="variable">l:</span> http<span class="variable">s:</span>//staging.example.<span class="keyword">com</span></span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br><span class="line"></span><br><span class="line">deploy_prod:</span><br><span class="line">  stage: deploy</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span></span><br><span class="line">    - <span class="keyword">echo</span> <span class="string">"Deploy to production server"</span></span><br><span class="line">  environmen<span class="variable">t:</span></span><br><span class="line">    name: production</span><br><span class="line">    ur<span class="variable">l:</span> http<span class="variable">s:</span>//example.<span class="keyword">com</span></span><br><span class="line">  when: manual</span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;如上，是一个具有ci/cd功能的.gitlab-ci.yml文件的写法，</p>
+<p>&emsp;&emsp;.gitlab-ci.yml的具体写法,以及关键字含义见： <a href="https://docs.gitlab.com/ee/ci/yaml/README.html" title="Title" target="_blank" rel="noopener">GitLab CI/CD Pipeline Configuration Reference</a></p>
+<p>&emsp;&emsp;关于gitlab为什么使用.gitlab-ci.yml,见： <a href="https://about.gitlab.com/blog/2015/05/06/why-were-replacing-gitlab-ci-jobs-with-gitlab-ci-dot-yml/" title="Title" target="_blank" rel="noopener">Why we’re replacing GitLab CI jobs with .gitlab-ci.yml</a></p>
+<p>&emsp;&emsp;runner配置主要分为三步:</p>
+<blockquote>
+<ul>
+<li>首先安装runner安装脚本，具体见：<a href="https://docs.gitlab.com/runner/#install-gitlab-runner" title="Title" target="_blank" rel="noopener">Install GitLab Runner</a></li>
+<li>然后注册runner到gitlab：<a href="https://docs.gitlab.com/runner/#register-gitlab-runner" title="Title" target="_blank" rel="noopener">Register GitLab Runner</a></li>
+<li>更多配置见：<a href="https://docs.gitlab.com/runner/executors/README.html" title="Title" target="_blank" rel="noopener">Executors</a></li>
+</ul>
+</blockquote>
+<h4 id="3-x-5-总结"><a href="#3-x-5-总结" class="headerlink" title="3.x.5 总结"></a><strong>3.x.5 总结</strong></h4><blockquote>
+<p>总的来说，gitlab-ci基本上可以完成完整的构建及发布，但也会存在一些缺点:</p>
+<ol>
+<li>发布部分，需要将程序部署到哪个服务器固化到.gitlab-ci文件中,另外，如果runner上直接进行部署，那么runner所在的机器则需要直接或间接的访问所有的发布的机器，这里存在一定安全问题．</li>
+<li>程序发布没有审计，对于小公司来说，这问题可能不突出，但是当研发团队扩大，以及公司业务增加之后，对于发布过程的权限管理以及审计则显得很重要．</li>
+</ol>
+</blockquote>
+<h3 id="3-BUG管理"><a href="#3-BUG管理" class="headerlink" title="3. BUG管理"></a><strong>3. BUG管理</strong></h3><p>issues</p>
+<hr>
+<h2 id="第四节-开发案例"><a href="#第四节-开发案例" class="headerlink" title="第四节 开发案例"></a><strong>第四节 开发案例</strong></h2><p>&emsp;&emsp;我们首先使用管理员身份，登陆GitLab创建项目，把服务器上的文件克隆下来。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">clone</span> <span class="title">git</span>@xxx</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;新建feature分支，并切换到新的分支。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -<span class="selector-tag">b</span> branch/<span class="number">20190911</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;新建文件hello.txt，随意填写内容，将所有有改动的全部添加到要提交的本地库中。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd xxx</span><br><span class="line"></span><br><span class="line">git <span class="keyword">add</span><span class="bash"> .</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;将修改提交到本地库。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -<span class="selector-tag">a</span> -m <span class="string">"add hello.txt"</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;项目切换owner到master，然后执行merge，合并分支到本地master，将本地库的commit推送到远程服务器，此处因为我们是管理员身份，所以可以直接修改源码。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git checkout <span class="keyword">master</span>  <span class="title"></span></span><br><span class="line"><span class="title">git</span> merge --no-ff branch／<span class="number">0111</span> -m 'xxx'//显示Already up-to-<span class="keyword">date</span>.说明合并成功</span><br><span class="line">git push origin <span class="literal">master</span>//上传主干</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;但大部分情况下，我们参与一些团队项目，是作为一名开发者工作，所以要先Fork项目的代码，新建一个feature分支，在本地开发自测完成后，再合并到develop分支（测试环境）</p>
+<p>&emsp;&emsp;假设我们目前是开发者用户，前面步骤相同，不同在一直使用开发分支，并推送到远程仓库的开发分支。</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby">-第一种方式，我们直接</span></span><br><span class="line"><span class="ruby">git checkout develop  </span></span><br><span class="line"><span class="ruby">git merge --no-ff &lt;分支名&gt; -m <span class="string">'xxx'</span> up-to-date.说明合并成功</span></span><br><span class="line"><span class="ruby">git push origin develop </span></span><br><span class="line"><span class="ruby"></span></span><br><span class="line"><span class="ruby">--</span></span><br><span class="line"><span class="ruby">git push origin &lt;分支名&gt;</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;发起一个pull request请求合并分支，经过审核后代码合并到develop中，经过测试稳定后合并到master分支。</p>
+<p>拉取服务器上最新资源：</p>
+<p>git pull    </p>
+<p>在不同的分支之间切换：git checkout 分支名<br>注意事项：切换分支的时候，如果当前分支有改动没有提交，是不能切换分支的，需要先把改动的内容提交或者放入缓存区</p>
+<p>git checkout release/v1.0.0<br>合并分支：git merge 分支名</p>
+<p>git merge feature/login<br>从当前分支merge feature/login分支的内容，如果有两个人修改了同一个文件的同一行，则会有冲突，可以在IDE工具上先解决当前冲突然后再提交。</p>
+<p>git diff<br>查看本次修改了哪些内容</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -463,6 +1485,9 @@
 </blockquote>
 <blockquote>
 <p><a href="https://www.jianshu.com/p/fb61299086b6" title="Title" target="_blank" rel="noopener">Gitlab详细操作</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://docs.gitlab.com/ee/user/permissions.html" title="Title" target="_blank" rel="noopener">Gitlab Docs - Permissions</a></p>
 </blockquote>
 <p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -602,7 +1627,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">225</span>
+                  <span class="site-state-item-count">227</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -613,7 +1638,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -624,7 +1649,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">78</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -692,7 +1717,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab"><span class="nav-number">1.</span> <span class="nav-text">GitLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#github和github区别"><span class="nav-number">1.1.1.</span> <span class="nav-text">github和github区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-安装"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-选择版本"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 选择版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-使用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 使用</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab"><span class="nav-number">1.</span> <span class="nav-text">GitLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#github和github区别"><span class="nav-number">1.1.1.</span> <span class="nav-text">github和github区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-安装"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-选择版本"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 选择版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-使用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-新增用户"><span class="nav-number">1.3.1.</span> <span class="nav-text">3. 新增用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-管理工作组"><span class="nav-number">1.3.2.</span> <span class="nav-text">3. 管理工作组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-成员权限"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 成员权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-项目管理"><span class="nav-number">1.3.4.</span> <span class="nav-text">3. 项目管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-配置SSH"><span class="nav-number">1.3.5.</span> <span class="nav-text">3. 配置SSH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-分支管理"><span class="nav-number">1.3.6.</span> <span class="nav-text">3. 分支管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-CI-CD管理"><span class="nav-number">1.3.7.</span> <span class="nav-text">3. CI/CD管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-1-简介"><span class="nav-number">1.3.7.1.</span> <span class="nav-text">3.x.1 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-2-特性"><span class="nav-number">1.3.7.2.</span> <span class="nav-text">3.x.2 特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-3-结构"><span class="nav-number">1.3.7.3.</span> <span class="nav-text">3.x.3 结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-4-流程"><span class="nav-number">1.3.7.4.</span> <span class="nav-text">3.x.4 流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-5-总结"><span class="nav-number">1.3.7.5.</span> <span class="nav-text">3.x.5 总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-BUG管理"><span class="nav-number">1.3.8.</span> <span class="nav-text">3. BUG管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-开发案例"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 开发案例</span></a></li></ol></li></ol></div>
             
 
           </div>
