@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="GitLab。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-03-06T11:01:56.189Z">
+<meta property="og:updated_time" content="2020-03-09T09:00:51.174Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="gitlab-ci.yml语法">
 <meta name="twitter:description" content="GitLab。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  698
+                  1,037
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -397,12 +397,23 @@
       
 
       
-        <h1 id="gitlab-ci"><a href="#gitlab-ci" class="headerlink" title="gitlab-ci"></a><strong>gitlab-ci</strong></h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a><strong>概念</strong></h2><p>自7.12版本开始，GitLab CI使用YAML文件来管理项目配置。此文件存放于项目仓库的根目录，定义了项目该如何构建。</p>
-<p>两个任务由Runners接管，并由服务器中的runner执行，每个任务独立运行，script可以直接执行系统命令或脚本。</p>
+        <h1 id="gitlab-ci"><a href="#gitlab-ci" class="headerlink" title="gitlab-ci"></a><strong>gitlab-ci</strong></h1><h2 id="第一节-简介"><a href="#第一节-简介" class="headerlink" title="第一节 简介"></a><strong>第一节 简介</strong></h2><p>&emsp;&emsp;自7.12版本开始，GitLab CI使用YAML文件来管理项目配置。此文件存放于项目仓库的根目录，定义了项目该如何构建。</p>
+<blockquote>
+<ul>
+<li>Gitlab-CI ：<a href="https://docs.gitlab.com/ce/ci/quick_start/README.html" title="Title" target="_blank" rel="noopener">Gitlab-CI</a>是GitLab Continuous Integration（Gitlab持续集成）的简称。从Gitlab的8.0版本开始，gitlab就全面集成了Gitlab-CI，并且对所有项目默认开启。只要在项目仓库的根目录添加.gitlab-ci.yml文件，并且配置了Runner（运行器），那么每一次合并请求（MR）或者push都会触发CI pipeline。</li>
+<li>Gitlab-runner ：<a href="https://docs.gitlab.com/ce/ci/runners/README.html" title="Title" target="_blank" rel="noopener">Gitlab-runner</a>是.gitlab-ci.yml脚本的运行器，Gitlab-runner是基于Gitlab-CI的API进行构建的相互隔离的机器（或虚拟机）。考虑到GitLab Runner的资源消耗问题和安全问题，GitLab Runner不建议和Gitlab安装在同一台机器上。Gitlab Runner分为两种，Shared runners和Specific runners。Specific runners只能被指定的项目使用，Shared runners则可以运行所有开启 Allow shared runners选项的项目。</li>
+<li>Pipeline ：管道，每次commit或MR都会执行一次pipeline构建任务，包含多个阶段如测试、编译。</li>
+<li>Stage ：阶段，每个Pipeline有多个Stage，从上向下执行，前一个执行成功才能执行下一个。</li>
+<li>Job ：任务，CI/CD的最小运行单位，表示在指定Stage下执行的任务工作，可以有多个Job，并行执行。</li>
+<li>Badges ：徽章，当Pipelines执行完成，会生成徽章，你可以将这些徽章加入到你的README.md文件或者你的网站。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="第二节-案例"><a href="#第二节-案例" class="headerlink" title="第二节 案例"></a><strong>第二节 案例</strong></h2><p>&emsp;&emsp;如下面的两个任务由Runners接管，并由服务器中的runner执行，每个任务独立运行，script可以直接执行系统命令或脚本。</p>
 <figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">job1:</span></span><br><span class="line"><span class="symbol">  script:</span> <span class="string">"execute-script-for-job1"</span></span><br><span class="line">  </span><br><span class="line"><span class="symbol">job2:</span></span><br><span class="line"><span class="symbol">  script:</span> <span class="string">"execute-script-for-job2"</span></span><br></pre></td></tr></table></figure>
-<p>一个复杂任务如下。</p>
+<p>&emsp;&emsp;一个复杂任务如下。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># image和services这两个关键字允许使用一个自定义的Docker镜像和一系列的服务，并且可以用于整个job周期。</span></span><br><span class="line"><span class="attr">image:</span> <span class="attr">ruby:2.1</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">postgres</span></span><br><span class="line"><span class="string">​</span></span><br><span class="line"><span class="comment"># before_script用来定义所有job之前运行的命令，包括deploy(部署) jobs，但是在修复artifacts之后。它可以是一个数组或者是多行字符串。</span></span><br><span class="line"><span class="attr">before_script:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">bundle</span> <span class="string">install</span></span><br><span class="line"><span class="string">​</span></span><br><span class="line"><span class="comment"># after_script用来定义所有job之后运行的命令。它必须是一个数组或者是多行字符串</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">rm</span> <span class="string">secrets</span></span><br><span class="line"><span class="string">​</span></span><br><span class="line"><span class="comment"># stages用来定义可以被job调用的stages。stages的规范允许有灵活的多级pipelines。</span></span><br><span class="line"><span class="comment"># stages中的元素顺序决定了对应job的执行顺序：</span></span><br><span class="line"><span class="comment">#  1. 相同stage的job可以平行执行。</span></span><br><span class="line"><span class="comment">#  2. 下一个stage的job会在前一个stage的job成功后开始执行。</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">test</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">deploy</span></span><br><span class="line"><span class="comment"># 如果.gitlab-ci.yml中没有定义stages，那么job's stages 会默认定义为 build，test 和 deploy。</span></span><br><span class="line"><span class="comment"># 如果一个job没有指定stage，那么这个任务会分配到test stage。</span></span><br><span class="line"><span class="string">​</span></span><br><span class="line"><span class="comment"># GItLab CI 允许在.gitlab-ci.yml文件中添加变量，并在job环境中起作用。因为这些配置是存储在git仓库中，所以最好是存储项目的非敏感配置，例如： </span></span><br><span class="line"><span class="attr">variables:</span></span><br><span class="line"><span class="attr">  DATABASE_URL:</span><span class="string">"postgres://postgres@postgres/my_database"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job1:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">build</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">execute-script-for-job1</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">master</span></span><br><span class="line"><span class="attr">  tags:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">docker</span></span><br></pre></td></tr></table></figure>
-<p>下面列出保留字段，这些保留字段不能被定义为job名称：</p>
+<p>&emsp;&emsp;下面列出保留字段，这些保留字段不能被定义为job名称：</p>
 <table>
 <thead>
 <tr>
@@ -454,7 +465,7 @@
 </tr>
 </tbody>
 </table>
-<p>&emsp;&emsp;.gitlab-ci.yml的具体写法,以及关键字含义见： <a href="https://docs.gitlab.com/ee/ci/yaml/README.html" title="Title" target="_blank" rel="noopener">GitLab CI/CD Pipeline Configuration Reference</a></p>
+<p>&emsp;&emsp;.gitlab-ci.yml的具体写法，以及关键字含义见： <a href="https://docs.gitlab.com/ee/ci/yaml/README.html" title="Title" target="_blank" rel="noopener">GitLab CI/CD Pipeline Configuration Reference</a></p>
 <p>&emsp;&emsp;关于gitlab为什么使用.gitlab-ci.yml,见： <a href="https://about.gitlab.com/blog/2015/05/06/why-were-replacing-gitlab-ci-jobs-with-gitlab-ci-dot-yml/" title="Title" target="_blank" rel="noopener">Why we’re replacing GitLab CI jobs with .gitlab-ci.yml</a></p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
@@ -691,7 +702,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gitlab-ci"><span class="nav-number">1.</span> <span class="nav-text">gitlab-ci</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.1.</span> <span class="nav-text">概念</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gitlab-ci"><span class="nav-number">1.</span> <span class="nav-text">gitlab-ci</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-简介"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-案例"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 案例</span></a></li></ol></li></ol></div>
             
 
           </div>
