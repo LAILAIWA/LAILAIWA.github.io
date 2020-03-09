@@ -97,8 +97,7 @@
 <meta property="og:description" content="GitLab。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010103.png">
-<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png">
-<meta property="og:updated_time" content="2020-03-06T02:27:25.270Z">
+<meta property="og:updated_time" content="2020-03-06T11:02:38.589Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GitLab（未完成）">
 <meta name="twitter:description" content="GitLab。">
@@ -359,7 +358,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,895
+                  3,233
                 </span>
               
 
@@ -375,7 +374,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  15
+                  12
                 </span>
               
             </div>
@@ -1401,46 +1400,8 @@
 </blockquote>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010103.png" alt="Git分支图"></p>
 <h3 id="3-CI-CD管理"><a href="#3-CI-CD管理" class="headerlink" title="3. CI/CD管理"></a><strong>3. CI/CD管理</strong></h3><h4 id="3-x-1-简介"><a href="#3-x-1-简介" class="headerlink" title="3.x.1 简介"></a><strong>3.x.1 简介</strong></h4><p>&emsp;&emsp;<a href="../2020020501.html" title="Title">CI/CD-持续集成和持续交付</a></p>
-<h4 id="3-x-2-特性"><a href="#3-x-2-特性" class="headerlink" title="3.x.2 特性"></a><strong>3.x.2 特性</strong></h4><blockquote>
-<p>gitlab ci/cd具有以下特性：</p>
-<ul>
-<li>跨平台支持：只要支持go语言的平台均可以在上面进行ci,目前基本涵盖了大部分的操作系统．</li>
-<li>多语言支持：构建时是通过脚本触发，因此基本上支持所有的语言．</li>
-<li>Pipeline：可以通过不同的阶段形成工作流</li>
-<li>支持docker：可以构建docker镜像，同时也支持触发在Kubernetes允许．</li>
-</ul>
-</blockquote>
-<p>&emsp;&emsp;所有特性：<a href="https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/" title="Title" target="_blank" rel="noopener">GitLab Continuous Integration (CI) &amp; Continuous Delivery (CD)</a></p>
-<h4 id="3-x-3-结构"><a href="#3-x-3-结构" class="headerlink" title="3.x.3 结构"></a><strong>3.x.3 结构</strong></h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png" alt="CI/CD架构"></p>
-<p>&emsp;&emsp;gitlab ci/cd是由独立的runner程序完成，runner采用go语言编写，因此可以很好的进行跨平台，通常可以将runner部署到任何gitlab server之外的服务器，从而避免对gitlab server的影响．</p>
-<p>&emsp;&emsp;runner项目：<a href="https://gitlab.com/gitlab-org/gitlab-runner" title="Title" target="_blank" rel="noopener">gitlab-runner</a></p>
-<h4 id="3-x-4-流程"><a href="#3-x-4-流程" class="headerlink" title="3.x.4 流程"></a><strong>3.x.4 流程</strong></h4><p>&emsp;&emsp;gitlab通过在项目的根目录放置.gitlab-ci.yml文件来触发pipline，文件书写遵循yml语法，因此，概括来说gitlab ci/cd只需要两步。</p>
-<blockquote>
-<ul>
-<li>写好.gitlab-ci.yml文件，并放置到项目根目录</li>
-<li>配置好gitlab runner．完成后，提交代码时会自动根据gitlab-ci.yml的触发条件进行执行相应的stage.</li>
-</ul>
-</blockquote>
-<p>&emsp;&emsp;gitlab-ci.yml文件</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">stage<span class="variable">s:</span></span><br><span class="line">  - test</span><br><span class="line">  - build</span><br><span class="line">  - deploy</span><br><span class="line"></span><br><span class="line">tes<span class="variable">t:</span></span><br><span class="line">  stage: test</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span> <span class="keyword">echo</span> <span class="string">"Running tests"</span></span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br><span class="line"></span><br><span class="line">build:</span><br><span class="line">  stage: build</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span> <span class="keyword">echo</span> <span class="string">"Building the app"</span></span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br><span class="line"></span><br><span class="line">deploy_stagin<span class="variable">g:</span></span><br><span class="line">  stage: deploy</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span></span><br><span class="line">    - <span class="keyword">echo</span> <span class="string">"Deploy to staging server"</span></span><br><span class="line">  environmen<span class="variable">t:</span></span><br><span class="line">    name: staging</span><br><span class="line">    ur<span class="variable">l:</span> http<span class="variable">s:</span>//staging.example.<span class="keyword">com</span></span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br><span class="line"></span><br><span class="line">deploy_prod:</span><br><span class="line">  stage: deploy</span><br><span class="line">  <span class="keyword">scrip</span><span class="variable">t:</span></span><br><span class="line">    - <span class="keyword">echo</span> <span class="string">"Deploy to production server"</span></span><br><span class="line">  environmen<span class="variable">t:</span></span><br><span class="line">    name: production</span><br><span class="line">    ur<span class="variable">l:</span> http<span class="variable">s:</span>//example.<span class="keyword">com</span></span><br><span class="line">  when: manual</span><br><span class="line">  <span class="keyword">only</span>:</span><br><span class="line">  - <span class="keyword">tags</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;如上，是一个具有ci/cd功能的.gitlab-ci.yml文件的写法，</p>
-<p>&emsp;&emsp;.gitlab-ci.yml的具体写法,以及关键字含义见： <a href="https://docs.gitlab.com/ee/ci/yaml/README.html" title="Title" target="_blank" rel="noopener">GitLab CI/CD Pipeline Configuration Reference</a></p>
-<p>&emsp;&emsp;关于gitlab为什么使用.gitlab-ci.yml,见： <a href="https://about.gitlab.com/blog/2015/05/06/why-were-replacing-gitlab-ci-jobs-with-gitlab-ci-dot-yml/" title="Title" target="_blank" rel="noopener">Why we’re replacing GitLab CI jobs with .gitlab-ci.yml</a></p>
-<p>&emsp;&emsp;runner配置主要分为三步:</p>
-<blockquote>
-<ul>
-<li>首先安装runner安装脚本，具体见：<a href="https://docs.gitlab.com/runner/#install-gitlab-runner" title="Title" target="_blank" rel="noopener">Install GitLab Runner</a></li>
-<li>然后注册runner到gitlab：<a href="https://docs.gitlab.com/runner/#register-gitlab-runner" title="Title" target="_blank" rel="noopener">Register GitLab Runner</a></li>
-<li>更多配置见：<a href="https://docs.gitlab.com/runner/executors/README.html" title="Title" target="_blank" rel="noopener">Executors</a></li>
-</ul>
-</blockquote>
-<h4 id="3-x-5-总结"><a href="#3-x-5-总结" class="headerlink" title="3.x.5 总结"></a><strong>3.x.5 总结</strong></h4><blockquote>
-<p>总的来说，gitlab-ci基本上可以完成完整的构建及发布，但也会存在一些缺点:</p>
-<ol>
-<li>发布部分，需要将程序部署到哪个服务器固化到.gitlab-ci文件中,另外，如果runner上直接进行部署，那么runner所在的机器则需要直接或间接的访问所有的发布的机器，这里存在一定安全问题．</li>
-<li>程序发布没有审计，对于小公司来说，这问题可能不突出，但是当研发团队扩大，以及公司业务增加之后，对于发布过程的权限管理以及审计则显得很重要．</li>
-</ol>
-</blockquote>
+<p>&emsp;&emsp;<a href="../2020020601.html" title="Title">GitLab配置CI持续集成</a></p>
+<p>&emsp;&emsp;<a href="../2020020701.html" title="Title">gitlab-ci.yml语法</a></p>
 <h3 id="3-BUG管理"><a href="#3-BUG管理" class="headerlink" title="3. BUG管理"></a><strong>3. BUG管理</strong></h3><p>issues</p>
 <hr>
 <h2 id="第四节-开发案例"><a href="#第四节-开发案例" class="headerlink" title="第四节 开发案例"></a><strong>第四节 开发案例</strong></h2><p>&emsp;&emsp;我们首先使用管理员身份，登陆GitLab创建项目，把服务器上的文件克隆下来。</p>
@@ -1472,6 +1433,9 @@
 <p><a href="https://about.gitlab.com/install/#centos-7" title="Title" target="_blank" rel="noopener">GitLab官网安装文档</a></p>
 </blockquote>
 <blockquote>
+<p><a href="https://docs.gitlab.com/ee/user/permissions.html" title="Title" target="_blank" rel="noopener">Gitlab Docs - Permissions</a></p>
+</blockquote>
+<blockquote>
 <p><a href="http://jemgeek.com/archives/2019/docker-base-install.html" title="Title" target="_blank" rel="noopener">安装 Docker 和 Docker Compose (Ubuntu)</a></p>
 </blockquote>
 <blockquote>
@@ -1485,9 +1449,6 @@
 </blockquote>
 <blockquote>
 <p><a href="https://www.jianshu.com/p/fb61299086b6" title="Title" target="_blank" rel="noopener">Gitlab详细操作</a></p>
-</blockquote>
-<blockquote>
-<p><a href="https://docs.gitlab.com/ee/user/permissions.html" title="Title" target="_blank" rel="noopener">Gitlab Docs - Permissions</a></p>
 </blockquote>
 <p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -1627,7 +1588,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">227</span>
+                  <span class="site-state-item-count">229</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1649,7 +1610,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1717,7 +1678,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab"><span class="nav-number">1.</span> <span class="nav-text">GitLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#github和github区别"><span class="nav-number">1.1.1.</span> <span class="nav-text">github和github区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-安装"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-选择版本"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 选择版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-使用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-新增用户"><span class="nav-number">1.3.1.</span> <span class="nav-text">3. 新增用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-管理工作组"><span class="nav-number">1.3.2.</span> <span class="nav-text">3. 管理工作组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-成员权限"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 成员权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-项目管理"><span class="nav-number">1.3.4.</span> <span class="nav-text">3. 项目管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-配置SSH"><span class="nav-number">1.3.5.</span> <span class="nav-text">3. 配置SSH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-分支管理"><span class="nav-number">1.3.6.</span> <span class="nav-text">3. 分支管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-CI-CD管理"><span class="nav-number">1.3.7.</span> <span class="nav-text">3. CI/CD管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-1-简介"><span class="nav-number">1.3.7.1.</span> <span class="nav-text">3.x.1 简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-2-特性"><span class="nav-number">1.3.7.2.</span> <span class="nav-text">3.x.2 特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-3-结构"><span class="nav-number">1.3.7.3.</span> <span class="nav-text">3.x.3 结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-4-流程"><span class="nav-number">1.3.7.4.</span> <span class="nav-text">3.x.4 流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-5-总结"><span class="nav-number">1.3.7.5.</span> <span class="nav-text">3.x.5 总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-BUG管理"><span class="nav-number">1.3.8.</span> <span class="nav-text">3. BUG管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-开发案例"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 开发案例</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab"><span class="nav-number">1.</span> <span class="nav-text">GitLab</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#github和github区别"><span class="nav-number">1.1.1.</span> <span class="nav-text">github和github区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-安装"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-选择版本"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 选择版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-过程"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-使用"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-新增用户"><span class="nav-number">1.3.1.</span> <span class="nav-text">3. 新增用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-管理工作组"><span class="nav-number">1.3.2.</span> <span class="nav-text">3. 管理工作组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-成员权限"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 成员权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-项目管理"><span class="nav-number">1.3.4.</span> <span class="nav-text">3. 项目管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-配置SSH"><span class="nav-number">1.3.5.</span> <span class="nav-text">3. 配置SSH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-分支管理"><span class="nav-number">1.3.6.</span> <span class="nav-text">3. 分支管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-CI-CD管理"><span class="nav-number">1.3.7.</span> <span class="nav-text">3. CI/CD管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-1-简介"><span class="nav-number">1.3.7.1.</span> <span class="nav-text">3.x.1 简介</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-BUG管理"><span class="nav-number">1.3.8.</span> <span class="nav-text">3. BUG管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-开发案例"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 开发案例</span></a></li></ol></li></ol></div>
             
 
           </div>

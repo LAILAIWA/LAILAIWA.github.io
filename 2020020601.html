@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="git,gitlab," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="沂水博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="GitLab。">
+<meta name="keywords" content="git,gitlab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitLab配置CI持续集成">
+<meta property="og:url" content="http://linyishui.top/2020020601.html">
+<meta property="og:site_name" content="沂水博客">
+<meta property="og:description" content="GitLab。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010108.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010109.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010107.png">
+<meta property="og:updated_time" content="2020-03-09T08:13:37.494Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GitLab配置CI持续集成">
+<meta name="twitter:description" content="GitLab。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020020601.html"/>
+
+
+
+
+
+  <title>GitLab配置CI持续集成 | 沂水博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">沂水博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">编程和心历记录</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020020601.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="沂水">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="沂水博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">GitLab配置CI持续集成</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-06T14:09:42+08:00">
+                2020-02-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,582
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  GitLab。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="GitLab配置CI持续集成"><a href="#GitLab配置CI持续集成" class="headerlink" title="GitLab配置CI持续集成"></a><strong>GitLab配置CI持续集成</strong></h1><h2 id="第一节-简介"><a href="#第一节-简介" class="headerlink" title="第一节 简介"></a><strong>第一节 简介</strong></h2><h3 id="1-1-概念"><a href="#1-1-概念" class="headerlink" title="1.1 概念"></a><strong>1.1 概念</strong></h3><blockquote>
+<ul>
+<li>Gitlab-CI ：<a href="https://docs.gitlab.com/ce/ci/quick_start/README.html" title="Title" target="_blank" rel="noopener">Gitlab-CI</a>是GitLab Continuous Integration（Gitlab持续集成）的简称。从Gitlab的8.0版本开始，gitlab就全面集成了Gitlab-CI，并且对所有项目默认开启。只要在项目仓库的根目录添加.gitlab-ci.yml文件，并且配置了Runner（运行器），那么每一次合并请求（MR）或者push都会触发CI pipeline。</li>
+<li>Gitlab-runner ：<a href="https://docs.gitlab.com/ce/ci/runners/README.html" title="Title" target="_blank" rel="noopener">Gitlab-runner</a>是.gitlab-ci.yml脚本的运行器，Gitlab-runner是基于Gitlab-CI的API进行构建的相互隔离的机器（或虚拟机）。考虑到GitLab Runner的资源消耗问题和安全问题，GitLab Runner不建议和Gitlab安装在同一台机器上。Gitlab Runner分为两种，Shared runners和Specific runners。Specific runners只能被指定的项目使用，Shared runners则可以运行所有开启 Allow shared runners选项的项目。</li>
+<li>Pipeline ：管道，每次commit或MR都会执行一次pipeline构建任务，包含多个阶段如测试、编译。</li>
+<li>Stage ：阶段，每个Pipeline有多个Stage，从上向下执行，前一个执行成功才能执行下一个。</li>
+<li>Job ：任务，CI/CD的最小运行单位，表示在指定Stage下执行的任务工作，可以有多个Job，并行执行。</li>
+<li>Badges ：徽章，当Pipelines执行完成，会生成徽章，你可以将这些徽章加入到你的README.md文件或者你的网站。</li>
+</ul>
+</blockquote>
+<h3 id="1-2-特性"><a href="#1-2-特性" class="headerlink" title="1.2 特性"></a><strong>1.2 特性</strong></h3><blockquote>
+<p>gitlab ci/cd具有以下特性：</p>
+<ul>
+<li>跨平台支持：只要支持go语言的平台均可以在上面进行ci,目前基本涵盖了大部分的操作系统．</li>
+<li>多语言支持：构建时是通过脚本触发，因此基本上支持所有的语言．</li>
+<li>Pipeline：可以通过不同的阶段形成工作流</li>
+<li>支持docker：可以构建docker镜像，同时也支持触发在Kubernetes允许．</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;所有特性：<a href="https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/" title="Title" target="_blank" rel="noopener">GitLab Continuous Integration (CI) &amp; Continuous Delivery (CD)</a></p>
+<h3 id="1-3-结构"><a href="#1-3-结构" class="headerlink" title="1.3 结构"></a><strong>1.3 结构</strong></h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010103.png" alt="CI/CD架构"></p>
+<p>&emsp;&emsp;gitlab ci/cd是由独立的runner程序完成，runner采用go语言编写，因此可以很好的进行跨平台，通常可以将runner部署到任何gitlab server之外的服务器，从而避免对gitlab server的影响．</p>
+<p>&emsp;&emsp;runner项目：<a href="https://gitlab.com/gitlab-org/gitlab-runner" title="Title" target="_blank" rel="noopener">gitlab-runner</a></p>
+<h2 id="第二节-案例"><a href="#第二节-案例" class="headerlink" title="第二节 案例"></a><strong>第二节 案例</strong></h2><h3 id="2-1-新建一个Spring-Boot项目"><a href="#2-1-新建一个Spring-Boot项目" class="headerlink" title="2.1 新建一个Spring Boot项目"></a><strong>2.1 新建一个Spring Boot项目</strong></h3><p>&emsp;&emsp;新建项目，添加一些demo代码，运行测试。</p>
+<h3 id="2-2-新建GitLab项目"><a href="#2-2-新建GitLab项目" class="headerlink" title="2.2 新建GitLab项目"></a><strong>2.2 新建GitLab项目</strong></h3><p>&emsp;&emsp;登陆GitLab创建项目，并复制URL。</p>
+<p>&emsp;&emsp;提交项目代码到对应URL。</p>
+<h3 id="2-3-添加-gitlab-ci文件"><a href="#2-3-添加-gitlab-ci文件" class="headerlink" title="2.3 添加.gitlab-ci文件"></a><strong>2.3 添加.gitlab-ci文件</strong></h3><p>&emsp;&emsp;创建.gitlab-ci.yml，【.gitlab-ci.yml】用来配置 CI 用你的项目中做哪些操作。当有新内容push到仓库后，GitLab会查找是否有.gitlab-ci.yml文件，如果文件存在，Runners将会根据该文件的内容开始 build 本次 commit。</p>
+<p>&emsp;&emsp;gitlab通过在项目的根目录放置.gitlab-ci.yml文件来触发pipline，文件书写遵循yml语法，因此，概括来说gitlab ci/cd只需要两步。</p>
+<blockquote>
+<ul>
+<li>写好.gitlab-ci.yml文件，并放置到项目根目录</li>
+<li>配置好gitlab runner．完成后，提交代码时会自动根据gitlab-ci.yml的触发条件进行执行相应的stage.</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;如下简单的.gitlab-ci.yml - maven项目，更多案例可以参考官网<a href="https://docs.gitlab.com/ee/ci/examples/README.html#cicd-examples" title="Title" target="_blank" rel="noopener">CI/CD examples</a>。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">image</span>: <span class="attribute">docker</span>:latest</span><br><span class="line"><span class="attribute">services</span>:</span><br><span class="line">  - <span class="attribute">docker</span>:dind</span><br><span class="line"></span><br><span class="line"><span class="attribute">stages</span>:</span><br><span class="line">  - build</span><br><span class="line">  - package</span><br><span class="line">  - deploy</span><br><span class="line"></span><br><span class="line"><span class="attribute">maven-build</span>:</span><br><span class="line">  <span class="attribute">image</span>: <span class="attribute">maven</span>:<span class="number">3</span>-jdk-<span class="number">8</span></span><br><span class="line">  <span class="attribute">stage</span>: build</span><br><span class="line">  <span class="attribute">script</span>: <span class="string">"mvn package"</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;配置好.gitlab-ci.yml文件之后，只要把它加入git后然后推送到远程仓库，CI就会开始自动化集成</p>
+<h3 id="2-4-配置一个Runner"><a href="#2-4-配置一个Runner" class="headerlink" title="2.4 配置一个Runner"></a><strong>2.4 配置一个Runner</strong></h3><p>&emsp;&emsp;runner配置主要分为三步:</p>
+<blockquote>
+<ul>
+<li>首先安装runner安装脚本，具体见：<a href="https://docs.gitlab.com/runner/#install-gitlab-runner" title="Title" target="_blank" rel="noopener">Install GitLab Runner</a></li>
+<li>然后注册runner到gitlab：<a href="https://docs.gitlab.com/runner/#register-gitlab-runner" title="Title" target="_blank" rel="noopener">Register GitLab Runner</a></li>
+<li>更多配置见：<a href="https://docs.gitlab.com/runner/executors/README.html" title="Title" target="_blank" rel="noopener">Executors</a></li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;登陆服务器安装gitlab-ci-multi-runner，笔者是一台Centos服务器。</p>
+<blockquote>
+<p>考虑到GitLab Runner的资源消耗问题和安全问题，GitLab Runner不建议和Gitlab安装在同一台机器上，但笔者因为只有一台服务器所以先布置在一起了。</p>
+</blockquote>
+<ol>
+<li>添加repository</li>
+</ol>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L https:<span class="regexp">//</span>packages.gitlab.com<span class="regexp">/install/</span>repositories<span class="regexp">/runner/gi</span>tlab-ci-multi-runner<span class="regexp">/script.rpm.sh | sudo bash</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>安装包</li>
+</ol>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> gitlab-runner</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>注册runner</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gitlab-runner <span class="keyword">register</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注册共享的Runner需要gitlab的admin权限</p>
+<ol>
+<li>输入Gitlab CI地址</li>
+<li>输入项目CI token</li>
+<li>输入 Runner 描述</li>
+<li>输入 Runner 标签，可以多个，用逗号隔开</li>
+<li>输入 Runner 执行的语言 (e.g. shell)</li>
+</ol>
+</blockquote>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010105.png" alt="CI/CD"></p>
+<p>&emsp;&emsp;相关数据值可以在登录gitlab之后，下图所示位置找到，先点击右上方Admin Settings，再找到左侧列表的runners</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010104.png" alt="CI/CD"></p>
+<p>&emsp;&emsp;注册完成之后，GitLab-CI立刻就会多出一条Runner记录，启动runner，点击为Project启用Runner</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ci-<span class="keyword">multi-runner </span><span class="keyword">install</span></span><br><span class="line"><span class="keyword">gitlab-ci-multi-runner </span>start</span><br></pre></td></tr></table></figure>
+<h2 id="2-5-提交代码"><a href="#2-5-提交代码" class="headerlink" title="2.5 提交代码"></a><strong>2.5 提交代码</strong></h2><p>&emsp;&emsp;推送到服务器后，pipeline一直处于struck状态，提示：This job is stuck, because the project doesn’t have any runners online assigned to it. Go to Runners page.</p>
+<p>&emsp;&emsp;检查一下确认Runner处于正常状态。</p>
+<p>&emsp;&emsp;出现这种情况可能是因为我们注册的Runner设置了TAG，但Job并没有。所以要按照以下4个步骤使我们的Runner能够在没有标记的情况下执行：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010108.png" alt="CI/CD"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010109.png" alt="CI/CD"></p>
+<p>&emsp;&emsp;配置后Job成功运行，但是检查失败了，如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010107.png" alt="CI/CD"></p>
+<p>&emsp;&emsp;很明显是因为服务器缺失Maven镜像，登陆服务器，拉取Maven镜像。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">image</span> pull maven:latest</span><br></pre></td></tr></table></figure>
+<h4 id="3-x-5-总结"><a href="#3-x-5-总结" class="headerlink" title="3.x.5 总结"></a><strong>3.x.5 总结</strong></h4><blockquote>
+<p>总的来说，gitlab-ci基本上可以完成完整的构建及发布，但也会存在一些缺点:</p>
+<ol>
+<li>发布部分，需要将程序部署到哪个服务器固化到.gitlab-ci文件中,另外，如果runner上直接进行部署，那么runner所在的机器则需要直接或间接的访问所有的发布的机器，这里存在一定安全问题．</li>
+<li>程序发布没有审计，对于小公司来说，这问题可能不突出，但是当研发团队扩大，以及公司业务增加之后，对于发布过程的权限管理以及审计则显得很重要．</li>
+</ol>
+</blockquote>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/705428ca1410" title="Title" target="_blank" rel="noopener">基于Gitlab CI搭建持续集成环境</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://docs.gitlab.com/ee/ci/examples/deploy_spring_boot_to_cloud_foundry/index.html" title="Title" target="_blank" rel="noopener">Deploy a Spring Boot application to Cloud Foundry with GitLab CI/CD</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://about.gitlab.com/blog/2016/12/14/continuous-delivery-of-a-spring-boot-application-with-gitlab-ci-and-kubernetes/" title="Title" target="_blank" rel="noopener">Continuous delivery of a Spring Boot application with GitLab CI and Kubernetes</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://medium.com/@deeksha.sharma25/spring-boot-micro-service-with-gitlab-ci-281c6679b3f8" title="Title" target="_blank" rel="noopener">Spring Boot Micro Service with gitlab CI</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://segmentfault.com/a/1190000007180257" title="Title" target="_blank" rel="noopener">GitLab-CI安装</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/git/" rel="tag"># git</a>
+          
+            <a href="/tags/gitlab/" rel="tag"># gitlab</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020020501.html" rel="next" title="CI/CD-持续集成和持续交付 <整>">
+                <i class="fa fa-chevron-left"></i> CI/CD-持续集成和持续交付 <整>
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020020701.html" rel="prev" title="gitlab-ci.yml语法">
+                gitlab-ci.yml语法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg"
+                alt="沂水" />
+            
+              <p class="site-author-name" itemprop="name">沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">229</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GitLab配置CI持续集成"><span class="nav-number">1.</span> <span class="nav-text">GitLab配置CI持续集成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-简介"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-概念"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-特性"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-结构"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-案例"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-新建一个Spring-Boot项目"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 新建一个Spring Boot项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-新建GitLab项目"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 新建GitLab项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-添加-gitlab-ci文件"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 添加.gitlab-ci文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-配置一个Runner"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 配置一个Runner</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-提交代码"><span class="nav-number">1.3.</span> <span class="nav-text">2.5 提交代码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-x-5-总结"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">3.x.5 总结</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">沂水</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":true,"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"left","width":125,"height":250},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script>
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>
