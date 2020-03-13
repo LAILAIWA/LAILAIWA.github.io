@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="沂水博客">
 <meta property="og:description" content="整理面试中常问的Java并发编程相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-03-02T13:40:55.214Z">
+<meta property="og:updated_time" content="2020-03-13T02:08:52.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Java并发编程">
 <meta name="twitter:description" content="整理面试中常问的Java并发编程相关问题，持续更新中。">
@@ -356,7 +356,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  722
+                  1,364
                 </span>
               
 
@@ -372,7 +372,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  5
                 </span>
               
             </div>
@@ -397,7 +397,25 @@
       
 
       
-        <h2 id="未归类"><a href="#未归类" class="headerlink" title="未归类"></a><strong>未归类</strong></h2><hr>
+        <h2 id="未归类"><a href="#未归类" class="headerlink" title="未归类"></a><strong>未归类</strong></h2><p>synchronized 的实现原理以及锁优化？<br>volatile 的实现原理？</p>
+<p>synchronized 在静态方法和普通方法的区别？<br>怎么实现所有线程在等待某个事件的发生才会去执行？<br>CAS ？ CAS 有什么缺陷，如何解决？<br>synchronized 和 lock 有什么区别？<br>Hashtable 是怎么加锁的 ？<br>如何线程安全的实现一个计数器<br>单例模式，饿汉式，懒汉式，线程安全的做法，两次判断 instance 是否为空，每次判断的作用是什么。<br>线程池，这个还是很重要的，在生产中用的挺多，四个线程池类型，其参数，参数的理解很重要，corepoolSize 怎么设置，maxpoolsize 怎么设置，keep-alive 各种的，和美团面试官探讨过阻塞队列在生产中的设置，他说他一般设置为 0，防止用户阻塞<br>cyclicbarrier 和 countdownlatch 的区别，个人理解 赛马和点火箭<br>线程回调，这块 被问过让我设计一个 RPC，怎么实现，其实用到了回调这块的东西<br>sleep 和 yeild 方法有什么区别<br>volatile 关键字，可见性。<br>乐观锁和悲观锁的使用场景<br>悲观锁的常见实现方式：lock synchronized retreentlock<br>乐观锁：CAS MVCC<br>读写锁的实现方式，16 位 int 的前八位和后八位分别作为读锁和写锁的标志位<br>死锁的条件，怎么解除死锁，怎么观测死锁。<br>希望大家能够好好看一下反射的原理，怎么确定类，怎么调方法<br>RPC 框架，同步异步，响应时间，这些都被问到过，还让设计过<br>同步，异步，阻塞，非阻塞 在深信服的面试中遇到过，最好再找一些应用场景加以理解</p>
+<ol>
+<li>创建多线程的方式，以及线程的状态转换</li>
+<li>线程的中断机制</li>
+<li>ThreadPoolExecutor 初始化参数； Executors 静态方法</li>
+<li>synchronized 的使用方式及原理</li>
+<li>偏向锁、轻量级锁、自旋锁等优化</li>
+<li>ReentrantLock 的特点及 AQS 原理</li>
+<li>Semaphore、CountDownLatch、CyclicBarrier 等使用</li>
+<li>ThreadLocal 的原理、与 Thread 类的关系、以及内存泄漏问题</li>
+<li>volatile 的原理及内存屏障相关</li>
+<li>Lock 接口有哪些实现类，使用场景是什么</li>
+<li>悲观锁，乐观锁，优缺点，CAS 有什么缺陷，该如何解决</li>
+<li>ABC 三个线程如何保证顺序执行</li>
+<li>生产者消费者模式的实现方式</li>
+<li>如何实现控制线程在某段时间内完成，不完成就撤销</li>
+</ol>
+<hr>
 <h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a><strong>锁</strong></h2><h3 id="问：讲讲你知道的锁？"><a href="#问：讲讲你知道的锁？" class="headerlink" title="问：讲讲你知道的锁？"></a><strong>问：讲讲你知道的锁？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
 
 <h3 id="问：谈一下悲观锁和乐观锁？JDK中涉及到乐观锁和悲观锁的内容？这两种锁在Java和MySQL分别是怎么实现的？MySql的悲观锁怎么防止并发？"><a href="#问：谈一下悲观锁和乐观锁？JDK中涉及到乐观锁和悲观锁的内容？这两种锁在Java和MySQL分别是怎么实现的？MySql的悲观锁怎么防止并发？" class="headerlink" title="问：谈一下悲观锁和乐观锁？JDK中涉及到乐观锁和悲观锁的内容？这两种锁在Java和MySQL分别是怎么实现的？MySql的悲观锁怎么防止并发？"></a><strong>问：谈一下悲观锁和乐观锁？JDK中涉及到乐观锁和悲观锁的内容？这两种锁在Java和MySQL分别是怎么实现的？MySql的悲观锁怎么防止并发？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
@@ -590,7 +608,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">229</span>
+                  <span class="site-state-item-count">233</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

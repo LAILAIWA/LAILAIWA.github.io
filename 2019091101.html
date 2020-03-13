@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/202002010115.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190801/201908010103.png">
-<meta property="og:updated_time" content="2020-03-10T11:01:54.940Z">
+<meta property="og:updated_time" content="2020-03-11T03:27:40.007Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GitLab（未完成）">
 <meta name="twitter:description" content="简单介绍GitLab。">
@@ -359,7 +359,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,802
+                  3,806
                 </span>
               
 
@@ -430,8 +430,8 @@
 <p>sudo journalctl -xe</p>
 </blockquote>
 <p>&emsp;&emsp;提示：postfix[5181]: fatal: parameter inet_interfaces: no local     interface found for ::1</p>
-<p>&emsp;&emsp;修改/etc/postfix/main.cf文件中  inet_interfaces = localhost 为 inet_interfaces = all</p>
-<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/postfix/</span><br><span class="line">vi main.cf</span><br><span class="line">-<span class="ruby">-查询关键字</span></span><br><span class="line"><span class="ruby">/inet_interfaces</span></span><br><span class="line"><span class="ruby">--进入编辑模式</span></span><br><span class="line"><span class="ruby">i</span></span><br><span class="line"><span class="ruby">--修改后恢复命令模式</span></span><br><span class="line"><span class="ruby">[ESC]</span></span><br><span class="line"><span class="ruby">--保存并退出</span></span><br><span class="line"><span class="ruby"><span class="symbol">:wq</span></span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;修改/etc/postfix/main.cf文件中 inet_interfaces = localhost 为 inet_interfaces = all</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/postfix/</span><br><span class="line"></span><br><span class="line">vi main.cf</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询关键字</span></span><br><span class="line">/inet_interfaces</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 进入编辑模式</span></span><br><span class="line">i</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改后恢复命令模式</span></span><br><span class="line">[ESC]</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 保存并退出</span></span><br><span class="line">:wq</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;再次启动postfix服务正常</p>
 <p>&emsp;&emsp;然后添加GitLab package repository。</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https:<span class="regexp">//</span>packages.gitlab.com<span class="regexp">/install/</span>repositories<span class="regexp">/gitlab/gi</span>tlab-ee<span class="regexp">/script.rpm.sh | sudo bash</span></span><br></pre></td></tr></table></figure>
@@ -455,8 +455,8 @@
 <p>&emsp;&emsp;首先我使用了465端口，但未升级SSL，所以先排查是否是这个原因。</p>
 <p>&emsp;&emsp;修改端口为80，然后重配置使修改生效。</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo gitlab-ctl reconfigure</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;再次测试邮件，仍未收到</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="selector-tag">Traceback</span> (most recent call last):</span><br><span class="line">        <span class="selector-tag">1</span>: <span class="selector-tag">from</span> (irb)<span class="selector-pseudo">:1</span></span><br><span class="line"><span class="selector-tag">Net</span><span class="selector-pseudo">::OpenTimeout</span> (execution expired)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;再次测试邮件，仍未收到。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">Traceback</span> (most recent call last):</span><br><span class="line">        <span class="selector-tag">1</span>: <span class="selector-tag">from</span> (irb)<span class="selector-pseudo">:1</span></span><br><span class="line"><span class="selector-tag">Net</span><span class="selector-pseudo">::OpenTimeout</span> (execution expired)</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;认真检查了一下，对比阿里云SMTP帮助文档，发现SMTP配置有问题，修改如下。</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/gitlab/gitlab.rb</span><br><span class="line"></span><br><span class="line">gitlab_rails[<span class="string">'smtp_address'</span>] = <span class="string">"smtpdm.aliyun.com"</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;重配置，测试，成功收到邮件（垃圾箱）。</p>
@@ -1615,7 +1615,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">229</span>
+                  <span class="site-state-item-count">233</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
