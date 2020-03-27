@@ -97,7 +97,7 @@
 <meta property="og:description" content="SQL更新操作时，取限定范围内随机数据为属性赋值。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/sooyaaa___3____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg">
-<meta property="og:updated_time" content="2019-04-29T09:00:14.000Z">
+<meta property="og:updated_time" content="2020-03-27T03:09:41.401Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SqlServer更新几个属性列为随机数据">
 <meta name="twitter:description" content="SQL更新操作时，取限定范围内随机数据为属性赋值。">
@@ -404,7 +404,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/sooyaaa___3____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg" rel="gallery_ck89l9f38000884t7zxstnuy4"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/sooyaaa___3____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg" rel="gallery_ck89m04g60008h0t7c0mlpb0b"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/sooyaaa___3____utm_source=ig_share_sheet&igshid=1hifa0lijzfax___.jpg" itemprop="contentUrl"/>
               </a>
@@ -418,12 +418,12 @@
 
       
         
-        <div id="aplayer-QTUvwSDh" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
+        <div id="aplayer-GArlyZuw" class="aplayer aplayer-tag-marker" style="margin-bottom: 20px;">
             <pre class="aplayer-lrc-content"></pre>
         </div>
         <script>
           var ap = new APlayer({
-            element: document.getElementById("aplayer-QTUvwSDh"),
+            element: document.getElementById("aplayer-GArlyZuw"),
             narrow: false,
             autoplay: false,
             showlrc: false,
@@ -438,10 +438,10 @@
           window.aplayers || (window.aplayers = []);
           window.aplayers.push(ap);
         </script>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;今天写好服务后想测试一下，需要导入一些数据后为其随机取日期以及随机取字段’是’,’否’。想当然的就用rand()来赋值，发现结果每条数据都是同一数据，一条update语句所以也就只取了一个随机数。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;想到了newid()取全局不重复的唯一随机值，变相的生成限定范围内的随机数。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;取限制范围内的随机时间，可以先取时间差，然后用newid()获取随机ID，对时间差求余获取随机时间。</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;随机取字段’是’,’否’，同理，取随机数加一个case when判断赋值即可。</p>
+<p>今天写好服务后想测试一下，需要导入一些数据后为其随机取日期以及随机取字段’是’,’否’。想当然的就用rand()来赋值，发现结果每条数据都是同一数据，一条update语句所以也就只取了一个随机数。</p>
+<p>想到了newid()取全局不重复的唯一随机值，变相的生成限定范围内的随机数。</p>
+<p>取限制范围内的随机时间，可以先取时间差，然后用newid()获取随机ID，对时间差求余获取随机时间。</p>
+<p>随机取字段’是’,’否’，同理，取随机数加一个case when判断赋值即可。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> DATASHOW_YXSH <span class="keyword">set</span> BDSJ = <span class="keyword">DATEADD</span>(<span class="keyword">second</span>,<span class="keyword">ABS</span>(<span class="keyword">CHECKSUM</span>(NEWID()))%<span class="keyword">DATEDIFF</span>(<span class="keyword">second</span>,<span class="string">'2017-9-1'</span>,<span class="string">'2017-9-1 23:59:59'</span>),<span class="string">'2017-9-1'</span>) <span class="keyword">where</span> SFBLWC = <span class="string">'已完成'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">UPDATE</span> DATASHOW_YXSH <span class="keyword">SET</span> SFYBD = T.randValue</span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">(</span><br><span class="line"><span class="keyword">SELECT</span> KSH,<span class="keyword">CASE</span> <span class="keyword">WHEN</span> <span class="keyword">RIGHT</span>(<span class="keyword">ABS</span>(<span class="keyword">CHECKSUM</span>(newid())),<span class="number">1</span>) &gt; <span class="number">5</span> <span class="keyword">THEN</span> <span class="string">'是'</span> <span class="keyword">ELSE</span> <span class="string">'否'</span> <span class="keyword">END</span> <span class="keyword">AS</span> randValue</span><br><span class="line"><span class="keyword">FROM</span> DATASHOW_YXSH</span><br><span class="line">)T</span><br><span class="line"><span class="keyword">WHERE</span> DATASHOW_YXSH.KSH = T.KSH</span><br></pre></td></tr></table></figure>
 
       
@@ -569,7 +569,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">238</span>
+                  <span class="site-state-item-count">237</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
