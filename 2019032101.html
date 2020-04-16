@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍Java中的对象流和序列化，以及Path和Files处理文件。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg">
-<meta property="og:updated_time" content="2019-12-13T07:35:05.898Z">
+<meta property="og:updated_time" content="2020-04-14T08:14:25.005Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对象流和序列化">
 <meta name="twitter:description" content="介绍Java中的对象流和序列化，以及Path和Files处理文件。">
@@ -412,7 +412,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,004
+                  4,005
                 </span>
               
 
@@ -456,7 +456,7 @@
           
             <div class="post-gallery-row">
               <a class="post-gallery-img fancybox"
-                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg" rel="gallery_ck8psisgg00jisot7sippch7a"
+                 href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg" rel="gallery_ck92krlgm00looct7tvpqyduj"
                  itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/IMG_20190303_234919.jpg" itemprop="contentUrl"/>
               </a>
@@ -469,26 +469,23 @@
       
 
       
-        <h1 id="对象流和序列化"><a href="#对象流和序列化" class="headerlink" title="对象流和序列化"></a><strong>对象流和序列化</strong></h1><h2 id="第一节-流"><a href="#第一节-流" class="headerlink" title="第一节 流"></a><strong>第一节 流</strong></h2><p>&emsp;&emsp;流还可以根据传输的基本单位分为<strong>字节流</strong>和<strong>字符流</strong>，字节流一般以Stream命名，字符流则以Reader/Writer命名。计算机传输本质上都是字节流，字符流只是不需要再手动指定一次编码格式。以下直接用流来指代字节流。</p>
+        <h1 id="对象流和序列化"><a href="#对象流和序列化" class="headerlink" title="对象流和序列化"></a><strong>对象流和序列化</strong></h1><h2 id="第一节-流"><a href="#第一节-流" class="headerlink" title="第一节 流"></a><strong>第一节 流</strong></h2><p>&emsp;&emsp;流可以根据传输的基本单位分为<strong>字节流</strong>和<strong>字符流</strong>，字节流一般以Stream命名，字符流则以Reader/Writer命名。计算机传输本质上都是字节流，字符流只是不需要再手动指定一次编码格式。以下直接用流来指代字节流。</p>
 <p>&emsp;&emsp;能够读出或写入一个字节序列的对象分别叫<strong>输入流</strong>或<strong>输出流</strong>，这些对象可以是文件，网络连接或内存块等。</p>
-<p>&emsp;&emsp;抽象类InputStream和OutputStream是I/O结构的基础。其抽象读写方法是基于字节读写，但并不方便处理Unicode格式，且读写方法执行时会阻塞，可以通过available()检查当前可读入字节数量，避免等待。</p>
-<p>&emsp;&emsp;在使用流后切记要即时的close()释放资源，可以通过try-with-resource来实现无论何种情况自动释放资源。</p>
+<p>&emsp;&emsp;抽象类InputStream和OutputStream是I/O结构的基础。其抽象读写方法是基于字节读写，但并不方便处理Unicode格式，且读写方法执行时会阻塞，可以通过available()检查当前可读入字节数量，避免等待。在使用流后切记要即时的close()释放资源，可以通过try-with-resource来实现无论何种情况自动释放资源。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160102.png" alt="输入输出流的层次结构"></p>
 <p>&emsp;&emsp;Unicode格式可以使用抽象类Reader和Writer的子类（字符流）。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160103.png" alt="Reader和Writer的层次结构"></p>
 <p>&emsp;&emsp;Closeable，Flushable，Readable和Appendable接口。</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> InputStream <span class="keyword">implements</span> Closeable</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> OutputStream <span class="keyword">implements</span> Closeable, Flushable </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Reader <span class="keyword">implements</span> Readable, Closeable</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> Writer <span class="keyword">implements</span> Appendable, Closeable, Flushable</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Closeable <span class="keyword">extends</span> AutoCloseable &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> close() <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Flushable &#123;</span><br><span class="line">    <span class="keyword">void</span> flush() <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Readable &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">read</span>(java.nio.CharBuffer cb) <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Appendable &#123;</span><br><span class="line"></span><br><span class="line">    Appendable <span class="keyword">append</span>(CharSequence csq) <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    Appendable <span class="keyword">append</span>(CharSequence csq, <span class="keyword">int</span> start, <span class="keyword">int</span> end) <span class="keyword">throws</span> IOException;</span><br><span class="line"></span><br><span class="line">    Appendable <span class="keyword">append</span>(<span class="keyword">char</span> c) <span class="keyword">throws</span> IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
 <ol>
-<li><p>Closeable接口扩展了AutoCloseable接口，所以可以使用try-with-resource语句，Closeable的close()方法限制只能抛出IOException，而AutoCloseable接口的close()方法则没有限制。InputStream，OutputStream，Reader和Writer都实现了Closeable接口。</p>
-</li>
-<li><p>Flushable的flush()方法通过写入缓冲输出到底层流来刷新当前流</p>
-</li>
-<li><p>Readable的read()方法需要CharBuffer类型参数，其表示内存中的缓冲区或内存映像的文件，可以顺序或随机的进行读写访问。</p>
-</li>
-<li><p>Appendable接口则可以添加字符或字符序列</p>
-</li>
+<li><strong>Closeable</strong>接口扩展了AutoCloseable接口，所以可以使用try-with-resource语句，Closeable的close()方法限制只能抛出IOException，而AutoCloseable接口的close()方法则没有限制。InputStream，OutputStream，Reader和Writer都实现了Closeable接口。</li>
+<li><strong>Flushable</strong>的flush()方法通过写入缓冲输出到底层流来刷新当前流。</li>
+<li><strong>Readable</strong>的read()方法需要CharBuffer类型参数，其表示内存中的缓冲区或内存映像的文件，可以顺序或随机的进行读写访问。</li>
+<li><strong>Appendable</strong>接口则可以添加字符或字符序列。</li>
 </ol>
-<p>&emsp;&emsp;Java分离职能来分类输入流和输出流，所以在实现某些功能时需要结合多种类型的流，Filter流的的子类用来向原生的字节流添加额外的功能，所以可以通过嵌套过滤器来添加多重功能。如下从文件中读取数字并引入缓冲区。</p>
+</blockquote>
+<p>&emsp;&emsp;Java通过分离职能来分类输入流和输出流，所以在实现某些功能时需要结合多种类型的流，Filter流的的子类用来向原生的字节流添加额外的功能，所以可以通过嵌套过滤器来添加多重功能。如下从文件中读取数字并引入缓冲区。</p>
 <figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DataInputStream dis = <span class="keyword">new</span> <span class="type">DataInputStream</span>(<span class="keyword">new</span> <span class="type">BufferedInputStream</span>(<span class="keyword">new</span> <span class="type">FileInputStream</span>(<span class="string">"/test.txt"</span>)));</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;多个流链接在一起时可以通过PushbackInputStream跟踪各个中介流，PushbackInputStream可以推回读入字节。</p>
 <p>&emsp;&emsp;DataInput和DataOutput定义了一些方法用来读写二进制格式数据</p>
@@ -499,7 +496,7 @@
 <p>&emsp;&emsp;通过字符集可以在字符串和字节序列之间转换。</p>
 <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//<span class="keyword">String </span>-&gt; 字节序列</span><br><span class="line"><span class="symbol">Charset</span> charset = Charset.forName(<span class="string">"UTF-8"</span>)<span class="comment">;</span></span><br><span class="line"><span class="keyword">String </span><span class="keyword">str </span>= <span class="string">"Hello世界"</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">ByteBuffer </span><span class="keyword">buffer </span>= charset.encode(<span class="keyword">str);</span></span><br><span class="line"><span class="keyword">byte[] </span><span class="keyword">bytes </span>= <span class="keyword">buffer.array();</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword">//字节序列 </span>-&gt; <span class="keyword">String </span></span><br><span class="line"><span class="keyword">ByteBuffer </span><span class="keyword">buffer1 </span>= <span class="keyword">ByteBuffer.wrap(bytes);</span></span><br><span class="line"><span class="keyword">CharBuffer </span>charBuffer = charset.decode(<span class="keyword">buffer1);</span></span><br><span class="line"><span class="keyword">String </span><span class="keyword">str1 </span>= charBuffer.toString()<span class="comment">;</span></span><br></pre></td></tr></table></figure>
 <hr>
-<h2 id="第三节-序列化"><a href="#第三节-序列化" class="headerlink" title="第三节 序列化"></a><strong>第三节 序列化</strong></h2><h3 id="为什么要序列化？"><a href="#为什么要序列化？" class="headerlink" title="为什么要序列化？"></a><strong>为什么要序列化？</strong></h3><p>&emsp;&emsp;需要把对象等数据转为字节序列进行传输，这个过程就是序列化，还原的过程就是反序列化。</p>
+<h2 id="第三节-序列化"><a href="#第三节-序列化" class="headerlink" title="第三节 序列化"></a><strong>第三节 序列化</strong></h2><h3 id="为什么要序列化？"><a href="#为什么要序列化？" class="headerlink" title="为什么要序列化？"></a><strong>为什么要序列化？</strong></h3><p>&emsp;&emsp;需要<strong>把对象等数据转为字节序列进行传输</strong>，这个过程就是序列化，还原的过程就是反序列化。</p>
 <h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a><strong>使用场景</strong></h3><blockquote>
 <ul>
 <li>持久保存：保存对象的字节序列到本地文件或数据库</li>
@@ -509,7 +506,7 @@
 </blockquote>
 <h3 id="Java序列化"><a href="#Java序列化" class="headerlink" title="Java序列化"></a><strong>Java序列化</strong></h3><p>&emsp;&emsp;Java支持<strong>对象序列化</strong>机制可以将任何对象写出到流中，并在之后读回。其实现机制主要基于两个接口Serializable和Externalizable。</p>
 <p>&emsp;&emsp;可以通过库提供的ObjectInputStream，ObjectOutputStream类来进行对象的序列化。以下示例通过ObjectOutputStream保存对象数据，ObjectInputStream读回对象数据。</p>
-<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Employee employee = <span class="keyword">new</span> <span class="type">Employee</span>(<span class="string">"张三"</span>,<span class="number">3000</span>,<span class="number">1995</span>,<span class="number">8</span>,<span class="number">1</span>);</span><br><span class="line">Manager manager = <span class="keyword">new</span> <span class="type">Manager</span>(<span class="string">"李四"</span>,<span class="number">8000</span>,<span class="number">1986</span>,<span class="number">12</span>,<span class="number">15</span>);</span><br><span class="line">oos.writeObject(employee);</span><br><span class="line">oos.writeObject(manager);</span><br><span class="line">ObjectInputStream <span class="keyword">in</span> = <span class="keyword">new</span> <span class="type">ObjectInputStream</span>(<span class="keyword">new</span> <span class="type">FileInputStream</span>(<span class="string">"test.dat"</span>));</span><br><span class="line">Employee e1 = (Employee)<span class="keyword">in</span>.readObject();</span><br><span class="line">Employee e2 = (Employee)<span class="keyword">in</span>.readObject();</span><br><span class="line">System.out.println(e1.toString());</span><br><span class="line">System.out.println(e2.toString());</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Employee employee = <span class="keyword">new</span> Employee(<span class="string">"张三"</span>,<span class="number">3000</span>,<span class="number">1995</span>,<span class="number">8</span>,<span class="number">1</span>);</span><br><span class="line">Manager manager = <span class="keyword">new</span> Manager(<span class="string">"李四"</span>,<span class="number">8000</span>,<span class="number">1986</span>,<span class="number">12</span>,<span class="number">15</span>);</span><br><span class="line">oos.writeObject(employee);</span><br><span class="line">oos.writeObject(manager);</span><br><span class="line">ObjectInputStream in = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"test.dat"</span>));</span><br><span class="line">Employee e1 = (Employee)in.readObject();</span><br><span class="line">Employee e2 = (Employee)in.readObject();</span><br><span class="line">System.out.println(e1.toString());</span><br><span class="line">System.out.println(e2.toString());</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;结果如下。</p>
 <figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name<span class="string">[张三]</span> pay<span class="string">[3000]</span> year<span class="string">[1995]</span> month<span class="string">[8]</span> day<span class="string">[1]</span></span><br><span class="line">name<span class="string">[李四]</span> pay<span class="string">[8000]</span> year<span class="string">[1986]</span> month<span class="string">[12]</span> day<span class="string">[15]</span></span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;writeObject()和readObject()方法只能写出对象，如果想使用基本数据类型需要实现DataInput和DataOutput定义的相对方法，对象流已经都实现了所需方法。</p>
@@ -728,7 +725,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">242</span>
+                  <span class="site-state-item-count">244</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -739,7 +736,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -750,7 +747,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-count">86</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
