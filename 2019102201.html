@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Q&A," />
+  <meta name="keywords" content="Q&A,updating," />
 
 
 
@@ -89,18 +89,18 @@
 
 
 <meta name="description" content="整理面试中常问的Java并发编程相关问题，持续更新中。">
-<meta name="keywords" content="Q&amp;A">
+<meta name="keywords" content="Q&amp;A,updating">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面试整理——Java并发编程">
+<meta property="og:title" content="面试整理——Java并发编程（持续更新）">
 <meta property="og:url" content="http://linyishui.top/2019102201.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Java并发编程相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200401/202004010123.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160104.jpg">
-<meta property="og:updated_time" content="2020-05-13T10:15:23.137Z">
+<meta property="og:updated_time" content="2020-05-20T02:41:02.335Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面试整理——Java并发编程">
+<meta name="twitter:title" content="面试整理——Java并发编程（持续更新）">
 <meta name="twitter:description" content="整理面试中常问的Java并发编程相关问题，持续更新中。">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200401/202004010123.png">
 
@@ -138,7 +138,7 @@
 
 
 
-  <title>面试整理——Java并发编程 | 俺的部落格</title>
+  <title>面试整理——Java并发编程（持续更新） | 俺的部落格</title>
   
 
 
@@ -346,7 +346,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">面试整理——Java并发编程</h1>
+          <h1 class="post-title" itemprop="name headline">面试整理——Java并发编程（持续更新）</h1>
         
 
         <div class="post-meta">
@@ -413,7 +413,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  7,082
+                  7,350
                 </span>
               
 
@@ -429,7 +429,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  25
+                  26
                 </span>
               
             </div>
@@ -468,9 +468,9 @@
 
 <h4 id="问：终止线程的方法？"><a href="#问：终止线程的方法？" class="headerlink" title="问：终止线程的方法？"></a><strong>问：终止线程的方法？</strong></h4><details><br><br>&gt; <em> 使用退出标志（如volatile布尔变量），表示线程正常退出；<br>&gt; </em> 通过interrupt()中断，run()内通过isInterrupted()判断是否中断，若处于阻塞状态就无法检测中断状态，会抛出异常InterruptedException。<br><br></details>
 
-<h4 id="问：谈一下线程切换，并引申到Java阻塞，运行？"><a href="#问：谈一下线程切换，并引申到Java阻塞，运行？" class="headerlink" title="问：谈一下线程切换，并引申到Java阻塞，运行？"></a><strong>问：谈一下线程切换，并引申到Java阻塞，运行？</strong></h4><details><br><br>&emsp;&emsp;<br><br></details>
+<h4 id="问：谈一下线程切换，并引申到Java阻塞，运行？"><a href="#问：谈一下线程切换，并引申到Java阻塞，运行？" class="headerlink" title="问：谈一下线程切换，并引申到Java阻塞，运行？"></a><strong>问：谈一下线程切换，并引申到Java阻塞，运行？</strong></h4><details><br><br>&emsp;&emsp;线程切换就是指<strong>CPU从一个进程/线程切换到另一个进程/线程</strong>（上下文指某个时间节点CPU寄存器和计数器的内容）。大概过程可以简单的理解为：<strong>挂起当前线程</strong>（存储当前上下文），<strong>恢复一个线程</strong>（找到一个合适的上下文并恢复到寄存器），<strong>跳转到程序计数器指向的位置</strong>（即线程被中断时的代码行）。<br><br>&emsp;&emsp;阻塞<br><br></details>
 
-<h4 id="问：线程的中断机制？"><a href="#问：线程的中断机制？" class="headerlink" title="问：线程的中断机制？"></a><strong>问：线程的中断机制？</strong></h4><details><br><br>&emsp;&emsp;<br><br></details>
+<h4 id="问：线程的中断机制？"><a href="#问：线程的中断机制？" class="headerlink" title="问：线程的中断机制？"></a><strong>问：线程的中断机制？</strong></h4><details><br><br>&emsp;&emsp;Java的线程中有一个中断标识位，表示是否有中断请求，并在Thread中提供了interrupt()来中断线程，以及interrupted()和isInterrupted()来判断当前中断状态，前者会将中断复位。<br><br>&emsp;&emsp;中断并不意味着线程会立即终止，中断线程可以任意处理，通常会把中断请求当作终止请求，由线程根据情况在合适的时机终止。<br><br>&emsp;&emsp;处于阻塞状态的线程会抛出异常InterruptedException，且抛出异常的方法大多会先重置中断标识位再抛出异常。<br><br></details>
 
 <h4 id="问：怎么实现所有线程在等待某个事件的发生才会去执行？"><a href="#问：怎么实现所有线程在等待某个事件的发生才会去执行？" class="headerlink" title="问：怎么实现所有线程在等待某个事件的发生才会去执行？"></a><strong>问：怎么实现所有线程在等待某个事件的发生才会去执行？</strong></h4><details><br><br>&emsp;&emsp;<br><br></details>
 
@@ -656,6 +656,8 @@
         <div class="post-tags">
           
             <a href="/tags/Q-A/" rel="tag"># Q&A</a>
+          
+            <a href="/tags/updating/" rel="tag"># updating</a>
           
         </div>
       
