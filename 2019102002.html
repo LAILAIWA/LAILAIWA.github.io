@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Java基础相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-05-21T11:04:44.843Z">
+<meta property="og:updated_time" content="2020-05-22T07:28:19.707Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Java基础">
 <meta name="twitter:description" content="整理面试中常问的Java基础相关问题，持续更新中。">
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,017
+                  4,299
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  14
+                  15
                 </span>
               
             </div>
@@ -495,15 +495,13 @@
 
 <h3 id="问：如何通过反射和设置对象私有字段的值？"><a href="#问：如何通过反射和设置对象私有字段的值？" class="headerlink" title="问：如何通过反射和设置对象私有字段的值？"></a><strong>问：如何通过反射和设置对象私有字段的值？</strong></h3><details><br><br>&emsp;&emsp;首先使用反射提供的setAccessible(true)，使我们可以访问到非public的变量。然后使用反射提供的getDeclaredFields()方法获取某个类的所有声明字段或getDeclaredField()方法获取指定字段。<br><br></details>
 
-<h3 id="问：动态代理？"><a href="#问：动态代理？" class="headerlink" title="问：动态代理？"></a><strong>问：动态代理？</strong></h3><details><br><br>&emsp;&emsp;什么是动态代理？相比于静态代理（代理模式）解决了其代码冗余问题，动态生成代理对象，用完即销毁。<br><br>&emsp;&emsp;<br><br>&emsp;&emsp;<br><br></details>
+<h3 id="问：动态代理？"><a href="#问：动态代理？" class="headerlink" title="问：动态代理？"></a><strong>问：动态代理？</strong></h3><details><br><br>&emsp;&emsp;什么是动态代理？相比于静态代理（代理模式）解决了其代码冗余问题，动态生成代理对象，用完即销毁。核心是Proxy和InvocationHandler。<br><br>&emsp;&emsp;动态代理步骤：<br><br>1. 获取 <code>RealSubject</code>上的所有接口列表；<br>2. 确定要生成的代理类的类名，默认为：<code>com.sun.proxy.$ProxyXXXX</code>；<br>3. 根据需要实现的接口信息，在代码中动态创建该 <code>Proxy</code> 类的字节码；<br>4. 将对应的字节码转换为对应的 <code>Class</code> 对象；<br>5. 创建 <code>InvocationHandler</code> 实例 handler，用来处理 <code>Proxy</code> 所有方法调用；<br>6. <code>Proxy</code> 的 <code>Class</code> 对象以创建的 handler 对象为参数，实例化一个 proxy 对象。<br><br>&emsp;&emsp;代理类命名格式固定，一旦在运行中创建则和普通类无异。代理类都继承自Proxy类，通过实现接口的方式来实现代理。<br><br></details>
 
 <h3 id="问：为什么JDK动态代理只能代理接口？"><a href="#问：为什么JDK动态代理只能代理接口？" class="headerlink" title="问：为什么JDK动态代理只能代理接口？"></a><strong>问：为什么JDK动态代理只能代理接口？</strong></h3><details><br><br>&emsp;&emsp;因为JDK动态代理创建代理对象需要继承标准类库中的 <code>Proxy</code> 类，且Java遵守单继承多实现，所以JDK只能通过实现来代理接口。<br><br></details>
 
-<h3 id="问：Spring中AOP的实现采用那种代理方式？"><a href="#问：Spring中AOP的实现采用那种代理方式？" class="headerlink" title="问：Spring中AOP的实现采用那种代理方式？"></a><strong>问：Spring中AOP的实现采用那种代理方式？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
+<h3 id="问：Spring中AOP的实现采用那种代理方式？"><a href="#问：Spring中AOP的实现采用那种代理方式？" class="headerlink" title="问：Spring中AOP的实现采用那种代理方式？"></a><strong>问：Spring中AOP的实现采用那种代理方式？</strong></h3><details><br><br>&emsp;&emsp;有两种：JDK动态代理和CGLib，Spring默认使用JDK动态代理，Spring Boot则在2.x版本后默认使用CGlib（理由是相比JDK动态代理更少出现转换问题）<br><br></details>
 
-<h3 id="问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？"><a href="#问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？" class="headerlink" title="问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？"></a><strong>问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
-
-
+<h3 id="问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？"><a href="#问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？" class="headerlink" title="问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？"></a><strong>问：都说jdk动态代理性能远比cglib要差，如果是，依据是什么？</strong></h3><details><br><br>&emsp;&emsp;这应该是一个过时的问题，在JDK 1.8之前的版本或许JDK动态代理生成的代理类运行效率要弱于CGLib，但之后的版本应该是JDK动态代理要更强一些。<br><br></details>
 
 <h3 id="问：Java-的信号灯？"><a href="#问：Java-的信号灯？" class="headerlink" title="问：Java 的信号灯？"></a><strong>问：Java 的信号灯？</strong></h3><details><br><br>&emsp;&emsp;<br><br></details>
 
