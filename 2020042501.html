@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java,unfinished," />
+  <meta name="keywords" content="java," />
 
 
 
@@ -88,18 +88,18 @@
 
 
 
-<meta name="description" content="介绍Java中的对象序列化">
-<meta name="keywords" content="java,unfinished">
+<meta name="description" content="介绍Java中的对象序列化，内容包括：概述（什么是序列化、为什么要序列化、使用场景、序列化与反序列化），Java序列化（ObjectInputStream与ObjectOutputStream、序列化ID、安全性、Transient、自定义序列化、writeReplace()和readResolve()、Externalizable），原理（序列化流程、序列化后内容改变、被多个对象共享、序列化单例">
+<meta name="keywords" content="java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="对象序列化（未完成）">
+<meta property="og:title" content="对象序列化">
 <meta property="og:url" content="http://linyishui.top/2020042501.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="介绍Java中的对象序列化">
+<meta property="og:description" content="介绍Java中的对象序列化，内容包括：概述（什么是序列化、为什么要序列化、使用场景、序列化与反序列化），Java序列化（ObjectInputStream与ObjectOutputStream、序列化ID、安全性、Transient、自定义序列化、writeReplace()和readResolve()、Externalizable），原理（序列化流程、序列化后内容改变、被多个对象共享、序列化单例">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-05-24T14:06:25.832Z">
+<meta property="og:updated_time" content="2020-05-27T04:00:51.563Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="对象序列化（未完成）">
-<meta name="twitter:description" content="介绍Java中的对象序列化">
+<meta name="twitter:title" content="对象序列化">
+<meta name="twitter:description" content="介绍Java中的对象序列化，内容包括：概述（什么是序列化、为什么要序列化、使用场景、序列化与反序列化），Java序列化（ObjectInputStream与ObjectOutputStream、序列化ID、安全性、Transient、自定义序列化、writeReplace()和readResolve()、Externalizable），原理（序列化流程、序列化后内容改变、被多个对象共享、序列化单例">
 
 
 
@@ -135,7 +135,7 @@
 
 
 
-  <title>对象序列化（未完成） | 俺的部落格</title>
+  <title>对象序列化 | 俺的部落格</title>
   
 
 
@@ -343,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">对象序列化（未完成）</h1>
+          <h1 class="post-title" itemprop="name headline">对象序列化</h1>
         
 
         <div class="post-meta">
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,915
+                  3,406
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  13
                 </span>
               
             </div>
@@ -434,7 +434,7 @@
 
           
               <div class="post-description">
-                  介绍Java中的对象序列化
+                  介绍Java中的对象序列化，内容包括：概述（什么是序列化、为什么要序列化、使用场景、序列化与反序列化），Java序列化（ObjectInputStream与ObjectOutputStream、序列化ID、安全性、Transient、自定义序列化、writeReplace()和readResolve()、Externalizable），原理（序列化流程、序列化后内容改变、被多个对象共享、序列化单例和类型安全的枚举、克隆和序列化）。
               </div>
           
 
@@ -451,57 +451,118 @@
       
 
       
-        <h2 id="第三节-序列化"><a href="#第三节-序列化" class="headerlink" title="第三节 序列化"></a><strong>第三节 序列化</strong></h2><h3 id="为什么要序列化？"><a href="#为什么要序列化？" class="headerlink" title="为什么要序列化？"></a><strong>为什么要序列化？</strong></h3><p>&emsp;&emsp;需要<strong>把对象等数据转为字节序列进行传输</strong>，这个过程就是序列化，还原的过程就是反序列化。</p>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a><strong>使用场景</strong></h3><blockquote>
+        <h1 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a><strong>序列化</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><h3 id="1-1-什么是序列化？"><a href="#1-1-什么是序列化？" class="headerlink" title="1.1 什么是序列化？"></a><strong>1.1 什么是序列化？</strong></h3><p>&emsp;&emsp;序列化指<strong>将一个Java对象转化为二进制序列</strong>，可以看作一个 <code>byte[]</code> 字节数组。</p>
+<h3 id="1-2-为什么要序列化？"><a href="#1-2-为什么要序列化？" class="headerlink" title="1.2 为什么要序列化？"></a><strong>1.2 为什么要序列化？</strong></h3><p>&emsp;&emsp;需要<strong>把对象等数据转为字节序列进行传输</strong>。序列化后方便把对象<strong>存入文件</strong>或是通过<strong>网络传输</strong>到远程服务器。</p>
+<h3 id="1-3-使用场景"><a href="#1-3-使用场景" class="headerlink" title="1.3 使用场景"></a><strong>1.3 使用场景</strong></h3><blockquote>
 <ul>
-<li>持久保存：保存对象的字节序列到本地文件或数据库</li>
-<li>网络传输：序列化后写入字节流使对象得以在网络中传输</li>
-<li>传递对象：通过序列化在进程间传递对象</li>
+<li><strong>持久保存</strong>：保存对象的字节序列到本地文件或数据库</li>
+<li><strong>网络传输</strong>：序列化后写入字节流使对象得以在网络中传输</li>
+<li><strong>传递对象</strong>：通过序列化在进程间传递对象</li>
 </ul>
 </blockquote>
-<h3 id="Java序列化"><a href="#Java序列化" class="headerlink" title="Java序列化"></a><strong>Java序列化</strong></h3><p>&emsp;&emsp;Java支持<strong>对象序列化</strong>机制可以将任何对象写出到流中，并在之后读回。其实现机制主要基于两个接口Serializable和Externalizable。</p>
-<p>&emsp;&emsp;可以通过库提供的ObjectInputStream，ObjectOutputStream类来进行对象的序列化。以下示例通过ObjectOutputStream保存对象数据，ObjectInputStream读回对象数据。</p>
+<h3 id="1-4-序列化与反序列化"><a href="#1-4-序列化与反序列化" class="headerlink" title="1.4 序列化与反序列化"></a><strong>1.4 序列化与反序列化</strong></h3><p>&emsp;&emsp;把对象等数据转为字节序列的这个过程就是序列化，还原的过程就是反序列化。</p>
+<p>&emsp;&emsp;注意：<strong>反序列化时，由JVM直接构造出Java对象，不调用构造方法</strong>，构造方法内部的代码，在反序列化时根本不可能执行。</p>
+<hr>
+<h2 id="第二节-Java序列化"><a href="#第二节-Java序列化" class="headerlink" title="第二节 Java序列化"></a><strong>第二节 Java序列化</strong></h2><p>&emsp;&emsp;Java支持<strong>对象序列化</strong>机制可以将任何对象写出到流中，并在之后读回。其实现机制主要基于两个接口 <code>Serializable</code> 和 <code>Externalizable</code> 。</p>
+<p>&emsp;&emsp;实现 <code>Serializable</code> 接口表示此类的对象是可序列化的。如果类中的成员变量是引用类型，那么它也必须实现<code>Serializable</code> 接口才能保证序列化成功。</p>
+<h3 id="2-1-ObjectInputStream与ObjectOutputStream"><a href="#2-1-ObjectInputStream与ObjectOutputStream" class="headerlink" title="2.1 ObjectInputStream与ObjectOutputStream"></a><strong>2.1 ObjectInputStream与ObjectOutputStream</strong></h3><p>&emsp;&emsp;可以通过库提供的 <code>ObjectInputStream</code> ，<code>ObjectOutputStream</code> 类来进行对象的序列化。</p>
+<p>&emsp;&emsp;以下示例通过ObjectOutputStream保存对象数据，ObjectInputStream读回对象数据。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Employee employee = <span class="keyword">new</span> Employee(<span class="string">"张三"</span>,<span class="number">3000</span>,<span class="number">1995</span>,<span class="number">8</span>,<span class="number">1</span>);</span><br><span class="line">Manager manager = <span class="keyword">new</span> Manager(<span class="string">"李四"</span>,<span class="number">8000</span>,<span class="number">1986</span>,<span class="number">12</span>,<span class="number">15</span>);</span><br><span class="line">oos.writeObject(employee);</span><br><span class="line">oos.writeObject(manager);</span><br><span class="line">ObjectInputStream in = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"test.dat"</span>));</span><br><span class="line">Employee e1 = (Employee)in.readObject();</span><br><span class="line">Employee e2 = (Employee)in.readObject();</span><br><span class="line">System.out.println(e1.toString());</span><br><span class="line">System.out.println(e2.toString());</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;结果如下。</p>
 <figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name<span class="string">[张三]</span> pay<span class="string">[3000]</span> year<span class="string">[1995]</span> month<span class="string">[8]</span> day<span class="string">[1]</span></span><br><span class="line">name<span class="string">[李四]</span> pay<span class="string">[8000]</span> year<span class="string">[1986]</span> month<span class="string">[12]</span> day<span class="string">[15]</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;writeObject()和readObject()方法只能写出对象，如果想使用基本数据类型需要实现DataInput和DataOutput定义的相对方法，对象流已经都实现了所需方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectInputStream</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">InputStream</span> <span class="keyword">implements</span> <span class="title">ObjectInput</span>, <span class="title">ObjectStreamConstants</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bin.readBoolean();</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> v = read();</span><br><span class="line">        <span class="keyword">if</span> (v &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EOFException();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (v != <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectOutputStream</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">OutputStream</span> <span class="keyword">implements</span> <span class="title">ObjectOutput</span>, <span class="title">ObjectStreamConstants</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeInt</span><span class="params">(<span class="keyword">int</span> val)</span>  <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        bout.writeInt(val);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeInt</span><span class="params">(<span class="keyword">int</span> v)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pos + <span class="number">4</span> &lt;= MAX_BLOCK_SIZE) &#123;</span><br><span class="line">            Bits.putInt(buf, pos, v);</span><br><span class="line">            pos += <span class="number">4</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dout.writeInt(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="序列化ID"><a href="#序列化ID" class="headerlink" title="序列化ID"></a><strong>序列化ID</strong></h3><p>&emsp;&emsp;序列化ID可以看作版本号，序列化对象的唯一标识，如果序列化ID不同（比如新版本不兼容旧版本）或修改了对象的信息，反序列化时就会抛出InvalidClassException异常。</p>
-<p>&emsp;&emsp;序列化ID可以通过以下两种方式生成。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//默认1L</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1</span>L;</span><br><span class="line"><span class="comment">//根据类名、接口名、成员方法及属性等来生成一个64位的哈希字段</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = xxxL;</span><br></pre></td></tr></table></figure>
-<h3 id="Transient"><a href="#Transient" class="headerlink" title="Transient"></a><strong>Transient</strong></h3><p>&emsp;&emsp;某些域是不可被序列化的或着说没有序列化的意义，Java可以通过transient关键字来标记这类域，详细可看这篇<a href="../2019010901.html" title="Title">static,final,transient,volatile等关键字原理作用</a>。</p>
-<h3 id="Serializable和Externalizable"><a href="#Serializable和Externalizable" class="headerlink" title="Serializable和Externalizable"></a><strong>Serializable和Externalizable</strong></h3><p>&emsp;&emsp;对于一个对象只要实现Serializable接口，就会可以对非transient以及非static修饰属性进行序列化工作（静态属性属于类信息，所以不会被序列化）。如果想要自定义序列化的属性，除了transient也可以通过重写readObject()和writeObject()方法来代替默认的自动序列化或通过实现Externalizable接口。</p>
+<p>&emsp;&emsp; <code>writeObject()</code> 和 <code>readObject()</code> 方法只能写出对象，如果想使用基本数据类型需要实现 <code>DataInput</code> 和 <code>DataOutput</code> 定义的相对方法，对象流已经都实现了所需方法：<code>readXX()</code> 和 <code>writeXX()</code> 系列方法支持各种数据类型的字节读写（包括各种基本类型、UTF-8编码的String和实现了Serializable接口的Object等）。</p>
+<p>&emsp;&emsp;<code>ObjectOutputStream</code>（序列化）可以把一个Java对象变为 <code>byte[]</code> 数组，它负责把一个Java对象写入一个字节流。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectOutputStream</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">OutputStream</span> <span class="keyword">implements</span> <span class="title">ObjectOutput</span>, <span class="title">ObjectStreamConstants</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (enableOverride) &#123;</span><br><span class="line">            writeObjectOverride(obj);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            writeObject0(obj, <span class="keyword">false</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            <span class="keyword">if</span> (depth == <span class="number">0</span>) &#123;</span><br><span class="line">                writeFatalException(ex);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">throw</span> ex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeInt</span><span class="params">(<span class="keyword">int</span> val)</span>  <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        bout.writeInt(val);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeInt</span><span class="params">(<span class="keyword">int</span> v)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pos + <span class="number">4</span> &lt;= MAX_BLOCK_SIZE) &#123;</span><br><span class="line">            Bits.putInt(buf, pos, v);</span><br><span class="line">            pos += <span class="number">4</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dout.writeInt(v);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;<code>ObjectInputStream</code>（反序列化）则负责从一个字节流读取Java对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectInputStream</span></span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">InputStream</span> <span class="keyword">implements</span> <span class="title">ObjectInput</span>, <span class="title">ObjectStreamConstants</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">readObject</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IOException, ClassNotFoundException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (enableOverride) &#123;</span><br><span class="line">            <span class="keyword">return</span> readObjectOverride();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// if nested read, passHandle contains handle of enclosing object</span></span><br><span class="line">        <span class="keyword">int</span> outerHandle = passHandle;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Object obj = readObject0(<span class="keyword">false</span>);</span><br><span class="line">            handles.markDependency(outerHandle, passHandle);</span><br><span class="line">            ClassNotFoundException ex = handles.lookupException(passHandle);</span><br><span class="line">            <span class="keyword">if</span> (ex != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> ex;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (depth == <span class="number">0</span>) &#123;</span><br><span class="line">                vlist.doCallbacks();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> obj;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            passHandle = outerHandle;</span><br><span class="line">            <span class="keyword">if</span> (closed &amp;&amp; depth == <span class="number">0</span>) &#123;</span><br><span class="line">                clear();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bin.readBoolean();</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">readBoolean</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> v = read();</span><br><span class="line">        <span class="keyword">if</span> (v &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> EOFException();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (v != <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>部分属性序列化的方法：</p>
+<p>ObjectInputStream可能抛出的异常包括：</p>
 <ul>
-<li>transient</li>
-<li>重写readObject()和writeObject()</li>
-<li>实现Externalizable接口</li>
+<li><code>ClassNotFoundException</code> ：没有找到对应的Class，如Person对象序列化以后，通过网络传给另一台电脑上的另一个Java程序，但是这台电脑的Java程序并没有定义Person类，所以无法反序列化。</li>
+<li><code>InvalidClassException</code> ：Class不匹配，如序列化的Person对象定义了一个int类型的age字段，但是反序列化时，Person类定义的age字段被改成了long类型，所以导致class不兼容。</li>
 </ul>
 </blockquote>
-<p>&emsp;&emsp;Externalizable接口继承自Serializable，声明了两个方法writeExternal和readExternal。</p>
+<p>&emsp;&emsp;为了避免这种class定义变动导致的不兼容，Java的序列化允许class定义一个特殊的 <code>serialVersionUID</code> 静态变量，用于标识Java类的序列化“版本”，通常可以由IDE自动生成。</p>
+<h3 id="2-2-序列化ID"><a href="#2-2-序列化ID" class="headerlink" title="2.2 序列化ID"></a><strong>2.2 序列化ID</strong></h3><p>&emsp;&emsp;<strong>序列化ID</strong>（serialVersionUID）可以看作版本号，序列化对象的唯一标识，如果序列化ID不同（比如新版本不兼容旧版本）或修改了对象的信息，反序列化时就会抛出 <code>InvalidClassException</code> 异常。</p>
+<p>&emsp;&emsp;序列化ID可以通过以下两种方式生成：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认1L</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1</span>L;</span><br><span class="line"><span class="comment">// 根据类名、接口名、成员方法及属性等来生成一个64位的哈希字段</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = xxxL;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-安全性"><a href="#2-3-安全性" class="headerlink" title="2.3 安全性"></a><strong>2.3 安全性</strong></h3><p>&emsp;&emsp;因为Java的序列化机制可以导致一个实例能直接从 <code>byte[]</code> 数组创建，而不经过构造方法，因此，它存在一定的安全隐患。一个精心构造的 <code>byte[]</code> 数组被反序列化后可以执行特定的Java代码，从而导致严重的安全漏洞。</p>
+<p>&emsp;&emsp;实际上，Java本身提供的基于对象的序列化和反序列化机制既存在安全性问题，也存在兼容性问题。更好的序列化方法是通过JSON这样的通用数据结构来实现，只输出基本类型（包括String）的内容，而不存储任何与代码相关的信息。</p>
+<h3 id="2-4-Transient"><a href="#2-4-Transient" class="headerlink" title="2.4 Transient"></a><strong>2.4 Transient</strong></h3><p>&emsp;&emsp;某些域是不可被序列化的或着说没有序列化的意义，Java可以通过transient关键字来标记这类域，详细可看这篇<a href="../2019010901.html" title="Title">static,final,transient,volatile等关键字原理作用</a>。</p>
+<h3 id="2-5-自定义序列化"><a href="#2-5-自定义序列化" class="headerlink" title="2.5 自定义序列化"></a><strong>2.5 自定义序列化</strong></h3><p>&emsp;&emsp;对于一个对象只要实现 <code>Serializable</code> 接口，就会可以对 <code>非transient</code> 以及 <code>非static</code> 修饰属性进行序列化工作（静态属性属于类信息，所以不会被序列化）。</p>
+<p>&emsp;&emsp;如果想要<strong>自定义序列化的属性</strong>，除了transient也可以通过重写 <code>readObject()</code> 和 <code>writeObject()</code> 方法来代替默认的自动序列化或通过实现Externalizable接口。</p>
+<blockquote>
+<p>部分属性序列化（自定义序列化）的方法：</p>
+<ul>
+<li><strong>transient</strong></li>
+<li><strong>重写</strong> <code>readObject()</code> 和 <code>writeObject()</code></li>
+<li><strong>实现</strong> <code>Externalizable</code> 接口</li>
+</ul>
+</blockquote>
+<h3 id="2-6-writeReplace-和readResolve"><a href="#2-6-writeReplace-和readResolve" class="headerlink" title="2.6 writeReplace()和readResolve()"></a><strong>2.6 writeReplace()和readResolve()</strong></h3><p>&emsp;&emsp;<code>writeReplace()</code> 在序列化时，会先调用此方法，再调用 <code>writeObject()</code> ，此方法可将任意对象代替目标序列化对象。</p>
+<p>&emsp;&emsp;<code>readResolve()</code> 反序列化时替换反序列化出的对象，反序列化出来的对象被立即丢弃，此方法在 <code>readObject()</code> 后调用。</p>
+<p>&emsp;&emsp;readResolve常用来反序列单例类，保证单例类的唯一性。</p>
+<p>&emsp;&emsp;注意：<code>readResolve()</code> 与 <code>writeReplace()</code> 的访问修饰符可以是private、protected、public，如果父类重写了这两个方法，子类都需要根据自身需求重写，这显然不是一个好的设计。通常建议对于final修饰的类重写 <code>readResolve()</code> 方法没有问题；否则，重写 <code>readResolve()</code> 使用private修饰。</p>
+<h3 id="2-7-Externalizable"><a href="#2-7-Externalizable" class="headerlink" title="2.7 Externalizable"></a><strong>2.7 Externalizable</strong></h3><p>&emsp;&emsp;<code>Externalizable</code> 接口继承自 <code>Serializable</code> ，声明了两个方法 <code>writeExternal()</code> 和 <code>readExternal()</code> 。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Externalizable</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">writeExternal</span><span class="params">(ObjectOutput out)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">readExternal</span><span class="params">(ObjectInput in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;这两个方法可以对包含超类在内的对象所有数据的存储和恢复进行管理，序列化机制在流中仅仅记录对象所属的类。在读入可外部化的类时，对象流将调用无参构造器创建一个新的对象（所以实现Externalizable接口一定要声明无参构造器），然后调用readExternal()方法，将字段值分别填充到新的对象中。</p>
+<p>&emsp;&emsp;这两个方法可以<strong>对包含超类在内的对象所有数据的存储和恢复进行管理</strong>，序列化机制在流中仅仅记录对象所属的类。在读入可外部化的类时，对象流将调用无参构造器创建一个新的对象（所以实现Externalizable接口一定要声明无参构造器），然后调用 <code>readExternal()</code> 方法，将字段值分别填充到新的对象中。</p>
+<p>&emsp;&emsp;<code>readObject()</code> 和 <code>writeObject()</code> 是<strong>私有</strong>的，只能被序列化机制调用，而 <code>readExternal()</code> 和 <code>writeExternal()</code> 是<strong>公共</strong>的。</p>
 <blockquote>
 <p>Serializable和Externalizable的区别：</p>
 <ul>
-<li>Serializable没有声明方法，只是一个标识接口</li>
-<li>Serializable实现时不需要重写readObject()和writeObject()，有默认实现</li>
-<li>实现Externalizable接口必须声明无参构造器，Serializable则采用反射机制完成内容恢复，没有这个限制</li>
-<li>Externalizable方式不需要序列化ID，而Serializable接口则需要</li>
-<li>相比Serializable, Externalizable序列化、反序列更加快速，占用相比较小的内存</li>
+<li>Serializable没有声明方法，只是一个标识接口。</li>
+<li>Serializable实现时不需要重写 <code>readObject()</code> 和 <code>writeObject()</code>，有默认实现。</li>
+<li>实现Externalizable接口必须声明无参构造器，Serializable则采用反射机制完成内容恢复，没有这个限制。</li>
+<li>Externalizable方式不需要序列化ID，而Serializable接口则需要。</li>
+<li>相比Serializable, Externalizable序列化、反序列更加快速，占用相比较小的内存。</li>
 </ul>
 </blockquote>
-<p>&emsp;&emsp;readObject()和writeObject()是私有的，只能被序列化机制调用，而readExternal()和writeExternal()是公共的。</p>
-<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a><strong>思考</strong></h3><p>&emsp;&emsp;当一个对象被多个对象共享时，序列化过程是怎么样的呢？</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Employee employee = new Employee(<span class="string">"张三"</span>,<span class="number">3000</span>,<span class="number">1995</span>,<span class="number">8</span>,<span class="number">1</span>);</span><br><span class="line">Manager manager1 = new Manager(<span class="string">"李四"</span>,<span class="number">8000</span>,<span class="number">1986</span>,<span class="number">12</span>,<span class="number">15</span>);</span><br><span class="line">Manager manager2 = new Manager(<span class="string">"王五"</span>,<span class="number">7000</span>,<span class="number">1992</span>,<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">manager1.setEmployee(employee);</span><br><span class="line">manager2.setEmployee(employee);</span><br><span class="line">oos.writeObject(employee);</span><br><span class="line">oos.writeObject(manager1);</span><br><span class="line">oos.writeObject(manager2);</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;每个对象都是用一个序列号保存，第一次调用时，将对象数据保存到流中，如果此对象已被保存过，只写出”与以保存序列号x对象相同”。对于流中的对象，第一次遇到其序列号时，构建对象，并使用流中的数据来初始化，再记录此序号和新对象之间的关联，当遇到”与以保存序列号x对象相同”此标记时，获取与序号关联的对象引用。</p>
-<p>&emsp;&emsp;对象序列化以特殊的文件格式来存储对象数据，通过对类的域进行排序，然后通过SHA安全散列算法得到SHA码，只取前8个字节作为类的指纹，指纹即其身份证明，可以通过对象的指纹和其所属类的指纹进行比对，当类信息改变时，指纹大概率会不同，所以当两者不同时就抛出一个异常。具体如何进行编码和排布对于当前的学习不是那么重要，只需要知道对象流输出中包含所有对象的类型和数据域，每个对象都被赋予一个序列号，相同对象的重复出现将被存储为对这个对象序列号的引用。</p>
-<h3 id="序列化单例和类型安全的枚举"><a href="#序列化单例和类型安全的枚举" class="headerlink" title="序列化单例和类型安全的枚举"></a><strong>序列化单例和类型安全的枚举</strong></h3><p>&emsp;&emsp;<a href="../2019030501.html" title="Title">枚举类</a>这篇博客有提到序列化枚举类，当枚举类或使用单例模式进行序列化化时目标对象是唯一的，这其中隐藏着一个问题：即序列化后的对象和原对象是相等吗？</p>
-<p>&emsp;&emsp;我们实现单例模式时，期望得到的实例应该是唯一的，而序列化的对象却是一个全新的对象，所以其它方式实现单例模式时，只要实现了Serializable接口，目标对象就不唯一了，所以需要加如readResolve()方法来避免这种情况，此方法会直接返回单例对象。</p>
-<p>&emsp;&emsp;而使用Java中的枚举类时不会出现此问题，因为Jvm限制枚举类型及其枚举常量是唯一的，在序列化时只会将枚举对象的name属性输出到流中，反序列化时在通过Enum.valueOf()方法根据名字来查找枚举对象。同时Jvm禁止了枚举类的readObject()，writeObject()和readResolve()等方法，避免上述规范被破坏。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Object readResolve() throws ObjectStreamException&#123;<span class="comment">//定义了此方法后，对象被序列化时会被调用，其返回的对象在之后会成为readObject()的返回值。</span></span><br><span class="line">    <span class="keyword">if</span>(filed == A) <span class="keyword">return</span> Demo.A;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(filed == B) <span class="keyword">return</span> Demo.B;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="克隆和序列化"><a href="#克隆和序列化" class="headerlink" title="克隆和序列化"></a><strong>克隆和序列化</strong></h3><p>&emsp;&emsp;<a href="../2018083001.html" title="Title">Java对象克隆</a>这篇博客中有谈到用序列化去实现克隆，相比重载equals()还要更为简单。只要声明对象为可序列化的，将其序列化到流中再读回，即可得到一个深拷贝的结果，但序列化的性能相比复制数据域来说是要慢很多的，所以个人觉得非深克隆的情况还是避免使用好一点。</p>
+<p>&emsp;&emsp;虽然Externalizable接口带来了一定的性能提升，但相应的复杂度也提高了，所以一般还是会通过实现Serializable接口进行序列化。</p>
+<hr>
+<h2 id="第三节-原理"><a href="#第三节-原理" class="headerlink" title="第三节 原理"></a><strong>第三节 原理</strong></h2><h3 id="3-1-序列化流程"><a href="#3-1-序列化流程" class="headerlink" title="3.1 序列化流程"></a><strong>3.1 序列化流程</strong></h3><p>&emsp;&emsp;Java序列化同一对象，多次的序列化只会得到相同的结果。可以编程试验一下，原因就在于序列化时会对是否序列化过进行检测。</p>
+<blockquote>
+<p>Java序列化算法简单描述：</p>
+<ol>
+<li>所有保存到磁盘的对象都有一个序列化编码号。</li>
+<li>当程序试图序列化一个对象时，会先检查此对象是否已经序列化过，只有此对象从未（在此虚拟机）被序列化过，才会将此对象序列化为字节序列输出。</li>
+<li>如果此对象已经序列化过，则直接输出编号即可。</li>
+</ol>
+</blockquote>
+<h3 id="3-2-序列化后内容改变"><a href="#3-2-序列化后内容改变" class="headerlink" title="3.2 序列化后内容改变"></a><strong>3.2 序列化后内容改变</strong></h3><p>&emsp;&emsp;当一个对象在序列化后，内容发生了修改，再次序列化会如何？</p>
+<p>&emsp;&emsp;答案是仍然不会再次进行序列化转换，只是保存一下序列化编号。</p>
+<blockquote>
+<p>什么情况下会导致serialVersionUID修改呢？</p>
+<ul>
+<li>如果只是修改了方法，反序列化不容影响，则无需修改版本号。</li>
+<li>如果只是修改了静态变量，瞬态变量（transient修饰的变量），反序列化不受影响，无需修改版本号。</li>
+<li>如果修改了非瞬态变量，则可能导致反序列化失败。</li>
+<li>如果新类中实例变量的类型与序列化时类的类型不一致，则会反序列化失败，这时候需要更改serialVersionUID。</li>
+<li>如果只是新增了实例变量，则反序列化回来新增的是默认值；</li>
+<li>如果减少了实例变量，反序列化时会忽略掉减少的实例变量。</li>
+</ul>
+</blockquote>
+<h3 id="3-3-被多个对象共享"><a href="#3-3-被多个对象共享" class="headerlink" title="3.3 被多个对象共享"></a><strong>3.3 被多个对象共享</strong></h3><p>&emsp;&emsp;当一个对象被多个对象共享时，序列化过程是怎么样的呢？</p>
+<p>&emsp;&emsp;每个对象都是用一个序列号保存，第一次调用时，将对象数据保存到流中，如果此对象已被保存过，则只写出”与以保存序列号x对象相同”。</p>
+<p>&emsp;&emsp;对于流中的对象，第一次遇到其序列号时，构建对象，并使用流中的数据来初始化，再记录此序号和新对象之间的关联，当遇到”与以保存序列号x对象相同”此标记时，获取与序号关联的对象引用。</p>
+<p>&emsp;&emsp;对象序列化以特殊的文件格式来存储对象数据，通过对类的域进行排序，然后通过 <code>SHA安全散列算法</code> 得到SHA码，只取前8个字节作为类的<strong>指纹</strong>（指纹即其身份证明）。可以通过对象的指纹和其所属类的指纹进行比对，<strong>当类信息改变时，指纹大概率会不同</strong>（注意是类的结构信息，而非对象数据），所以当两者不同时就抛出一个异常。</p>
+<p>&emsp;&emsp;具体如何进行编码和排布对于当前的学习不是那么重要，只需要知道对象流输出中包含所有对象的类型和数据域，每个对象都被赋予一个序列号，相同对象的重复出现将被存储为对这个对象序列号的引用。</p>
+<h3 id="3-4-序列化单例和类型安全的枚举"><a href="#3-4-序列化单例和类型安全的枚举" class="headerlink" title="3.4 序列化单例和类型安全的枚举"></a><strong>3.4 序列化单例和类型安全的枚举</strong></h3><p>&emsp;&emsp;<a href="../2019030501.html" title="Title">枚举类</a>这篇博客有提到序列化枚举类，当枚举类或使用单例模式进行序列化化时目标对象是唯一的，这其中隐藏着一个问题：<strong>即序列化后的对象和原对象是相等吗？</strong></p>
+<p>&emsp;&emsp;我们实现单例模式时，期望得到的实例应该是唯一的，而<strong>序列化的对象却是一个全新的对象</strong>，所以其它方式实现单例模式时，只要实现了Serializable接口，目标对象就不唯一了，所以需要加如 <code>readResolve()</code>方法来避免这种情况，此方法会直接返回单例对象。</p>
+<p>&emsp;&emsp;而使用Java中的枚举类时不会出现此问题，因为<strong>Jvm限制枚举类型及其枚举常量是唯一的</strong>，在序列化时只会将枚举对象的name属性输出到流中，反序列化时在通过 <code>Enum.valueOf()</code> 方法根据名字来查找枚举对象。同时Jvm禁止了枚举类的 <code>readObject()</code> ， <code>writeObject()</code> 和 <code>readResolve()</code> 等方法，避免上述规范被破坏。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">readResolve</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException</span>&#123;<span class="comment">//定义了此方法后，对象被序列化时会被调用，其返回的对象在之后会成为readObject()的返回值。</span></span><br><span class="line">    <span class="keyword">if</span>(filed == A) <span class="keyword">return</span> Demo.A;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(filed == B) <span class="keyword">return</span> Demo.B;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-5-克隆和序列化"><a href="#3-5-克隆和序列化" class="headerlink" title="3.5 克隆和序列化"></a><strong>3.5 克隆和序列化</strong></h3><p>&emsp;&emsp;<a href="../2018083001.html" title="Title">Java对象克隆</a>这篇博客中有谈到用序列化去实现克隆，相比重载 <code>equals()</code> 还要更为简单。只要声明对象为可序列化的，将其序列化到流中再读回，即可得到一个深拷贝的结果，但序列化的性能相比复制数据域来说是要慢很多的，所以个人觉得非深克隆的情况还是避免使用好一点。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Java核心技术 卷Ⅱ》</p>
+</blockquote>
+<blockquote>
+<p><a href="https://www.liaoxuefeng.com/wiki/1252599548343744/1298366845681698" target="_blank" rel="noopener">序列化</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://juejin.im/post/5ce3cdc8e51d45777b1a3cdf" target="_blank" rel="noopener">java序列化</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
       
     </div>
@@ -531,8 +592,6 @@
         <div class="post-tags">
           
             <a href="/tags/java/" rel="tag"># java</a>
-          
-            <a href="/tags/unfinished/" rel="tag"># unfinished</a>
           
         </div>
       
@@ -775,7 +834,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-序列化"><span class="nav-number">1.</span> <span class="nav-text">第三节 序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要序列化？"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要序列化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java序列化"><span class="nav-number">1.3.</span> <span class="nav-text">Java序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化ID"><span class="nav-number">1.4.</span> <span class="nav-text">序列化ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transient"><span class="nav-number">1.5.</span> <span class="nav-text">Transient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Serializable和Externalizable"><span class="nav-number">1.6.</span> <span class="nav-text">Serializable和Externalizable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考"><span class="nav-number">1.7.</span> <span class="nav-text">思考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化单例和类型安全的枚举"><span class="nav-number">1.8.</span> <span class="nav-text">序列化单例和类型安全的枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#克隆和序列化"><span class="nav-number">1.9.</span> <span class="nav-text">克隆和序列化</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#序列化"><span class="nav-number">1.</span> <span class="nav-text">序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是序列化？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是序列化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-为什么要序列化？"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 为什么要序列化？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-使用场景"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-序列化与反序列化"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 序列化与反序列化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-Java序列化"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 Java序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-ObjectInputStream与ObjectOutputStream"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 ObjectInputStream与ObjectOutputStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-序列化ID"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 序列化ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-安全性"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 安全性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Transient"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 Transient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-自定义序列化"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 自定义序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-writeReplace-和readResolve"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 writeReplace()和readResolve()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-7-Externalizable"><span class="nav-number">1.2.7.</span> <span class="nav-text">2.7 Externalizable</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-原理"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-序列化流程"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 序列化流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-序列化后内容改变"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 序列化后内容改变</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-被多个对象共享"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 被多个对象共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-序列化单例和类型安全的枚举"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 序列化单例和类型安全的枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-克隆和序列化"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 克隆和序列化</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
