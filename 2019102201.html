@@ -98,7 +98,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200401/202004010123.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160104.jpg">
-<meta property="og:updated_time" content="2020-05-25T08:28:09.218Z">
+<meta property="og:updated_time" content="2020-06-09T09:47:15.695Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Java并发编程">
 <meta name="twitter:description" content="整理面试中常问的Java并发编程相关问题，持续更新中。">
@@ -413,7 +413,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6,754
+                  6,925
                 </span>
               
 
@@ -429,7 +429,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  24
+                  25
                 </span>
               
             </div>
@@ -501,9 +501,11 @@
 <h4 id="问：sleep-和-yeild-方法有什么区别？"><a href="#问：sleep-和-yeild-方法有什么区别？" class="headerlink" title="问：sleep 和 yeild 方法有什么区别？"></a><strong>问：sleep 和 yeild 方法有什么区别？</strong></h4><details><br><br>&emsp;&emsp;<br><br></details>
 
 <hr>
-<h3 id="1-4-线程池"><a href="#1-4-线程池" class="headerlink" title="1.4 线程池"></a><strong>1.4 线程池</strong></h3><h4 id="问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？"><a href="#问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？" class="headerlink" title="问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？"></a><strong>问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？</strong></h4><details><br><br>&emsp;&emsp;线程池，这个还是很重要的，在生产中用的挺多，四个线程池类型，其参数，参数的理解很重要，<br><br></details>
+<h3 id="1-4-线程池"><a href="#1-4-线程池" class="headerlink" title="1.4 线程池"></a><strong>1.4 线程池</strong></h3><h4 id="问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？"><a href="#问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？" class="headerlink" title="问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？"></a><strong>问：项目的用户量多吗？有用过线程池吗？用到多线程的优势在哪？</strong></h4><details><br><br>&emsp;&emsp;以前的项目用户量不大，但有学习和练习过线程池。<br><br>&emsp;&emsp;多线程意味着能同时执行多个任务，可以更好的利用CPU的空闲时间，让程序运行的更快。<br><br>&emsp;&emsp;线程池则是用来管理和限制系统中执行线程的数量，减少创建和销毁线程的次数，重复的利用已创建的线程，防止内存的浪费，也能提高响应速度。<br><br></details>
 
-<h4 id="问：ThreadPoolExecutor-初始化参数？"><a href="#问：ThreadPoolExecutor-初始化参数？" class="headerlink" title="问：ThreadPoolExecutor 初始化参数？"></a><strong>问：ThreadPoolExecutor 初始化参数？</strong></h4><details><br><br>&emsp;&emsp;<br><br></details>
+<h4 id="问：ThreadPoolExecutor-初始化参数？"><a href="#问：ThreadPoolExecutor-初始化参数？" class="headerlink" title="问：ThreadPoolExecutor 初始化参数？"></a><strong>问：ThreadPoolExecutor 初始化参数？</strong></h4><details><br><br><em> corePoolSize（线程池基本大小）：控制执行线程的数目，超过此值就不再创建基本线程。
+</em> maximumPoolSize（线程池最大数量）：若队列满了，会继续创建新的线程，直到达到线程池最大数量，当然若任务队列没有界限此参数就失效了。<br><em> ThreadFactory（线程工厂）：
+</em> runnableTaskQueue（任务队列）<br><br></details>
 
 <h4 id="问：线程状态？"><a href="#问：线程状态？" class="headerlink" title="问：线程状态？"></a><strong>问：线程状态？</strong></h4><details><br><br>&emsp;&emsp;线程池有5种状态：running，showdown，stop，Tidying，TERMINATED。<br><br>&gt; <em> running：线程池处于运行状态，可以接受任务，执行任务，创建线程默认就是这个状态了<br>&gt; </em> showdown：调用showdown（）函数，不会接受新任务，但是会慢慢处理完堆积的任务。<br>&gt; <em> stop：调用showdownnow（）函数，不会接受新任务，不处理已有的任务，会中断现有的任务。<br>&gt; </em> Tidying：当线程池状态为showdown或者stop，任务数量为0，就会变为tidying。这个时候会调用钩子函数terminated（）。<br>&gt; * ERMINATED：terminated（）执行完成。<br><br>&emsp;&emsp;在线程池中，用了一个原子类来记录线程池的信息，用了int的高3位表示状态，后面的29位表示线程池中线程的个数。<br><br></details>
 
