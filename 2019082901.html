@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190701/201907010109.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190701/201907010110.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190701/201907010111.png">
-<meta property="og:updated_time" content="2020-06-09T09:38:46.460Z">
+<meta property="og:updated_time" content="2020-06-11T02:25:42.476Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程池（未完成）">
 <meta name="twitter:description" content="介绍Java中线程池，包括：线程池的实现原理和使用等。">
@@ -412,7 +412,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,914
+                  3,916
                 </span>
               
 
@@ -510,26 +510,33 @@
 <li><strong>corePoolSize</strong>（线程池的基本大小）：当提交一个任务到线程池时，线程池会创建一个线程来执行任务，即使其他空闲的基本线程能够执行新任务也会创建线程，等到需要执行的任务数大于线程池基本大小时就不再创建。如果调用了线程池的 <code>prestartAllCoreThreads()</code> 方法，线程池会提前创建并启动所有基本线程。</li>
 <li><strong>runnableTaskQueue</strong>（任务队列）：用于保存等待执行的任务的阻塞队列。可以选择以下几个阻塞队列。<ul>
 <li><strong>ArrayBlockingQueue</strong>：是一个基于数组结构的有界阻塞队列，此队列按FIFO（先进先出）原则对元素进行排序。</li>
-<li><strong>LinkedBlockingQueue</strong>：一个基于链表结构的阻塞队列，此队列按FIFO排序元素，吞吐量通 常要高于ArrayBlockingQueue。静态工厂方法Executors.newFixedThreadPool()使用了这个队列。</li>
-<li><strong>SynchronousQueue</strong>：一个不存储元素的阻塞队列。每个插入操作必须等到另一个线程调用 移除操作，否则插入操作一直处于阻塞状态，吞吐量通常要高于Linked-BlockingQueue，静态工 厂方法Executors.newCachedThreadPool使用了这个队列。</li>
+<li><strong>LinkedBlockingQueue</strong>：一个基于链表结构的阻塞队列，此队列按FIFO排序元素，吞吐量通 常要高于ArrayBlockingQueue。静态工厂方法 <code>Executors.newFixedThreadPool()</code> 使用了这个队列。</li>
+<li><strong>SynchronousQueue</strong>：一个不存储元素的阻塞队列。每个插入操作必须等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态，吞吐量通常要高于Linked-BlockingQueue，静态工厂方法 <code>Executors.newCachedThreadPool()</code> 使用了这个队列。</li>
 <li><strong>PriorityBlockingQueue</strong>：一个具有优先级的无限阻塞队列。</li>
 </ul>
 </li>
 <li><p><strong>maximumPoolSize</strong>（线程池最大数量）：线程池允许创建的最大线程数。如果队列满了，并且已创建的线程数小于最大线程数，则线程池会再创建新的线程执行任务。值得注意的是，如果使用了无界的任务队列这个参数就没什么效果。</p>
 </li>
-<li><p><strong>ThreadFactory</strong>：用于设置创建线程的工厂，可以通过线程工厂给每个创建出来的线程设 置更有意义的名字。使用开源框架guava提供的ThreadFactoryBuilder可以快速给线程池里的线程设置有意义的名字，代码如下。</p>
+<li><p><strong>ThreadFactory</strong>：用于设置创建线程的工厂，可以通过线程工厂给每个创建出来的线程设置更有意义的名字。使用开源框架guava提供的ThreadFactoryBuilder可以快速给线程池里的线程设置有意义的名字，代码如下。</p>
 </li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> ThreadFactoryBuilder().setNameFormat(<span class="string">"XX-task-%d"</span>).build();</span><br></pre></td></tr></table></figure>
 <ol start="5">
-<li><strong>RejectedExecutionHandler</strong>（饱和策略）：当队列和线程池都满了，说明线程池处于饱和状态，那么必须采取一种策略处理提交的新任务。这个策略默认情况下是AbortPolicy，表示无法处理新任务时抛出异常。在JDK 1.5中Java线程池框架提供了以下4种策略。<ul>
-<li><strong>AbortPolicy</strong>：直接抛出异常。</li>
-<li><strong>CallerRunsPolicy</strong>：只用调用者所在线程来运行任务。</li>
-<li><strong>DiscardOldestPolicy</strong>：丢弃队列里最近的一个任务，并执行当前任务。</li>
-<li><strong>DiscardPolicy</strong>：不处理，丢弃掉。当然，也可以根据应用场景需要来实现RejectedExecutionHandler接口自定义策略。如记录日志或持久化存储不能处理的任务。</li>
-<li><strong>keepAliveTime</strong>（线程活动保持时间）：线程池的工作线程空闲后，保持存活的时间。所以，如果任务很多，并且每个任务执行的时间比较短，可以调大时间，提高线程的利用率。</li>
-<li><strong>TimeUnit</strong>（线程活动保持时间的单位）：可选的单位有天（DAYS）、小时（HOURS）、分钟 （MINUTES）、毫秒（MILLISECONDS）、微秒（MICROSECONDS，千分之一毫秒）和纳秒（NANOSECONDS，千分之一微秒）。</li>
+<li><p><strong>RejectedExecutionHandler</strong>（饱和策略）：当队列和线程池都满了，说明线程池处于饱和状态，那么必须采取一种策略处理提交的新任务。这个策略默认情况下是AbortPolicy，表示无法处理新任务时抛出异常。在JDK 1.5中Java线程池框架提供了以下4种策略。</p>
+<ul>
+<li><p><strong>AbortPolicy</strong>：直接抛出异常。</p>
+</li>
+<li><p><strong>CallerRunsPolicy</strong>：只用调用者所在线程来运行任务。</p>
+</li>
+<li><p><strong>DiscardOldestPolicy</strong>：丢弃队列里最近的一个任务，并执行当前任务。</p>
+</li>
+<li><p><strong>DiscardPolicy</strong>：不处理，丢弃掉。当然，也可以根据应用场景需要来实现RejectedExecutionHandler接口自定义策略。如记录日志或持久化存储不能处理的任务。</p>
+</li>
 </ul>
+</li>
+<li><p><strong>keepAliveTime</strong>（线程活动保持时间）：线程池的工作线程空闲后，保持存活的时间。所以，如果任务很多，并且每个任务执行的时间比较短，可以调大时间，提高线程的利用率。</p>
+</li>
+<li><p><strong>TimeUnit</strong>（线程活动保持时间的单位）：可选的单位有天（DAYS）、小时（HOURS）、分钟 （MINUTES）、毫秒（MILLISECONDS）、微秒（MICROSECONDS，千分之一毫秒）和纳秒（NANOSECONDS，千分之一微秒）。</p>
 </li>
 </ol>
 <h3 id="3-2-向线程池提交任务"><a href="#3-2-向线程池提交任务" class="headerlink" title="3.2 向线程池提交任务"></a><strong>3.2 向线程池提交任务</strong></h3><p>&emsp;&emsp;可以使用两个方法向线程池提交任务，分别为execute()和submit()方法。execute()方法用于提交不需要返回值的任务，所以无法判断任务是否被线程池执行成功。 通过以下代码可知execute()方法输入的任务是一个Runnable类的实例。</p>
