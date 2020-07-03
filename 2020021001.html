@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="spring,">
+  <meta name="keywords" content="spring,bean,">
 
 
 
@@ -88,19 +88,19 @@
 
 
 
-<meta name="description" content="简单整理Spring Bean。">
-<meta name="keywords" content="spring">
+<meta name="description" content="简单整理Spring Bean，内容包括：概述（Spring Bean是什么、概念、作用域），生命周期，解析（实例化Bean、依赖注入、BeanNameAware、BeanFactoryAware、ApplicationContextAware、BeanPostProcessor、InitializingBean与init-method、DisposableBean和destroy-method）">
+<meta name="keywords" content="spring,bean">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Bean">
 <meta property="og:url" content="http://linyishui.top/2020021001.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="简单整理Spring Bean。">
+<meta property="og:description" content="简单整理Spring Bean，内容包括：概述（Spring Bean是什么、概念、作用域），生命周期，解析（实例化Bean、依赖注入、BeanNameAware、BeanFactoryAware、ApplicationContextAware、BeanPostProcessor、InitializingBean与init-method、DisposableBean和destroy-method）">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/754a34e03cfaa40008de8e2b9c1b815c_1440w.jpg">
-<meta property="og:updated_time" content="2020-03-24T02:14:52.162Z">
+<meta property="og:updated_time" content="2020-07-03T08:41:14.050Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Bean">
-<meta name="twitter:description" content="简单整理Spring Bean。">
+<meta name="twitter:description" content="简单整理Spring Bean，内容包括：概述（Spring Bean是什么、概念、作用域），生命周期，解析（实例化Bean、依赖注入、BeanNameAware、BeanFactoryAware、ApplicationContextAware、BeanPostProcessor、InitializingBean与init-method、DisposableBean和destroy-method）">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/754a34e03cfaa40008de8e2b9c1b815c_1440w.jpg">
 
 
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,429
+                  1,818
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  7
                 </span>
               
             </div>
@@ -434,7 +434,7 @@
 
           
               <div class="post-description">
-                  简单整理Spring Bean。
+                  简单整理Spring Bean，内容包括：概述（Spring Bean是什么、概念、作用域），生命周期，解析（实例化Bean、依赖注入、BeanNameAware、BeanFactoryAware、ApplicationContextAware、BeanPostProcessor、InitializingBean与init-method、DisposableBean和destroy-method）等。
               </div>
           
 
@@ -451,45 +451,64 @@
       
 
       
-        <h1 id="Spring-Bean"><a href="#Spring-Bean" class="headerlink" title="Spring Bean"></a><strong>Spring Bean</strong></h1><h2 id="第一节-简介"><a href="#第一节-简介" class="headerlink" title="第一节 简介"></a><strong>第一节 简介</strong></h2><h3 id="1-1-Spring-Bean是什么？"><a href="#1-1-Spring-Bean是什么？" class="headerlink" title="1.1 Spring Bean是什么？"></a><strong>1.1 Spring Bean是什么？</strong></h3><p>&emsp;&emsp;在Spring中，用来构成应用程序主干并由Spring IoC容器管理的对象就是bean，所以Spring Bean是一个由Spring IoC容器实例化、组装和管理的对象。</p>
-<h3 id="1-2-概念"><a href="#1-2-概念" class="headerlink" title="1.2 概念"></a><strong>1.2 概念</strong></h3><blockquote>
-<ul>
-<li><strong>IoC</strong>：IoC(Inversion of Control)即控制反转，通过依赖注入的方式动态生成依赖对象并注入被依赖对象中。</li>
+        <h1 id="Spring-Bean"><a href="#Spring-Bean" class="headerlink" title="Spring Bean"></a><strong>Spring Bean</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><h3 id="1-1-Spring-Bean是什么？"><a href="#1-1-Spring-Bean是什么？" class="headerlink" title="1.1 Spring Bean是什么？"></a><strong>1.1 Spring Bean是什么？</strong></h3><p><strong>在Spring中，用来构成应用程序主干并由Spring IoC容器管理的对象就是bean，所以Spring Bean是一个由Spring IoC容器实例化、组装和管理的对象</strong>。</p>
+<h3 id="1-2-概念"><a href="#1-2-概念" class="headerlink" title="1.2 概念"></a><strong>1.2 概念</strong></h3><ul>
+<li><strong>IoC</strong>：IoC（Inversion of Control）即控制反转，通过依赖注入（DI）的方式动态生成依赖对象并注入被依赖对象中，动态的绑定二者。</li>
 <li><strong>Bean容器</strong>：即Spring IoC容器，管理对象和依赖，以及依赖的注入。</li>
 <li><strong>Bean</strong>：Java对象，遵循Bean规范，由Bean容器生成。</li>
 <li><strong>Bean规范</strong>：满足几个条件，包括所有属性为private，提供默认构造方法，提供getter和setter，实现serializable接口。</li>
 </ul>
-</blockquote>
+<h3 id="1-3-作用域"><a href="#1-3-作用域" class="headerlink" title="1.3 作用域"></a><strong>1.3 作用域</strong></h3><p>Spring Bean的作用域（即scope属性）<strong>默认是单例</strong>的，即singleton。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 声明Bean为原型 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">scope</span>=<span class="string">"prototype"</span>/&gt;</span> </span><br><span class="line"><span class="comment">&lt;!-- 或者 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">singleton</span>=<span class="string">"false"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>五种作用域如下：</p>
+<ul>
+<li><strong>Singleton</strong>（单例）：Spring IoC 容器中仅存在一个Bean实例，Bean以单例的形式存在，在创建后会缓存起来，以后不再重复创建。</li>
+<li><strong>Prototype</strong>（原型）：每次从容器中调用Bean时，都返回一个新的实例，即每次调用 <code>getBean()</code> 时，相当于执行 <code>new XxxBean()</code> 。</li>
+<li><strong>Request</strong> ：每次HTTP请求都会创建一个新的Bean，该作用域仅适用于 <code>WebApplicationContext</code> 环境。</li>
+<li><strong>Session</strong> ：同一个 <code>HTTP Session</code> 共享一个Bean，不同Session使用不同Bean，仅适用于 <code>WebApplicationContext</code> 环境。</li>
+<li><strong>GlobalSession</strong> ：一般用于 Portlet 应用环境，它映射到 Portlet 的 global 范围内的 session，仅适用于 <code>WebApplicationContext</code> 环境。</li>
+</ul>
 <hr>
-<h2 id="第二节-生命周期"><a href="#第二节-生命周期" class="headerlink" title="第二节 生命周期"></a><strong>第二节 生命周期</strong></h2><p>&emsp;&emsp;Java对象在new时创建，不被引用后被GC回收，而Spring IoC容器托管的对象的生命周期则由容器控制。Spring Bean的生命周期如下。</p>
+<h2 id="第二节-生命周期"><a href="#第二节-生命周期" class="headerlink" title="第二节 生命周期"></a><strong>第二节 生命周期</strong></h2><p>Java对象在new时创建，不被引用后被GC回收，而 <code>Spring IoC</code> 容器托管的对象的生命周期则由容器控制。Spring Bean的生命周期的执行过程如下。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200201/754a34e03cfaa40008de8e2b9c1b815c_1440w.jpg" alt="Spring Bean的生命周期"></p>
+<ol>
+<li>实例化Bean对象，默认为单例。</li>
+<li>设置对象属性，进行依赖注入。</li>
+<li>检查Aware相关接口并设置相关依赖。</li>
+<li><code>BeanPostProcessor</code> 前置处理。</li>
+<li>检查是否是 <code>InitializingBean</code> 以决定是否调用 <code>afterPropertiesSet()</code> 方法。</li>
+<li>检查是否配置自定义的 <code>init-method</code> ，若声明则调用对应方法。</li>
+<li><code>BeanPostProcessor</code> 后置处理。</li>
+<li>注册必要的 <code>Destruction</code> 相关回调接口，此时Bean已准备就绪。</li>
+<li>使用中，将一直驻留在应用上下文中。</li>
+<li>是否实现 <code>DisposableBean</code> 接口，有则调用其 <code>destroy()</code> 方法。</li>
+<li>是否配置自定义的配置<code>destroy-method</code> 声明的 <code>destroy()</code> 方法。</li>
+</ol>
 <hr>
-<h2 id="第三节-解析"><a href="#第三节-解析" class="headerlink" title="第三节 解析"></a><strong>第三节 解析</strong></h2><h3 id="3-1-实例化Bean"><a href="#3-1-实例化Bean" class="headerlink" title="3.1 实例化Bean"></a><strong>3.1 实例化Bean</strong></h3><p>&emsp;&emsp;对于BeanFactory容器，当用户向容器请求一个尚未初始化的Bean时，或者是初始化Bean的时候需要注入另一个尚未初始化的依赖时，容器会调用createBean()进行实例化。</p>
-<p>&emsp;&emsp;对于ApplicationContext容器，容器启动后就实例化所有Bean。</p>
-<p>&emsp;&emsp;容器通过获取BeanDefinition对象中的信息进行实例化。并且这一步仅仅是简单的实例化，并未进行依赖注入。实例化对象被包装在BeanWrapper对象中，BeanWrapper提供了设置对象属性的接口，从而避免了使用反射机制设置属性。</p>
-<h3 id="3-2-依赖注入"><a href="#3-2-依赖注入" class="headerlink" title="3.2 依赖注入"></a><strong>3.2 依赖注入</strong></h3><p>&emsp;&emsp;设置对象属性，按照Spring上下文对实例化的Bean进行配置</p>
-<h3 id="3-3-BeanNameAware"><a href="#3-3-BeanNameAware" class="headerlink" title="3.3 BeanNameAware"></a><strong>3.3 BeanNameAware</strong></h3><p>&emsp;&emsp;紧接着，Spring会检测该Bean对象是否实现了BeanNameAware接口，如果实现了则Spring将Bean的ID传递给setBeanName()方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//实现此接口主要是为了通过Bean的引用来获得Bean的ID，一般业务中是很少有用到Bean的ID的</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BeanNameAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setBeanName</span><span class="params">(String var1)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-4-BeanFactoryAware"><a href="#3-4-BeanFactoryAware" class="headerlink" title="3.4 BeanFactoryAware"></a><strong>3.4 BeanFactoryAware</strong></h3><p>&emsp;&emsp;继续检测Bean是否实现了BeanFactoryAware接口，如果实现了，则调用setBeanFactory()方法，并传递BeanFactory实例。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//主要目的是为了获取Spring容器，如Bean通过Spring容器发布事件等</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BeanFactoryAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setBeanFactory</span><span class="params">(BeanFactory var1)</span> <span class="keyword">throws</span> BeansException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-5-ApplicationContextAware"><a href="#3-5-ApplicationContextAware" class="headerlink" title="3.5 ApplicationContextAware"></a><strong>3.5 ApplicationContextAware</strong></h3><p>&emsp;&emsp;继续检测Bean是否实现了ApplicationContextAware接口，如果实现了，则调用setApplicationContext()方法，并传递应用上下文。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//作用与BeanFactory类似都是为了获取Spring容器，不同的是Spring容器在调用setApplicationContext方法时会把它自己作为setApplicationContext的参数传入，而Spring容器在调用setBeanDactory前需要指定（注入）setBeanDactory里的参数BeanFactory</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ApplicationContextAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setApplicationContext</span><span class="params">(ApplicationContext var1)</span> <span class="keyword">throws</span> BeansException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-6-BeanPostProcessor"><a href="#3-6-BeanPostProcessor" class="headerlink" title="3.6 BeanPostProcessor"></a><strong>3.6 BeanPostProcessor</strong></h3><p>&emsp;&emsp;当经过上述几个步骤后，bean对象已经被正确构造，但如果你想要对象被使用前再进行一些自定义的处理，就可以通过BeanPostProcessor接口实现。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//作用是在Bean实例创建成功后对进行增强处理，如对Bean进行修改，增加某个功能</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> BeanPostProcessor &#123;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">default</span> <span class="built_in">Object</span> postProcessBeforeInitialization(<span class="built_in">Object</span> bean, <span class="built_in">String</span> beanName) throws BeansException &#123;</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">default</span> <span class="built_in">Object</span> postProcessAfterInitialization(<span class="built_in">Object</span> bean, <span class="built_in">String</span> beanName) throws BeansException &#123;</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
+<h2 id="第三节-解析"><a href="#第三节-解析" class="headerlink" title="第三节 解析"></a><strong>第三节 解析</strong></h2><h3 id="3-1-实例化Bean"><a href="#3-1-实例化Bean" class="headerlink" title="3.1 实例化Bean"></a><strong>3.1 实例化Bean</strong></h3><p>对于 <code>BeanFactory</code> 容器，当用户向容器请求一个尚未初始化的Bean时，或者是初始化Bean的时候需要注入另一个尚未初始化的依赖时，容器会调用 <code>createBean()</code> 进行实例化。</p>
+<p>对于 <code>ApplicationContext</code> 容器，容器启动后就实例化所有Bean。</p>
+<p>容器通过获取 <code>BeanDefinition</code> 对象中的信息进行实例化。并且这一步仅仅是简单的实例化，并未进行依赖注入。实例化对象被包装在 <code>BeanWrapper</code> 对象中，<code>BeanWrapper</code> 提供了设置对象属性的接口，从而避免了使用反射机制设置属性。</p>
+<h3 id="3-2-依赖注入"><a href="#3-2-依赖注入" class="headerlink" title="3.2 依赖注入"></a><strong>3.2 依赖注入</strong></h3><p>设置对象属性，按照Spring上下文对实例化的Bean进行配置。</p>
+<h3 id="3-3-BeanNameAware"><a href="#3-3-BeanNameAware" class="headerlink" title="3.3 BeanNameAware"></a><strong>3.3 BeanNameAware</strong></h3><p>紧接着，Spring会检测该Bean对象是否实现了 <code>BeanNameAware</code> 接口，如果实现了则Spring将Bean的ID传递给 <code>setBeanName()</code> 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现此接口主要是为了通过Bean的引用来获得Bean的ID，一般业务中是很少有用到Bean的ID的</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BeanNameAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setBeanName</span><span class="params">(String var1)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-4-BeanFactoryAware"><a href="#3-4-BeanFactoryAware" class="headerlink" title="3.4 BeanFactoryAware"></a><strong>3.4 BeanFactoryAware</strong></h3><p>继续检测Bean是否实现了 <code>BeanFactoryAware</code> 接口，如果实现了，则调用 <code>setBeanFactory()</code> 方法，并传递 <code>BeanFactory</code> 实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主要目的是为了获取Spring容器，如Bean通过Spring容器发布事件等</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BeanFactoryAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setBeanFactory</span><span class="params">(BeanFactory var1)</span> <span class="keyword">throws</span> BeansException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-5-ApplicationContextAware"><a href="#3-5-ApplicationContextAware" class="headerlink" title="3.5 ApplicationContextAware"></a><strong>3.5 ApplicationContextAware</strong></h3><p>继续检测Bean是否实现了 <code>ApplicationContextAware</code> 接口，如果实现了，则调用 <code>setApplicationContext()</code> 方法，并传递应用上下文。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 作用与BeanFactory类似都是为了获取Spring容器，不同的是Spring容器在调用setApplicationContext方法时会把它自己作为setApplicationContext的参数传入，而Spring容器在调用setBeanDactory前需要指定（注入）setBeanDactory里的参数BeanFactory</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ApplicationContextAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setApplicationContext</span><span class="params">(ApplicationContext var1)</span> <span class="keyword">throws</span> BeansException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-6-BeanPostProcessor"><a href="#3-6-BeanPostProcessor" class="headerlink" title="3.6 BeanPostProcessor"></a><strong>3.6 BeanPostProcessor</strong></h3><p>当经过上述几个步骤后，bean对象已经被正确构造，但如果你想要对象被使用前再进行一些自定义的处理，就可以通过 <code>BeanPostProcessor</code> 接口实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 作用是在Bean实例创建成功后对进行增强处理，如对Bean进行修改，增加某个功能</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BeanPostProcessor</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> Object <span class="title">postProcessAfterInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>该接口提供了两个函数：</p>
 <ul>
-<li>postProcessBeforeInitialization(Object bean, String beanName)：当前正在初始化的bean对象会被传递进来，我们就可以对这个bean作任何处理。这个函数会先于InitialzationBean执行，因此称为前置处理。所有Aware接口的注入就是在这一步完成的。</li>
-<li>postProcessAfterInitialization(Object bean, String beanName)：当前正在初始化的bean对象会被传递进来，我们就可以对这个bean作任何处理。这个函数会在InitialzationBean完成后执行，因此称为后置处理。</li>
+<li><code>postProcessBeforeInitialization(Object bean, String beanName)</code> ：当前正在初始化的bean对象会被传递进来，我们就可以对这个bean作任何处理。这个函数会先于 <code>InitialzationBean</code> 执行，因此称为<strong>前置处理</strong>。所有Aware接口的注入就是在这一步完成的。</li>
+<li><code>postProcessAfterInitialization(Object bean, String beanName)</code> ：当前正在初始化的bean对象会被传递进来，我们就可以对这个bean作任何处理。这个函数会在 <code>InitialzationBean</code> 完成后执行，因此称为<strong>后置处理</strong>。</li>
 </ul>
-</blockquote>
-<h3 id="3-7-InitializingBean与init-method"><a href="#3-7-InitializingBean与init-method" class="headerlink" title="3.7 InitializingBean与init-method"></a><strong>3.7 InitializingBean与init-method</strong></h3><p>&emsp;&emsp;当BeanPostProcessor的前置处理完成后就会进入本阶段，调用afterPropertiesSet()方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//作用与在配置文件中对Bean使用init-method声明初始化的作用一样，都是在Bean的全部属性设置成功后执行的初始化方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;这一阶段也可以在bean正式构造完成前增加我们自定义的逻辑，但它与前置处理不同，由于该函数并不会把当前bean对象传进来，因此在这一步没办法处理对象本身，只能增加一些额外的逻辑。 </p>
-<p>&emsp;&emsp;若要使用它，我们需要让bean实现该接口，并把要增加的逻辑写在该函数中。然后Spring会在前置处理完成后检测当前bean是否实现了该接口，并执行afterPropertiesSet函数。当然，Spring为了降低对客户代码的侵入性，给bean的配置提供了init-method属性，该属性指定了在这一阶段需要执行的函数名。Spring便会在初始化阶段执行我们设置的函数。init-method本质上仍然使用了InitializingBean接口。</p>
-<h3 id="3-8-DisposableBean和destroy-method"><a href="#3-8-DisposableBean和destroy-method" class="headerlink" title="3.8 DisposableBean和destroy-method"></a><strong>3.8 DisposableBean和destroy-method</strong></h3><p>&emsp;&emsp;经过以上的工作后，Bean将一直驻留在应用上下文中给应用使用，直到应用上下文被销毁。</p>
-<p>&emsp;&emsp;Bean可以实现DisposableBean接口，和init-method一样，通过给destroy-method指定函数，就可以在bean销毁前执行指定的逻辑。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//作用与在配置文件中对Bean使用destory-method属性的作用一样，都是在Bean实例销毁前执行的方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DisposableBean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-7-InitializingBean与init-method"><a href="#3-7-InitializingBean与init-method" class="headerlink" title="3.7 InitializingBean与init-method"></a><strong>3.7 InitializingBean与init-method</strong></h3><p>当 <code>BeanPostProcessor</code> 的前置处理完成后就会进入本阶段，调用 <code>afterPropertiesSet()</code> 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 作用与在配置文件中对Bean使用init-method声明初始化的作用一样，都是在Bean的全部属性设置成功后执行的初始化方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这一阶段也可以在bean正式构造完成前增加我们自定义的逻辑，但它与前置处理不同，由于该函数并不会把当前bean对象传进来，因此在这一步没办法处理对象本身，只能增加一些额外的逻辑。 </p>
+<p>若要使用它，我们需要让bean实现该接口，并把要增加的逻辑写在该函数中。然后Spring会在前置处理完成后检测当前bean是否实现了该接口，并执行 <code>afterPropertiesSet()</code> 函数。当然，Spring为了降低对客户代码的侵入性，给bean的配置提供了 <code>init-method</code> 属性，该属性指定了在这一阶段需要执行的函数名。Spring便会在初始化阶段执行我们设置的函数。<code>init-method</code> 本质上仍然使用了 <code>InitializingBean</code> 接口。</p>
+<h3 id="3-8-DisposableBean和destroy-method"><a href="#3-8-DisposableBean和destroy-method" class="headerlink" title="3.8 DisposableBean和destroy-method"></a><strong>3.8 DisposableBean和destroy-method</strong></h3><p>经过以上的工作后，Bean将一直驻留在应用上下文中给应用使用，直到应用上下文被销毁。</p>
+<p>Bean可以实现 <code>DisposableBean</code> 接口，和 <code>init-method</code> 一样，通过给 <code>destroy-method</code> 指定函数，就可以在bean销毁前执行指定的逻辑。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 作用与在配置文件中对Bean使用destory-method属性的作用一样，都是在Bean实例销毁前执行的方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DisposableBean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
 <p><em>参考博客、文章或书籍：</em></p>
 <blockquote>
@@ -528,6 +547,8 @@
         <div class="post-tags">
           
             <a href="/tags/spring/" rel="tag"># spring</a>
+          
+            <a href="/tags/bean/" rel="tag"># bean</a>
           
         </div>
       
@@ -663,7 +684,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -762,7 +783,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Bean"><span class="nav-number">1.</span> <span class="nav-text">Spring Bean</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-简介"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Spring-Bean是什么？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 Spring Bean是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-概念"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-生命周期"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-解析"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-实例化Bean"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 实例化Bean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-依赖注入"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 依赖注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-BeanNameAware"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 BeanNameAware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-BeanFactoryAware"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 BeanFactoryAware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-ApplicationContextAware"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 ApplicationContextAware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-BeanPostProcessor"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 BeanPostProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-InitializingBean与init-method"><span class="nav-number">1.3.7.</span> <span class="nav-text">3.7 InitializingBean与init-method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-DisposableBean和destroy-method"><span class="nav-number">1.3.8.</span> <span class="nav-text">3.8 DisposableBean和destroy-method</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Bean"><span class="nav-number">1.</span> <span class="nav-text">Spring Bean</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Spring-Bean是什么？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 Spring Bean是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-概念"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-作用域"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 作用域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-生命周期"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-解析"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-实例化Bean"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 实例化Bean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-依赖注入"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 依赖注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-BeanNameAware"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 BeanNameAware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-BeanFactoryAware"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 BeanFactoryAware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-ApplicationContextAware"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 ApplicationContextAware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-BeanPostProcessor"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 BeanPostProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-InitializingBean与init-method"><span class="nav-number">1.3.7.</span> <span class="nav-text">3.7 InitializingBean与init-method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-DisposableBean和destroy-method"><span class="nav-number">1.3.8.</span> <span class="nav-text">3.8 DisposableBean和destroy-method</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
