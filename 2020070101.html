@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="redis,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="简单整理Redis中的几种常见的底层数据结构，内容包括：等。">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis底层数据结构">
+<meta property="og:url" content="http://linyishui.top/2020070101.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="简单整理Redis中的几种常见的底层数据结构，内容包括：等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc35b4da?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80c4f8982b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc798df0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ede0c3b2e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ecf48bcfe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/22/16d5800edea0e859?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/10/12/16dbffe59b8e16ad?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/10/12/16dbffe5a1111a7c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="data:image/svg+xml;utf8,<?xml version=" 1.0"?><svg xmlns="" version="1.1" width="1142" height="636">
+<meta property="og:image" content="data:image/svg+xml;utf8,<?xml version=" 1.0"?=""/><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="216" height="367">
+<meta property="og:image" content="data:image/svg+xml;utf8,<?xml version=" 1.0"?=""/><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="800" height="554">
+<meta property="og:image" content="data:image/svg+xml;utf8,<?xml version=" 1.0"?=""/><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="472" height="187">
+<meta property="og:image" content="data:image/svg+xml;utf8,<?xml version=" 1.0"?=""/><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="537" height="173">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/11/13/16e64a764ad1fcd3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/11/13/16e64a764b42d99f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/11/13/16e64a76497a20d5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
+<meta property="og:updated_time" content="2020-07-15T14:41:08.722Z"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis底层数据结构"/>
+<meta name="twitter:description" content="简单整理Redis中的几种常见的底层数据结构，内容包括：等。"/>
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc35b4da?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020070101.html"/>
+
+
+
+
+
+  <title>Redis底层数据结构 | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</svg></svg></svg></svg></svg></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020070101.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Speciosity">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Redis底层数据结构</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-01T17:28:50+08:00">
+                2020-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  15,767
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  61
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  简单整理Redis中的几种常见的底层数据结构，内容包括：等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Redis底层数据结构"><a href="#Redis底层数据结构" class="headerlink" title="Redis底层数据结构"></a><strong>Redis底层数据结构</strong></h1><p><img src="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc35b4da?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<h2 id="第一节-动态字符串-SDS"><a href="#第一节-动态字符串-SDS" class="headerlink" title="第一节 动态字符串-SDS"></a><strong>第一节 动态字符串-SDS</strong></h2><h3 id="1-1-概述"><a href="#1-1-概述" class="headerlink" title="1.1 概述"></a><strong>1.1 概述</strong></h3><p>Redis 是由 C 语言作为底层编程语言实现的，而 C 语言中的字符串是一个以空字符结尾的字符数组，这种结构对于 Redis 而言过于简单了，主要缺点如下：</p>
+<ol>
+<li>C 字符串不记录自身长度信息，为了获取字符串长度必须遍历整个字符串，时间复杂度为 O(n)。</li>
+<li>由于 C 字符串不记录自身长度，稍有不小心就会造成缓冲区溢出。</li>
+<li>对于 Redis 这种缓存类型数据库，对于缓存的 Value 是有可能经常的更改的。但是 C 字符串每次的增长或是缩小都需要一次内存的重分配操作。</li>
+<li>Redis 数据库中缓存的内容不是特定的，有可能会是图片、音频等等文件的二进制数据，但是 C 字符串中的字符必须符合某种编码，且字符串中不能包含空格，这些限制也导致了 Redis 不能使用 C 字符串来作为自身字符串的实现。</li>
+</ol>
+<p>于是 Redis 实现了 SDS 这种简单动态字符串结构，它其实和 Java 中 ArrayList 的实现是很类似的。</p>
+<p>Redis 源代码中 sds.h 文件下，有五种 sdshdr，它们分别是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr5</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, and 5 msb of string length */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr8</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint8_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint8_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr16</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint16_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint16_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr32</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr64</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint64_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其中，sdshdr5 的注释表明，<strong>sdshdr5  is never used</strong>。sdshdr5 这种数据结构一般用于存储长度小于 32 个字符的字符串，但现在也已经不再使用这种结构了，再小长度的字符串也建议使用 sdshdr8 进行存储，因为 sdshdr5 少了两个关键字段，因此不具备动态扩容操作，一旦预分配的内存空间使用完，就需要重新分配内存并完成数据的复制迁移，在实际的生产环境中对于性能的影响还是很大的，所以进行了一个抛弃，但其实有些比较小的键依然会采用这种结构存储。</p>
+<p>关于 sdshdr5 我们不再多说，我们看其他四种结构的各个字段，len 字段表示当前字符串总长度，也即当前字符串已使用内存大小，alloc 表示为当前字符串分配的总内存大小（不包括len以及flags字段本身分配的内存），因为每一个结构在预分配的时候都会多分配一段内存空间，主要是为了方便以后的扩容。flags 的低三位表示当前 sds 的类型，高五位无用。低三位取值如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SDS_TYPE_5  0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SDS_TYPE_8  1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SDS_TYPE_16 2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SDS_TYPE_32 3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SDS_TYPE_64 4</span></span><br></pre></td></tr></table></figure>
+<p>实际上，redis 对 sdshdr 内存分配是禁用内存对齐的，也就是说每个字段分配的内存地址是紧紧排列在一起的， 所以 redis 中字符串参数的传递直接使用 <strong>char*</strong> 指针。</p>
+<p>可能有人会疑问，仅仅通过一个 <strong>char</strong> 指针如何确定当前字符串的类型，其实由于 sdshdr 内存分配禁止内存对齐，所以 sds[-1] 其实指向的就是 flags 字段的内存地址，通过 flags 字段又可以得到当前 sds 属于哪种类型，进而可以读取头部字段确定 sds 的相关属性。</p>
+<p>接下来我们讲讲 sdshdr 相对于传统的 C 语言字符串，性能的提升在哪，以及具有哪些便捷的点。</p>
+<p><strong>首先</strong>，对于传统的 C 字符串，我想要获取字符串的长度，至少需要 O(n) 遍历一遍数组才行，而我们 sds 只需要 O(1) 的取 len 字段的值即可。</p>
+<p><strong>其次</strong>，也是非常重要的一个设计，如果我们初始分配了一个字符串对象，那么如果我要在这个字符串后面追加内容的话，限制于数组的长度一经初始化是不能修改的，我们至少需要分配一个足够大的数组，然后将原先的字符串进行一个拷贝。</p>
+<p>sdshdr 每次为一个 sds 分配内存的时候都会额外分配一部分暂不使用的内存空间，一般额外的内存会等同于当前字符串占用的内存大小，如果超过 1MB，那么额外空间的内存大小就是 1MB。每当执行 sdscat 这种方法的时候，程序会用 alloc-len 比较下剩下的空余内存是否足够分配追加的内容，如果不够自然触发内存重分配，而如果剩余未使用内存空间足够放下，那么将直接进行分配，无需内存重分配。</p>
+<p>通过这种预分配策略， SDS 将连续增长 N 次字符串所需的内存重分配次数从必定 N 次降低为最多 N 次。</p>
+<p><strong>最后</strong>，对于常规的 C 语言字符串，它通过判断当前字符是否是空字符来决定字符串的结尾，所以就要求你的字符串中不能包含甚至一个空字符，否则空字符后面的字符都不能作为有效字符被读取。而对于某些具有特殊格式要求的，需要使用空字符进行分隔作用的，那么传统的 C 字符串就无法存储了，而我们的 sds 不是通过空字符判断字符串结尾，而是通过 len 字段的值判断字符串的结尾，所以说，sds 还具备<strong>二进制安全</strong>这个特性，即它可以安全的存储具备特殊格式要求的二进制数据。</p>
+<p>关于 sds 我们就简单说到这，它是一种改良版的 C 字符串，兼容 C 语言中既有的函数 API，也通过一些手段提升了某些操作的性能，值得大家借鉴。</p>
+<hr>
+<h2 id="第二节-链表"><a href="#第二节-链表" class="headerlink" title="第二节 链表"></a><strong>第二节 链表</strong></h2><p>链表这种数据结构相信大家也不陌生，有很多类型，比如单向链表，双向链表，循环链表等，链表相对于数组来说，一是不需要连续的内存块地址，二是删除和插入的时间复杂度是 O(1) 级别的，非常的高效，但比不上数组的随机访问查询方式。</p>
+<p>一样的那句话，没有最好的数据结构，只有恰到好处的数据结构，比如我们后面要介绍的更高层次的数据结构，字典，它的底层其实就依赖的链表规避哈希冲突，具体的我们后面再说。</p>
+<p>redis 中借助 C 语言实现了一个双向链表结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125; listNode;</span><br></pre></td></tr></table></figure>
+<p>pre 指针指向前一个节点，next 指针指向后一个节点，value 指向当前节点对应的数据对象。盗一张图描述整个串联起来的链表结构：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80c4f8982b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>虽然通过链表的第一个头节点就可以遍历整个链表，但在 redis 向上封装了一层结构，专门用于表示一个链表结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    listNode *head;</span><br><span class="line">    listNode *tail;</span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;</span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>head 指向链表的头节点</li>
+<li>tail 指向链表的尾节点</li>
+<li>dup 函数用于链表转移复制时对节点 value 拷贝的一个实现，一般来说用等于号足以，但某些特殊情况下可能会用到节点转移函数，默认可以给这个函数赋值 NULL 即表示使用等于号进行节点转移。</li>
+<li>free 函数用于释放一个节点所占用的内存空间，默认赋值 NULL 的话，即使用 redis 自带的 zfree 函数进行内存空间释放，我们也可以来看一下这个 zfree 函数。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">zfree</span><span class="params">(<span class="keyword">void</span> *ptr)</span> </span>&#123;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">ifndef</span> HAVE_MALLOC_SIZE</span></span><br><span class="line">    <span class="keyword">void</span> *realptr;</span><br><span class="line">    <span class="keyword">size_t</span> oldsize;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ptr == <span class="literal">NULL</span>) <span class="keyword">return</span>;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">ifdef</span> HAVE_MALLOC_SIZE</span></span><br><span class="line">    update_zmalloc_stat_free(zmalloc_size(ptr));</span><br><span class="line">    <span class="built_in">free</span>(ptr);</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    realptr = (<span class="keyword">char</span>*)ptr-PREFIX_SIZE;</span><br><span class="line">    oldsize = *((<span class="keyword">size_t</span>*)realptr);</span><br><span class="line">    update_zmalloc_stat_free(oldsize+PREFIX_SIZE);</span><br><span class="line">    <span class="built_in">free</span>(realptr);</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会涉及到一个内存对齐的概念，就比如一个 64 位的操作系统，一次内存 IO 会固定取出 8 个字节的内存数据出来，如果某个变量横跨了两个八字节段，那么 CPU 需要进行两次的 IO 才能完整取出该变量的数据，引入内存对齐，是为了保证任意变量的内存分配不会出现上述的横跨情况，具体的操作手法就是填充无用的内存位，当然这必然会造成内存碎片，不过这也是一种以空间换时间的策略，你也可以禁用它。</p>
+<p>函数的上半部分是做一些判断，如果确定了该指针指向的数据结构占用的总内存，则直接调用 free 函数进行内存的释放，否则需要进行一个计算。redis 中的 zmalloc 在每一次内存数据分配的时候都会追加一个 PREFIX_SIZE 的头部数据块，它的值等于当前系统的最大寻址空间，比如 64 CPU的话，PREFIX_SIZE 就会占用到 8 个字节，并且这 8 个字节内部存储的是当前数据实际占用内存大小。</p>
+<p>所以这里的话，ptr 指针向低位移动就是指向头部 PREFIX_SIZE 字段首地址，然后取出里面保存的值，也就是当前数据结构实际占用的内存大小，最后加上它自身传入 update_zmalloc_stat_free 函数中修改 used_memory 内存记录指针的值，并在最后调用 free 函数释放内存，包括头部的部分。</p>
+<p>其实我们扯远了，继续看数据结构，这里如果还不是很明白的话，没关系，后面我们还会继续讲的。</p>
+<p>match 函数依然是一个多态的实现，只给出了定义，具体实现由你来决定，你也可以选择不实现，它用于比较两个链表节点的 value 值是否相等。返回 0 表示不相等，返回 1 表示相等。</p>
+<p>最后一个 len 字段描述的是，整个链表中所包含的节点数量。以上就是 redis 中链表的一个基本的定义，加上 list，最终链表结构在 redis 中呈现的抽象图大概是这样的，依然盗的图：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc798df0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>综上，我们介绍了 redis 中链表的一个基本实现情况，总结一下，它是一个双端链表，也就是查找某个节点的前后节点的时间复杂度都在 O(1)，也是一个无环并具有首尾节点指针的链表，初次之外，还具有三个多态函数，用于节点间的复制、比较以及内存释放，需要使用者自行实现。</p>
+<hr>
+<h2 id="第三节-字典"><a href="#第三节-字典" class="headerlink" title="第三节 字典"></a><strong>第三节 字典</strong></h2><p>字典相对于数组，链表来说，是一种较高层次的数据结构，像我们的汉语字典一样，可以通过拼音或偏旁唯一确定一个汉字，在程序里我们管每一个映射关系叫做一个键值对，很多个键值对放在一起就构成了我们的字典结构。</p>
+<p>有很多高级的字典结构实现，例如我们 Java 中的 HashMap 底层实现，根据键的 Hash 值均匀的将键值对分散到数组中，并在遇到哈希冲突时，冲突的键值对通过单向链表串联，并在链表结构超过八个节点裂变成红黑树。</p>
+<p>那么 redis 中是怎么实现的呢？我们一起来看一看。</p>
+<h3 id="一、字典结构定义"><a href="#一、字典结构定义" class="headerlink" title="一、字典结构定义"></a>一、字典结构定义</h3><p>Redis 中的字典相关结构都定义在 dict.h 文件中，dict 表示一个字典结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span> &#123;</span></span><br><span class="line">    dictType *type;</span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">long</span> rehashidx; </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> iterators;</span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>type 字段指向 dictType 结构，这个结构中定义几个多态方法。</li>
+<li>privdata 指针存储了字典结构一些附属额外信息。</li>
+<li>ht 是一个 dictht 结构的数组，dictht 就是一个哈希表结构。</li>
+<li>rehashidx 字段用于 rehash 过程中记录正在转移的键。</li>
+<li>iterators 字段记录了当前字典正在进行中的迭代器。</li>
+</ul>
+<p>dictType 具体如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictType</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> (*hashFunction)(<span class="keyword">const</span> <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">void</span> *(*keyDup)(<span class="keyword">void</span> *privdata, <span class="keyword">const</span> <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">void</span> *(*valDup)(<span class="keyword">void</span> *privdata, <span class="keyword">const</span> <span class="keyword">void</span> *obj);</span><br><span class="line">    <span class="keyword">int</span> (*keyCompare)(<span class="keyword">void</span> *privdata, <span class="keyword">const</span> <span class="keyword">void</span> *key1, <span class="keyword">const</span> <span class="keyword">void</span> *key2);</span><br><span class="line">    <span class="keyword">void</span> (*keyDestructor)(<span class="keyword">void</span> *privdata, <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">void</span> (*valDestructor)(<span class="keyword">void</span> *privdata, <span class="keyword">void</span> *obj);</span><br><span class="line">&#125; dictType;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>hashFunction 哈希函数指针，当我们通过 set 命令往字典中存储数据时，会先用键值对的键作为参数传入哈希函数，得到一个较为散列均匀的值，然后才会实际的进行数据的存储。这里就会用到哈希函数，如果你需要为你的字典结构提供不同的散列方式，在初始化字典的时候为 dictType 中哈希函数进行一个实现就好。</li>
+<li>keyDup 是一个键的复制函数。</li>
+<li>valDup是一个键值对的值的复制函数。</li>
+<li>keyCompare 是一个键的比较大小的函数。</li>
+<li>keyDestructor 销毁一个键。</li>
+<li>valDestructor 销毁一个键值对的值。都是一个多态的呈现，具体实现需要使用者自行提供。</li>
+</ul>
+<p>接着看 dict 结构，具体的再看。</p>
+<p>dictht 就是我们的哈希表结构，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span> &#123;</span></span><br><span class="line">    dictEntry **table;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> size;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line">&#125; dictht;</span><br></pre></td></tr></table></figure>
+<p>table 是一个指向 dictEntry 的二维数组，每个 dictEntry 其实就表述一个键值对，为什么是一个二维的结构呢？</p>
+<p>其实正常情况下，我们的字典是这样保存数据的：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ede0c3b2e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>每个 dictEntry 内部会保存一个 key/value 的键值对，然后我们通过 table 指针可以遍历所有的键值对，但是如果某个键值对的键进行哈希之后并计算得到应该存储的位置被别的节点捷足先登了，也就是我们常说的哈希冲突了，怎么办？</p>
+<p>redis 中的做法，甚至于大部分字典结构实现都是选择将冲突的节点串联成链表，于是字典结构就变成这样了。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ecf48bcfe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>同一条链表上的节点键的哈希值必定是相同的，也正是因为相同才会被串在一起，从逻辑上看，字典结构如上图所展示的那样，但抽象到我们的代码层，就是一个二维数组的结构，第一维放的就是节点指针的指针，第二维指向的就是指向我们键值对结构的指针，每一个 dictEntry 结构都会有一个 next 指针，在遇到哈希冲突的时候可以串联所有冲突节点。</p>
+<p>除此之外，dictht 中的 size 属性用于描述整个哈希字典表最大可寻址大小，也就是二维数组中第一维度的最大长度，sizemask 属性始终等于 size-1 表述的是一种大小掩码的概念，用于确定节点最初在数组中的位置，used 记录了整张哈希表中已经存储的键值对节点数量。</p>
+<p>其中，dict 字典结构中 ht 是一个只有两个元素的数组，正常情况下我们使用 ht[0] 字典表，ht[1] 用在我们渐进 rehash 过程中转移 ht[0] 中所有节点中。</p>
+<p>最后，我们再来看这个 dictEntry 键值对结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span> *key;</span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">        <span class="keyword">void</span> *val;</span><br><span class="line">        <span class="keyword">uint64_t</span> u64;</span><br><span class="line">        <span class="keyword">int64_t</span> s64;</span><br><span class="line">        <span class="keyword">double</span> d;</span><br><span class="line">    &#125; v;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
+<p>key 是一个指向任意结构的指针，代表我们的 key 可以使用我们 redis 中任意对象类型，v 是一个 union 类型，它可以是一个指针，也可以是 uint64_t 或 int64_t 类型，也可以是一个 double 类型。根据实际使用中，value 的不同值，使用不同的字段属性。</p>
+<p>next 指针指向另一个 dictEntry 结构，用于发生哈希冲突时，链接下一个键值对节点。</p>
+<p>以上就是 redis 中字典结构主要结构类型，从里至外封装了三层，dict 描述一个字典，其中的 dictht 描述哈希表，其中的 dictEntry 描述键值对结构。迭代器回头我们单独说说。</p>
+<h3 id="二、渐进式-rehash-迁移数据"><a href="#二、渐进式-rehash-迁移数据" class="headerlink" title="二、渐进式 rehash 迁移数据"></a>二、渐进式 rehash 迁移数据</h3><p>redis 的 rehash 和 Java 以及其他哈希的实现稍微可能有点不同，由于 redis 是单线程的，不需要写大量的并发语句来保证数据一致性，但是单线程处理也会导致一次 rehash 过程会非常缓慢，客户端阻塞太久。那么 redis 具体是怎么做的呢？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">dictRehash</span><span class="params">(dict *d, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> empty_visits = n*<span class="number">10</span>; <span class="comment">/* Max number of empty buckets to visit. */</span></span><br><span class="line">    <span class="keyword">if</span> (!dictIsRehashing(d)) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(n-- &amp;&amp; d-&gt;ht[<span class="number">0</span>].used != <span class="number">0</span>) &#123;</span><br><span class="line">        dictEntry *de, *nextde;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Note that rehashidx can't overflow as we are sure there are more</span></span><br><span class="line"><span class="comment">         * elements because ht[0].used != 0 */</span></span><br><span class="line">        assert(d-&gt;ht[<span class="number">0</span>].size &gt; (<span class="keyword">unsigned</span> <span class="keyword">long</span>)d-&gt;rehashidx);</span><br><span class="line">        <span class="keyword">while</span>(d-&gt;ht[<span class="number">0</span>].table[d-&gt;rehashidx] == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            d-&gt;rehashidx++;</span><br><span class="line">            <span class="keyword">if</span> (--empty_visits == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        de = d-&gt;ht[<span class="number">0</span>].table[d-&gt;rehashidx];</span><br><span class="line">        <span class="comment">/* Move all the keys in this bucket from the old to the new hash HT */</span></span><br><span class="line">        <span class="keyword">while</span>(de) &#123;</span><br><span class="line">            <span class="keyword">uint64_t</span> h;</span><br><span class="line"></span><br><span class="line">            nextde = de-&gt;next;</span><br><span class="line">            <span class="comment">/* Get the index in the new hash table */</span></span><br><span class="line">            h = dictHashKey(d, de-&gt;key) &amp; d-&gt;ht[<span class="number">1</span>].sizemask;</span><br><span class="line">            de-&gt;next = d-&gt;ht[<span class="number">1</span>].table[h];</span><br><span class="line">            d-&gt;ht[<span class="number">1</span>].table[h] = de;</span><br><span class="line">            d-&gt;ht[<span class="number">0</span>].used--;</span><br><span class="line">            d-&gt;ht[<span class="number">1</span>].used++;</span><br><span class="line">            de = nextde;</span><br><span class="line">        &#125;</span><br><span class="line">        d-&gt;ht[<span class="number">0</span>].table[d-&gt;rehashidx] = <span class="literal">NULL</span>;</span><br><span class="line">        d-&gt;rehashidx++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check if we already rehashed the whole table... */</span></span><br><span class="line">    <span class="keyword">if</span> (d-&gt;ht[<span class="number">0</span>].used == <span class="number">0</span>) &#123;</span><br><span class="line">        zfree(d-&gt;ht[<span class="number">0</span>].table);</span><br><span class="line">        d-&gt;ht[<span class="number">0</span>] = d-&gt;ht[<span class="number">1</span>];</span><br><span class="line">        _dictReset(&amp;d-&gt;ht[<span class="number">1</span>]);</span><br><span class="line">        d-&gt;rehashidx = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* More to rehash... */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rehashidx 的值默认为 -1，表示当前字典未处于 rehash 阶段，其他场合该字段的值等于当前正在转移桶的索引。</p>
+<p>新版本的 dictRehash 需要多传一个参数 n，这个参数用于控制单次最多转移空桶数量。什么意思呢，具体我们看一张图：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/22/16d5800edea0e859?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>有这么一个字典结构，其中索引值为 2 和 3 的两个桶是空的，也即里面没有放我们的键值对节点。正常情况下，一次 rehash 只会转移一个桶，但如果上一次转移了索引为 1 的那个桶，下一次来会遍历后面一个桶，如果继续为空就继续向后遍历，直到找到一个存储了我们节点的非空桶，极端情况下，如果字典表中只有最后一个桶有节点，那么一次的 rehash 就要遍历所有的桶，时间复杂度 O(n)，这会导致客户端等待过长时间，所以新版本中额外传一个参数 n 用于控制最多遍历的空桶数。</p>
+<p>相关代码段如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(d-&gt;ht[<span class="number">0</span>].table[d-&gt;rehashidx] == <span class="literal">NULL</span>) &#123;</span><br><span class="line">    d-&gt;rehashidx++;</span><br><span class="line">    <span class="keyword">if</span> (--empty_visits == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>方法的尾部会进行一个校验，如果当前桶转移结束后，当前字典的 rehash 过程完全结束，那么修改 ht[0] 指针引用，让他指向新的字典表 ht[1]，并设置 rehashidx 为 -1，标记整个字典 rehash 结束。</p>
+<p>以上就是 redis 中 rehash 的全过程，还是比较简单的，那为什么说它是渐进式的呢，我们看一下添加和查询键值对的方法。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dictEntry *<span class="title">dictAddRaw</span><span class="params">(dict *d, <span class="keyword">void</span> *key, dictEntry **existing)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> index;</span><br><span class="line">    dictEntry *entry;</span><br><span class="line">    dictht *ht;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (dictIsRehashing(d)) _dictRehashStep(d);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((index = _dictKeyIndex(d, key, dictHashKey(d,key), existing)) == <span class="number">-1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    ht = dictIsRehashing(d) ? &amp;d-&gt;ht[<span class="number">1</span>] : &amp;d-&gt;ht[<span class="number">0</span>];</span><br><span class="line">    entry = zmalloc(<span class="keyword">sizeof</span>(*entry));</span><br><span class="line">    entry-&gt;next = ht-&gt;table[index];</span><br><span class="line">    ht-&gt;table[index] = entry;</span><br><span class="line">    ht-&gt;used++;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Set the hash entry fields. */</span></span><br><span class="line">    dictSetKey(d, entry, key);</span><br><span class="line">    <span class="keyword">return</span> entry;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这就是我们调用 set 命令，底层为我们添加键值对的方法，函数的最开头逻辑就是调用 dictIsRehashing 方法判断当前的字典表是否处于 rehash 状态，也即判断 rehashidx 是否不等于 -1 了。_dictRehashStep 方法实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> _dictRehashStep(dict *d) &#123;</span><br><span class="line">    <span class="keyword">if</span> (d-&gt;iterators == <span class="number">0</span>) dictRehash(d,<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认情况下，一次 rehash 过程，redis 允许最多 10 空桶的访问就要返回，不得逗留。<strong>值得注意的是，方法的后续逻辑会判断当前字典如果正在进行 rehash，那么新的键值对将不再向 ht[0] 中添加，而直接转而添加到 ht[1] 中</strong>。</p>
+<p>我们再看看查询键值对的 get 命令底层 API 调用，底层会调用 dictFind 方法。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dictEntry *<span class="title">dictFind</span><span class="params">(dict *d, <span class="keyword">const</span> <span class="keyword">void</span> *key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    dictEntry *he;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> h, idx, table;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (d-&gt;ht[<span class="number">0</span>].used + d-&gt;ht[<span class="number">1</span>].used == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">NULL</span>; </span><br><span class="line">    <span class="keyword">if</span> (dictIsRehashing(d)) _dictRehashStep(d);</span><br><span class="line">    h = dictHashKey(d, key);</span><br><span class="line">    <span class="keyword">for</span> (table = <span class="number">0</span>; table &lt;= <span class="number">1</span>; table++) &#123;</span><br><span class="line">        idx = h &amp; d-&gt;ht[table].sizemask;</span><br><span class="line">        he = d-&gt;ht[table].table[idx];</span><br><span class="line">        <span class="keyword">while</span>(he) &#123;</span><br><span class="line">            <span class="keyword">if</span> (key==he-&gt;key || dictCompareKeys(d, key, he-&gt;key))</span><br><span class="line">                <span class="keyword">return</span> he;</span><br><span class="line">            he = he-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!dictIsRehashing(d)) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，同样也是有 dictIsRehashing 方法的判断，如果字典处于 rehash 状态，即需要去完成一个桶的转移，然后才能返回。<strong>值得注意的是，方法的中间逻辑是嵌套在一个 for 循环中的，供两次循环，第一次从 ht[0] 中搜索我们给定 key 的键值对，如果没有找到，第二次循环将从 ht[1] 中搜索我们要查询的键值对。</strong></p>
+<p>之所以说 redis 的 rehash 是渐进式的，就是因为即便它处于 rehash 状态下，所有节点的插入、查询甚至于删除都是不受影响的，直至整个 rehash 结束，redis 释放原先 ht[0] 占用无用内存。</p>
+<p><em>ps：redis 中的字典实现相对于 Java 中的实现要简单不少，主要还是因为 redis 是单线程调用的，不需要使用额外的并发语句控制。</em></p>
+<h3 id="三、字典迭代器"><a href="#三、字典迭代器" class="headerlink" title="三、字典迭代器"></a>三、字典迭代器</h3><p>迭代器是用于迭代遍历字典中所有的节点的一个工具，有两种，一种是安全迭代器，一种是不安全迭代器。安全迭代器就是指，你在迭代的过程中，允许你对字典结构进行修改，也即允许你添加、删除、修改字典中的键值对节点。不安全迭代器即不允许对字典中任何节点进行修改。</p>
+<p>dictIterator 结构的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictIterator</span> &#123;</span></span><br><span class="line">    dict *d;</span><br><span class="line">    <span class="keyword">long</span> index;</span><br><span class="line">    <span class="keyword">int</span> table, safe;</span><br><span class="line">    dictEntry *entry, *nextEntry;</span><br><span class="line">    <span class="comment">/* unsafe iterator fingerprint for misuse detection. */</span></span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> fingerprint;</span><br><span class="line">&#125; dictIterator;</span><br></pre></td></tr></table></figure>
+<p>字段 d 指向一个即将被迭代的字典结构，index 记录了当前迭代到字典中的桶索引，table 取值为 0 或 1，表示当前迭代的是字典中哪个哈希表，safe 标记当前迭代器是安全的或是不安全的。 entry 记录的是当前迭代的节点，nextEntry 的值等于 entry 的 next 指针，用于防止当前节点接受删除操作后续节点丢失情况。fingerprint 保存了 dictFingerprint 函数根据当前字典的基本信息计算的一个指纹信息，稍有一丁点变动，指纹信息就会发生变化，用于不安全迭代器检验。</p>
+<p>安全迭代器获取方式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dictIterator *<span class="title">dictGetIterator</span><span class="params">(dict *d)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    dictIterator *iter = zmalloc(<span class="keyword">sizeof</span>(*iter));</span><br><span class="line"></span><br><span class="line">    iter-&gt;d = d;</span><br><span class="line">    iter-&gt;table = <span class="number">0</span>;</span><br><span class="line">    iter-&gt;index = <span class="number">-1</span>;</span><br><span class="line">    iter-&gt;safe = <span class="number">0</span>;</span><br><span class="line">    iter-&gt;entry = <span class="literal">NULL</span>;</span><br><span class="line">    iter-&gt;nextEntry = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> iter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不安全迭代器获取方式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dictIterator *<span class="title">dictGetSafeIterator</span><span class="params">(dict *d)</span> </span>&#123;</span><br><span class="line">    dictIterator *i = dictGetIterator(d);</span><br><span class="line"></span><br><span class="line">    i-&gt;safe = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面我们看看迭代器的核心方法，dictNext 用于获取字典中下一个节点。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">dictEntry *<span class="title">dictNext</span><span class="params">(dictIterator *iter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//如果迭代器初次工作，entry 必定为 null</span></span><br><span class="line">        <span class="keyword">if</span> (iter-&gt;entry == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="comment">//拿到迭代器 d 字段保存的字典</span></span><br><span class="line">            dictht *ht = &amp;iter-&gt;d-&gt;ht[iter-&gt;table];</span><br><span class="line">            <span class="keyword">if</span> (iter-&gt;index == <span class="number">-1</span> &amp;&amp; iter-&gt;table == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (iter-&gt;safe)</span><br><span class="line">                    <span class="comment">//给字典的 iterators 字段自增，禁止 rehash操作</span></span><br><span class="line">                    iter-&gt;d-&gt;iterators++;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    <span class="comment">//计算并保存指纹信息</span></span><br><span class="line">                    iter-&gt;fingerprint = dictFingerprint(iter-&gt;d);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//迭代器开始工作，指向 0 号桶</span></span><br><span class="line">            iter-&gt;index++;</span><br><span class="line">            <span class="comment">//如果 index 大于等于 size，即最后一个桶迭代结束</span></span><br><span class="line">            <span class="keyword">if</span> (iter-&gt;index &gt;= (<span class="keyword">long</span>) ht-&gt;size) &#123;</span><br><span class="line">                <span class="keyword">if</span> (dictIsRehashing(iter-&gt;d) &amp;&amp; iter-&gt;table == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">//当前字典结构正在 rehash 且 ht[0] 已经遍历结束</span></span><br><span class="line">                    <span class="comment">//继续遍历 ht[1]</span></span><br><span class="line">                    iter-&gt;table++;</span><br><span class="line">                    iter-&gt;index = <span class="number">0</span>;</span><br><span class="line">                    ht = &amp;iter-&gt;d-&gt;ht[<span class="number">1</span>];</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">//否则表示迭代工作确实全部结束</span></span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//根据 index 取出节点</span></span><br><span class="line">            iter-&gt;entry = ht-&gt;table[iter-&gt;index];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//如果 entry 不等于 null，尝试遍历它的后续节点</span></span><br><span class="line">            iter-&gt;entry = iter-&gt;nextEntry;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//到这里，迭代器已经拿到下一个节点了</span></span><br><span class="line">        <span class="keyword">if</span> (iter-&gt;entry) &#123;</span><br><span class="line">            <span class="comment">//记录 nextEntry 节点的值</span></span><br><span class="line">            iter-&gt;nextEntry = iter-&gt;entry-&gt;next;</span><br><span class="line">            <span class="keyword">return</span> iter-&gt;entry;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大部分逻辑都已经注释上了，整个方法是一个死循环，如果 entry 等于 null，要么是迭代器初次工作，要么是迭代到一个桶的最后节点处了。如果是后者，会进入 if 逻辑中，判断是否整个字典全部迭代结束，如果不是取下一个桶。</p>
+<p>如果字典未处于 rehash 状态，自增 iterators 属性的操作会禁止后续节点操作触发 rehash，如果已经处于 rehash 过程了，也不慌，当前 ht[0] 迭代结束后，再去迭代早于迭代器工作前已经被转移到 ht[1] 的那些节点。因为如果你是安全迭代器的话，iterators 一自增之后，后续节点就不会触发 rehash 迁移节点，所以不会重复迭代数据。</p>
+<p>迭代器迭代结束之后需要释放关闭释放迭代器，redis 中对应方法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dictReleaseIterator</span><span class="params">(dictIterator *iter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!(iter-&gt;index == <span class="number">-1</span> &amp;&amp; iter-&gt;table == <span class="number">0</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (iter-&gt;safe)</span><br><span class="line">            iter-&gt;d-&gt;iterators--;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            assert(iter-&gt;fingerprint == dictFingerprint(iter-&gt;d));</span><br><span class="line">    &#125;</span><br><span class="line">    zfree(iter);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果是安全的迭代器，自减 iterators，不安全迭代器会重新计算指纹并与迭代器最开始工作时计算的指纹比较，并通过 assert 断言判断指纹是否一致，如果不一致则说明你在不安全的迭代器中执行了修改字典结构的方法，程序报错并退出。</p>
+<p>以上就是 redis 字典中基础的两个安全与非安全迭代器用法及其原理，终究是不允许边 rehash 边遍历的，其实 redis 中还有一种高级遍历方式，大家叫它 scan 遍历，它允许边 rehash 边迭代，比较高级，我们后续会分析它的源码，敬请期待！</p>
+<hr>
+<h2 id="第四节-跳跃表"><a href="#第四节-跳跃表" class="headerlink" title="第四节 跳跃表"></a><strong>第四节 跳跃表</strong></h2><p>我们都知道单链表有一个致命的弱点，查找任一节点都至少 O(n) 的时间复杂度，它需要遍历一遍整个链表，那么有没有办法提升链表的搜索效率？</p>
+<p>跳跃表（SkipList）这种数据结构使用空间换时间的策略，通过给链表建立多层索引来加快搜索效率，我们先介绍跳跃表的基本理论，再来看看 redis 中的实现情况。</p>
+<h3 id="一、跳跃表（SkipList）"><a href="#一、跳跃表（SkipList）" class="headerlink" title="一、跳跃表（SkipList）"></a>一、跳跃表（SkipList）</h3><p><img src="https://user-gold-cdn.xitu.io/2019/10/12/16dbffe59b8e16ad?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>这是一条带哨兵的双端链表，大部分场景下的链表都是这种结构，它的好处是，无论是头插法还是尾插法，插入操作都是常量级别的时间复杂度，删除也是一样。但缺点就是，如果想要查询某个节点，则需要 O(n)。</p>
+<p>那如果我们给链表加一层索引呢？当然前提是最底层的链表是有序的，不然索引也没有意义了。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/12/16dbffe5a1111a7c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>让 HEAD 头指针指向最高索引，我抽出来一层索引，这样即便你查找节点 2222 三次比较。</p>
+<p>第一次：与 2019 节点比较，发现大于 2019，往后继续</p>
+<p>第二次：与 2100 节点比较，发现依然大于，往后继续</p>
+<p>第三次：本层索引到头了，指向低层索引的下一个节点，继续比较，找到节点</p>
+<p>而无索引的链表需要四次，效率看起来不是很明显，但是随着链表节点数量增多，索引层级增多，效率差距会很明显。图就不自己画了，取自极客时间王争老师的一张图。</p>
+<p><img src="data:image/svg+xml;utf8,&lt;?xml version=&quot;1.0&quot;?&gt;&lt;svg xmlns=&quot;&quot; version=&quot;1.1&quot; width=&quot;1142&quot; height=&quot;636&quot;&gt;&lt;/svg" alt="image"></p>
+<p>你看，原本需要 62 次比较操作，通过五层索引，只需要 4 次比较，跳跃表的效率可见一瞥。</p>
+<p>想要知道具体跳跃表与链表差距多少，我们接下来进行它们各个操作的时间复杂度分析对比。</p>
+<p><strong>1、插入节点操作</strong></p>
+<p>双端链表（以下我们简称链表）的原本插入操作是 O(1) 的时间复杂度，但是这里我们讨论的是有序链表，所以插入一个节点至少还要找到它该插入的位置，然后才能执行插入操作，所以链表的插入效率是 O(n)。</p>
+<p>跳跃表（以下我们简称跳表）也依然是需要两个步骤才能完成插入操作，先找到该插入的位置，再进行插入操作。我们设定一个具有 N 个节点的链表，它建有 K 层索引并假设每两个节点间隔就向上分裂一层索引。</p>
+<p>k 层两个节点，k-1 层 4 个节点，k-2 层 8 个节点 … 第一层 n 个节点，</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>：n</span><br><span class="line"><span class="number">2</span>：<span class="number">1</span>/<span class="number">2</span> * n</span><br><span class="line"><span class="number">3</span>：<span class="number">1</span>/<span class="number">2</span>^<span class="number">2</span> * n</span><br><span class="line">.....</span><br><span class="line">.....</span><br><span class="line">k：<span class="number">1</span>/<span class="number">2</span>^(k<span class="number">-1</span>) * n</span><br></pre></td></tr></table></figure>
+<p>1/2^(k-1) <em> n 表示第 k 层节点数，1/2^(k-1) </em> n=2 可以得到，k 等于 logn，也就是说 ，N 个节点构建跳表将需要 logn 层索引，包括自身那层链表层。</p>
+<p>而当我们要搜索某个节点时，需要从最高层索引开始，按照我们的构建方式，某个节点必然位于两个索引节点之间，所以每一层都最多访问三个节点。这一点你可能需要理解理解，因为每一层索引的搜索都是基于上一层索引的，从上一层索引下来，要么是大于（小于）当前的索引节点，但不会大于（小于）其往后两个位置的节点，也就是当前索引节点的上一层后一索引节点，所以它最多访问三个节点。</p>
+<p>有了这一结论，我们向跳表中插入一个元素的时间复杂度就为：O(logn)。这个时间复杂度等于二分查找的时间复杂度，所有有时我们又称跳表是实现了二分查找的链表。</p>
+<p>很明显，插入操作，跳表完胜链表。</p>
+<p><strong>2、修改删除查询</strong></p>
+<p>这三个节点操作其实没什么可比性，修改删除操作，链表等效于跳表。而查询，我们上面也说了，链表至少 O(n)，跳表在 O(logn)。</p>
+<p>除此之外，我们都知道红黑树在每次插入节点后会自旋来进行树的平衡，那么跳表其实也会有这么一个问题，就是不断的插入，会导致底层链表节点疯狂增长，而索引层依然那么多，极端情况所有节点都新增到最后一级索引节点的右边，进而使跳表退化成链表。</p>
+<p>简单一句话来说，就是大量的节点插入之后，而不更新索引的话，跳表将无法一如既往的保证效率。解决办法也很简单，就是每一次节点的插入，触发索引节点的更新，我们具体来看一下更新策略。</p>
+<p>一般跳表会使用一个随机函数，这个随机函数会在跳表新增了一个节点后，根据跳表的目前结构生成一个随机数，这个数值当然要小于最大的索引层值，假定这个值等于 m，那么跳表会生成从 1 到 m 层的索引。所以这个随机函数的选择或者说实现就显得很重要了，关于它我们这里不做讨论，大家可以看看各种跳表的实现中是如何实现这个随机函数的，典型的就是 Java 中 ConcurrentSkipListMap 内部实现的 SkipList 结构，当然还有我们马上要介绍的 redis 中的实现。</p>
+<p>以上就是跳表这种数据结构的基本理论内容，接下来我们看 redis 中的实现情况。</p>
+<h3 id="二、Redis-中的跳跃表"><a href="#二、Redis-中的跳跃表" class="headerlink" title="二、Redis 中的跳跃表"></a>二、Redis 中的跳跃表</h3><p>说在前面的是，redis 自己实现了跳表，但目的是为它的有序集合等高层抽象数据结构提供服务，所以等下我们分析源代码的时候其中必然会涉及到一些看似无用的结构和代码逻辑，但那些也是非常重要的，我们也会提及有序集合相关的内容，但不会拆分细致，重点还是看跳表的实现。</p>
+<p>跳表的数据结构定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplist</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">header</span>, *<span class="title">tail</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> length;</span><br><span class="line">    <span class="keyword">int</span> level;</span><br><span class="line">&#125; zskiplist;</span><br></pre></td></tr></table></figure>
+<p>跳表中的每个节点用数据结构 zskiplistNode 表示，head 和 tail 分别指向最底层链表的头尾节点。length 表示当前跳表最底层链表有多少个节点，level 记录当前跳表最高索引层数。</p>
+<p>zskiplistNode 结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> &#123;</span></span><br><span class="line">    sds ele;</span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">backward</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistLevel</span> &#123;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">forward</span>;</span></span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> span;</span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;</span><br></pre></td></tr></table></figure>
+<p>我这里摘取的 redis 源码是 4.0 版本的，以前版本 ele 属性是一个 RedisObject 类型，现在是一个字符串类型，也即表示跳表现在只用于存储字符串数据。</p>
+<p>score 记录当前节点的一个分值，最底层的链表就是按照分值大小有序的串联的，并且我们查询一个节点，一般也会传入该节点的 score 值，毕竟数值类型比较起来方便。</p>
+<p>backward 指针指向前一个节点，为什么是倒着往前，我们待会会说。</p>
+<p>level 是比较关键的一个点，这里面是一个 level 数组，而每个元素又都是一个 zskiplistLevel 类型的结构，zskiplistLevel 类型包括一个 forward 前向指针，一个 span 跨度值，具体是什么意思，我们一点点说。</p>
+<p>跳表理论上在最底层是一条双端链表，然后基于此建立了多层索引节点以实现的，但在实际的代码实现上，这种结构是不好表述的，所以你要打破既有的惯性思维，然后才能好理解 redis 中的实现。实际上正如我们上述介绍的 zskiplistNode 结构一样，<strong>每个节点除了存储节点自身的数据外，还通过 level 数组保存了该节点在整个跳表各个索引层的节点引用</strong>，具体结构就是这样的：</p>
+<p><img src="data:image/svg+xml;utf8,&lt;?xml version=&quot;1.0&quot;?&gt;&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;216&quot; height=&quot;367&quot;&gt;&lt;/svg" alt="image"></p>
+<p>而整张跳表基本就是这样的结构：</p>
+<p><img src="data:image/svg+xml;utf8,&lt;?xml version=&quot;1.0&quot;?&gt;&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;800&quot; height=&quot;554&quot;&gt;&lt;/svg" alt="image"></p>
+<p>每一个节点的 backward 指针指向自己前面的一个节点，而每个节点中的 level 数组记录的就是当前节点在跳表的哪些索引层出现，并通过其 forward 指针顺序串联这一层索引的各个节点，0 表示第一层，1 表示第二层，等等以此类推。span 表示的是当前节点与后面一个节点的跨度，我们等下还会在代码里说到，暂时不理解也没关系。</p>
+<p>基本上跳表就是这样一个结构，上面那张图还是很重要的，包括我们等下介绍源码实现，也对你理解有很大帮助的。（毕竟我画了半天。。）</p>
+<p>这里多插一句，与跳表相关结构定义在一起的还有一个有序集合结构，很多人会说 redis 中的有序集合是跳表实现的，这句话不错，但有失偏驳。</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">typedef struct zset &#123;</span><br><span class="line">    <span class="keyword">dict </span>*<span class="keyword">dict;</span></span><br><span class="line"><span class="keyword"> </span>   zskiplist *zsl<span class="comment">;</span></span><br><span class="line">&#125; zset<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>准确来说，redis 中的有序集合是由我们之前介绍过的字典加上跳表实现的，字典中保存的数据和分数 score 的映射关系，每次插入数据会从字典中查询，如果已经存在了，就不再插入，有序集合中是不允许重复数据。</p>
+<p>下面我们看看 redis 中跳表的相关代码的实现情况。</p>
+<p><strong>1、跳表初始化</strong></p>
+<p>redis 中初始化一个跳表的代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">zskiplistNode *<span class="title">zslCreateNode</span><span class="params">(<span class="keyword">int</span> level, <span class="keyword">double</span> score, sds ele)</span> </span>&#123;</span><br><span class="line">    zskiplistNode *zn =</span><br><span class="line">        zmalloc(<span class="keyword">sizeof</span>(*zn)+level*<span class="keyword">sizeof</span>(struct zskiplistLevel));</span><br><span class="line">    zn-&gt;score = score;</span><br><span class="line">    zn-&gt;ele = ele;</span><br><span class="line">    <span class="keyword">return</span> zn;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Create a new skiplist. */</span></span><br><span class="line"><span class="function">zskiplist *<span class="title">zslCreate</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> j;</span><br><span class="line">    zskiplist *zsl;</span><br><span class="line">    <span class="comment">//分配内存空间</span></span><br><span class="line">    zsl = zmalloc(<span class="keyword">sizeof</span>(*zsl));</span><br><span class="line">    <span class="comment">//默认只有一层索引</span></span><br><span class="line">    zsl-&gt;level = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//0 个节点</span></span><br><span class="line">    zsl-&gt;length = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//1、创建一个 node 节点，这是个哨兵节点</span></span><br><span class="line">    <span class="comment">//2、为 level 数组分配 ZSKIPLIST_MAXLEVEL=32 内存大小</span></span><br><span class="line">    <span class="comment">//3、也即 redis 中支持索引最大 32 层</span></span><br><span class="line">    zsl-&gt;header = zslCreateNode(ZSKIPLIST_MAXLEVEL,<span class="number">0</span>,<span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//为哨兵节点的 level 初始化</span></span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; ZSKIPLIST_MAXLEVEL; j++) &#123;</span><br><span class="line">        zsl-&gt;header-&gt;level[j].forward = <span class="literal">NULL</span>;</span><br><span class="line">        zsl-&gt;header-&gt;level[j].span = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    zsl-&gt;header-&gt;backward = <span class="literal">NULL</span>;</span><br><span class="line">    zsl-&gt;tail = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="keyword">return</span> zsl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>zslCreate 用于初始化一个跳表，比较简单，我也给出了基本的注释，这里不再赘述了，强调一点的是，redis 中实现的跳表最高允许 32 层索引，这么做也是一种性能与内存之间的衡量，过多的索引层必然占用更多的内存空间，32 是一个比较合适值。</p>
+<p><strong>2、插入一个节点</strong></p>
+<p>插入一个节点的代码比较多，也稍微有点复杂，希望你也有耐心和我一起来分析。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">zskiplistNode *<span class="title">zslInsert</span><span class="params">(zskiplist *zsl, <span class="keyword">double</span> score, sds ele)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//update数组将用于记录新节点在每一层索引的目标插入位置</span></span><br><span class="line">    zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;</span><br><span class="line">    <span class="comment">//rank数组记录目标节点每一层的排名</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> rank[ZSKIPLIST_MAXLEVEL];</span><br><span class="line">    <span class="keyword">int</span> i, level;</span><br><span class="line"></span><br><span class="line">    serverAssert(!isnan(score));</span><br><span class="line">    <span class="comment">//指向哨兵节点</span></span><br><span class="line">    x = zsl-&gt;header;</span><br><span class="line">    <span class="comment">//这一段就是遍历每一层索引，找到最后一个小于当前给定score值的节点</span></span><br><span class="line">    <span class="comment">//从高层索引向底层索引遍历</span></span><br><span class="line">    <span class="keyword">for</span> (i = zsl-&gt;level<span class="number">-1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="comment">//rank记录的是节点的排名，正常情况下给它初始值等于上一层目标节点的排名</span></span><br><span class="line">        <span class="comment">//如果当前正在遍历最高层索引，那么这个初始值暂时给0</span></span><br><span class="line">        rank[i] = i == (zsl-&gt;level<span class="number">-1</span>) ? <span class="number">0</span> : rank[i+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">while</span> (x-&gt;level[i].forward &amp;&amp;</span><br><span class="line">                (x-&gt;level[i].forward-&gt;score &lt; score ||</span><br><span class="line">                    (x-&gt;level[i].forward-&gt;score == score &amp;&amp;</span><br><span class="line">                    sdscmp(x-&gt;level[i].forward-&gt;ele,ele) &lt; <span class="number">0</span>)))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//我们说过level结构中，span表示的是与后面一个节点的跨度</span></span><br><span class="line">            <span class="comment">//rank[i]最终会得到我们要找的目标节点的排名，也就是它前面有多少个节点</span></span><br><span class="line">            rank[i] += x-&gt;level[i].span;</span><br><span class="line">            <span class="comment">//挪动指针</span></span><br><span class="line">            x = x-&gt;level[i].forward;</span><br><span class="line">        &#125;</span><br><span class="line">        update[i] = x;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//至此，update数组中已经记录好，每一层最后一个小于给定score值的节点</span></span><br><span class="line">    <span class="comment">//我们的新节点只需要插在他们后即可</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//random算法获取一个平衡跳表的level值，标志着我们的新节点将要在哪些索引出现</span></span><br><span class="line">    <span class="comment">//具体算法这里不做分析，你也可以私下找我讨论</span></span><br><span class="line">    level = zslRandomLevel();</span><br><span class="line">    <span class="comment">//如果产生值大于当前跳表最高索引</span></span><br><span class="line">    <span class="keyword">if</span> (level &gt; zsl-&gt;level) &#123;</span><br><span class="line">        <span class="comment">//为高出来的索引层赋初始值，update[i]指向哨兵节点</span></span><br><span class="line">        <span class="keyword">for</span> (i = zsl-&gt;level; i &lt; level; i++) &#123;</span><br><span class="line">            rank[i] = <span class="number">0</span>;</span><br><span class="line">            update[i] = zsl-&gt;header;</span><br><span class="line">            update[i]-&gt;level[i].span = zsl-&gt;length;</span><br><span class="line">        &#125;</span><br><span class="line">        zsl-&gt;level = level;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//根据score和ele创建节点</span></span><br><span class="line">    x = zslCreateNode(level,score,ele);</span><br><span class="line">    <span class="comment">//每一索引层得进行新节点插入，建议对照我之前给出的跳表示意图</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; level; i++) &#123;</span><br><span class="line">        <span class="comment">//断开指针，插入新节点</span></span><br><span class="line">        x-&gt;level[i].forward = update[i]-&gt;level[i].forward;</span><br><span class="line">        update[i]-&gt;level[i].forward = x;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//rank[0]等于新节点再最底层链表的排名，就是它前面有多少个节点</span></span><br><span class="line">        <span class="comment">//update[i]-&gt;level[i].span记录的是目标节点与后一个索引节点之间的跨度，即跨越了多少个节点</span></span><br><span class="line">        <span class="comment">//得到新插入节点与后一个索引节点之间的跨度</span></span><br><span class="line">        x-&gt;level[i].span = update[i]-&gt;level[i].span - (rank[<span class="number">0</span>] - rank[i]);</span><br><span class="line">        <span class="comment">//修改目标节点的span值</span></span><br><span class="line">        update[i]-&gt;level[i].span = (rank[<span class="number">0</span>] - rank[i]) + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果上面产生的平衡level大于跳表最高使用索引，我们上面说会为高出部分做初始化</span></span><br><span class="line">    <span class="comment">//这里是自增他们的span值，因为新插入了一个节点，跨度自然要增加</span></span><br><span class="line">    <span class="keyword">for</span> (i = level; i &lt; zsl-&gt;level; i++) &#123;</span><br><span class="line">        update[i]-&gt;level[i].span++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//修改 backward 指针与 tail 指针</span></span><br><span class="line">    x-&gt;backward = (update[<span class="number">0</span>] == zsl-&gt;header) ? <span class="literal">NULL</span> : update[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">if</span> (x-&gt;level[<span class="number">0</span>].forward)</span><br><span class="line">        x-&gt;level[<span class="number">0</span>].forward-&gt;backward = x;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        zsl-&gt;tail = x;</span><br><span class="line">    zsl-&gt;length++;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整个方法我都已经给出了注释，具体的不再细说，欢迎你与我交流讨论，整体的逻辑分为三个步骤。</p>
+<ol>
+<li>从最高索引层开始遍历，根据 score 找到它的前驱节点，用 update 数组进行保存</li>
+<li>每一层得进行节点的插入，并计算更新 span 值</li>
+<li>修改 backward 指针与 tail 指针</li>
+</ol>
+<p>删除节点也是类似的，首先需要根据 score 值找到目标节点，然后断开前后节点的连接，完成节点删除。</p>
+<p><strong>3、特殊的查询操作</strong></p>
+<p>因为 redis 的跳表实现中，增设了 span 这个跨度字段，它记录了与当前节点与后一个节点之间的跨度，所以就具有以下一些查询方法。</p>
+<p><strong>a、zslGetRank</strong></p>
+<p>返回包含给定成员和分值的节点在跳跃表中的排位。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">zslGetRank</span><span class="params">(zskiplist *zsl, <span class="keyword">double</span> score, sds ele)</span> </span>&#123;</span><br><span class="line">    zskiplistNode *x;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> rank = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    x = zsl-&gt;header;</span><br><span class="line">    <span class="keyword">for</span> (i = zsl-&gt;level<span class="number">-1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">while</span> (x-&gt;level[i].forward &amp;&amp;</span><br><span class="line">            (x-&gt;level[i].forward-&gt;score &lt; score ||</span><br><span class="line">                (x-&gt;level[i].forward-&gt;score == score &amp;&amp;</span><br><span class="line">                sdscmp(x-&gt;level[i].forward-&gt;ele,ele) &lt;= <span class="number">0</span>))) &#123;</span><br><span class="line">            rank += x-&gt;level[i].span;</span><br><span class="line">            x = x-&gt;level[i].forward;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* x might be equal to zsl-&gt;header, so test if obj is non-NULL */</span></span><br><span class="line">        <span class="keyword">if</span> (x-&gt;ele &amp;&amp; sdscmp(x-&gt;ele,ele) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> rank;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你会发现，这个方法的核心代码其实就是我们插入节点方法的一个部分，通过累计 span 得到目标节点的一个排名值。</p>
+<p><strong>b、zslGetElementByRank</strong></p>
+<p>通过给定排名查询元素。这个方法就更简单了。</p>
+<p><strong>c、zslIsInRange</strong></p>
+<p>给定一个分值范围（range）， 比如 0 到 10， 如果给定的分值范围包含在跳跃表的分值范围之内， 那么返回 1 ，否则返回 0 。</p>
+<p><strong>d、zslFirstInRange</strong></p>
+<p>给定一个分值范围， 返回跳跃表中第一个符合这个范围的节点。</p>
+<p><strong>e、zslDeleteRangeByScore</strong></p>
+<p>给定一个分值范围， 删除跳跃表中所有在这个范围之内的节点。</p>
+<p><strong>f、zslDeleteRangeByRank</strong></p>
+<p>给定一个排名范围， 删除跳跃表中所有在这个范围之内的节点。</p>
+<p>其实，后面列出来的那些根据排名，甚至一个范围查询删除节点的方法，都仰仗的是 span 这个字段，这也是为什么 insert 方法中需要通过那么复杂的计算逻辑对 span 字段进行计算的一个原因。</p>
+<p>总结一下，跳表是为有序集合服务的，通过多层索引把链表的搜索效率提升到 O(logn)级别，但修改删除依然是 O(1)，是一个较为优秀的数据结构，而 redis 中的实现把每个节点实现成类似楼房一样的结构，也即我们的索引层，非常的巧妙。</p>
+<hr>
+<h2 id="第五节-整数集合"><a href="#第五节-整数集合" class="headerlink" title="第五节 整数集合"></a><strong>第五节 整数集合</strong></h2><p>当一个集合中只包含整数，并且元素的个数不是很多的话，redis 会用整数集合作为底层存储，它的一个优点就是可以节省很多内存，虽然字典结构的效率很高，但是它的实现结构相对复杂并且会分配较多的内存空间。</p>
+<p>而我们的整数集合（intset）可以做到使用较少的内存空间却达到和字典一样效率的实现，但也是前提的，集合中只能包含整型数据并且数量不能太多。整数集合最多能存多少个元素在 redis 中也是有体现的。</p>
+<blockquote>
+<p>OBJ_SET_MAX_INTSET_ENTRIES 512</p>
+</blockquote>
+<p>也就是超过 512 个元素，或者向集合中添加了字符串或其他数据结构，redis 会将整数集合向字典结构进行转换。</p>
+<h3 id="一、基本的数据结构"><a href="#一、基本的数据结构" class="headerlink" title="一、基本的数据结构"></a>一、基本的数据结构</h3><p>intset 的结构定义很简单，有以下成员构成：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding;</span><br><span class="line">    <span class="keyword">uint32_t</span> length;</span><br><span class="line">    <span class="keyword">int8_t</span> contents [];</span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+<p>encoding 记录当前 intset 使用编码，有三个取值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INTSET_ENC_INT16 (sizeof(int16_t))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INTSET_ENC_INT32 (sizeof(int32_t))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INTSET_ENC_INT64 (sizeof(int64_t))</span></span><br></pre></td></tr></table></figure>
+<p>length 记录整数集合中目前存储了多少个元素，contents 记录我们实际的数据集合，虽然我们看到结构体中给数组元素的类型定死成 int8_t，但实际上这个 int8_t 定义的毫无意义，因为这里的处理方式非常规的数组操作，content 字段虽然被定义成指向一个 int8_t 类型数据的指针，但实际上 redis 无论是读取数组元素还是新增元素进去都依赖 encoding 和 length 两个字段直接操作的内存。</p>
+<p>基本数据结构还是非常的简单的，下面我们来看看它的一些核心方法。</p>
+<h3 id="二、核心-API-实现"><a href="#二、核心-API-实现" class="headerlink" title="二、核心 API 实现"></a>二、核心 API 实现</h3><p><strong>1、初始化一个 intset</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">intset *<span class="title">intsetNew</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    intset *is = zmalloc(<span class="keyword">sizeof</span>(intset));</span><br><span class="line">    is-&gt;encoding = intrev32ifbe(INTSET_ENC_INT16);</span><br><span class="line">    is-&gt;length = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> is;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见，默认的 inset 配置是使用 INTSET_ENC_INT16 作为数据存储大小，并且不会为 content 数组初始化。常规的数组需要先预先确定数组长度，然后分配内存，继而通过 contents[x] 可以访问数组中任一元素。</p>
+<p>但是，inset 这里是非常规式操作数组，encoding 字段定义了数组中每个元素实际类型，lenth 字段定义了数组中实际的元素个数，那么 contents[x] 是失效的，这种方式只会按照 int8_t 进行内存偏移，这种方式是拿不到正确的数据的，所以 redis 中通过 memcpy 按照 encoding 字段的值暴力直接偏移地址操作内存读取数据。</p>
+<p>所以，这也是为什么 intset 初始化时不初始化 content 数组的原因所在，因为没有必要。而每当新增一个元素的时候都会去动态扩容原数组的长度以盛放下新插入进来的元素，扩容不会扩容很多，刚好一个新元素所占用的内存即可。具体的细节，我们接着看。</p>
+<p><strong>2、添加新元素</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">intset *<span class="title">intsetAdd</span><span class="params">(intset *is, <span class="keyword">int64_t</span> value, <span class="keyword">uint8_t</span> *success)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//计算得到新插入的元素的编码</span></span><br><span class="line">    <span class="keyword">uint8_t</span> valenc = _intsetValueEncoding(value);</span><br><span class="line">    <span class="keyword">uint32_t</span> pos;</span><br><span class="line">    <span class="keyword">if</span> (success) *success = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//如果大于 intset 目前存储元素的编码大小</span></span><br><span class="line">    <span class="keyword">if</span> (valenc &gt; intrev32ifbe(is-&gt;encoding)) &#123;</span><br><span class="line">        <span class="comment">//触发 intset 升级</span></span><br><span class="line">        <span class="keyword">return</span> intsetUpgradeAndAdd(is,value);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//二分搜索当前元素，如果元素已经存在会直接返回</span></span><br><span class="line">        <span class="comment">//如果没找到元素，pos 的值就是该元素的位置索引</span></span><br><span class="line">        <span class="keyword">if</span> (intsetSearch(is,value,&amp;pos)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (success) *success = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">return</span> is;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//resize 集合，扩容一个元素的内存空间</span></span><br><span class="line">        is = intsetResize(is,intrev32ifbe(is-&gt;length)+<span class="number">1</span>);</span><br><span class="line">        <span class="comment">//移动 pos 后面的元素，以插入我们的新元素</span></span><br><span class="line">        <span class="keyword">if</span> (pos &lt; intrev32ifbe(is-&gt;length)) intsetMoveTail(is,pos,pos+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//赋值</span></span><br><span class="line">    _intsetSet(is,pos,value);</span><br><span class="line">    is-&gt;length = intrev32ifbe(intrev32ifbe(is-&gt;length)+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> is;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由此，我们应该知道为什么 intset 内的数据是有序且无重复的了，二分查找 O(logN)，但是 intset 插入一个元素却不是 O(logN)，因为有些情况会触发升级操作，或者极端情况下，会移动所有元素，时间复杂度达到 O(N)。</p>
+<p><strong>3、升级</strong></p>
+<p>我们先看示意图的变化，然后再分析源码，假设原 intset 使用 16 位的编码存储数据，先来了一个 32 位的数据，触发了我们的编码升级。</p>
+<p>原 intset 结构如下：</p>
+<p><img src="data:image/svg+xml;utf8,&lt;?xml version=&quot;1.0&quot;?&gt;&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;472&quot; height=&quot;187&quot;&gt;&lt;/svg" alt="image"></p>
+<p>新 intset 结构会扩容成这样：</p>
+<p><img src="data:image/svg+xml;utf8,&lt;?xml version=&quot;1.0&quot;?&gt;&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;537&quot; height=&quot;173&quot;&gt;&lt;/svg" alt="image"></p>
+<p>虽然数据占用的内存已经分配好了，但是还需要做的是迁移每个元素占用的比特位。 做法是这样的，假设我们的新元素是 int_32 类型的数值 65536，那么首先我们会将这个 65536 放到[128-159]比特位区间，然后将 78 放到[96-127]比特位区间，并向前以此类推，最后我们会得到升级完成之后 intset。</p>
+<p>下面我们看 redis 中代码的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> intset *<span class="title">intsetUpgradeAndAdd</span><span class="params">(intset *is, <span class="keyword">int64_t</span> value)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//intset目前的编码</span></span><br><span class="line">    <span class="keyword">uint8_t</span> curenc = intrev32ifbe(is-&gt;encoding);</span><br><span class="line">    <span class="comment">//intset即将扩展到的编码</span></span><br><span class="line">    <span class="keyword">uint8_t</span> newenc = _intsetValueEncoding(value);</span><br><span class="line">    <span class="keyword">int</span> length = intrev32ifbe(is-&gt;length);</span><br><span class="line">    <span class="keyword">int</span> prepend = value &lt; <span class="number">0</span> ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据新的元素内存大小重新分配 intset 内存大小</span></span><br><span class="line">    is-&gt;encoding = intrev32ifbe(newenc);</span><br><span class="line">    is = intsetResize(is,intrev32ifbe(is-&gt;length)+<span class="number">1</span>);</span><br><span class="line">    <span class="comment">//这个地方我先标记一下 @1，下面详细分析</span></span><br><span class="line">    <span class="comment">//总体上你可以理解，就是我们上图画的那样，从原集合的最后一个元素</span></span><br><span class="line">    <span class="comment">//开始扩大它占用的比特位</span></span><br><span class="line">    <span class="keyword">while</span>(length--)</span><br><span class="line">        _intsetSet(is,length+prepend,_intsetGetEncoded(is,length,curenc));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将新元素放进 intset 中</span></span><br><span class="line">    <span class="keyword">if</span> (prepend)</span><br><span class="line">        _intsetSet(is,<span class="number">0</span>,value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        _intsetSet(is,intrev32ifbe(is-&gt;length),value);</span><br><span class="line">    is-&gt;length = intrev32ifbe(intrev32ifbe(is-&gt;length)+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> is;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>别的不再解释，我重点解释一下我做标记的 @1，这个循环其实是这个方法的核心点，它完成了将旧元素扩充比特位这么一个操作。</p>
+<p>首先明确的一点是，升级操作只有两种情况会触发，一种是新插入一个较大的数值，另一种是新插入一个负很大的值，这两种情况都会导致类型不够存储，需要扩大数据位。</p>
+<p>_intsetGetEncoded 这个方法可以根据给定了 length，也就是元素在数组中的下标取出旧数组中对应的元素，很显然，这里是从后往前倒着来的。</p>
+<p>因为我们的 intsetResize 方法已经完成了扩容内存的操作，也就是说新元素的内存已经分配完毕，那么 _intsetSet 方法就会将 _intsetGetEncoded 取出的元素重新的向数组中赋值。循环结束时，就是所有元素重新归位的时候，最后再将新元素赋值进入数组最后的位置。</p>
+<p>但其实细心的同学会发现，_intsetSet 方法在传下标索引的时候实际传的是 length+prepend，这其实就是我们说，如果 value 是小于零的，length+prepend 最终会导致所有的旧元素往后挪了一个偏移量，然后新的元素会被赋值的索引为零的位置。也就是说，如果新插入的数值是负数，它会被头插进数组的第一个位置。</p>
+<p>核心的几个 API 我们都已经介绍了，其他的一些 API 你可以自行参阅源码，相信对你不难。</p>
+<p>总结一下，整数集合(intset)使用了非常简洁的数据结构，可以更少的占用内存存储一些整数，但终究是基于数组的，也就避免不了不能存储大量数据的缺点。总体来说，插入一个元素，最好情况 O(logN)，最坏的情况是 O(N)，摊还时间复杂度为 O(N)，查找一个元素，根据索引下标时间复杂度在 O(1)。当 intset 中的元素超过 512 个，或者向其中添加了字符串，redis 会将 intset 转换成字典。</p>
+<hr>
+<h2 id="第六节-压缩列表"><a href="#第六节-压缩列表" class="headerlink" title="第六节 压缩列表"></a><strong>第六节 压缩列表</strong></h2><p>上一篇我们介绍了 redis 中的整数集合这种数据结构的实现，也谈到了，引入这种数据结构的一个很大的原因就是，在某些仅有少量整数元素的集合场景，通过整数集合既可以达到字典的效率，也能使用远少于字典的内存达到同样的效果。</p>
+<p>我们本篇介绍的压缩列表，相信你从他的名字里应该也能看出来，又是一个为了节约内存而设计的数据结构，它的数据结构相对于整数集合来说会复杂了很多，但是整数集合只能允许存储少量的整型数据，而我们的压缩列表可以允许存储少量的整型数据或字符串。</p>
+<p>这是他们之间的一个区别，下面我们来看看这种数据结构。</p>
+<h3 id="一、基本的结构定义"><a href="#一、基本的结构定义" class="headerlink" title="一、基本的结构定义"></a>一、基本的结构定义</h3><p><img src="https://user-gold-cdn.xitu.io/2019/11/13/16e64a764ad1fcd3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<ul>
+<li>ZIPLIST_BYTES：四个字节，记录了整个压缩列表总共占用了多少字节数</li>
+<li>ZIPLIST_TAIL_OFFSET：四个字节，记录了整个压缩列表第一个节点到最后一个节点跨越了多少个字节，通故这个字段可以迅速定位到列表最后一个节点位置</li>
+<li>ZIPLIST_LENGTH：两个字节，记录了整个压缩列表中总共包含几个 zlentry 节点</li>
+<li>zlentry：非固定字节，记录的是单个节点，这是一个复合结构，我们等下再说</li>
+<li>0xFF：一个字节，十进制的值为 255，标志压缩列表的结尾</li>
+</ul>
+<p>其中，zlentry 在 redis 中确实有着这样的结构体定义，但实际上这个结构定义了一堆类似于 length 这样的字段，记录前一个节点和自身节点占用的字节数等等信息，用处不多，而我们更倾向于使用这样的逻辑结构来描述 zlentry 节点。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/11/13/16e64a764b42d99f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>这种结构在 redis 中是没有具体结构体定义的，请知悉，网上的很多博客文章都直接描述 zlentry 节点是这样的一种结构，其实是不准确的。</p>
+<p>简单解释一下这三个字段的含义：</p>
+<ul>
+<li>previous_entry_length：每个节点会使用一个或者五个字节来描述前一个节点占用的总字节数，如果前一个节点占用的总字节数小于 254，那么就用一个字节存储，反之如果前一个节点占用的总字节数超过了 254，那么一个字节就不够存储了，这里会用五个字节存储并将第一个字节的值存储为固定值 254 用于区分。</li>
+<li>encoding：压缩列表可以存储 16位、32位、64位的整数以及字符串，encoding 就是用来区分后面的 content 字段中存储于的到底是哪种内容，分别占多少字节，这个我们等下细说。</li>
+<li>content：没什么特别的，存储的就是具体的二进制内容，整数或者字符串。</li>
+</ul>
+<p>下面我们细说一个 encoding 具体是怎么存储的。</p>
+<p>主要分为两种，一种是字符串的存储格式：</p>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>编码长度</th>
+<th>content类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00xxxxxx</td>
+<td>一个字节</td>
+<td>长度小于 63 的字符串</td>
+</tr>
+<tr>
+<td>01xxxxxx xxxxxxxx</td>
+<td>两个字节</td>
+<td>长度小于 16383 的字符串</td>
+</tr>
+<tr>
+<td>10xxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx</td>
+<td>五个字节</td>
+<td>长度小于 4294967295 的字符串</td>
+</tr>
+</tbody>
+</table>
+<p>content 的具体长度，由编码除去高两位剩余的二进制位表示。</p>
+<table>
+<thead>
+<tr>
+<th>编码</th>
+<th>编码长度</th>
+<th>content类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11000000</td>
+<td>一个字节</td>
+<td>int16_t 类型的整数</td>
+</tr>
+<tr>
+<td>11010000</td>
+<td>一个字节</td>
+<td>int32_t 类型的整数</td>
+</tr>
+<tr>
+<td>11100000</td>
+<td>一个字节</td>
+<td>int64_t 类型的整数</td>
+</tr>
+<tr>
+<td>11110000</td>
+<td>一个字节</td>
+<td>24 位有符号整数</td>
+</tr>
+<tr>
+<td>11111110</td>
+<td>一个字节</td>
+<td>8 位有符号整数</td>
+</tr>
+</tbody>
+</table>
+<p>注意，整型数据的编码是固定 11 开头的八位二进制，而字符串类型的编码都是非固定的，因为它还需要通过后面的二进制位得到字符串的长度，稍有区别。</p>
+<p>这就是压缩列表的基本的结构定义情况，下面我们通过节点的增删改查方法源码实现来看看 redis 中具体的实现情况。</p>
+<h3 id="二、redis-的具体源码实现"><a href="#二、redis-的具体源码实现" class="headerlink" title="二、redis 的具体源码实现"></a>二、redis 的具体源码实现</h3><p><strong>1、ziplistNew</strong></p>
+<p>我们先来看看压缩列表初始化的方法实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistNew</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//bytes=2*4+2</span></span><br><span class="line">    <span class="comment">//分配压缩列表结构所需要的字节数</span></span><br><span class="line">    <span class="comment">//ZIPLIST_BYTES + ZIPLIST_TAIL_OFFSET + ZIPLIST_LENGTH</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> bytes = ZIPLIST_HEADER_SIZE+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *zl = zmalloc(bytes);</span><br><span class="line">    <span class="comment">//初始化 ZIPLIST_BYTES 字段</span></span><br><span class="line">    ZIPLIST_BYTES(zl) = intrev32ifbe(bytes);</span><br><span class="line">    <span class="comment">//初始化 ZIPLIST_TAIL_OFFSET</span></span><br><span class="line">    ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(ZIPLIST_HEADER_SIZE);</span><br><span class="line">    <span class="comment">//初始化 ZIPLIST_LENGTH 字段</span></span><br><span class="line">    ZIPLIST_LENGTH(zl) = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//为压缩列表最后一个字节赋值 255</span></span><br><span class="line">    zl[bytes<span class="number">-1</span>] = ZIP_END;</span><br><span class="line">    <span class="keyword">return</span> zl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2、ziplistPush</strong></p>
+<p>接着我们看新增节点的源码实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span> *<span class="title">ziplistPush</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *s</span></span></span><br><span class="line"><span class="function"><span class="params">        ,<span class="keyword">unsigned</span> <span class="keyword">int</span> slen, <span class="keyword">int</span> where)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *p;</span><br><span class="line">    <span class="comment">//找到待插入的位置，头部或者尾部</span></span><br><span class="line">    p = (where == ZIPLIST_HEAD) ? ZIPLIST_ENTRY_HEAD(zl) : ZIPLIST_ENTRY_END(zl);</span><br><span class="line">    <span class="keyword">return</span> __ziplistInsert(zl,p,s,slen);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解释一下 ziplistPush 的几个入参的含义。</p>
+<p>zl 指向一个压缩列表的首地址，s 指向一个字符串首地址），slen 指向字符串的长度（如果节点存储的值是整型，存储的就是整型值），where 指明新节点的插入方式，头插亦或尾插。</p>
+<p>ziplistPush 方法的核心是 __ziplistInsert：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *__ziplistInsert(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *p, <span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">int</span> slen) &#123;</span><br><span class="line">    <span class="keyword">size_t</span> curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> prevlensize, prevlen = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">size_t</span> offset;</span><br><span class="line">    <span class="keyword">int</span> nextdiff = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> encoding = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> value = <span class="number">123456789</span>; </span><br><span class="line">    zlentry tail;</span><br><span class="line">    <span class="comment">//prevlensize 存储前一个节点长度，本节点使用了几个字节 1 or 5</span></span><br><span class="line">    <span class="comment">//prelen  存储前一个节点实际占用了几个字节</span></span><br><span class="line">    <span class="keyword">if</span> (p[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">        ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">char</span> *ptail = ZIPLIST_ENTRY_TAIL(zl);</span><br><span class="line">        <span class="keyword">if</span> (ptail[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">            prevlen = zipRawEntryLength(ptail);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (zipTryEncoding(s,slen,&amp;value,&amp;encoding)) &#123;</span><br><span class="line">        <span class="comment">//s 指针指向一个整数，尝试进行一个转换并得到存储这个整数占用了几个字节</span></span><br><span class="line">        reqlen = zipIntSize(encoding);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//s 指针指向一个字符串（字符数组），slen 就是他占用的字节数</span></span><br><span class="line">        reqlen = slen;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//当前节点存储数据占用 reqlen 个字节，加上存储前一个节点长度占用的字节数</span></span><br><span class="line">    reqlen += zipStorePrevEntryLength(<span class="literal">NULL</span>,prevlen);</span><br><span class="line">    <span class="comment">//encoding 字段存储实际占用字节数</span></span><br><span class="line">    reqlen += zipStoreEntryEncoding(<span class="literal">NULL</span>,encoding,slen);</span><br><span class="line">    <span class="comment">//至此，reqlen 保存了存储当前节点数据占用字节数和 encoding 编码占用的字节数总和</span></span><br><span class="line">    <span class="keyword">int</span> forcelarge = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//当前节点占用的总字节减去存储前一个节点字段占用的字节</span></span><br><span class="line">    <span class="comment">//记录的是这一个节点的插入会引起下一个节点占用字节的变化量</span></span><br><span class="line">    nextdiff = (p[<span class="number">0</span>] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (nextdiff == <span class="number">-4</span> &amp;&amp; reqlen &lt; <span class="number">4</span>) &#123;</span><br><span class="line">        nextdiff = <span class="number">0</span>;</span><br><span class="line">        forcelarge = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//扩容有可能导致 zl 的起始位置偏移，故记录 p 与 zl 首地址的相对偏差数，事后还原 p 指针指向</span></span><br><span class="line">    offset = p-zl;</span><br><span class="line">    zl = ziplistResize(zl,curlen+reqlen+nextdiff);</span><br><span class="line">    p = zl+offset;</span><br><span class="line">    <span class="keyword">if</span> (p[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">        memmove(p+reqlen,p-nextdiff,curlen-offset<span class="number">-1</span>+nextdiff);</span><br><span class="line">        <span class="comment">//把当前节点占用的字节数存储到下一个节点的头部字段</span></span><br><span class="line">        <span class="keyword">if</span> (forcelarge)</span><br><span class="line">            zipStorePrevEntryLengthLarge(p+reqlen,reqlen);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            zipStorePrevEntryLength(p+reqlen,reqlen);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//更新 tail_offset 字段，让他保存从头节点到尾节点之间的距离</span></span><br><span class="line">        ZIPLIST_TAIL_OFFSET(zl) =</span><br><span class="line">            intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+reqlen);</span><br><span class="line">        zipEntry(p+reqlen, &amp;tail);</span><br><span class="line">        <span class="keyword">if</span> (p[reqlen+tail.headersize+tail.len] != ZIP_END) &#123;</span><br><span class="line">            ZIPLIST_TAIL_OFFSET(zl) =</span><br><span class="line">                intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+nextdiff);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(p-zl);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//是否触发连锁更新</span></span><br><span class="line">    <span class="keyword">if</span> (nextdiff != <span class="number">0</span>) &#123;</span><br><span class="line">        offset = p-zl;</span><br><span class="line">        zl = __ziplistCascadeUpdate(zl,p+reqlen);</span><br><span class="line">        p = zl+offset;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//将节点写入指定位置</span></span><br><span class="line">    p += zipStorePrevEntryLength(p,prevlen);</span><br><span class="line">    p += zipStoreEntryEncoding(p,encoding,slen);</span><br><span class="line">    <span class="keyword">if</span> (ZIP_IS_STR(encoding)) &#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(p,s,slen);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        zipSaveInteger(p,value,encoding);</span><br><span class="line">    &#125;</span><br><span class="line">    ZIPLIST_INCR_LENGTH(zl,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> zl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体细节我不再赘述，总结一下整个插入节点的步骤。</p>
+<ol>
+<li>计算并得到前一个节点的总长度，并判断得到当前待插入节点保存前一个节点长度的 previous_entry_length 占用字节数</li>
+<li>根据传入的 s 和 slen，计算并保存 encoding 字段内容</li>
+<li>构建节点并将数据写入节点添加到压缩列表中</li>
+</ol>
+<p><em>ps：重点要去理解压缩列表节点的数据结构定义，previous_entry_length、encoding、content 字段，这样才能比较容易理解节点新增操作的实现。</em></p>
+<h3 id="三、连锁更新"><a href="#三、连锁更新" class="headerlink" title="三、连锁更新"></a>三、连锁更新</h3><p>谈到 redis 的压缩列表，就必然会谈到他的连锁更新，我们先引一张图：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/11/13/16e64a76497a20d5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
+<p>假设原本 entry1 节点占用字节数为 211（小于 254），那么 entry2 的 previous_entry_length 会使用一个字节存储 211，现在我们新插入一个节点 NEWEntry，这个节点比较大，占用了 512 个字节。</p>
+<p>那么，我们知道，NEWEntry 节点插入后，entry2 的 previous_entry_length 存储不了 512，那么 redis 就会重分配内存，增加 entry2 的内存分配，并分配给 previous_entry_length 五个字节存储 NEWEntry 节点长度。</p>
+<p>看似没什么问题，但是如果极端情况下，entry2 扩容四个字节后，导致自身占用字节数超过 254，就会又触发后一个节点的内存占用空间扩大，非常极端情况下，会导致所有的节点都扩容，这就是连锁更新，一次更新导致大量甚至全部节点都更新内存的分配。</p>
+<p>如果连锁更新发生的概率很高的话，压缩列表无疑就会是一个低效的数据结构，但实际上连锁更新发生的条件是非常苛刻的，其一是需要大量节点长度小于 254 连续串联连接，其二是我们更新的节点位置恰好也导致后一个节点内存扩充更新。</p>
+<p>基于这两点，且少量的连锁更新对性能是影响不大的，所以这里的连锁更新对压缩列表的性能是没有多大的影响的，可以忽略，但需要知晓。</p>
+<hr>
+<p><em>参考博客和文章书籍等：</em></p>
+<blockquote>
+<p>《Redis开发与运维》</p>
+</blockquote>
+<blockquote>
+<p><a href="https://juejin.im/post/5d7dac02518825297023fb35" target="_blank" rel="noopener">Redis 的底层数据结构（SDS和链表）</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://juejin.im/post/5d872b41f265da03ec2ea091" target="_blank" rel="noopener">Redis 的底层数据结构（字典）</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://juejin.im/post/5da1ca58e51d4577fc7b1c5a" target="_blank" rel="noopener">Redis 的底层数据结构（跳跃表）</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://juejin.im/post/5dac52a96fb9a04e2d36c9ec" target="_blank" rel="noopener">Redis 的底层数据结构（整数集合）</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://juejin.im/post/5dcbf185f265da3072427647" target="_blank" rel="noopener">Redis 的底层数据结构（压缩列表）</a></p>
+</blockquote>
+<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020060301.html" rel="next" title="迭代器">
+                <i class="fa fa-chevron-left"></i> 迭代器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="Speciosity">
+            
+              <p class="site-author-name" itemprop="name">Speciosity</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">270</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis底层数据结构"><span class="nav-number">1.</span> <span class="nav-text">Redis底层数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-动态字符串-SDS"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 动态字符串-SDS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-概述"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 概述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-链表"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-字典"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 字典</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、字典结构定义"><span class="nav-number">1.3.1.</span> <span class="nav-text">一、字典结构定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、渐进式-rehash-迁移数据"><span class="nav-number">1.3.2.</span> <span class="nav-text">二、渐进式 rehash 迁移数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、字典迭代器"><span class="nav-number">1.3.3.</span> <span class="nav-text">三、字典迭代器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-跳跃表"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 跳跃表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、跳跃表（SkipList）"><span class="nav-number">1.4.1.</span> <span class="nav-text">一、跳跃表（SkipList）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、Redis-中的跳跃表"><span class="nav-number">1.4.2.</span> <span class="nav-text">二、Redis 中的跳跃表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-整数集合"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 整数集合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、基本的数据结构"><span class="nav-number">1.5.1.</span> <span class="nav-text">一、基本的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、核心-API-实现"><span class="nav-number">1.5.2.</span> <span class="nav-text">二、核心 API 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-压缩列表"><span class="nav-number">1.6.</span> <span class="nav-text">第六节 压缩列表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、基本的结构定义"><span class="nav-number">1.6.1.</span> <span class="nav-text">一、基本的结构定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、redis-的具体源码实现"><span class="nav-number">1.6.2.</span> <span class="nav-text">二、redis 的具体源码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、连锁更新"><span class="nav-number">1.6.3.</span> <span class="nav-text">三、连锁更新</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Speciosity</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
