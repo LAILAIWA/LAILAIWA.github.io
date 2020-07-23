@@ -99,7 +99,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010115.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010116.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010117.png">
-<meta property="og:updated_time" content="2020-07-20T15:12:33.605Z">
+<meta property="og:updated_time" content="2020-07-23T08:50:31.017Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="读写锁ReentrantReadWriteLock的实现原理">
 <meta name="twitter:description" content="介绍Java中读写锁ReentrantReadWriteLock的实现原理，包括：简介，接口与示例，实现分析，相关补充和源码等内容。">
@@ -412,7 +412,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  9,444
+                  9,454
                 </span>
               
 
@@ -471,8 +471,8 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Cache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;String, Object&gt;();<span class="comment">//缓存的存储结构</span></span><br><span class="line">    <span class="keyword">static</span> ReentrantReadWriteLock rwl = <span class="keyword">new</span> ReentrantReadWriteLock();<span class="comment">//读写锁</span></span><br><span class="line">    <span class="keyword">static</span> Lock r = rwl.readLock();<span class="comment">//读锁</span></span><br><span class="line">    <span class="keyword">static</span> Lock w = rwl.writeLock();<span class="comment">//写锁</span></span><br><span class="line">    <span class="comment">// 获取一个key对应的value</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Object <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        r.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> map.get(key);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            r.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置key对应的value，并返回旧的value</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Object <span class="title">put</span><span class="params">(String key, Object value)</span> </span>&#123;</span><br><span class="line">        w.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> map.put(key, value);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 清空所有的内容</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        w.lock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            map.clear();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            w.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上述示例中，Cache组合一个非线程安全的HashMap作为缓存的实现，同时使用读写锁的读锁和写锁来保证Cache是线程安全的。在读操作 <code>get(String key)</code> 方法中，需要获取读锁，这使得并发访问该方法时不会被阻塞。写操作 <code>put(String key,Object value)</code> 方法和 <code>clear()</code> 方法，在更新HashMap时必须提前获取写锁，当获取写锁后，其他线程对于读锁和写锁的获取均被阻塞，而只有写锁被释放之后，其他读写操作才能继续。</p>
 <hr>
-<h2 id="第三节-实现分析"><a href="#第三节-实现分析" class="headerlink" title="第三节 实现分析"></a><strong>第三节 实现分析</strong></h2><p>接下来分析ReentrantReadWriteLock的实现，主要包括：<strong>读写状态的设计</strong>、<strong>写锁的获取与释放</strong>、<strong>读锁的获取与释放</strong>以及<strong>锁降级</strong>（以下没有特别说明读写锁均可认为是ReentrantReadWriteLock）。</p>
-<h3 id="1-读写状态的设计"><a href="#1-读写状态的设计" class="headerlink" title="1 读写状态的设计"></a><strong>1 读写状态的设计</strong></h3><p>读写锁同样依赖自定义同步器(AQS)来实现同步功能，而读写状态就是其同步器的同步状态。回想ReentrantLock中自定义同步器的实现，同步状态表示锁被一个线程重复获取的次数，而读写锁的自定义同步器需要在同步状态（一个整型变量）上维护多个读线程和一个写线程的状态，使得该状态的设计成为读写锁实现的关键。</p>
+<h2 id="第三节-实现分析"><a href="#第三节-实现分析" class="headerlink" title="第三节 实现分析"></a><strong>第三节 实现分析</strong></h2><p>接下来分析 <code>ReentrantReadWriteLock</code> 的实现，主要包括：<strong>读写状态的设计</strong>、<strong>写锁的获取与释放</strong>、<strong>读锁的获取与释放</strong>以及<strong>锁降级</strong>（以下没有特别说明读写锁均可认为是 <code>ReentrantReadWriteLock</code> ）。</p>
+<h3 id="1-读写状态的设计"><a href="#1-读写状态的设计" class="headerlink" title="1 读写状态的设计"></a><strong>1 读写状态的设计</strong></h3><p>读写锁同样依赖<strong>自定义同步器</strong> <code>AQS</code> 来实现同步功能，而读写状态就是其同步器的同步状态。回想ReentrantLock中自定义同步器的实现，同步状态表示锁被一个线程重复获取的次数，而读写锁的自定义同步器需要在同步状态（一个整型变量）上维护多个读线程和一个写线程的状态，使得该状态的设计成为读写锁实现的关键。</p>
 <p>如果在一个整型变量上维护多种状态，就一定需要“按位切割使用”这个变量，读写锁将变量切分成了两个部分，高16位表示读，低16位表示写，划分方式如下图所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010117.png" alt="读写锁状态的划分方式"></p>
 <p>当前同步状态表示一个线程已经获取了写锁，且重进入了两次，同时也连续获取了两次读锁。读写锁是如何迅速确定读和写各自的状态呢？答案是通过<strong>位运算</strong>。假设当前同步状态值为S，写状态等于<strong>S&amp;0x0000FFFF</strong>（将高16位全部抹去），读状态等于S&gt;&gt;&gt;16（无符号补0右移16位）。当写状态增加1时，等于S+1，当读状态增加1时，等于S+(1&lt;&lt;16)，也就是<strong>S+0x00010000</strong>。</p>
@@ -577,10 +577,10 @@
 <p>《Java并发编程的艺术》</p>
 </blockquote>
 <blockquote>
-<p><a href="https://zhuanlan.zhihu.com/p/38012123" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/38012123</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/38012123" target="_blank" rel="noopener">Java并发编程——ReentrantReadWriteLock</a></p>
 </blockquote>
 <blockquote>
-<p><a href="https://zhuanlan.zhihu.com/p/52280869" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/52280869</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/52280869" target="_blank" rel="noopener">打通 Java 任督二脉 —— 并发数据结构的基石</a></p>
 </blockquote>
 <p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -727,7 +727,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">271</span>
+                  <span class="site-state-item-count">272</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
