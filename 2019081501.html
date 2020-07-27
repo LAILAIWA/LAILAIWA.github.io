@@ -96,13 +96,13 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="介绍Java中的并发包中LockSupport工具相关内容。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160118.jpg">
-<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160119.jpg">
-<meta property="og:updated_time" content="2019-09-19T07:45:19.496Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010119.png">
+<meta property="og:updated_time" content="2020-07-26T15:27:06.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="LockSupport工具">
 <meta name="twitter:description" content="介绍Java中的并发包中LockSupport工具相关内容。">
-<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160118.jpg">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010118.png">
 
 
 
@@ -411,7 +411,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  553
+                  555
                 </span>
               
 
@@ -452,13 +452,13 @@
       
 
       
-        <h1 id="LockSupport工具"><a href="#LockSupport工具" class="headerlink" title="LockSupport工具"></a><strong>LockSupport工具</strong></h1><p>&emsp;回顾<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a>，当需要阻塞或唤醒一个线程的时候，都会使用LockSupport工具类来完成相应工作。LockSupport定义了一组的公共静态方法，这些方法提供了最基本的线程阻塞和唤醒功能，而LockSupport也成为构建同步组件的基础工具。</p>
-<p>&emsp;LockSupport定义了一组以park开头的方法用来阻塞当前线程，以及unpark(Thread thread)方法来唤醒一个被阻塞的线程。Park有停车的意思，假设线程为车辆，那么park方法代表着停车，而unpark方法则是指车辆启动离开，这些方法以及描述如下表所示。</p>
-<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160118.jpg" alt="LockSupport提供的阻塞和唤醒方法"></p>
-<p>&emsp;在Java 6中，LockSupport增加了park(Object blocker)、parkNanos(Object blocker,long nanos)和parkUntil(Object blocker,long deadline)3个方法，用于实现阻塞当前线程的功能，其中参数blocker是用来标识当前线程在等待的对象（以下称为阻塞对象），该对象主要用于问题排查和系统监控。</p>
-<p>&emsp;下面的示例中，将对比parkNanos(long nanos)方法和parkNanos(Object blocker,long nanos)方法来展示阻塞对象blocker的用处，代码片段和线程dump（部分）如下表所示。</p>
-<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160119.jpg" alt="Blocker在线程dump中的作用"></p>
-<p>&emsp;从表的线程dump结果可以看出，代码片段的内容都是阻塞当前线程10秒，但从线程dump结果可以看出，有阻塞对象的parkNanos方法能够传递给开发人员更多的现场信息。这是由于在Java 5之前，当线程阻塞（使用synchronized关键字）在一个对象上时，通过线程dump能够查看到该线程的阻塞对象，方便问题定位，而Java 5推出的Lock等并发工具时却遗漏了这一点，致使在线程dump时无法提供阻塞对象的信息。因此，在Java 6中，LockSupport新增了上述3个含有阻塞对象的park方法，用以替代原有的park方法。</p>
+        <h1 id="LockSupport工具"><a href="#LockSupport工具" class="headerlink" title="LockSupport工具"></a><strong>LockSupport工具</strong></h1><p>回顾<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a>，当需要阻塞或唤醒一个线程的时候，都会使用LockSupport工具类来完成相应工作。LockSupport定义了一组的公共静态方法，这些方法<strong>提供了最基本的线程阻塞和唤醒功能</strong>，而LockSupport也成为构建同步组件的基础工具。</p>
+<p>LockSupport定义了一组以 <code>park</code> 开头的方法用来阻塞当前线程，以及 <code>unpark(Thread thread)</code> 方法来唤醒一个被阻塞的线程。<code>Park</code> 有停车的意思，假设线程为车辆，那么 <code>park</code> 方法代表着停车，而 <code>unpark</code> 方法则是指车辆启动离开，这些方法以及描述如下表所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010118.png" alt="LockSupport提供的阻塞和唤醒方法"></p>
+<p>在 <code>Java 6</code> 中，LockSupport增加了 <code>park(Object blocker)</code> 、<code>parkNanos(Object blocker,long nanos)</code> 和 <code>parkUntil(Object blocker,long deadline)</code> 3个方法，用于实现阻塞当前线程的功能，其中参数 <code>blocker</code> 是用来标识当前线程在等待的对象（以下称为阻塞对象），该对象主要用于问题排查和系统监控。</p>
+<p>下面的示例中，将对比 <code>parkNanos(long nanos)</code> 方法和 <code>parkNanos(Object blocker,long nanos)</code> 方法来展示阻塞对象blocker的用处，代码片段和线程dump（部分）如下表所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190601/201906010119.png" alt="Blocker在线程dump中的作用"></p>
+<p>从表的线程dump结果可以看出，代码片段的内容都是阻塞当前线程10秒，但从线程dump结果可以看出，有阻塞对象的 <code>parkNanos</code> 方法能够传递给开发人员更多的现场信息。这是由于在Java 5之前，当线程阻塞（使用synchronized关键字）在一个对象上时，通过线程dump能够查看到该线程的阻塞对象，方便问题定位，而Java 5推出的Lock等并发工具时却遗漏了这一点，致使在线程dump时无法提供阻塞对象的信息。因此，在Java 6中，LockSupport新增了上述3个含有阻塞对象的park方法，用以替代原有的park方法。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -609,7 +609,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">272</span>
+                  <span class="site-state-item-count">273</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
