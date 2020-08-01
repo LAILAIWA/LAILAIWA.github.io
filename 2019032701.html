@@ -97,7 +97,7 @@
 <meta property="og:description" content="介绍Java中的synchronized关键字。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg">
-<meta property="og:updated_time" content="2019-09-16T09:07:20.752Z">
+<meta property="og:updated_time" content="2020-07-30T16:44:19.573Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="synchronized">
 <meta name="twitter:description" content="介绍Java中的synchronized关键字。">
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,930
+                  3,045
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  12
                 </span>
               
             </div>
@@ -453,7 +453,7 @@
           
           
             <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg" rel="gallery_ckd73902k003t5wt7eucz8h87" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+              <a class="post-gallery-img fancybox" href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg" rel="gallery_ckdbqwn8h003qist799wd551d" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam_1___BiwETvlndZw___.jpg" itemprop="contentUrl">
               </a>
             
@@ -465,57 +465,64 @@
       
 
       
-        <h1 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a><strong>synchronized</strong></h1><p>&emsp;使用synchronized关键字会隐式的获取锁，固定的先获取锁再释放，相比Lock显示的获取和释放锁会相对的简单和易用，但扩展性就不如了。</p>
-<h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a><strong>简述</strong></h2><p>&emsp;作用：</p>
+        <h1 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a><strong>synchronized</strong></h1><p>使用 <code>synchronized</code> 关键字会隐式的获取锁，固定的先获取锁再释放，相比Lock显示的获取和释放锁会相对的简单和易用，但扩展性就不如了。</p>
+<h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><h3 id="1-1-什么是synchronized"><a href="#1-1-什么是synchronized" class="headerlink" title="1.1 什么是synchronized?"></a><strong>1.1 什么是synchronized?</strong></h3><p> <code>synchronized</code> 是一种重量级锁，一种可重入、独占、悲观锁。与对象监视器方法组合来实现 <strong>等待/通知模式</strong>。</p>
+<h3 id="1-2-作用"><a href="#1-2-作用" class="headerlink" title="1.2 作用"></a><strong>1.2 作用</strong></h3><p> <code>synchronized</code> 作用：</p>
 <ol>
-<li>确保线程间互斥的访问代码</li>
-<li>保证对共享变量可见性</li>
-<li>解决重排序问题</li>
+<li>确保线程间互斥的访问代码。</li>
+<li>保证对共享变量可见性。</li>
+<li><p>解决重排序问题。</p>
+<p><code>synchronized</code> 可以修饰方法，可以修饰静态方法，可以修饰代码块。</p>
+</li>
 </ol>
-<p>&emsp;synchronized可以修饰方法，可以修饰静态方法，可以修饰代码块。</p>
-<p>&emsp;通过设计下列代码来看前两者区别。当方法printName()和printNameTwo()不加锁时，结果如下：</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">printName start</span><br><span class="line">printNameTwo start</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printNameTwo: Tom Tom</span><br><span class="line">printNameTwo execute</span><br><span class="line">printName end</span><br><span class="line">printNameTwo end</span><br></pre></td></tr></table></figure>
-<p>&emsp;分别加synchronized和static，变为四个方法：</p>
-<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> synchronized <span class="keyword">void</span> <span class="title">printName</span>(<span class="params"></span>)</span>&#123; <span class="comment">//方法1</span></span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printName start"</span>);</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printName: "</span> + name);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"printName execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printName end"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> synchronized <span class="keyword">void</span> <span class="title">printNameTwo</span>(<span class="params"></span>)</span>&#123; <span class="comment">//方法2</span></span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printNameTwo start"</span>);</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printNameTwo: "</span> + name + <span class="string">" "</span> + name);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"printNameTwo execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printNameTwo end"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> synchronized <span class="keyword">void</span> <span class="title">printStatic</span>(<span class="params"></span>)</span>&#123; <span class="comment">//方法3</span></span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printStatic: "</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"printStatic execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printStatic end"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> synchronized <span class="keyword">void</span> <span class="title">printStaticTwo</span>(<span class="params"></span>)</span>&#123; <span class="comment">//方法4</span></span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printStaticTwo: "</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">"printStaticTwo execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.<span class="keyword">out</span>.println(<span class="string">"printStaticTwo end"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;先通过对象Tom调用sync普通方法：方法1和方法2，结果如下：</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Person person1 =<span class="built_in"> new </span>Person(<span class="string">"Tom"</span>);</span><br><span class="line">Person person2 =<span class="built_in"> new </span>Person(<span class="string">"Lee"</span>);</span><br><span class="line">new Thread(new Runnable() &#123;</span><br><span class="line">    @Override</span><br><span class="line">   <span class="keyword"> public</span> void run() &#123;</span><br><span class="line">        person1.printName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line">new Thread(new Runnable() &#123;</span><br><span class="line">    @Override</span><br><span class="line">   <span class="keyword"> public</span> void run() &#123;</span><br><span class="line">        person1.printNameTwo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line">//结果如下</span><br><span class="line">printName start</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printName end</span><br><span class="line">printNameTwo start</span><br><span class="line">printNameTwo: Tom Tom</span><br><span class="line">printNameTwo execute</span><br><span class="line">printNameTwo end</span><br></pre></td></tr></table></figure>
-<p>&emsp;再通过对象Tom调用sync静态方法：方法3和方法4，结果如下：</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//结果如下</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br><span class="line">printStaticTwo: </span><br><span class="line">printStaticTwo execute</span><br><span class="line">printStaticTwo end</span><br></pre></td></tr></table></figure>
-<p>&emsp;再测试多个对象调用，结果如下：</p>
-<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//Tom和Lee调用普通方法1</span><br><span class="line">printName start</span><br><span class="line">printName start</span><br><span class="line">printName: Lee</span><br><span class="line">printName execute</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printName end</span><br><span class="line">printName end</span><br><span class="line"></span><br><span class="line">//Tom和Lee调用静态方法3</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br></pre></td></tr></table></figure>
-<p>&emsp;要了解在类文件中的这些域的区别，当sync修饰普通方法时，在方法调用时取得是对象锁，对象的锁信息会显式当前锁的状态，所以调用同一对象的方法时，前个线程获得锁后，后一个线程就因为取到同一个对象锁而阻塞。而不同对象调用时，取到的对象锁不同，所以就不会起到同步的效果了。</p>
-<p>&emsp;而静态方法锁的对象是T.class，所以对于同一个类文件的对象来说调用被锁的静态方法都会竞争，两个锁的对象不同所以静态方法被调用了，普通方法还可以继续调用，两者不影响。</p>
-<p>&emsp;在上篇博客有提到锁是可重入的，获取同个对象锁的线程可以继续调用同对象内的其它加同一个锁的方法，而子类在结构上等同于包裹了父类对象，也可以重入。</p>
+<p>通过设计下列代码来看前两者区别。当方法 <code>printName()</code> 和 <code>printNameTwo()</code> 不加锁时，结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">printName start</span><br><span class="line">printNameTwo start</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printNameTwo: Tom Tom</span><br><span class="line">printNameTwo execute</span><br><span class="line">printName end</span><br><span class="line">printNameTwo end</span><br></pre></td></tr></table></figure>
+<p>分别加 <code>synchronized</code> 和 <code>static</code> ，变为四个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">printName</span><span class="params">()</span></span>&#123; <span class="comment">//方法1</span></span><br><span class="line">    System.out.println(<span class="string">"printName start"</span>);</span><br><span class="line">    System.out.println(<span class="string">"printName: "</span> + name);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">"printName execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"printName end"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">printNameTwo</span><span class="params">()</span></span>&#123; <span class="comment">//方法2</span></span><br><span class="line">    System.out.println(<span class="string">"printNameTwo start"</span>);</span><br><span class="line">    System.out.println(<span class="string">"printNameTwo: "</span> + name + <span class="string">" "</span> + name);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">"printNameTwo execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"printNameTwo end"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">printStatic</span><span class="params">()</span></span>&#123; <span class="comment">//方法3</span></span><br><span class="line">    System.out.println(<span class="string">"printStatic: "</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">"printStatic execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"printStatic end"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">printStaticTwo</span><span class="params">()</span></span>&#123; <span class="comment">//方法4</span></span><br><span class="line">    System.out.println(<span class="string">"printStaticTwo: "</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">"printStaticTwo execute"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"printStaticTwo end"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先通过对象Tom调用 <code>sync</code> 普通方法：方法1和方法2，结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Person person1 = <span class="keyword">new</span> Person(<span class="string">"Tom"</span>);</span><br><span class="line">Person person2 = <span class="keyword">new</span> Person(<span class="string">"Lee"</span>);</span><br><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        person1.printName();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        person1.printNameTwo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"><span class="comment">//结果如下</span></span><br><span class="line">printName start</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printName end</span><br><span class="line">printNameTwo start</span><br><span class="line">printNameTwo: Tom Tom</span><br><span class="line">printNameTwo execute</span><br><span class="line">printNameTwo end</span><br></pre></td></tr></table></figure>
+<p>再通过对象Tom调用 <code>sync</code> 静态方法：方法3和方法4，结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//结果如下</span></span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br><span class="line">printStaticTwo: </span><br><span class="line">printStaticTwo execute</span><br><span class="line">printStaticTwo end</span><br></pre></td></tr></table></figure>
+<p>再测试多个对象调用，结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Tom和Lee调用普通方法1</span></span><br><span class="line">printName start</span><br><span class="line">printName start</span><br><span class="line">printName: Lee</span><br><span class="line">printName execute</span><br><span class="line">printName: Tom</span><br><span class="line">printName execute</span><br><span class="line">printName end</span><br><span class="line">printName end</span><br><span class="line"></span><br><span class="line"><span class="comment">//Tom和Lee调用静态方法3</span></span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br><span class="line">printStatic: </span><br><span class="line">printStatic execute</span><br><span class="line">printStatic end</span><br></pre></td></tr></table></figure>
+<p>要了解在类文件中的这些域的区别，当 <code>synchronized</code> 修饰普通方法时，在方法调用时取得是对象锁，对象的锁信息会显式当前锁的状态，所以调用同一对象的方法时，前个线程获得锁后，后一个线程就因为取到同一个对象锁而阻塞。而不同对象调用时，取到的对象锁不同，所以就不会起到同步的效果了。</p>
+<p>而静态方法锁的对象是 <code>T.class</code> ，所以对于同一个类文件的对象来说调用被锁的静态方法都会竞争，两个锁的对象不同所以静态方法被调用了，普通方法还可以继续调用，两者不影响。</p>
+<p> <code>synchronized</code> 锁是可重入的，获取同个对象锁的线程可以继续调用同对象内的其它加同一个锁的方法，而子类在结构上等同于包裹了父类对象，也可以重入。</p>
 <hr>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a><strong>原理</strong></h2><p><strong>锁不同对象时的关系：</strong></p>
+<h2 id="第二节-原理"><a href="#第二节-原理" class="headerlink" title="第二节 原理"></a><strong>第二节 原理</strong></h2><p><strong>锁不同对象时的关系：</strong></p>
 <ol>
-<li>修饰普通方法，是当前实例对象的锁</li>
-<li>修饰静态同步方法，是当前类的Class对象的锁</li>
-<li>同步方法块，是块内配置的对象的锁</li>
+<li>修饰普通方法，是当前实例对象的锁。</li>
+<li>修饰静态同步方法，是当前类的Class对象的锁。</li>
+<li>同步方法块，是块内配置的对象的锁。</li>
 </ol>
 <p><strong>对应的锁分类：</strong></p>
 <ul>
-<li>对象锁：使用 synchronized 修饰非静态的方法以及 synchronized(this) 同步代码块使用的锁是对象锁。</li>
-<li>类锁：使用 synchronized 修饰静态的方法以及 synchronized(class) 同步代码块使用的锁是类锁。</li>
-<li>私有锁：在类内部声明一个私有属性如private Object lock，在需要加锁的同步块使用 synchronized(lock）</li>
+<li><strong>对象锁</strong>：使用 <code>synchronized</code> 修饰非静态的方法以及 <code>synchronized(this)</code> 同步代码块使用的锁是对象锁。</li>
+<li><strong>类锁</strong>：使用 <code>synchronized</code> 修饰静态的方法以及 <code>synchronized(class)</code> 同步代码块使用的锁是类锁。</li>
+<li><strong>私有锁</strong>：在类内部声明一个私有属性如 <code>private Object lock</code> ，在需要加锁的同步块使用  <code>synchronized(lock)</code> 。</li>
 </ul>
-<h3 id="底层执行细节"><a href="#底层执行细节" class="headerlink" title="底层执行细节"></a><strong>底层执行细节</strong></h3><blockquote>
-<p>用到的指令符：</p>
+<h3 id="2-1-底层执行细节"><a href="#2-1-底层执行细节" class="headerlink" title="2.1 底层执行细节"></a><strong>2.1 底层执行细节</strong></h3><p>用到的指令符：</p>
 <ul>
-<li>monitorenter 指令指向同步代码块的开始位置</li>
-<li>monitorexit 指令指明同步代码块的结束位置</li>
+<li><code>monitorenter</code> 指令指向同步代码块的开始位置。</li>
+<li><code>monitorexit</code> 指令指明同步代码块的结束位置。</li>
 </ul>
-<p>在同步方法中会包含 ACC_SYNCHRONIZED 标记符。该标记符指明了该方法是一个同步方法，从而执行相应的同步调用。</p>
-</blockquote>
-<p>&emsp;每个对象都会有一个<strong>监视器(monitor)</strong>，当监视器被占用时对象就会处于锁定状态，线程在执行<strong>synchronized</strong>时会通过指令符<strong>monitorenter</strong>去获取监视器的所有权。实际运行中的过程是这样的，若monitor计数为0，线程进入，计数加1，此线程即为监视器所有者。线程已拥有所有权，再重新进入，计数继续加1。其它线程访问时，发现监视器已被占用，进入阻塞状态，直到计数归0，再竞争监视器所有权。</p>
-<p>&emsp;在前几篇博客整理锁机制时，有写到Object的wait(),notify()等方法也依赖于监视器，所以这些方法应该限制在同步的域中调用。</p>
-<h3 id="锁的存储位置"><a href="#锁的存储位置" class="headerlink" title="锁的存储位置"></a><strong>锁的存储位置</strong></h3><p>&emsp;synchronized所用的锁存储在<strong>Java对象头</strong>内，对象头具体结构可以参考<a href="../" title="Title">对象头</a>，</p>
-<h4 id="对象头结构"><a href="#对象头结构" class="headerlink" title="对象头结构"></a><strong>对象头结构</strong></h4><p><strong>Java对象头各部分和长度如下：</strong></p>
+<p>在同步方法中会包含 <code>ACC_SYNCHRONIZED</code> 标记符。该标记符指明了该方法是一个同步方法，从而执行相应的同步调用。</p>
+<p>每个对象都会有一个<strong>监视器(monitor)</strong>，<strong>当监视器被占用时对象就会处于锁定状态</strong>，<strong>线程在执行 <code>synchronized</code> 时会通过指令符 <code>monitorenter</code> 去获取监视器的所有权</strong>。</p>
+<p>实际运行中的过程是这样的：若monitor计数为0，线程进入，计数加1，此线程即为监视器所有者。线程已拥有所有权，再重新进入，计数继续加1。其它线程访问时，发现监视器已被占用，进入阻塞状态，直到计数归0，再竞争监视器所有权。</p>
+<p>在前几篇博客整理锁机制时，有写到Object的 <code>wait()</code> ， <code>notify()</code> 等方法也依赖于监视器，所以这些方法应该限制在同步的域中调用。</p>
+<h3 id="2-2-锁的存储位置"><a href="#2-2-锁的存储位置" class="headerlink" title="2.2 锁的存储位置"></a><strong>2.2 锁的存储位置</strong></h3><p><code>synchronized</code> 所用的锁存储在<strong>Java对象头</strong>内。</p>
+<p>Java对象保存在内存中由三部分组成：</p>
+<ol>
+<li>对象头。</li>
+<li>实例数据。</li>
+<li>对齐填充字节。</li>
+</ol>
+<h4 id="2-2-1-对象头结构"><a href="#2-2-1-对象头结构" class="headerlink" title="2.2.1 对象头结构"></a><strong>2.2.1 对象头结构</strong></h4><p>Java对象头也包括三部分：</p>
 <table>
 <thead>
 <tr>
 <th style="text-align:center">内容</th>
-<th style="text-align:center">长度</th>
+<th style="text-align:center">长度(32/64位JVM)</th>
 <th style="text-align:left">说明</th>
 </tr>
 </thead>
@@ -533,7 +540,7 @@
 <tr>
 <td style="text-align:center">Array Length</td>
 <td style="text-align:center">32/64bit</td>
-<td style="text-align:left">数组的长度(当对象为数组)</td>
+<td style="text-align:left">数组的长度（仅对象为数组）</td>
 </tr>
 </tbody>
 </table>
@@ -564,21 +571,22 @@
 <p><strong>64位JVM存储结构如下：</strong></p>
 <table><tr><td style="text-align:center" rowspan="2">锁状态</td><td style="text-align:center">25bit</td><td style="text-align:center">31bit</td><td style="text-align:center">1bit</td><td style="text-align:center">4bit</td><td style="text-align:center">1bit</td><td style="text-align:center">2bit</td></tr><tr><td></td><td></td><td style="text-align:center">cms_free</td><td style="text-align:center">分代年龄</td><td style="text-align:center">偏向锁</td><td style="text-align:center">锁标志位</td></tr><tr><td style="text-align:center">无锁</td><td style="text-align:center">unused</td><td style="text-align:center">hashcode</td><td></td><td></td><td style="text-align:center">0</td><td style="text-align:center">01</td></tr><tr><td style="text-align:center">偏向锁</td><td style="text-align:center" colspan="2">ThreadID(54bit) Epoch(2bit)</td><td></td><td></td><td style="text-align:center">1</td><td style="text-align:center">01</td></tr></table>
 
-<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%94%81%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9%E5%AF%B9%E6%AF%94.png" alt="锁的优缺点对比"></p>
+
+
 <hr>
-<h4 id="重量级锁的状态"><a href="#重量级锁的状态" class="headerlink" title="重量级锁的状态"></a><strong>重量级锁的状态</strong></h4><p>&emsp;监视器的实现依赖于底层操作系统的Mutex Lock，操作系统切换线程比较耗时，所以这类锁也叫重量级锁。JDK在更新中也对synchronized进行了很多次的优化，目的就是为了减少使用这种重量级锁带来的巨大性能损耗。</p>
+<h4 id="2-2-2-重量级锁的状态"><a href="#2-2-2-重量级锁的状态" class="headerlink" title="2.2.2 重量级锁的状态"></a><strong>2.2.2 重量级锁的状态</strong></h4><p>监视器的实现依赖于底层操作系统的 <code>Mutex Lock</code> ，操作系统切换线程比较耗时，所以这类锁也叫重量级锁。JDK在更新中也对 <code>synchronized</code> 进行了很多次的优化，目的就是为了减少使用这种重量级锁带来的巨大性能损耗。</p>
 <p><strong>Java 1.6版本后，锁的四种状态：</strong></p>
 <ol>
-<li>无锁状态  是否偏向锁位为0，锁标志位为01</li>
-<li>偏向锁    是否偏向锁位为1，锁标志位为01</li>
-<li>轻量级锁  锁标志位为00</li>
-<li>重量级锁  锁标志位为10</li>
+<li><strong>无锁状态</strong>：是否偏向锁位为0，锁标志位为01。</li>
+<li><strong>偏向锁</strong>：是否偏向锁位为1，锁标志位为01。</li>
+<li><strong>轻量级锁</strong>：锁标志位为00。</li>
+<li><strong>重量级锁</strong>：锁标志位为10。</li>
 </ol>
-<p>&emsp;次序即级别由低到高，可以顺序单向升级，但不能降级。这样设计并不是为了代替重量级锁，而是为了在不必要的场景下尽量少的去使用重量级锁。轻量级锁的使用场景是线程交替执行同步块，当出现多线程同时访问同步块时，轻量级锁就会升级为重量级锁。</p>
+<p>次序即级别由低到高，<strong>可以顺序单向升级，但不能降级</strong>。这样设计并不是为了代替重量级锁，而是为了在不必要的场景下尽量少的去使用重量级锁。<strong>轻量级锁的使用场景是线程交替执行同步块，当出现多线程同时访问同步块时，轻量级锁就会升级为重量级锁</strong>。</p>
 <hr>
-<h5 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a><strong>偏向锁</strong></h5><p>&emsp;<strong>来源</strong>：锁不仅要多线程竞争，也会单线程多次获取，需要某个机制可以降低线程获得锁的开销。</p>
+<h5 id="（1）偏向锁"><a href="#（1）偏向锁" class="headerlink" title="（1）偏向锁"></a><strong>（1）偏向锁</strong></h5><p><strong>来源</strong>：锁不仅要多线程竞争，也会单线程多次获取，需要某个机制可以降低线程获得锁的开销。</p>
 <ol>
-<li>获取偏向锁</li>
+<li>获取偏向锁。</li>
 </ol>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E5%81%8F%E5%90%91%E9%94%81%E6%9C%BA%E5%88%B6.png" alt="偏向锁机制"></p>
 <ol start="2">
@@ -586,56 +594,46 @@
 </ol>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E5%81%8F%E5%90%91%E9%94%81%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E6%B5%81%E7%A8%8B.png" alt="偏向锁初始化的流程"></p>
 <ol start="3">
-<li>关闭偏向锁，高版本Java默认启动偏向锁，可以通过: -XX:UseBiasedLocking=false 关闭偏向锁，使程序进入轻量级锁状态。</li>
+<li>关闭偏向锁，高版本Java默认启动偏向锁，可以通过: <code>-XX:UseBiasedLocking=false</code> 关闭偏向锁，使程序进入轻量级锁状态。</li>
 </ol>
 <hr>
-<h5 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a><strong>轻量级锁</strong></h5><ol>
-<li>加锁</li>
+<h5 id="（2）轻量级锁"><a href="#（2）轻量级锁" class="headerlink" title="（2）轻量级锁"></a><strong>（2）轻量级锁</strong></h5><ol>
+<li><p><strong>加锁</strong>：线程在执行同步块之前，JVM会先在当前线程的栈桢中<strong>创建用于存储锁记录的空间</strong>，并<strong>将对象头中的 <code>Mark Word</code> 复制到锁记录中</strong>，官方称为 <code>Displaced Mark Word</code> 。然后线程<strong>尝试使用 CAS 将对象头中的 <code>Mark Word</code> 替换为指向锁记录的指针</strong>。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便<strong>尝试使用自旋来获取锁</strong>。</p>
+</li>
+<li><p><strong>解锁</strong>：轻量级解锁时，会使用原子的CAS操作将 <code>Displaced Mark Word</code> 替换回到对象头，如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。因为自旋会消耗CPU，为了避免无用的自旋（比如获得锁的线程被阻塞住了），<strong>一旦锁升级成重量级锁，就不会再恢复到轻量级锁状态</strong>。当锁处于这个状态下，其他线程试图获取锁时，都会被阻塞住，当持有锁的线程释放锁之后会唤醒这些线程，被唤醒的线程就会进行新一轮的夺锁之争。</p>
+</li>
 </ol>
-<blockquote>
-<p>线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间，并 将对象头中的Mark Word复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用 CAS将对象头中的Mark Word替换为指向锁记录的指针。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。</p>
-</blockquote>
-<ol start="2">
-<li>解锁</li>
-</ol>
-<blockquote>
-<p>轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word替换回到对象头，如果成 功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁</p>
-<p>因为自旋会消耗CPU，为了避免无用的自旋（比如获得锁的线程被阻塞住了），一旦锁升级成重量级锁，就不会再恢复到轻量级锁状态。当锁处于这个状态下，其他线程试图获取锁时，都会被阻塞住，当持有锁的线程释放锁之后会唤醒这些线程，被唤醒的线程就会进行新一轮的夺锁之争。</p>
-</blockquote>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E4%BA%89%E5%A4%BA%E9%94%81%E5%AF%BC%E8%87%B4%E7%9A%84%E9%94%81%E8%86%A8%E8%83%80%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="争夺锁导致的锁膨胀流程图"></p>
 <hr>
-<h5 id="锁的状态变迁"><a href="#锁的状态变迁" class="headerlink" title="锁的状态变迁"></a><strong>锁的状态变迁</strong></h5><p>&emsp;内部的实现过程(无锁-&gt;轻量锁)：</p>
-<blockquote>
+<h5 id="（3）锁的状态变迁"><a href="#（3）锁的状态变迁" class="headerlink" title="（3）锁的状态变迁"></a><strong>（3）锁的状态变迁</strong></h5><p>内部的实现过程（无锁-&gt;轻量锁）：</p>
 <ol>
-<li>执行到同步块时，若对象锁为无锁状态，JVM在当前线程的栈帧中开辟一块名为锁记录(Lock Record)的空间，用来存储锁对象当前Mark Word(对象的头信息)的拷贝副本。</li>
-<li>拷贝Mark Word并复制到Lock Record中。</li>
-<li>JVM通过CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针，并将Lock Record的owner指针指向对象的Mark Word。</li>
-<li>若上述更新成功，线程就拥有了此对象的锁，此时线程和对象有相互指针指向对方，锁标志位设置为00。此线程可以继续执行同步块内的代码。</li>
-<li>若以上更新失败说明有多个线程竞争，则轻量锁要升级为重量锁，锁标志位设置为10，当前线程通过自旋的方式循环获取锁。</li>
+<li>执行到同步块时，若对象锁为无锁状态，JVM在当前线程的栈帧中开辟一块名为<strong>锁记录</strong>（Lock Record）的空间，用来存储锁对象当前 <code>Mark Word</code> (对象的头信息）的拷贝副本。</li>
+<li>拷贝 <code>Mark Word</code> 并复制到 <code>Lock Record</code> 中。</li>
+<li>JVM通过CAS操作尝试将对象的 <code>Mark Word</code> 更新为指向 <code>Lock Record</code> 的指针，并将 <code>Lock Record</code> 的 <code>owner</code> 指针指向对象的 <code>Mark Word</code> 。</li>
+<li>若上述更新成功，线程就拥有了此对象的锁，此时<strong>线程和对象有相互指针指向对方</strong>，锁标志位设置为00。此线程可以继续执行同步块内的代码。</li>
+<li>若以上<strong>更新失败说明有多个线程竞争，则轻量锁要升级为重量锁</strong>，锁标志位设置为10，当前线程通过自旋的方式循环获取锁。</li>
 </ol>
-</blockquote>
-<p>&emsp;内部的实现过程(偏向锁-&gt;轻量锁)：</p>
-<blockquote>
+<p>内部的实现过程（偏向锁-&gt;轻量锁）：</p>
 <ol>
-<li>访问对象当前Mark Word，确认对象锁偏向锁位为1，锁标志位为01，当前为偏向锁。</li>
-<li>测试线程ID是否指向当前线程，如果是就执行同步代码，否则进入下一步骤</li>
-<li>通过CAS获取偏向锁，竞争成功则将Mark Word中线程ID更新为当前线程ID。</li>
-<li>若取锁失败，表示有线程竞争，当到达安全点时获得偏向锁的线程会被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续执行。</li>
-<li>取锁成功则执行同步代码</li>
+<li>访问对象当前 <code>Mark Word</code> ，确认对象锁偏向锁位为1，锁标志位为01，当前为偏向锁。</li>
+<li>测试线程ID是否指向当前线程，如果是就执行同步代码，否则进入下一步骤。</li>
+<li>通过CAS获取偏向锁，竞争成功则将 <code>Mark Word</code> 中线程ID更新为当前线程ID。</li>
+<li><strong>若取锁失败，表示有线程竞争，当到达安全点时获得偏向锁的线程会被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续执行</strong>。</li>
+<li>取锁成功则执行同步代码。</li>
 </ol>
-</blockquote>
-<p>&emsp;当有线程竞争时，偏向锁和轻量锁都会升级，持有偏向锁的线程会被动释放锁。</p>
+<p><strong>当有线程竞争时，偏向锁和轻量锁都会升级，持有偏向锁的线程会被动释放锁</strong>。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190316/201903160105.png" alt="三者转换"></p>
+<h5 id="（4）几种锁的优缺点"><a href="#（4）几种锁的优缺点" class="headerlink" title="（4）几种锁的优缺点"></a><strong>（4）几种锁的优缺点</strong></h5><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/%E9%94%81%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9%E5%AF%B9%E6%AF%94.png" alt="锁的优缺点对比"></p>
 <hr>
-<h3 id="其它优化"><a href="#其它优化" class="headerlink" title="其它优化"></a><strong>其它优化</strong></h3><ol>
-<li><p>适应性自旋：获取轻量级锁执行CAS操作失败时，需要通过自旋来获取重量级锁，自旋是一个持续占用CPU性能的操作，所以JDK采用适应性自旋模式，设定一个自旋次数，自旋成功了就增加自旋次数，自旋失败就减少自旋次数。</p>
+<h3 id="2-3-其它优化"><a href="#2-3-其它优化" class="headerlink" title="2.3 其它优化"></a><strong>2.3 其它优化</strong></h3><ol>
+<li><p><strong>适应性自旋</strong>：获取轻量级锁执行CAS操作失败时，需要通过自旋来获取重量级锁，自旋是一个持续占用CPU性能的操作，所以JDK采用适应性自旋模式，设定一个自旋次数，自旋成功了就增加自旋次数，自旋失败就减少自旋次数。</p>
 </li>
-<li><p>锁粗化：将多次连接在一起的(同个对象多次调用方法)加锁和解锁操作合并，将多个连续的锁扩展为更大范围的锁。</p>
+<li><p><strong>锁粗化</strong>：将多次连接在一起的(同个对象多次调用方法)加锁和解锁操作合并，将多个连续的锁扩展为更大范围的锁。</p>
 </li>
-<li><p>锁消除：删除不必要的加锁操作，通过代码逃逸技术，判断一段代码内的数据不会逃逸出当前线程，就认为这段代码是线程安全的，不需要加锁。</p>
+<li><p><strong>锁消除</strong>：删除不必要的加锁操作，通过代码逃逸技术，判断一段代码内的数据不会逃逸出当前线程，就认为这段代码是线程安全的，不需要加锁。</p>
 </li>
 </ol>
-<p>&emsp;若线程间竞争激烈，锁升级这一设计反而会适得其反，这种环境需要禁用偏向锁。</p>
+<p>若线程间竞争激烈，锁升级这一设计反而会适得其反，这种环境需要禁用偏向锁。</p>
 <hr>
 <p><em>部分参考以下内容：</em></p>
 <blockquote>
@@ -648,10 +646,10 @@
 <p>《Java并发编程的艺术》</p>
 </blockquote>
 <blockquote>
-<p><a href="https://www.cnblogs.com/dolphin0520/p/3920373.html" target="_blank" rel="noopener">https://www.cnblogs.com/dolphin0520/p/3920373.html</a></p>
+<p><a href="https://www.cnblogs.com/dolphin0520/p/3920373.html" target="_blank" rel="noopener">Java并发编程：volatile关键字解析</a></p>
 </blockquote>
 <blockquote>
-<p><a href="http://www.cnblogs.com/paddix/p/5405678.html" target="_blank" rel="noopener">http://www.cnblogs.com/paddix/p/5405678.html</a></p>
+<p><a href="http://www.cnblogs.com/paddix/p/5405678.html" target="_blank" rel="noopener">Java并发编程：Synchronized底层优化（偏向锁、轻量级锁）</a></p>
 </blockquote>
 <p><em>若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -919,7 +917,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized"><span class="nav-number">1.</span> <span class="nav-text">synchronized</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简述"><span class="nav-number">1.1.</span> <span class="nav-text">简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">1.2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#底层执行细节"><span class="nav-number">1.2.1.</span> <span class="nav-text">底层执行细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁的存储位置"><span class="nav-number">1.2.2.</span> <span class="nav-text">锁的存储位置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象头结构"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">对象头结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重量级锁的状态"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">重量级锁的状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#偏向锁"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">偏向锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#轻量级锁"><span class="nav-number">1.2.2.2.2.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#锁的状态变迁"><span class="nav-number">1.2.2.2.3.</span> <span class="nav-text">锁的状态变迁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它优化"><span class="nav-number">1.2.3.</span> <span class="nav-text">其它优化</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#synchronized"><span class="nav-number">1.</span> <span class="nav-text">synchronized</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是synchronized"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是synchronized?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-作用"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-原理"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-底层执行细节"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 底层执行细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-锁的存储位置"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 锁的存储位置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-对象头结构"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">2.2.1 对象头结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-重量级锁的状态"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">2.2.2 重量级锁的状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#（1）偏向锁"><span class="nav-number">1.2.2.2.1.</span> <span class="nav-text">（1）偏向锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（2）轻量级锁"><span class="nav-number">1.2.2.2.2.</span> <span class="nav-text">（2）轻量级锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（3）锁的状态变迁"><span class="nav-number">1.2.2.2.3.</span> <span class="nav-text">（3）锁的状态变迁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（4）几种锁的优缺点"><span class="nav-number">1.2.2.2.4.</span> <span class="nav-text">（4）几种锁的优缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-其它优化"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 其它优化</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
