@@ -97,7 +97,7 @@
 <meta property="og:description" content="简单介绍Java集相关，散列集，Set，HashSet，TreeSet，SortedSet，NavigableSet，EnumSet，LinkedHashSet。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro10.jpg">
-<meta property="og:updated_time" content="2020-07-20T13:26:39.693Z">
+<meta property="og:updated_time" content="2020-08-02T05:40:22.635Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java集合(四) Set">
 <meta name="twitter:description" content="简单介绍Java集相关，散列集，Set，HashSet，TreeSet，SortedSet，NavigableSet，EnumSet，LinkedHashSet。">
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,716
+                  2,789
                 </span>
               
 
@@ -453,7 +453,7 @@
           
           
             <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro10.jpg" rel="gallery_ckdclp8l5003y9st7tdqgddju" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+              <a class="post-gallery-img fancybox" href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro10.jpg" rel="gallery_ckdhkm2oy006d20t77rzmliuq" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/game/sekiro10.jpg" itemprop="contentUrl">
               </a>
             
@@ -476,6 +476,7 @@
 <p>因为散列值的原因，在修改集合中元素时要注意是否导致hashcode改变，会导致其在集合的位置也发生变化。</p>
 <p>HashSet部分源码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">AbstractSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">transient</span> HashMap&lt;E,Object&gt; map;</span><br><span class="line">    <span class="comment">// Dummy value to associate with an Object in the backing Map</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">()</span> </span>&#123;<span class="comment">//构造一个空散列表</span></span><br><span class="line">        map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;<span class="comment">//构造一个散列集，并将集合中的所有元素添加到散列集中</span></span><br><span class="line">        map = <span class="keyword">new</span> HashMap&lt;&gt;(Math.max((<span class="keyword">int</span>) (c.size()/.<span class="number">75f</span>) + <span class="number">1</span>, <span class="number">16</span>));</span><br><span class="line">        addAll(c);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123;<span class="comment">//构造一个空的指定容量的散列集</span></span><br><span class="line">        map = <span class="keyword">new</span> HashMap&lt;&gt;(initialCapacity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor)</span> </span>&#123;<span class="comment">//构造一个具有指定容量和装填因子(0.0~1.0)的空散列集</span></span><br><span class="line">        map = <span class="keyword">new</span> HashMap&lt;&gt;(initialCapacity, loadFactor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    HashSet(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor, <span class="keyword">boolean</span> dummy) &#123;<span class="comment">//由LinkedHashSet使用，dummy只是用来区别其它构造函数</span></span><br><span class="line">        map = <span class="keyword">new</span> LinkedHashMap&lt;&gt;(initialCapacity, loadFactor);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>底层是基于一个 <code>HashMap</code> 来实现的，相关操作也是直接调用  <code>HashMap</code> API来完成。其设计就是利用 <code>HashMap</code> 的键来存放元素，用统一的 <code>PRESENT</code> 来作为 <code>HashMap</code> 的值，利用 <code>HashMap</code> 的键的唯一性来实现集合的元素不重复。</p>
 <hr>
 <h2 id="第三节-TreeSet"><a href="#第三节-TreeSet" class="headerlink" title="第三节 TreeSet"></a><strong>第三节 TreeSet</strong></h2><p>树集和散列集很相似，区别就是树集是一个有序集合。</p>
 <p>TreeSet实现了SortedSet接口，TreeSet的排序是通过红黑树来实现的，红黑树可以参考博客<a href="../2019110801.html" title="Title">算法复习 (二) 查找-平衡查找树</a>，每一次添加元素都会将其放入正确的排序位置，迭代器总是以顺序来访问集合，相应的其就要为此消耗一些性能在新增上，相比HashSet，TreeSet的add要慢一些。</p>
@@ -652,7 +653,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">272</span>
+                  <span class="site-state-item-count">274</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

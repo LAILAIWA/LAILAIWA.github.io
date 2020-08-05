@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Java集合相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-07-26T14:32:50.972Z">
+<meta property="og:updated_time" content="2020-08-02T05:39:08.255Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Java集合">
 <meta name="twitter:description" content="整理面试中常问的Java集合相关问题，持续更新中。">
@@ -408,7 +408,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5,795
+                  5,956
                 </span>
               
 
@@ -484,13 +484,13 @@
 
 <h4 id="问：CopyOnWriteArrayList-原理？"><a href="#问：CopyOnWriteArrayList-原理？" class="headerlink" title="问：CopyOnWriteArrayList 原理？"></a><strong>问：CopyOnWriteArrayList 原理？</strong></h4><details><br><br>CopyOnWriteArrayList 通过写时复制思想来实现线程安全的动态数组，底层数据结构仍是对象数组，但被 <code>volatile</code> 修饰来保证可见性。通过可重入锁 <code>ReentrantLock</code> 来保证写线程安全，读操作与单线程无异，写操作则先获取锁，然后通过 <code>System.arraycopy()</code> 进行数组浅复制，在新数组上添加元素，最终再更新数组引用。因为 <code>happens-before</code> 规则，保证读线程可以感知。<br><br></details>
 
-<h4 id="问：ArrayBlockingQueue-和-LinkedBlockingQueue-区别？"><a href="#问：ArrayBlockingQueue-和-LinkedBlockingQueue-区别？" class="headerlink" title="问：ArrayBlockingQueue 和 LinkedBlockingQueue 区别？"></a><strong>问：ArrayBlockingQueue 和 LinkedBlockingQueue 区别？</strong></h4><details><br>1. <strong>队列中锁的实现不同</strong>：<br>   <em> <code>ArrayBlockingQueue</code> 队列中的锁是没有分离的，即生产和消费用的是同一个锁；
+<h4 id="问：ArrayBlockingQueue-和-LinkedBlockingQueue-区别？"><a href="#问：ArrayBlockingQueue-和-LinkedBlockingQueue-区别？" class="headerlink" title="问：ArrayBlockingQueue 和 LinkedBlockingQueue 区别？"></a><strong>问：ArrayBlockingQueue 和 LinkedBlockingQueue 区别？</strong></h4><details><br><br>1. <strong>队列中锁的实现不同</strong>：<br>   <em> <code>ArrayBlockingQueue</code> 队列中的锁是没有分离的，即生产和消费用的是同一个锁；
    </em> <code>LinkedBlockingQueue</code> 队列中的锁是分离的，即生产用的是 <code>putLock</code> ，消费是 <code>takeLock</code> 。<br>2. <strong>在生产或消费时操作不同</strong>：<br>   <em> <code>ArrayBlockingQueue</code> 队列中在生产和消费的时候，是直接将枚举对象插入或移除的；
    </em> <code>LinkedBlockingQueue</code> 队列中在生产和消费的时候，需要把枚举对象转换为 <code>Node&lt;E&gt;</code> 进行插入或移除，会影响性能。<br>3. <strong>队列大小初始化方式不同</strong>：<br>   <em> <code>ArrayBlockingQueue</code> 实现的队列中必须指定队列的大小；
    </em> <code>LinkedBlockingQueue</code> 实现的队列中可以不指定队列的大小，但是默认是 <code>Integer.MAX_VALUE</code> 。<br><br></details>
 
 <hr>
-<h2 id="第三节-Set"><a href="#第三节-Set" class="headerlink" title="第三节 Set"></a><strong>第三节 Set</strong></h2><h4 id="问：HashSet-和-TreeSet-原理？"><a href="#问：HashSet-和-TreeSet-原理？" class="headerlink" title="问：HashSet 和 TreeSet 原理？"></a><strong>问：HashSet 和 TreeSet 原理？</strong></h4><details><br><br><br><br></details>
+<h2 id="第三节-Set"><a href="#第三节-Set" class="headerlink" title="第三节 Set"></a><strong>第三节 Set</strong></h2><h4 id="问：HashSet-和-TreeSet-原理？"><a href="#问：HashSet-和-TreeSet-原理？" class="headerlink" title="问：HashSet 和 TreeSet 原理？"></a><strong>问：HashSet 和 TreeSet 原理？</strong></h4><details><br><code>HashSet</code> 即散列集，因为散列的关系所以集合的访问顺序是随机的。底层是基于一个 <code>HashMap</code> 来实现的，相关操作也是直接调用  <code>HashMap</code> API来完成。其设计就是利用 <code>HashMap</code> 的键来存放元素，用统一的 <code>PRESENT</code> 来作为 <code>HashMap</code> 的值，利用 <code>HashMap</code> 的键的唯一性来实现集合的元素不重复。<br><br><code>TreeSet</code> 即树集，与散列集不同，树集是一个有序集合，其排序通过红黑树来实现，每次新增元素时都会放在正确的排序位置，以新增操作的开销来实现有序访问。<br><br><br></details>
 
 <hr>
 <h2 id="第四节-Map"><a href="#第四节-Map" class="headerlink" title="第四节 Map"></a><strong>第四节 Map</strong></h2><h4 id="问：能讲讲HashMap的实现原理吗？hashmap的底层是什么？HashMap内部数据结构？"><a href="#问：能讲讲HashMap的实现原理吗？hashmap的底层是什么？HashMap内部数据结构？" class="headerlink" title="问：能讲讲HashMap的实现原理吗？hashmap的底层是什么？HashMap内部数据结构？ "></a><strong>问：能讲讲HashMap的实现原理吗？hashmap的底层是什么？HashMap内部数据结构？ </strong></h4><details><br><br>HashMap是通过散列函数把元素均匀的分散到不同的散列值上，也就是对应的数组下标上。<br><br>底层实现就是数组+链表，因为散列是不可靠的，会出现哈希冲突，所以采用链表来存放因为哈希冲突而产生的相同哈希值但不同的元素。1.8版本后增加了红黑树进行优化。<br><br></details>
@@ -715,7 +715,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">272</span>
+                  <span class="site-state-item-count">274</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
