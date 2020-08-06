@@ -99,6 +99,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc35b4da?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80c4f8982b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc798df0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/202007010116.png">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ede0c3b2e?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ecf48bcfe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/9/22/16d5800edea0e859?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
@@ -112,7 +113,7 @@
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/11/13/16e64a764ad1fcd3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/11/13/16e64a764b42d99f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/11/13/16e64a76497a20d5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
-<meta property="og:updated_time" content="2020-07-15T14:41:08.722Z"/>
+<meta property="og:updated_time" content="2020-08-06T09:30:27.464Z"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Redis底层数据结构"/>
 <meta name="twitter:description" content="简单整理Redis中的几种常见的底层数据结构，内容包括：等。"/>
@@ -425,7 +426,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  15,767
+                  15,766
                 </span>
               
 
@@ -467,15 +468,15 @@
 
       
         <h1 id="Redis底层数据结构"><a href="#Redis底层数据结构" class="headerlink" title="Redis底层数据结构"></a><strong>Redis底层数据结构</strong></h1><p><img src="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc35b4da?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
-<h2 id="第一节-动态字符串-SDS"><a href="#第一节-动态字符串-SDS" class="headerlink" title="第一节 动态字符串-SDS"></a><strong>第一节 动态字符串-SDS</strong></h2><h3 id="1-1-概述"><a href="#1-1-概述" class="headerlink" title="1.1 概述"></a><strong>1.1 概述</strong></h3><p>Redis 是由 C 语言作为底层编程语言实现的，而 C 语言中的字符串是一个以空字符结尾的字符数组，这种结构对于 Redis 而言过于简单了，主要缺点如下：</p>
+<h2 id="第一节-动态字符串-SDS"><a href="#第一节-动态字符串-SDS" class="headerlink" title="第一节 动态字符串-SDS"></a><strong>第一节 动态字符串-SDS</strong></h2><h3 id="1-1-概述"><a href="#1-1-概述" class="headerlink" title="1.1 概述"></a><strong>1.1 概述</strong></h3><p>Redis 是由 <strong>C 语言</strong>作为底层编程语言实现的，而 <strong>C 语言中的字符串是一个以空字符结尾的字符数组</strong>，这种结构对于 Redis 而言过于简单了，主要缺点如下：</p>
 <ol>
-<li>C 字符串不记录自身长度信息，为了获取字符串长度必须遍历整个字符串，时间复杂度为 O(n)。</li>
-<li>由于 C 字符串不记录自身长度，稍有不小心就会造成缓冲区溢出。</li>
-<li>对于 Redis 这种缓存类型数据库，对于缓存的 Value 是有可能经常的更改的。但是 C 字符串每次的增长或是缩小都需要一次内存的重分配操作。</li>
-<li>Redis 数据库中缓存的内容不是特定的，有可能会是图片、音频等等文件的二进制数据，但是 C 字符串中的字符必须符合某种编码，且字符串中不能包含空格，这些限制也导致了 Redis 不能使用 C 字符串来作为自身字符串的实现。</li>
+<li><strong>C 字符串不记录自身长度信息，为了获取字符串长度必须遍历整个字符串，时间复杂度为 O(n)</strong>。</li>
+<li>由于 C 字符串不记录自身长度，<strong>稍有不小心就会造成缓冲区溢出</strong>。</li>
+<li>对于 Redis 这种缓存类型数据库，对于缓存的 Value 是有可能经常的更改的。但是 <strong>C 字符串每次的增长或是缩小都需要一次内存的重分配操作</strong>。</li>
+<li>Redis 数据库中缓存的内容不是特定的，有可能会是图片、音频等等文件的二进制数据，但是 <strong>C 字符串中的字符必须符合某种编码，且字符串中不能包含空格</strong>，这些限制也导致了 Redis 不能使用 C 字符串来作为自身字符串的实现。</li>
 </ol>
 <p>于是 Redis 实现了 SDS 这种简单动态字符串结构，它其实和 Java 中 ArrayList 的实现是很类似的。</p>
-<p>Redis 源代码中 sds.h 文件下，有五种 sdshdr，它们分别是：</p>
+<p>Redis 源代码中 <code>sds.h</code> 文件下，有五种 <code>sdshdr</code> ，它们分别是：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr5</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, and 5 msb of string length */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr8</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint8_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint8_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr16</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint16_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint16_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr32</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint32_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint32_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr64</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> len; <span class="comment">/* used */</span></span><br><span class="line">    <span class="keyword">uint64_t</span> alloc; <span class="comment">/* excluding the header and null terminator */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> flags; <span class="comment">/* 3 lsb of type, 5 unused bits */</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>其中，sdshdr5 的注释表明，<strong>sdshdr5  is never used</strong>。sdshdr5 这种数据结构一般用于存储长度小于 32 个字符的字符串，但现在也已经不再使用这种结构了，再小长度的字符串也建议使用 sdshdr8 进行存储，因为 sdshdr5 少了两个关键字段，因此不具备动态扩容操作，一旦预分配的内存空间使用完，就需要重新分配内存并完成数据的复制迁移，在实际的生产环境中对于性能的影响还是很大的，所以进行了一个抛弃，但其实有些比较小的键依然会采用这种结构存储。</p>
 <p>关于 sdshdr5 我们不再多说，我们看其他四种结构的各个字段，len 字段表示当前字符串总长度，也即当前字符串已使用内存大小，alloc 表示为当前字符串分配的总内存大小（不包括len以及flags字段本身分配的内存），因为每一个结构在预分配的时候都会多分配一段内存空间，主要是为了方便以后的扩容。flags 的低三位表示当前 sds 的类型，高五位无用。低三位取值如下：</p>
@@ -485,18 +486,18 @@
 <p>接下来我们讲讲 sdshdr 相对于传统的 C 语言字符串，性能的提升在哪，以及具有哪些便捷的点。</p>
 <p><strong>首先</strong>，对于传统的 C 字符串，我想要获取字符串的长度，至少需要 O(n) 遍历一遍数组才行，而我们 sds 只需要 O(1) 的取 len 字段的值即可。</p>
 <p><strong>其次</strong>，也是非常重要的一个设计，如果我们初始分配了一个字符串对象，那么如果我要在这个字符串后面追加内容的话，限制于数组的长度一经初始化是不能修改的，我们至少需要分配一个足够大的数组，然后将原先的字符串进行一个拷贝。</p>
-<p>sdshdr 每次为一个 sds 分配内存的时候都会额外分配一部分暂不使用的内存空间，一般额外的内存会等同于当前字符串占用的内存大小，如果超过 1MB，那么额外空间的内存大小就是 1MB。每当执行 sdscat 这种方法的时候，程序会用 alloc-len 比较下剩下的空余内存是否足够分配追加的内容，如果不够自然触发内存重分配，而如果剩余未使用内存空间足够放下，那么将直接进行分配，无需内存重分配。</p>
-<p>通过这种预分配策略， SDS 将连续增长 N 次字符串所需的内存重分配次数从必定 N 次降低为最多 N 次。</p>
-<p><strong>最后</strong>，对于常规的 C 语言字符串，它通过判断当前字符是否是空字符来决定字符串的结尾，所以就要求你的字符串中不能包含甚至一个空字符，否则空字符后面的字符都不能作为有效字符被读取。而对于某些具有特殊格式要求的，需要使用空字符进行分隔作用的，那么传统的 C 字符串就无法存储了，而我们的 sds 不是通过空字符判断字符串结尾，而是通过 len 字段的值判断字符串的结尾，所以说，sds 还具备<strong>二进制安全</strong>这个特性，即它可以安全的存储具备特殊格式要求的二进制数据。</p>
+<p><strong>sdshdr 每次为一个 sds 分配内存的时候都会额外分配一部分暂不使用的内存空间，一般额外的内存会等同于当前字符串占用的内存大小，如果超过 1MB，那么额外空间的内存大小就是 1MB</strong>。每当执行 sdscat 这种方法的时候，程序会用 alloc-len 比较下剩下的空余内存是否足够分配追加的内容，如果不够自然触发内存重分配，而如果剩余未使用内存空间足够放下，那么将直接进行分配，无需内存重分配。</p>
+<p><strong>通过这种预分配策略， SDS 将连续增长 N 次字符串所需的内存重分配次数从必定 N 次降低为最多 N 次</strong>。</p>
+<p><strong>最后</strong>，对于常规的 C 语言字符串，它通过判断当前字符是否是空字符来决定字符串的结尾，所以就要求你的字符串中不能包含甚至一个空字符，否则空字符后面的字符都不能作为有效字符被读取。而对于某些具有特殊格式要求的，需要使用空字符进行分隔作用的，那么传统的 C 字符串就无法存储了，而我们的 <strong>sds 不是通过空字符判断字符串结尾，而是通过 len 字段的值判断字符串的结尾</strong>，所以说，sds 还具备<strong>二进制安全</strong>这个特性，即它可以安全的存储具备特殊格式要求的二进制数据。</p>
 <p>关于 sds 我们就简单说到这，它是一种改良版的 C 字符串，兼容 C 语言中既有的函数 API，也通过一些手段提升了某些操作的性能，值得大家借鉴。</p>
 <hr>
-<h2 id="第二节-链表"><a href="#第二节-链表" class="headerlink" title="第二节 链表"></a><strong>第二节 链表</strong></h2><p>链表这种数据结构相信大家也不陌生，有很多类型，比如单向链表，双向链表，循环链表等，链表相对于数组来说，一是不需要连续的内存块地址，二是删除和插入的时间复杂度是 O(1) 级别的，非常的高效，但比不上数组的随机访问查询方式。</p>
+<h2 id="第二节-链表"><a href="#第二节-链表" class="headerlink" title="第二节 链表"></a><strong>第二节 链表</strong></h2><p>链表这种数据结构相信大家也不陌生，有很多类型，比如单向链表，双向链表，循环链表等，链表相对于数组来说，<strong>一是不需要连续的内存块地址，二是删除和插入的时间复杂度是 O(1) 级别的</strong>，非常的高效，但<strong>比不上数组的随机访问查询方式</strong>。</p>
 <p>一样的那句话，没有最好的数据结构，只有恰到好处的数据结构，比如我们后面要介绍的更高层次的数据结构，字典，它的底层其实就依赖的链表规避哈希冲突，具体的我们后面再说。</p>
 <p>redis 中借助 C 语言实现了一个双向链表结构：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125; listNode;</span><br></pre></td></tr></table></figure>
 <p>pre 指针指向前一个节点，next 指针指向后一个节点，value 指向当前节点对应的数据对象。盗一张图描述整个串联起来的链表结构：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80c4f8982b?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
-<p>虽然通过链表的第一个头节点就可以遍历整个链表，但在 redis 向上封装了一层结构，专门用于表示一个链表结构：</p>
+<p>虽然通过链表的第一个头节点就可以遍历整个链表，但在 <strong>redis 向上封装了一层结构，专门用于表示一个链表结构</strong>：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    listNode *head;</span><br><span class="line">    listNode *tail;</span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;</span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>head 指向链表的头节点</li>
@@ -505,7 +506,7 @@
 <li>free 函数用于释放一个节点所占用的内存空间，默认赋值 NULL 的话，即使用 redis 自带的 zfree 函数进行内存空间释放，我们也可以来看一下这个 zfree 函数。</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">zfree</span><span class="params">(<span class="keyword">void</span> *ptr)</span> </span>&#123;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">ifndef</span> HAVE_MALLOC_SIZE</span></span><br><span class="line">    <span class="keyword">void</span> *realptr;</span><br><span class="line">    <span class="keyword">size_t</span> oldsize;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ptr == <span class="literal">NULL</span>) <span class="keyword">return</span>;</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">ifdef</span> HAVE_MALLOC_SIZE</span></span><br><span class="line">    update_zmalloc_stat_free(zmalloc_size(ptr));</span><br><span class="line">    <span class="built_in">free</span>(ptr);</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    realptr = (<span class="keyword">char</span>*)ptr-PREFIX_SIZE;</span><br><span class="line">    oldsize = *((<span class="keyword">size_t</span>*)realptr);</span><br><span class="line">    update_zmalloc_stat_free(oldsize+PREFIX_SIZE);</span><br><span class="line">    <span class="built_in">free</span>(realptr);</span><br><span class="line">	<span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里会涉及到一个内存对齐的概念，就比如一个 64 位的操作系统，一次内存 IO 会固定取出 8 个字节的内存数据出来，如果某个变量横跨了两个八字节段，那么 CPU 需要进行两次的 IO 才能完整取出该变量的数据，引入内存对齐，是为了保证任意变量的内存分配不会出现上述的横跨情况，具体的操作手法就是填充无用的内存位，当然这必然会造成内存碎片，不过这也是一种以空间换时间的策略，你也可以禁用它。</p>
+<p>这里会涉及到一个<strong>内存对齐</strong>的概念，就比如一个 64 位的操作系统，一次内存 IO 会固定取出 8 个字节的内存数据出来，如果某个变量横跨了两个八字节段，那么 CPU 需要进行两次的 IO 才能完整取出该变量的数据，引入内存对齐，是为了保证任意变量的内存分配不会出现上述的横跨情况，具体的操作手法就是填充无用的内存位，当然这必然会造成内存碎片，不过这也是一种以空间换时间的策略，你也可以禁用它。</p>
 <p>函数的上半部分是做一些判断，如果确定了该指针指向的数据结构占用的总内存，则直接调用 free 函数进行内存的释放，否则需要进行一个计算。redis 中的 zmalloc 在每一次内存数据分配的时候都会追加一个 PREFIX_SIZE 的头部数据块，它的值等于当前系统的最大寻址空间，比如 64 CPU的话，PREFIX_SIZE 就会占用到 8 个字节，并且这 8 个字节内部存储的是当前数据实际占用内存大小。</p>
 <p>所以这里的话，ptr 指针向低位移动就是指向头部 PREFIX_SIZE 字段首地址，然后取出里面保存的值，也就是当前数据结构实际占用的内存大小，最后加上它自身传入 update_zmalloc_stat_free 函数中修改 used_memory 内存记录指针的值，并在最后调用 free 函数释放内存，包括头部的部分。</p>
 <p>其实我们扯远了，继续看数据结构，这里如果还不是很明白的话，没关系，后面我们还会继续讲的。</p>
@@ -514,8 +515,8 @@
 <p><img src="https://user-gold-cdn.xitu.io/2019/9/15/16d32e80bc798df0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
 <p>综上，我们介绍了 redis 中链表的一个基本实现情况，总结一下，它是一个双端链表，也就是查找某个节点的前后节点的时间复杂度都在 O(1)，也是一个无环并具有首尾节点指针的链表，初次之外，还具有三个多态函数，用于节点间的复制、比较以及内存释放，需要使用者自行实现。</p>
 <hr>
-<h2 id="第三节-字典"><a href="#第三节-字典" class="headerlink" title="第三节 字典"></a><strong>第三节 字典</strong></h2><p>字典相对于数组，链表来说，是一种较高层次的数据结构，像我们的汉语字典一样，可以通过拼音或偏旁唯一确定一个汉字，在程序里我们管每一个映射关系叫做一个键值对，很多个键值对放在一起就构成了我们的字典结构。</p>
-<p>有很多高级的字典结构实现，例如我们 Java 中的 HashMap 底层实现，根据键的 Hash 值均匀的将键值对分散到数组中，并在遇到哈希冲突时，冲突的键值对通过单向链表串联，并在链表结构超过八个节点裂变成红黑树。</p>
+<h2 id="第三节-字典"><a href="#第三节-字典" class="headerlink" title="第三节 字典"></a><strong>第三节 字典</strong></h2><p>字典相对于数组，链表来说，是一种较高层次的数据结构，像我们的汉语字典一样，可以通过拼音或偏旁唯一确定一个汉字，在程序里我们管<strong>每一个映射关系叫做一个键值对</strong>，<strong>很多个键值对放在一起就构成了我们的字典结构</strong>。</p>
+<p>有很多高级的字典结构实现，例如我们 <strong>Java 中的 HashMap 底层实现，根据键的 Hash 值均匀的将键值对分散到数组中，并在遇到哈希冲突时，冲突的键值对通过单向链表串联，并在链表结构超过八个节点裂变成红黑树</strong>。</p>
 <p>那么 redis 中是怎么实现的呢？我们一起来看一看。</p>
 <h3 id="一、字典结构定义"><a href="#一、字典结构定义" class="headerlink" title="一、字典结构定义"></a>一、字典结构定义</h3><p>Redis 中的字典相关结构都定义在 dict.h 文件中，dict 表示一个字典结构：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span> &#123;</span></span><br><span class="line">    dictType *type;</span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">long</span> rehashidx; </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> iterators;</span><br><span class="line">&#125; dict;</span><br></pre></td></tr></table></figure>
@@ -526,6 +527,7 @@
 <li>rehashidx 字段用于 rehash 过程中记录正在转移的键。</li>
 <li>iterators 字段记录了当前字典正在进行中的迭代器。</li>
 </ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/202007010116.png" alt></p>
 <p>dictType 具体如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictType</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> (*hashFunction)(<span class="keyword">const</span> <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">void</span> *(*keyDup)(<span class="keyword">void</span> *privdata, <span class="keyword">const</span> <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">void</span> *(*valDup)(<span class="keyword">void</span> *privdata, <span class="keyword">const</span> <span class="keyword">void</span> *obj);</span><br><span class="line">    <span class="keyword">int</span> (*keyCompare)(<span class="keyword">void</span> *privdata, <span class="keyword">const</span> <span class="keyword">void</span> *key1, <span class="keyword">const</span> <span class="keyword">void</span> *key2);</span><br><span class="line">    <span class="keyword">void</span> (*keyDestructor)(<span class="keyword">void</span> *privdata, <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">void</span> (*valDestructor)(<span class="keyword">void</span> *privdata, <span class="keyword">void</span> *obj);</span><br><span class="line">&#125; dictType;</span><br></pre></td></tr></table></figure>
 <ul>
@@ -545,9 +547,9 @@
 <p>每个 dictEntry 内部会保存一个 key/value 的键值对，然后我们通过 table 指针可以遍历所有的键值对，但是如果某个键值对的键进行哈希之后并计算得到应该存储的位置被别的节点捷足先登了，也就是我们常说的哈希冲突了，怎么办？</p>
 <p>redis 中的做法，甚至于大部分字典结构实现都是选择将冲突的节点串联成链表，于是字典结构就变成这样了。</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/9/22/16d5800ecf48bcfe?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
-<p>同一条链表上的节点键的哈希值必定是相同的，也正是因为相同才会被串在一起，从逻辑上看，字典结构如上图所展示的那样，但抽象到我们的代码层，就是一个二维数组的结构，第一维放的就是节点指针的指针，第二维指向的就是指向我们键值对结构的指针，每一个 dictEntry 结构都会有一个 next 指针，在遇到哈希冲突的时候可以串联所有冲突节点。</p>
+<p><strong>同一条链表上的节点键的哈希值必定是相同的，也正是因为相同才会被串在一起</strong>，从逻辑上看，字典结构如上图所展示的那样，但抽象到我们的代码层，就是一个二维数组的结构，第一维放的就是节点指针的指针，第二维指向的就是指向我们键值对结构的指针，每一个 dictEntry 结构都会有一个 next 指针，在遇到哈希冲突的时候可以串联所有冲突节点。</p>
 <p>除此之外，dictht 中的 size 属性用于描述整个哈希字典表最大可寻址大小，也就是二维数组中第一维度的最大长度，sizemask 属性始终等于 size-1 表述的是一种大小掩码的概念，用于确定节点最初在数组中的位置，used 记录了整张哈希表中已经存储的键值对节点数量。</p>
-<p>其中，dict 字典结构中 ht 是一个只有两个元素的数组，正常情况下我们使用 ht[0] 字典表，ht[1] 用在我们渐进 rehash 过程中转移 ht[0] 中所有节点中。</p>
+<p>其中，dict 字典结构中 ht 是一个只有两个元素的数组，<strong>正常情况下我们使用 ht[0] 字典表，ht[1] 用在我们渐进 rehash 过程中转移 ht[0] 中所有节点中</strong>。</p>
 <p>最后，我们再来看这个 dictEntry 键值对结构：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> &#123;</span></span><br><span class="line">    <span class="keyword">void</span> *key;</span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">        <span class="keyword">void</span> *val;</span><br><span class="line">        <span class="keyword">uint64_t</span> u64;</span><br><span class="line">        <span class="keyword">int64_t</span> s64;</span><br><span class="line">        <span class="keyword">double</span> d;</span><br><span class="line">    &#125; v;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; dictEntry;</span><br></pre></td></tr></table></figure>
 <p>key 是一个指向任意结构的指针，代表我们的 key 可以使用我们 redis 中任意对象类型，v 是一个 union 类型，它可以是一个指针，也可以是 uint64_t 或 int64_t 类型，也可以是一个 double 类型。根据实际使用中，value 的不同值，使用不同的字段属性。</p>
@@ -558,7 +560,7 @@
 <p>rehashidx 的值默认为 -1，表示当前字典未处于 rehash 阶段，其他场合该字段的值等于当前正在转移桶的索引。</p>
 <p>新版本的 dictRehash 需要多传一个参数 n，这个参数用于控制单次最多转移空桶数量。什么意思呢，具体我们看一张图：</p>
 <p><img src="https://user-gold-cdn.xitu.io/2019/9/22/16d5800edea0e859?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="image"></p>
-<p>有这么一个字典结构，其中索引值为 2 和 3 的两个桶是空的，也即里面没有放我们的键值对节点。正常情况下，一次 rehash 只会转移一个桶，但如果上一次转移了索引为 1 的那个桶，下一次来会遍历后面一个桶，如果继续为空就继续向后遍历，直到找到一个存储了我们节点的非空桶，极端情况下，如果字典表中只有最后一个桶有节点，那么一次的 rehash 就要遍历所有的桶，时间复杂度 O(n)，这会导致客户端等待过长时间，所以新版本中额外传一个参数 n 用于控制最多遍历的空桶数。</p>
+<p>有这么一个字典结构，其中索引值为 2 和 3 的两个桶是空的，即里面没有放我们的键值对节点。正常情况下，一次 rehash 只会转移一个桶，但如果上一次转移了索引为 1 的那个桶，下一次来会遍历后面一个桶，如果继续为空就继续向后遍历，直到找到一个存储了我们节点的非空桶，极端情况下，如果字典表中只有最后一个桶有节点，那么一次的 rehash 就要遍历所有的桶，时间复杂度 O(n)，这会导致客户端等待过长时间，所以新版本中额外传一个参数 n 用于控制最多遍历的空桶数。</p>
 <p>相关代码段如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(d-&gt;ht[<span class="number">0</span>].table[d-&gt;rehashidx] == <span class="literal">NULL</span>) &#123;</span><br><span class="line">    d-&gt;rehashidx++;</span><br><span class="line">    <span class="keyword">if</span> (--empty_visits == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>方法的尾部会进行一个校验，如果当前桶转移结束后，当前字典的 rehash 过程完全结束，那么修改 ht[0] 指针引用，让他指向新的字典表 ht[1]，并设置 rehashidx 为 -1，标记整个字典 rehash 结束。</p>
@@ -982,7 +984,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">274</span>
+                  <span class="site-state-item-count">275</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
