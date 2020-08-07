@@ -96,10 +96,12 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Redis相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-07-16T07:46:09.946Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/202007010116.png">
+<meta property="og:updated_time" content="2020-08-06T16:35:23.077Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Redis">
 <meta name="twitter:description" content="整理面试中常问的Redis相关问题，持续更新中。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/202007010116.png">
 
 
 
@@ -408,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  5,891
+                  6,125
                 </span>
               
 
@@ -424,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  21
+                  22
                 </span>
               
             </div>
@@ -508,7 +510,8 @@
 
 <h3 id="问：SDS相比原生的char-有什么优点？知道动态字符串sds的优缺点么？"><a href="#问：SDS相比原生的char-有什么优点？知道动态字符串sds的优缺点么？" class="headerlink" title="问：SDS相比原生的char[]有什么优点？知道动态字符串sds的优缺点么？"></a><strong>问：SDS相比原生的char[]有什么优点？知道动态字符串sds的优缺点么？</strong></h3><details><br>首先原生C字符串获取字符串长度需要遍历整个字符串，复杂度为O(n)，而SDS则为O(1)。<br><br>因为有预分配的空间以及惰性释放空间，所以可以避免重复内存分配。<br><br>因为有了长度控制，所以避免了C字符串常见的内存溢出问题。<br><br>C字符串对于字符编码有要求，对于一些如图片、音频等格式的二进制编码未必能支持，而SDS虽然保留了空字符结尾但并不以它来判断字符串结尾，所以可以安全的存储一些特殊格式要求的二进制数据。<br><br></details>
 
-<h3 id="问：hash底层如何实现？rehash做了哪些优化？"><a href="#问：hash底层如何实现？rehash做了哪些优化？" class="headerlink" title="问：hash底层如何实现？rehash做了哪些优化？"></a><strong>问：hash底层如何实现？rehash做了哪些优化？</strong></h3><details><br><br><br></details>
+<h3 id="问：hash底层如何实现？rehash做了哪些优化？"><a href="#问：hash底层如何实现？rehash做了哪些优化？" class="headerlink" title="问：hash底层如何实现？rehash做了哪些优化？"></a><strong>问：hash底层如何实现？rehash做了哪些优化？</strong></h3><details><br>Redis 的 hash 数据有两种底层编码实现：ziplist和hashtable。<br><br>字典由 <code>dict.h</code> 文件定义，其中ht是哈希表结构，0是正常使用的表，1则是渐进rehash时用来转移0的节点。<br><br>rehashidx用来在rehash过程记录正在转移的键，平时为-1。<br><br><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/202007010116.png" alt><br><br>dictht即哈希表结构，内部包含一个 <code>dictEntry **table</code> table即dictEntry二维数组，为了哈希冲突时能够串联所有冲突的节点。size即哈希表最大可寻址大小，即一维数组最大长度。dictEntry则是一个键值对结构。<br><br>在数组+链表的基础上，进行了一些rehash优化。TODO<br><br><em> Reids的Hash采用<strong>链地址法</strong>来处理冲突，然后它<strong>没有使用红黑树优化</strong>。
+</em> 哈希表节点采用<strong>单链表结构</strong>。<br>* <strong>rehash优化</strong> （采用分而治之的思想，将庞大的迁移工作量划分到每一次CURD中，避免了服务繁忙）<br><br></details>
 
 <h3 id="问：zset底层怎么实现的？zset为什么使用跳跃链表而不用红黑树实现？"><a href="#问：zset底层怎么实现的？zset为什么使用跳跃链表而不用红黑树实现？" class="headerlink" title="问：zset底层怎么实现的？zset为什么使用跳跃链表而不用红黑树实现？"></a><strong>问：zset底层怎么实现的？zset为什么使用跳跃链表而不用红黑树实现？</strong></h3><details><br><br>1. skiplist的复杂度和红黑树一样，而且实现起来更简单。<br>1. 在并发环境下红黑树在插入和删除时需要rebalance，性能不如跳表。<br><br></details>
 
