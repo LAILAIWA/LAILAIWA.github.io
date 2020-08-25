@@ -88,19 +88,19 @@
 
 
 
-<meta name="description" content="介绍Java中的锁的内存语义：等等">
+<meta name="description" content="简单整理了Java中的锁和final域的内存语义，内容主要来源于《Java并发编程的艺术》，包括：锁的内存语义（锁的释放-获取建立的happens-before关系、锁的释放和获取的内存语义、锁内存语义的实现、concurrent包的实现），final域的内存语义（final域的重排序规则、final域为引用类型、为什么final引用不能从构造函数内“溢出”、final语义在处理器中的实现）等等">
 <meta name="keywords" content="java,lock">
 <meta property="og:type" content="article">
-<meta property="og:title" content="锁的内存语义">
+<meta property="og:title" content="锁和final域的内存语义">
 <meta property="og:url" content="http://linyishui.top/2019062201.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="介绍Java中的锁的内存语义：等等">
+<meta property="og:description" content="简单整理了Java中的锁和final域的内存语义，内容主要来源于《Java并发编程的艺术》，包括：锁的内存语义（锁的释放-获取建立的happens-before关系、锁的释放和获取的内存语义、锁内存语义的实现、concurrent包的实现），final域的内存语义（final域的重排序规则、final域为引用类型、为什么final引用不能从构造函数内“溢出”、final语义在处理器中的实现）等等">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam___BwtyTcLBtzF___.jpg">
-<meta property="og:updated_time" content="2019-09-16T09:07:40.705Z">
+<meta property="og:updated_time" content="2020-08-24T09:21:11.919Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="锁的内存语义">
-<meta name="twitter:description" content="介绍Java中的锁的内存语义：等等">
+<meta name="twitter:title" content="锁和final域的内存语义">
+<meta name="twitter:description" content="简单整理了Java中的锁和final域的内存语义，内容主要来源于《Java并发编程的艺术》，包括：锁的内存语义（锁的释放-获取建立的happens-before关系、锁的释放和获取的内存语义、锁内存语义的实现、concurrent包的实现），final域的内存语义（final域的重排序规则、final域为引用类型、为什么final引用不能从构造函数内“溢出”、final语义在处理器中的实现）等等">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam___BwtyTcLBtzF___.jpg">
 
 
@@ -137,7 +137,7 @@
 
 
 
-  <title>锁的内存语义 | 俺的部落格</title>
+  <title>锁和final域的内存语义 | 俺的部落格</title>
   
 
 
@@ -343,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">锁的内存语义</h1>
+          <h1 class="post-title" itemprop="name headline">锁和final域的内存语义</h1>
         
 
         <div class="post-meta">
@@ -410,7 +410,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,865
+                  5,642
                 </span>
               
 
@@ -426,7 +426,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  11
+                  21
                 </span>
               
             </div>
@@ -434,7 +434,7 @@
 
           
               <div class="post-description">
-                  介绍Java中的锁的内存语义：等等
+                  简单整理了Java中的锁和final域的内存语义，内容主要来源于《Java并发编程的艺术》，包括：锁的内存语义（锁的释放-获取建立的happens-before关系、锁的释放和获取的内存语义、锁内存语义的实现、concurrent包的实现），final域的内存语义（final域的重排序规则、final域为引用类型、为什么final引用不能从构造函数内“溢出”、final语义在处理器中的实现）等等
               </div>
           
 
@@ -453,7 +453,7 @@
           
           
             <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam___BwtyTcLBtzF___.jpg" rel="gallery_cke303xds004el4t76vabqwr5" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
+              <a class="post-gallery-img fancybox" href="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam___BwtyTcLBtzF___.jpg" rel="gallery_cke9i9ltm00cpo4t75rpu26xa" itemscope itemtype="http://schema.org/ImageObject" itemprop="url">
                 <img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/rukam/imrukam___BwtyTcLBtzF___.jpg" itemprop="contentUrl">
               </a>
             
@@ -465,126 +465,166 @@
       
 
       
-        <h1 id="锁的内存语义"><a href="#锁的内存语义" class="headerlink" title="锁的内存语义"></a><strong>锁的内存语义</strong></h1><h2 id="锁的释放-获取建立的happens-before关系"><a href="#锁的释放-获取建立的happens-before关系" class="headerlink" title="锁的释放-获取建立的happens-before关系"></a><strong>锁的释放-获取建立的happens-before关系</strong></h2><blockquote>
-<p>&emsp;<strong>锁</strong>是Java并发编程中最重要的同步机制。锁除了让临界区互斥执行外，还可以让释放锁的线程向获取同一个锁的线程发送消息。</p>
-</blockquote>
-<p>&emsp;下面是锁释放-获取的示例代码。</p>
+        <h1 id="锁和final域的内存语义"><a href="#锁和final域的内存语义" class="headerlink" title="锁和final域的内存语义"></a><strong>锁和final域的内存语义</strong></h1><h2 id="第一节-锁的内存语义"><a href="#第一节-锁的内存语义" class="headerlink" title="第一节 锁的内存语义"></a><strong>第一节 锁的内存语义</strong></h2><h3 id="1-1-锁的释放-获取建立的happens-before关系"><a href="#1-1-锁的释放-获取建立的happens-before关系" class="headerlink" title="1.1 锁的释放-获取建立的happens-before关系"></a><strong>1.1 锁的释放-获取建立的happens-before关系</strong></h3><p><strong>锁</strong>是Java并发编程中最重要的同步机制。锁除了让临界区互斥执行外，还可以让释放锁的线程向获取同一个锁的线程发送消息。</p>
+<p>下面是锁释放-获取的示例代码。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MonitorExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span> </span>&#123; <span class="comment">// 1</span></span><br><span class="line">        a++; <span class="comment">// 2</span></span><br><span class="line">    &#125; <span class="comment">// 3</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">reader</span><span class="params">()</span> </span>&#123; <span class="comment">// 4</span></span><br><span class="line">        <span class="keyword">int</span> i = a; <span class="comment">// 5</span></span><br><span class="line">        ……</span><br><span class="line">    &#125; <span class="comment">// 6</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;假设有线程A执行writer()方法，随后线程B执行reader()方法。</p>
-<blockquote>
+<p>假设有线程A执行writer()方法，随后线程B执行reader()方法。</p>
 <p>根据happens-before规则，这个过程包含的happens-before关系可以分为3类：</p>
 <ol>
 <li>根据程序次序规则: {1 happens-before 2 , 2 happens-before 3 ; 4 happens-before 5 , 5 happensbefore 6}</li>
 <li>根据监视器锁规则: {3 happens-before 4}</li>
 <li>根据happens-before的传递性: {2 happens-before 5}</li>
 </ol>
-</blockquote>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170122.png" alt="happens-before关系图"></p>
-<p>&emsp;橙色箭头：在线程A释放了锁之后，随后线程B获取同一个锁。蓝色箭头：2 happens-before 5。因此，线程A在释放锁之前所有可见的共享变量，在线程B获取同一个锁之后，将立刻变得对B线程可见。</p>
-<h2 id="锁的释放和获取的内存语义"><a href="#锁的释放和获取的内存语义" class="headerlink" title="锁的释放和获取的内存语义"></a><strong>锁的释放和获取的内存语义</strong></h2><p>&emsp;当线程释放锁时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存中。以上面的MonitorExample程序为例，A线程释放锁后，共享数据的状态示意图如下图所示。</p>
+<p>橙色箭头：在线程A释放了锁之后，随后线程B获取同一个锁。蓝色箭头：2 happens-before 5。因此，线程A在释放锁之前所有可见的共享变量，在线程B获取同一个锁之后，将立刻变得对B线程可见。</p>
+<h3 id="1-2-锁的释放和获取的内存语义"><a href="#1-2-锁的释放和获取的内存语义" class="headerlink" title="1.2 锁的释放和获取的内存语义"></a><strong>1.2 锁的释放和获取的内存语义</strong></h3><p>当线程释放锁时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存中。以上面的MonitorExample程序为例，A线程释放锁后，共享数据的状态示意图如下图所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170123.png" alt="共享数据的状态示意图"></p>
-<p>&emsp;当线程获取锁时，JMM会把该线程对应的本地内存置为无效。从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。下图是锁获取的状态示意图。</p>
+<p>当线程获取锁时，JMM会把该线程对应的本地内存置为无效。从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。下图是锁获取的状态示意图。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170124.png" alt="锁获取的状态示意图"></p>
-<blockquote>
 <p>对比锁释放-获取的内存语义与volatile写-读的内存语义可以看出：</p>
-<blockquote>
 <ol>
 <li>锁释放与volatile写有相同的内存语义；</li>
 <li>锁获取与volatile读有相同的内存语义。</li>
 </ol>
-</blockquote>
-</blockquote>
-<blockquote>
 <p>对锁释放和锁获取的内存语义的总结：</p>
-<blockquote>
 <ul>
 <li>线程A释放一个锁，实质上是线程A向接下来将要获取这个锁的某个线程发出了（线程A对共享变量所做修改的）消息。</li>
 <li>线程B获取一个锁，实质上是线程B接收了之前某个线程发出的（在释放这个锁之前对共享变量所做修改的）消息。</li>
 <li>线程A释放锁，随后线程B获取这个锁，这个过程实质上是线程A通过主内存向线程B发送消息。</li>
 </ul>
-</blockquote>
-</blockquote>
-<h2 id="锁内存语义的实现"><a href="#锁内存语义的实现" class="headerlink" title="锁内存语义的实现"></a><strong>锁内存语义的实现</strong></h2><p>&emsp;此部分将借助<a href="../2019032901.html" title="Title">ReentrantLock</a>的源代码，来分析锁内存语义的具体实现机制。</p>
-<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">ReentrantLockExample</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">    ReentrantLock <span class="keyword">lock</span> = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writer</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">lock</span>.<span class="keyword">lock</span>(); <span class="comment">// 获取锁</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            a++;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">lock</span>.unlock(); <span class="comment">// 释放锁</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reader</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">lock</span>.<span class="keyword">lock</span>(); <span class="comment">// 获取锁</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> i = a;</span><br><span class="line">            ……</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">lock</span>.unlock(); <span class="comment">// 释放锁</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;在ReentrantLock中，调用lock()方法获取锁；调用unlock()方法释放锁。ReentrantLock的实现依赖于Java同步器框架AbstractQueuedSynchronizer（本文简称之为AQS）。AQS使用一个整型的volatile变量（命名为state）来维护同步状态，这个volatile变量是ReentrantLock内存语义实现的关键。</p>
-<p>&emsp;下图是ReentrantLock的类图（仅画出与本文相关的部分）。</p>
+<h3 id="1-3-锁内存语义的实现"><a href="#1-3-锁内存语义的实现" class="headerlink" title="1.3 锁内存语义的实现"></a><strong>1.3 锁内存语义的实现</strong></h3><p>此部分将借助<a href="../2019032901.html" title="Title">ReentrantLock</a>的源代码，来分析锁内存语义的具体实现机制。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ReentrantLockExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">    ReentrantLock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        lock.lock(); <span class="comment">// 获取锁</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            a++;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock(); <span class="comment">// 释放锁</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reader</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        lock.lock(); <span class="comment">// 获取锁</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> i = a;</span><br><span class="line">            ……</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unlock(); <span class="comment">// 释放锁</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在ReentrantLock中，调用lock()方法获取锁；调用unlock()方法释放锁。ReentrantLock的实现依赖于Java同步器框架AbstractQueuedSynchronizer（本文简称之为AQS）。AQS使用一个整型的volatile变量（命名为state）来维护同步状态，这个volatile变量是ReentrantLock内存语义实现的关键。</p>
+<p>下图是ReentrantLock的类图（仅画出与本文相关的部分）。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170125.png" alt="ReentrantLock的类图"></p>
-<p>&emsp;ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。</p>
-<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a><strong>公平锁</strong></h4><blockquote>
-<p>使用公平锁时，加锁方法lock()调用轨迹如下:</p>
+<p>ReentrantLock分为公平锁和非公平锁，我们首先分析公平锁。</p>
+<h4 id="3-1-公平锁"><a href="#3-1-公平锁" class="headerlink" title="3.1 公平锁"></a><strong>3.1 公平锁</strong></h4><p>使用公平锁时，加锁方法lock()调用轨迹如下:</p>
 <ol>
 <li>ReentrantLock:lock()。</li>
 <li>FairSync:lock()。</li>
 <li>AbstractQueuedSynchronizer:acquire(int arg)。</li>
 <li>ReentrantLock:tryAcquire(int acquires)。</li>
 </ol>
-</blockquote>
-<p>&emsp;在第4步真正开始加锁，下面是该方法的源代码。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="function"><span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Thread current = Thread.currentThread();</span><br><span class="line">    <span class="keyword">int</span> c = getState(); <span class="comment">// 获取锁的开始，首先读volatile变量state</span></span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (isFirst(current) &amp;&amp; compareAndSetState(<span class="number">0</span>, acquires)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(current);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">        <span class="keyword">int</span> nextc = c + acquires;</span><br><span class="line">        <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Maximum lock count exceeded"</span>);</span><br><span class="line">        setState(nextc);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;从上面源代码中我们可以看出，加锁方法首先读volatile变量state。</p>
-<blockquote>
-<p>在使用公平锁时，解锁方法unlock()调用轨迹如下。</p>
+<p>在第4步真正开始加锁，下面是该方法的源代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Thread current = Thread.currentThread();</span><br><span class="line">    <span class="keyword">int</span> c = getState(); <span class="comment">// 获取锁的开始，首先读volatile变量state</span></span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (isFirst(current) &amp;&amp; compareAndSetState(<span class="number">0</span>, acquires)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(current);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">        <span class="keyword">int</span> nextc = c + acquires;</span><br><span class="line">        <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Maximum lock count exceeded"</span>);</span><br><span class="line">        setState(nextc);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面源代码中我们可以看出，加锁方法首先读volatile变量state。</p>
+<p>在使用公平锁时，解锁方法unlock()调用轨迹如下：</p>
 <ol>
 <li>ReentrantLock:unlock()。</li>
 <li>AbstractQueuedSynchronizer:release(int arg)。</li>
 <li>Sync:tryRelease(int releases)。</li>
 </ol>
-</blockquote>
-<p>&emsp;在第3步真正开始释放锁，下面是该方法的源代码。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="function"><span class="keyword">boolean</span> <span class="title">tryRelease</span><span class="params">(<span class="keyword">int</span> releases)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c = getState() - releases;</span><br><span class="line">    <span class="keyword">if</span> (Thread.currentThread() != getExclusiveOwnerThread())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException();</span><br><span class="line">    <span class="keyword">boolean</span> free = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        free = <span class="keyword">true</span>;</span><br><span class="line">        setExclusiveOwnerThread(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    setState(c); <span class="comment">// 释放锁的最后，写volatile变量state</span></span><br><span class="line">    <span class="keyword">return</span> free;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;从上面的源代码可以看出，在释放锁的最后写volatile变量state。公平锁在释放锁的最后写volatile变量state，在获取锁时首先读这个volatile变量。根据<br>volatile的happens-before规则，释放锁的线程在写volatile变量之前可见的共享变量，在获取锁的线程读取同一个volatile变量后将立即变得对获取锁的线程可见。</p>
-<h4 id="非公平锁"><a href="#非公平锁" class="headerlink" title="非公平锁"></a><strong>非公平锁</strong></h4><p>&emsp;现在我们来分析非公平锁的内存语义的实现。非公平锁的释放和公平锁完全一样，所以这里仅仅分析非公平锁的获取。</p>
-<blockquote>
-<p>使用非公平锁时，加锁方法lock()调用轨迹如下。</p>
+<p>在第3步真正开始释放锁，下面是该方法的源代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryRelease</span><span class="params">(<span class="keyword">int</span> releases)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c = getState() - releases;</span><br><span class="line">    <span class="keyword">if</span> (Thread.currentThread() != getExclusiveOwnerThread())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalMonitorStateException();</span><br><span class="line">    <span class="keyword">boolean</span> free = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        free = <span class="keyword">true</span>;</span><br><span class="line">        setExclusiveOwnerThread(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    setState(c); <span class="comment">// 释放锁的最后，写volatile变量state</span></span><br><span class="line">    <span class="keyword">return</span> free;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的源代码可以看出，在释放锁的最后写volatile变量state。公平锁在释放锁的最后写volatile变量state，在获取锁时首先读这个volatile变量。根据<br>volatile的happens-before规则，释放锁的线程在写volatile变量之前可见的共享变量，在获取锁的线程读取同一个volatile变量后将立即变得对获取锁的线程可见。</p>
+<h4 id="3-2-非公平锁"><a href="#3-2-非公平锁" class="headerlink" title="3.2 非公平锁"></a><strong>3.2 非公平锁</strong></h4><p>现在我们来分析非公平锁的内存语义的实现。非公平锁的释放和公平锁完全一样，所以这里仅仅分析非公平锁的获取。</p>
+<p>使用非公平锁时，加锁方法lock()调用轨迹如下：</p>
 <ol>
 <li>ReentrantLock:lock()。</li>
 <li>NonfairSync:lock()。</li>
 <li>AbstractQueuedSynchronizer:compareAndSetState(int expect,int update)。</li>
 </ol>
-</blockquote>
-<p>&emsp;在第3步真正开始加锁，下面是该方法的源代码。<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="function"><span class="keyword">boolean</span> <span class="title">compareAndSetState</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">return</span> unsafe.<span class="title">compareAndSwapInt</span><span class="params">(<span class="keyword">this</span>, stateOffset, expect, update)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;该方法以原子操作的方式更新state变量，本文把Java的compareAndSet()方法调用简称为CAS。可以结合文章<a href="../2019051801.html" title="Title">CAS原理</a>学习。JDK文档对该方法的说明如下：如果当前状态值等于预期值，则以原子方式将同步状态设置为给定的更新值。此操作具有volatile读和写的内存语义。</p>
-<h5 id="为什么说CAS同时具有volatile读和volatile写的内存语义？"><a href="#为什么说CAS同时具有volatile读和volatile写的内存语义？" class="headerlink" title="为什么说CAS同时具有volatile读和volatile写的内存语义？"></a><strong>为什么说CAS同时具有volatile读和volatile写的内存语义？</strong></h5><p>&emsp;这里我们分别从编译器和处理器的角度来分析，CAS如何同时具有volatile读和volatile写的内存语义。</p>
-<p>&emsp;前文<a href="../2019040201.html" title="Title">volatile</a>我们提到过，编译器不会对volatile读与volatile读后面的任意内存操作重排序；编译器不会对volatile写与volatile写前面的任意内存操作重排序。组合这两个条件，意味着为了同时实现volatile读和volatile写的内存语义，编译器不能对CAS与CAS前面和后面的任意内存操作重排序。</p>
-<p>&emsp;下面我们来分析在常见的intel X86处理器中，CAS是如何同时具有volatile读和volatile写的内存语义的。</p>
-<p>&emsp;下面是sun.misc.Unsafe类的compareAndSwapInt()方法的源代码。<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="function"><span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">int</span> expected, <span class="keyword">int</span> x)</span></span>;</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;可以看到，这是一个本地方法调用。这个本地方法在openjdk中依次调用的c++代码为：unsafe.cpp，atomic.cpp和atomic_windows_x86.inline.hpp。这个本地方法的最终实现在openjdk的如下位置：openjdk-7-fcs-src-b147-<br>27_jun_2011\openjdk\hotspot\src\os_cpu\windows_x86\vm\atomic_windows_x86.inline.hpp（对应于Windows操作系统，X86处理器）。</p>
-<p>&emsp;下面是对应于intel X86处理器的源代码的片段。<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">inline jint Atomic::<span class="keyword">cmpxchg</span> (jint exchange_value, volatile jint* dest, jint compare_value) &#123; </span><br><span class="line">    // alternative for InterlockedCompareExchange</span><br><span class="line">    <span class="keyword">int</span> mp = os::is_MP()<span class="comment">;</span></span><br><span class="line">    __asm &#123;</span><br><span class="line">        <span class="keyword">mov</span> <span class="built_in">edx</span>, dest</span><br><span class="line">        <span class="keyword">mov</span> <span class="built_in">ecx</span>, exchange_value</span><br><span class="line">        <span class="keyword">mov</span> <span class="built_in">eax</span>, compare_value</span><br><span class="line">        LOCK_IF_MP(mp)</span><br><span class="line">        <span class="keyword">cmpxchg</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>], <span class="built_in">ecx</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;如上面源代码所示，程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀。如果程序是在多处理器上运行，就为cmpxchg指令加上lock前缀（Lock Cmpxchg）。反之，如果程序是在单处理器上运行，就省略lock前缀（单处理器自身会维护单处理器内的顺序一致性，不需要lock前缀提供的内存屏障效果）。<br>intel的手册对lock前缀的说明如下。</p>
+<p>在第3步真正开始加锁，下面是该方法的源代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSetState</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, stateOffset, expect, update);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>该方法以原子操作的方式更新state变量，本文把Java的compareAndSet()方法调用简称为CAS。可以结合文章<a href="../2019051801.html" title="Title">CAS原理</a>学习。JDK文档对该方法的说明如下：如果当前状态值等于预期值，则以原子方式将同步状态设置为给定的更新值。此操作具有volatile读和写的内存语义。</p>
+<h5 id="为什么说CAS同时具有volatile读和volatile写的内存语义？"><a href="#为什么说CAS同时具有volatile读和volatile写的内存语义？" class="headerlink" title="为什么说CAS同时具有volatile读和volatile写的内存语义？"></a><strong>为什么说CAS同时具有volatile读和volatile写的内存语义？</strong></h5><p>这里我们分别从编译器和处理器的角度来分析，CAS如何同时具有volatile读和volatile写的内存语义。</p>
+<p>前文<a href="../2019040201.html" title="Title">volatile</a>我们提到过，编译器不会对volatile读与volatile读后面的任意内存操作重排序；编译器不会对volatile写与volatile写前面的任意内存操作重排序。组合这两个条件，意味着为了同时实现volatile读和volatile写的内存语义，编译器不能对CAS与CAS前面和后面的任意内存操作重排序。</p>
+<p>下面我们来分析在常见的intel X86处理器中，CAS是如何同时具有volatile读和volatile写的内存语义的。</p>
+<p>下面是sun.misc.Unsafe类的compareAndSwapInt()方法的源代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object o, <span class="keyword">long</span> offset, <span class="keyword">int</span> expected, <span class="keyword">int</span> x)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这是一个本地方法调用。这个本地方法在openjdk中依次调用的c++代码为：unsafe.cpp，atomic.cpp和atomic_windows_x86.inline.hpp。这个本地方法的最终实现在openjdk的如下位置：<code>openjdk-7-fcs-src-b147-
+27_jun_2011\openjdk\hotspot\src\os_cpu\windows_x86\vm\atomic_windows_x86.inline.hpp</code>（对应于Windows操作系统，X86处理器）。</p>
+<p>下面是对应于intel X86处理器的源代码的片段。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">inline jint Atomic::cmpxchg (jint exchange_value, <span class="keyword">volatile</span> jint* dest, jint compare_value) &#123; </span><br><span class="line">    <span class="comment">// alternative for InterlockedCompareExchange</span></span><br><span class="line">    <span class="keyword">int</span> mp = os::is_MP();</span><br><span class="line">    __asm &#123;</span><br><span class="line">        mov edx, dest</span><br><span class="line">        mov ecx, exchange_value</span><br><span class="line">        mov eax, compare_value</span><br><span class="line">        LOCK_IF_MP(mp)</span><br><span class="line">        cmpxchg dword ptr [edx], ecx</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如上面源代码所示，程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀。如果程序是在多处理器上运行，就为cmpxchg指令加上lock前缀（Lock Cmpxchg）。反之，如果程序是在单处理器上运行，就省略lock前缀（单处理器自身会维护单处理器内的顺序一致性，不需要lock前缀提供的内存屏障效果）。<br>intel的手册对lock前缀的说明如下。</p>
 <ol>
 <li>确保对内存的读-改-写操作原子执行。在Pentium及Pentium之前的处理器中，带有lock前缀的指令在执行期间会锁住总线，使得其他处理器暂时无法通过总线访问内存。<a href="../2019051601.html" title="Title">原子操作的实现原理</a>中有介绍Lock信号实现总线锁。很显然，这会带来昂贵的开销。从Pentium 4、Intel Xeon及P6处理器开始，Intel使用<strong>缓存锁定</strong>（Cache Locking）来保证指令执行的原子性。缓存锁定将大大降低lock前缀指令的执行开销。</li>
 <li>禁止该指令与之前和之后的读和写指令重排序。</li>
 <li>把写缓冲区中的所有数据刷新到内存中。</li>
 </ol>
-<p>&emsp;上面的第2点和第3点所具有的内存屏障效果，足以同时实现volatile读和volatile写的内存语义。</p>
-<p>&emsp;经过上面的分析，现在我们终于能明白为什么JDK文档说CAS同时具有volatile读和volatile写的内存语义了。</p>
-<blockquote>
-<p>现在对公平锁和非公平锁的内存语义做个总结。</p>
+<p>上面的第2点和第3点所具有的内存屏障效果，足以同时实现volatile读和volatile写的内存语义。</p>
+<p>经过上面的分析，现在我们终于能明白为什么JDK文档说CAS同时具有volatile读和volatile写的内存语义了。</p>
+<p>现在对公平锁和非公平锁的内存语义做个总结：</p>
 <ul>
 <li>公平锁和非公平锁释放时，最后都要写一个volatile变量state。</li>
 <li>公平锁获取时，首先会去读volatile变量。</li>
 <li>非公平锁获取时，首先会用CAS更新volatile变量，这个操作同时具有volatile读和volatile写的内存语义。</li>
 </ul>
-</blockquote>
-<p>&emsp;从本文对ReentrantLock的分析可以看出，锁释放-获取的内存语义的实现至少有下面两种方式。</p>
+<p>从本文对ReentrantLock的分析可以看出，锁释放-获取的内存语义的实现至少有下面两种方式。</p>
 <ol>
 <li>利用volatile变量的写-读所具有的内存语义。</li>
 <li>利用CAS所附带的volatile读和volatile写的内存语义。</li>
 </ol>
-<h2 id="concurrent包的实现"><a href="#concurrent包的实现" class="headerlink" title="concurrent包的实现"></a><strong>concurrent包的实现</strong></h2><p>&emsp;由于Java的CAS同时具有volatile读和volatile写的内存语义，因此Java线程之间的通信现在有了下面4种方式。</p>
+<h3 id="1-4-concurrent包的实现"><a href="#1-4-concurrent包的实现" class="headerlink" title="1.4 concurrent包的实现"></a><strong>1.4 concurrent包的实现</strong></h3><p>由于Java的CAS同时具有volatile读和volatile写的内存语义，因此Java线程之间的通信现在有了下面4种方式。</p>
 <ol>
 <li>A线程写volatile变量，随后B线程读这个volatile变量。</li>
 <li>A线程写volatile变量，随后B线程用CAS更新这个volatile变量。</li>
 <li>A线程用CAS更新一个volatile变量，随后B线程用CAS更新这个volatile变量。</li>
 <li>A线程用CAS更新一个volatile变量，随后B线程读这个volatile变量。</li>
 </ol>
-<p>&emsp;Java的CAS会使用现代处理器上提供的高效机器级别的原子指令，这些原子指令以原子方式对内存执行读-改-写操作，这是在多处理器中实现同步的关键（从本质上来说，能够支持原子性读-改-写指令的计算机，是顺序计算图灵机的异步等价机器，因此任何现代的多处理器都会去支持某种能对内存执行原子性读-改-写操作的原子指令）。同时，volatile变量的读/写和CAS可以实现线程之间的通信。把这些特性整合在一起，就形成了整个concurrent包得以实现的基石。如果我们仔细分析concurrent包的源代码实现，会发现一个通用化的实现模式。</p>
-<p>&emsp;首先，声明共享变量为volatile。</p>
-<p>&emsp;然后，使用CAS的原子条件更新来实现线程之间的同步。</p>
-<p>&emsp;同时，配合以volatile的读/写和CAS所具有的volatile读和写的内存语义来实现线程之间的通信。</p>
-<p>&emsp;AQS，非阻塞数据结构和原子变量类（java.util.concurrent.atomic包中的类），这些concurrent包中的基础类都是使用这种模式来实现的，而concurrent包中的高层类又是依赖于这些基础类来实现的。</p>
-<p>&emsp;从整体来看，concurrent包的实现示意图如下所示。</p>
+<p>Java的CAS会使用现代处理器上提供的高效机器级别的原子指令，这些原子指令以原子方式对内存执行读-改-写操作，这是在多处理器中实现同步的关键（从本质上来说，能够支持原子性读-改-写指令的计算机，是顺序计算图灵机的异步等价机器，因此任何现代的多处理器都会去支持某种能对内存执行原子性读-改-写操作的原子指令）。同时，volatile变量的读/写和CAS可以实现线程之间的通信。把这些特性整合在一起，就形成了整个concurrent包得以实现的基石。如果我们仔细分析concurrent包的源代码实现，会发现一个通用化的实现模式。</p>
+<p>首先，声明共享变量为volatile。</p>
+<p>然后，使用CAS的原子条件更新来实现线程之间的同步。</p>
+<p>同时，配合以volatile的读/写和CAS所具有的volatile读和写的内存语义来实现线程之间的通信。</p>
+<p>AQS，非阻塞数据结构和原子变量类（java.util.concurrent.atomic包中的类），这些concurrent包中的基础类都是使用这种模式来实现的，而concurrent包中的高层类又是依赖于这些基础类来实现的。</p>
+<p>从整体来看，concurrent包的实现示意图如下所示。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170126.png" alt="concurrent包的实现示意图"></p>
+<hr>
+<h2 id="第二节-final域的内存语义"><a href="#第二节-final域的内存语义" class="headerlink" title="第二节 final域的内存语义"></a><strong>第二节 final域的内存语义</strong></h2><h3 id="2-1-final域的重排序规则"><a href="#2-1-final域的重排序规则" class="headerlink" title="2.1 final域的重排序规则"></a><strong>2.1 final域的重排序规则</strong></h3><p>与锁和volatile相比，对final域的读和写更像是对普通的变量访问。</p>
+<blockquote>
+<p>对于final域，编译器和处理器要遵守两个重排序规则：</p>
+<ol>
+<li>在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。</li>
+<li>初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序。</li>
+</ol>
+</blockquote>
+<p>下面通过一些示例性的代码来分别说明这两个规则。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i; <span class="comment">// 普通变量</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> j; <span class="comment">// final变量</span></span><br><span class="line">    <span class="keyword">static</span> FinalExample obj;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FinalExample</span> <span class="params">()</span> </span>&#123; <span class="comment">// 构造函数</span></span><br><span class="line">        i = <span class="number">1</span>; <span class="comment">// 写普通域</span></span><br><span class="line">        j = <span class="number">2</span>; <span class="comment">// 写final域</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writer</span> <span class="params">()</span> </span>&#123; <span class="comment">// 写线程A执行</span></span><br><span class="line">        obj = <span class="keyword">new</span> FinalExample ();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reader</span> <span class="params">()</span> </span>&#123; <span class="comment">// 读线程B执行</span></span><br><span class="line">        FinalExample object = obj; <span class="comment">// 读对象引用</span></span><br><span class="line">        <span class="keyword">int</span> a = object.i; <span class="comment">// 读普通域</span></span><br><span class="line">        <span class="keyword">int</span> b = object.j; <span class="comment">// 读final域</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设一个线程A执行writer()方法，随后另一个线程B执行reader()方法。我们通过这两个线程的交互来学习这两个规则。</p>
+<h4 id="一、写final域的重排序规则"><a href="#一、写final域的重排序规则" class="headerlink" title="一、写final域的重排序规则"></a><strong>一、写final域的重排序规则</strong></h4><p>写final域的重排序规则禁止把final域的写重排序到构造函数之外。</p>
+<blockquote>
+<p>这个规则的实现包含下面2个方面：</p>
+<ol>
+<li>JMM禁止编译器把final域的写重排序到构造函数之外。</li>
+<li>编译器会在final域的写之后，构造函数return之前，插入一个StoreStore屏障。这个屏障禁止处理器把final域的写重排序到构造函数之外。</li>
+</ol>
+</blockquote>
+<p>现在我们分析writer()方法。writer()方法只包含一行代码：finalExample = newFinalExample()。</p>
+<blockquote>
+<p>这行代码包含两个步骤，如下：</p>
+<ol>
+<li>构造一个FinalExample类型的对象。</li>
+<li>把这个对象的引用赋值给引用变量obj。</li>
+</ol>
+</blockquote>
+<p>假设线程B读对象引用与读对象的成员域之间没有重排序（马上会说明为什么需要这个假设），下图是一种可能的执行时序。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170127.png" alt="线程执行时序图"></p>
+<p>在图中，写普通域的操作被编译器重排序到了构造函数之外，读线程B错误地读取了普通变量i初始化之前的值。而写final域的操作，被写final域的重排序规则“限定”在了构造函数之内，读线程B正确地读取了final变量初始化之后的值。写final域的重排序规则可以确保：在对象引用为任意线程可见之前，对象的final域已经被正确初始化过了，而普通域不具有这个保障。以上图为例，在读线程B“看到”对象引用obj时，很可能obj对象还没有构造完成（对普通域i的写操作被重排序到构造函数外，此时初始值1还没有写入普通域i）。</p>
+<h4 id="二、读final域的重排序规则"><a href="#二、读final域的重排序规则" class="headerlink" title="二、读final域的重排序规则"></a><strong>二、读final域的重排序规则</strong></h4><p>读final域的重排序规则是，在一个线程中，初次读对象引用与初次读该对象包含的final域，JMM禁止处理器重排序这两个操作（注意，这个规则仅仅针对处理器）。编译器会在读final域操作的前面插入一个LoadLoad屏障。初次读对象引用与初次读该对象包含的final域，这两个操作之间存在<strong>间接依赖</strong>关系。由于编译器遵守间接依赖关系，因此编译器不会重排序这两个操作。大多数处理器也会遵守间接依赖，也不会重排序这两个操作。但有少数处理器允许对存在间接依赖关系的操作做重排序（比如alpha处理器），这个规则就是专门用来针对这种处理器的。</p>
+<blockquote>
+<p>reader()方法包含3个操作：</p>
+<ul>
+<li>初次读引用变量obj。</li>
+<li>初次读引用变量obj指向对象的普通域j。</li>
+<li>初次读引用变量obj指向对象的final域i。</li>
+</ul>
+</blockquote>
+<p>假设写线程A没有发生任何重排序，同时程序在不遵守间接依赖的处理器上执行，下图所示是一种可能的执行时序。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170128.png" alt="线程执行时序图"></p>
+<p>在图中，读对象的普通域的操作被处理器重排序到读对象引用之前。读普通域时，该域还没有被写线程A写入，这是一个错误的读取操作。而读final域的重排序规则会把读对象final域的操作“限定”在读对象引用之后，此时该final域已经被A线程初始化过了，这是一个正确的读取操作。</p>
+<p>读final域的重排序规则可以确保：在读一个对象的final域之前，一定会先读包含这个final域的对象的引用。在这个示例程序中，如果该引用不为null，那么引用对象的final域一定已经被A线程初始化过了。</p>
+<h3 id="2-2-final域为引用类型"><a href="#2-2-final域为引用类型" class="headerlink" title="2.2 final域为引用类型"></a><strong>2.2 final域为引用类型</strong></h3><p>上面我们看到的final域是基础数据类型，如果final域是引用类型，将会有什么效果？请看下列示例代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalReferenceExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span>[] intArray; <span class="comment">// final是引用类型</span></span><br><span class="line">    <span class="keyword">static</span> FinalReferenceExample obj;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FinalReferenceExample</span> <span class="params">()</span> </span>&#123; <span class="comment">// 构造函数</span></span><br><span class="line">        intArray = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>]; <span class="comment">// 1</span></span><br><span class="line">        intArray[<span class="number">0</span>] = <span class="number">1</span>; <span class="comment">// 2</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writerOne</span> <span class="params">()</span> </span>&#123; <span class="comment">// 写线程A执行</span></span><br><span class="line">        obj = <span class="keyword">new</span> FinalReferenceExample (); <span class="comment">// 3</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writerTwo</span> <span class="params">()</span> </span>&#123; <span class="comment">// 写线程B执行</span></span><br><span class="line">        obj.intArray[<span class="number">0</span>] = <span class="number">2</span>; <span class="comment">// 4</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reader</span> <span class="params">()</span> </span>&#123; <span class="comment">// 读线程C执行</span></span><br><span class="line">        <span class="keyword">if</span> (obj != <span class="keyword">null</span>) &#123; </span><br><span class="line">            <span class="comment">// 5</span></span><br><span class="line">            <span class="keyword">int</span> temp1 = obj.intArray[<span class="number">0</span>]; <span class="comment">// 6</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本例final域为一个引用类型，它引用一个int型的数组对象。对于引用类型，写final域的重排序规则对编译器和处理器增加了如下约束：在构造函数内对一个final引用的对象的成员域的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。对上面的示例程序，假设首先线程A执行writerOne()方法，执行完后线程B执行writerTwo()方法，执行完后线程C执行reader()方法。</p>
+<p>下图是一种可能的线程执行时序。在图中，1是对final域的写入，2是对这个final域引用的对象的成员域的写入，3是把被构造的对象的引用赋值给某个引用变量。这里除了前面提到的1不能和3重排序外，2和3也不能重排序。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170129.png" alt="引用型final的执行时序图"></p>
+<p>JMM可以确保读线程C至少能看到写线程A在构造函数中对final引用对象的成员域的写入。即C至少能看到数组下标0的值为1。而写线程B对数组元素的写入，读线程C可能看得到，也可能看不到。JMM不保证线程B的写入对读线程C可见，因为写线程B和读线程C之间存在数据竞争，此时的执行结果不可预知。如果想要确保读线程C看到写线程B对数组元素的写入，写线程B和读线程C之间需要使用同步原语（lock或volatile）来确保内存可见性。</p>
+<h3 id="2-3-为什么final引用不能从构造函数内“溢出”"><a href="#2-3-为什么final引用不能从构造函数内“溢出”" class="headerlink" title="2.3 为什么final引用不能从构造函数内“溢出”"></a><strong>2.3 为什么final引用不能从构造函数内“溢出”</strong></h3><p>前面提到，写final域的重排序规则可以确保：在引用变量为任意线程可见之前，该引用变量指向的对象的final域已经在构造函数中被正确初始化过了。其实，要得到这个效果，还需要一个保证：在构造函数内部，不能让这个被构造对象的引用为其他线程所见，也就是对象引用不能在构造函数中“逸出”。为了说明问题，让我们来看下面的示例代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FinalReferenceEscapeExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">static</span> FinalReferenceEscapeExample obj;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FinalReferenceEscapeExample</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        i = <span class="number">1</span>; <span class="comment">// 1写final域</span></span><br><span class="line">        obj = <span class="keyword">this</span>; <span class="comment">// 2 this引用在此"逸出"</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> FinalReferenceEscapeExample ();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (obj != <span class="keyword">null</span>) &#123; <span class="comment">// 3</span></span><br><span class="line">            <span class="keyword">int</span> temp = obj.i; <span class="comment">// 4</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设一个线程A执行writer()方法，另一个线程B执行reader()方法。这里的操作2使得对象还未完成构造前就为线程B可见。即使这里的操作2是构造函数的最后一步，且在程序中操作2排在操作1后面，执行reader()方法的线程仍然可能无法看到final域被初始化后的值，因为这里的操作1和操作2之间可能被重排序。实际的执行时序可能如下图所示。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20190512/201905170130.png" alt="多线程执行时序图"></p>
+<p>从图可以看出：在构造函数返回前，被构造对象的引用不能为其他线程所见，因为此时的final域可能还没有被初始化。在构造函数返回后，任意线程都将保证能看到final域正确初始化之后的值。</p>
+<h3 id="2-4-final语义在处理器中的实现"><a href="#2-4-final语义在处理器中的实现" class="headerlink" title="2.4 final语义在处理器中的实现"></a><strong>2.4 final语义在处理器中的实现</strong></h3><p>现在我们以X86处理器为例，说明final语义在处理器中的具体实现。上面我们提到，写final域的重排序规则会要求编译器在final域的写之后，构造函数return之前插入一个StoreStore障屏。读final域的重排序规则要求编译器在读final域的操作前面插入一个LoadLoad屏障。</p>
+<p>由于X86处理器不会对写-写操作做重排序，所以在X86处理器中，写final域需要的StoreStore障屏会被省略掉。同样，由于X86处理器不会对存在间接依赖关系的操作做重排序，所以在X86处理器中，读final域需要的LoadLoad屏障也会被省略掉。也就是说，在X86处理器中，final域的读/写不会插入任何内存屏障！</p>
+<h3 id="2-5-JSR-133为什么要增强final的语义"><a href="#2-5-JSR-133为什么要增强final的语义" class="headerlink" title="2.5 JSR-133为什么要增强final的语义"></a><strong>2.5 JSR-133为什么要增强final的语义</strong></h3><p>在旧的Java内存模型中，一个最严重的缺陷就是线程可能看到final域的值会改变。比如，一个线程当前看到一个整型final域的值为0（还未初始化之前的默认值），过一段时间之后这个线程再去读这个final域的值时，却发现值变为1（被某个线程初始化之后的值）。最常见的例子就是在旧的Java内存模型中，String的值可能会改变。</p>
+<p>为了修补这个漏洞，JSR-133专家组增强了final的语义。通过为final域增加写和读重排序规则，可以为Java程序员提供初始化安全保证：只要对象是正确构造的（被构造对象的引用在构造函数中没有“逸出”），那么不需要使用同步（指lock和volatile的使用）就可以保证任意线程都能看到这个final域在构造函数中被初始化之后的值。</p>
 <hr>
 <p><em>参考博客和文章书籍等：</em></p>
 <blockquote>
@@ -644,8 +684,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019062301.html" rel="prev" title="final域的内存语义">
-                final域的内存语义 <i class="fa fa-chevron-right"></i>
+              <a href="/2019062401.html" rel="prev" title="happens-before规则">
+                happens-before规则 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -735,7 +775,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">276</span>
+                  <span class="site-state-item-count">275</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -746,7 +786,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -757,7 +797,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">92</span>
+                  <span class="site-state-item-count">91</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -856,7 +896,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#锁的内存语义"><span class="nav-number">1.</span> <span class="nav-text">锁的内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的释放-获取建立的happens-before关系"><span class="nav-number">1.1.</span> <span class="nav-text">锁的释放-获取建立的happens-before关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁的释放和获取的内存语义"><span class="nav-number">1.2.</span> <span class="nav-text">锁的释放和获取的内存语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁内存语义的实现"><span class="nav-number">1.3.</span> <span class="nav-text">锁内存语义的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#公平锁"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">公平锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#非公平锁"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">非公平锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么说CAS同时具有volatile读和volatile写的内存语义？"><span class="nav-number">1.3.0.2.1.</span> <span class="nav-text">为什么说CAS同时具有volatile读和volatile写的内存语义？</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#concurrent包的实现"><span class="nav-number">1.4.</span> <span class="nav-text">concurrent包的实现</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#锁和final域的内存语义"><span class="nav-number">1.</span> <span class="nav-text">锁和final域的内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-锁的内存语义"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 锁的内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-锁的释放-获取建立的happens-before关系"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 锁的释放-获取建立的happens-before关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-锁的释放和获取的内存语义"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 锁的释放和获取的内存语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-锁内存语义的实现"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 锁内存语义的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-公平锁"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">3.1 公平锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-非公平锁"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">3.2 非公平锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#为什么说CAS同时具有volatile读和volatile写的内存语义？"><span class="nav-number">1.1.3.2.1.</span> <span class="nav-text">为什么说CAS同时具有volatile读和volatile写的内存语义？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-concurrent包的实现"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 concurrent包的实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-final域的内存语义"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 final域的内存语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-final域的重排序规则"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 final域的重排序规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、写final域的重排序规则"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">一、写final域的重排序规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、读final域的重排序规则"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">二、读final域的重排序规则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-final域为引用类型"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 final域为引用类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-为什么final引用不能从构造函数内“溢出”"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 为什么final引用不能从构造函数内“溢出”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-final语义在处理器中的实现"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 final语义在处理器中的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-JSR-133为什么要增强final的语义"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 JSR-133为什么要增强final的语义</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
