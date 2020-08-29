@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Spring Cloud相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-05-12T07:33:08.027Z">
+<meta property="og:updated_time" content="2020-08-29T14:48:11.706Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Spring Cloud">
 <meta name="twitter:description" content="整理面试中常问的Spring Cloud相关问题，持续更新中。">
@@ -449,32 +449,42 @@
       
 
       
-        <h1 id="Java并发编程"><a href="#Java并发编程" class="headerlink" title="Java并发编程"></a><strong>Java并发编程</strong></h1><h2 id="第一节-待整理"><a href="#第一节-待整理" class="headerlink" title="第一节 待整理"></a><strong>第一节 待整理</strong></h2><h4 id="问：Zuul与Gateway区别？"><a href="#问：Zuul与Gateway区别？" class="headerlink" title="问：Zuul与Gateway区别？"></a><strong>问：Zuul与Gateway区别？</strong></h4><details><br><br>（1）：zuul则是netflix公司的项目集成在spring-cloud中使用而已， Gateway是spring-cloud的 一个子项目；<br><br>（2）：zuul不提供异步支持流控等均由hystrix支持， gateway提供了异步支持，提供了抽象负载均衡，提供了抽象流控； 理论上gateway则更适合于提高系统吞吐量（但不一定能有更好的性能），最终性能还需要通过严密的压测来决定<br><br>（3）：两者底层实现都是servlet，但是gateway多嵌套了一层webflux框架<br><br>（4）： zuul可用至其他微服务框架中，内部没有实现限流、负载均衡；gateway只能用在springcloud中；<br><br></details>
-
-<h4 id="问：Zuul原理分析？"><a href="#问：Zuul原理分析？" class="headerlink" title="问：Zuul原理分析？"></a><strong>问：Zuul原理分析？</strong></h4><details><br><br>（1）：请求给zuulservlet处理（HttpServlet子类） zuulservlet中有一个zuulRunner对象，该对象中初始化了RequestContext（存储请求的数据），RequestContext被所有的zuulfilter共享；<br><br>（2）： zuulRunner中有 FilterProcessor（zuulfilter的管理器），其从filterloader 中获取zuulfilter；<br><br>（3）：有了这些filter之后， zuulservelet执行的Pre-&gt; route-&gt; post 类型的过滤器，如果在执行这些过滤器有错误的时候则会执行error类型的过滤器，执行完后把结果返回给客户端.<br><br></details>
-
-<h4 id="问：Gateway原理分析？"><a href="#问：Gateway原理分析？" class="headerlink" title="问：Gateway原理分析？"></a><strong>问：Gateway原理分析？</strong></h4><details><br><br>（1）：请求到达DispatcherHandler， DispatchHandler在IOC容器初始化时会在容器中实例化HandlerMapping接口<br><br>（2）：用handlerMapping根据请求URL匹配到对应的Route，然后有对应的filter做对应的请求转发最终response返回去<br><br></details>
-
-<h4 id="问：Zookeeper-工作原理（待查）？"><a href="#问：Zookeeper-工作原理（待查）？" class="headerlink" title="问：Zookeeper 工作原理（待查）？"></a><strong>问：Zookeeper 工作原理（待查）？</strong></h4><details><br><br>&emsp;&emsp;Zookeeper 的核心是原子广播，这个机制保证了各个 server 之间的同步。实现这个机制的协议叫做 Zab 协议。Zab 协议有两种模式，它们分别是恢复模式和广播模式。<br><br></details>
-
-<h4 id="问：zoo与eur区别？"><a href="#问：zoo与eur区别？" class="headerlink" title="问：zoo与eur区别？"></a><strong>问：zoo与eur区别？</strong></h4><details><br><br>&gt; <em> zookeeper保证cp（一致性）<br>&gt; </em> eureka保证ap（可用性）<br>&gt; <em> zoo在选举期间注册服务瘫痪，期间不可用<br>&gt; </em> eur各个节点平等关系，只要有一台就可保证服务可用，而查询到的数据可能不是最新的，可以很好应对网络故障导致部分节点失联情况<br>&gt; <em> zoo有leader和follower角色，eur各个节点平等<br>&gt; </em> zoo采用半数存活原则（避免脑裂），eur采用自我保护机制来解决分区问题<br>&gt; * eur本质是个工程，zoo只是一个进程 ZooKeeper基于CP，不保证高可用，如果zookeeper正在选主，或者Zookeeper集群中半数以上机器不可用，那么将无法获得数据。 Eureka基于AP，能保证高可用，即使所有机器都挂了，也能拿到本地缓存的数据。作为注册中心，其实配置是不经常变动的，只有发版（发布新的版本）和机器出故障时会变。对于不经常变动的配置来说，CP是不合适的，而AP在遇到问题时可以用牺牲一致性来保证可用性，既返回旧数据，缓存数据。 所以理论上Eureka是更适合做注册中心。而现实环境中大部分项目可能会使用ZooKeeper，那是因为集群不够大，并且基本不会遇到用做注册中心的机器一半以上都挂了的情况。所以实际上也没什么大问题。<br><br></details>
-
-<h4 id="问：Hystrix原理（待查）？"><a href="#问：Hystrix原理（待查）？" class="headerlink" title="问：Hystrix原理（待查）？"></a><strong>问：Hystrix原理（待查）？</strong></h4><details><br><br>&emsp;&emsp;通过维护一个自己的线程池，当线程池达到阈值的时候，就启动服务降级，返回fallback默认值<br><br></details>
-
-<h4 id="问：为什么需要hystrix熔断？"><a href="#问：为什么需要hystrix熔断？" class="headerlink" title="问：为什么需要hystrix熔断？"></a><strong>问：为什么需要hystrix熔断？</strong></h4><details><br><br>&emsp;&emsp;防止雪崩，及时释放资源，防止系统发生更多的额级联故障，需要对故障和延迟进行隔离，防止单个依赖关系的失败影响整个应用程序；<br><br></details>
-
-<h4 id="问：微服务优缺点？"><a href="#问：微服务优缺点？" class="headerlink" title="问：微服务优缺点？"></a><strong>问：微服务优缺点？</strong></h4><details><br><br>&gt; <em> 每个服务高内聚，松耦合，面向接口编程；<br>&gt; </em> 服务间通信成本，数据一致性，多服务运维难度增加，http传输效率不如rpc<br><br></details>
-
-
-<h4 id="问：eureka自我保护机制？"><a href="#问：eureka自我保护机制？" class="headerlink" title="问：eureka自我保护机制？"></a><strong>问：eureka自我保护机制？</strong></h4><details><br><br>&gt; <em> eur不移除长时间没收到心跳而应该过期的服务<br>&gt; </em> 仍然接受新服务注册和查询请求，但是不会同步到其它节点（高可用）<br>&gt; * 当网络稳定后，当前实例新注册信息会同步到其它节点（最终一致性）<br><br></details>
-
-<h4 id="问：MQ对比？"><a href="#问：MQ对比？" class="headerlink" title="问：MQ对比？"></a><strong>问：MQ对比？</strong></h4><details><br><br>&gt; <em> ActiveMQ：Apache出品，最早使用的消息队列产品，时间比较长了，最近版本更新比较缓慢。 RabbitMQ：erlang语言开发，支持很多的协议，非常重量级，更适合于企业级的开发。性能较好，但是不利于做二次开发和维护。<br>&gt; </em> RocketMQ：阿里开源的消息中间件，纯Java开发，具有高吞吐量、高可用性、适合大规模分布式系统应用的特点，分布式事务。 ZeroMQ：号称最快的消息队列系统，尤其针对大吞吐量的需求场景，采用 C 语言实现。 消息队列的选型需要根据具体应用需求而定，ZeroMQ 小而美，RabbitMQ 大而稳，Kakfa 和 RocketMQ 快而强劲<br><br></details>
-
-
+        <h1 id="Java并发编程"><a href="#Java并发编程" class="headerlink" title="Java并发编程"></a><strong>Java并发编程</strong></h1><h2 id="第一节-待整理"><a href="#第一节-待整理" class="headerlink" title="第一节 待整理"></a><strong>第一节 待整理</strong></h2><h4 id="问：Zuul与Gateway区别？"><a href="#问：Zuul与Gateway区别？" class="headerlink" title="问：Zuul与Gateway区别？"></a><strong>问：Zuul与Gateway区别？</strong></h4><p>（1）：zuul则是netflix公司的项目集成在spring-cloud中使用而已， Gateway是spring-cloud的 一个子项目；</p>
+<p>（2）：zuul不提供异步支持流控等均由hystrix支持， gateway提供了异步支持，提供了抽象负载均衡，提供了抽象流控； 理论上gateway则更适合于提高系统吞吐量（但不一定能有更好的性能），最终性能还需要通过严密的压测来决定</p>
+<p>（3）：两者底层实现都是servlet，但是gateway多嵌套了一层webflux框架</p>
+<p>（4）： zuul可用至其他微服务框架中，内部没有实现限流、负载均衡；gateway只能用在springcloud中；</p>
+<h4 id="问：Zuul原理分析？"><a href="#问：Zuul原理分析？" class="headerlink" title="问：Zuul原理分析？"></a><strong>问：Zuul原理分析？</strong></h4><p>（1）：请求给zuulservlet处理（HttpServlet子类） zuulservlet中有一个zuulRunner对象，该对象中初始化了RequestContext（存储请求的数据），RequestContext被所有的zuulfilter共享；</p>
+<p>（2）： zuulRunner中有 FilterProcessor（zuulfilter的管理器），其从filterloader 中获取zuulfilter；</p>
+<p>（3）：有了这些filter之后， zuulservelet执行的Pre- route- post 类型的过滤器，如果在执行这些过滤器有错误的时候则会执行error类型的过滤器，执行完后把结果返回给客户端.</p>
+<h4 id="问：Gateway原理分析？"><a href="#问：Gateway原理分析？" class="headerlink" title="问：Gateway原理分析？"></a><strong>问：Gateway原理分析？</strong></h4><p>（1）：请求到达DispatcherHandler， DispatchHandler在IOC容器初始化时会在容器中实例化HandlerMapping接口</p>
+<p>（2）：用handlerMapping根据请求URL匹配到对应的Route，然后有对应的filter做对应的请求转发最终response返回去</p>
+<h4 id="问：Zookeeper-工作原理（待查）？"><a href="#问：Zookeeper-工作原理（待查）？" class="headerlink" title="问：Zookeeper 工作原理（待查）？"></a><strong>问：Zookeeper 工作原理（待查）？</strong></h4><p>Zookeeper 的核心是原子广播，这个机制保证了各个 server 之间的同步。实现这个机制的协议叫做 Zab 协议。Zab 协议有两种模式，它们分别是恢复模式和广播模式。</p>
+<h4 id="问：zoo与eur区别？"><a href="#问：zoo与eur区别？" class="headerlink" title="问：zoo与eur区别？"></a><strong>问：zoo与eur区别？</strong></h4><ul>
+<li>zookeeper保证cp（一致性）</li>
+<li>eureka保证ap（可用性）</li>
+<li>zoo在选举期间注册服务瘫痪，期间不可用</li>
+<li>eur各个节点平等关系，只要有一台就可保证服务可用，而查询到的数据可能不是最新的，可以很好应对网络故障导致部分节点失联情况</li>
+<li>zoo有leader和follower角色，eur各个节点平等</li>
+<li>zoo采用半数存活原则（避免脑裂），eur采用自我保护机制来解决分区问题</li>
+<li>eur本质是个工程，zoo只是一个进程 ZooKeeper基于CP，不保证高可用，如果zookeeper正在选主，或者Zookeeper集群中半数以上机器不可用，那么将无法获得数据。 Eureka基于AP，能保证高可用，即使所有机器都挂了，也能拿到本地缓存的数据。作为注册中心，其实配置是不经常变动的，只有发版（发布新的版本）和机器出故障时会变。对于不经常变动的配置来说，CP是不合适的，而AP在遇到问题时可以用牺牲一致性来保证可用性，既返回旧数据，缓存数据。 所以理论上Eureka是更适合做注册中心。而现实环境中大部分项目可能会使用ZooKeeper，那是因为集群不够大，并且基本不会遇到用做注册中心的机器一半以上都挂了的情况。所以实际上也没什么大问题。</li>
+</ul>
+<h4 id="问：Hystrix原理（待查）？"><a href="#问：Hystrix原理（待查）？" class="headerlink" title="问：Hystrix原理（待查）？"></a><strong>问：Hystrix原理（待查）？</strong></h4><p>通过维护一个自己的线程池，当线程池达到阈值的时候，就启动服务降级，返回fallback默认值</p>
+<h4 id="问：为什么需要hystrix熔断？"><a href="#问：为什么需要hystrix熔断？" class="headerlink" title="问：为什么需要hystrix熔断？"></a><strong>问：为什么需要hystrix熔断？</strong></h4><p>防止雪崩，及时释放资源，防止系统发生更多的额级联故障，需要对故障和延迟进行隔离，防止单个依赖关系的失败影响整个应用程序；</p>
+<h4 id="问：微服务优缺点？"><a href="#问：微服务优缺点？" class="headerlink" title="问：微服务优缺点？"></a><strong>问：微服务优缺点？</strong></h4><ul>
+<li>每个服务高内聚，松耦合，面向接口编程；</li>
+<li>服务间通信成本，数据一致性，多服务运维难度增加，http传输效率不如rpc</li>
+</ul>
+<h4 id="问：eureka自我保护机制？"><a href="#问：eureka自我保护机制？" class="headerlink" title="问：eureka自我保护机制？"></a><strong>问：eureka自我保护机制？</strong></h4><ul>
+<li>eur不移除长时间没收到心跳而应该过期的服务</li>
+<li>仍然接受新服务注册和查询请求，但是不会同步到其它节点（高可用）</li>
+<li>当网络稳定后，当前实例新注册信息会同步到其它节点（最终一致性）</li>
+</ul>
+<h4 id="问：MQ对比？"><a href="#问：MQ对比？" class="headerlink" title="问：MQ对比？"></a><strong>问：MQ对比？</strong></h4><ul>
+<li>ActiveMQ：Apache出品，最早使用的消息队列产品，时间比较长了，最近版本更新比较缓慢。 RabbitMQ：erlang语言开发，支持很多的协议，非常重量级，更适合于企业级的开发。性能较好，但是不利于做二次开发和维护。 </li>
+<li>RocketMQ：阿里开源的消息中间件，纯Java开发，具有高吞吐量、高可用性、适合大规模分布式系统应用的特点，分布式事务。 ZeroMQ：号称最快的消息队列系统，尤其针对大吞吐量的需求场景，采用 C 语言实现。 消息队列的选型需要根据具体应用需求而定，ZeroMQ 小而美，RabbitMQ 大而稳，Kakfa 和 RocketMQ 快而强劲</li>
+</ul>
 <hr>
-<blockquote>
 <p><a href="https://zhuanlan.zhihu.com/p/138951555" target="_blank" rel="noopener">后端面试的所有知识点</a></p>
-</blockquote>
 <p><em>参考内容均来自网络中网友分享，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
       

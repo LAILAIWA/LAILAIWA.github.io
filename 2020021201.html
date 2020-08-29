@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Spring Boot相关问题，持续更新中。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-08-29T04:07:21.451Z">
+<meta property="og:updated_time" content="2020-08-29T14:47:32.549Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面试整理——Spring Boot">
 <meta name="twitter:description" content="整理面试中常问的Spring Boot相关问题，持续更新中。">
@@ -449,37 +449,67 @@
       
 
       
-        <h1 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a><strong>Spring Boot</strong></h1><h2 id="第一节-综合"><a href="#第一节-综合" class="headerlink" title="第一节 综合"></a><strong>第一节 综合</strong></h2><h3 id="问：SpringBoot和Spring对比？"><a href="#问：SpringBoot和Spring对比？" class="headerlink" title="问：SpringBoot和Spring对比？"></a><strong>问：SpringBoot和Spring对比？</strong></h3><details><br><em> Spring提供了很多好用的功能：SpringJDBC、SpringMVC、SpringSecurity、SpringAOP、SpringORM、SpringTest等。
-</em> SpringBoot可以看作是Spring的扩展和进化。<br><em> 首先设计理念约定大于配置，使用大量默认配置，可以快速搭建项目。
-</em> 嵌入应用服务器如Tomcat、 Jetty、 Undertow容器等，不需要再单独配置Web服务器。<br><em> 支持JavaConfig可以减少笨重的xml配置
-</em> 支持自动配置<br><br></details>
-
-<h4 id="问：SpringBoot启动流程？"><a href="#问：SpringBoot启动流程？" class="headerlink" title="问：SpringBoot启动流程？"></a><strong>问：SpringBoot启动流程？</strong></h4><details><br><em> 由SpringFactoriesLoader
-</em> 首先 prepareEnvironment 配置环境：prepareEnvironment<br><em> 然后准备 Context 上下文：createApplicationContext 
-</em> ApplicationContext 的后置处理器：postProcessApplicationContext<br><em> 初始化 lnitializers：applylnitializers 
-</em> 通知处理上下文准备和加载时间：listeners.contextPrepared  listeners.contextLoaded<br>* 然后开始refresh：refreshContext<br><br><br><br>通过 SpringFactoriesLoader 加载 META-INF/spring.factories 文件，获取并创建 SpringApplicationRunListener 对象<br><br>2、然后由 SpringApplicationRunListener 来发出 starting 消息<br><br>3、创建参数，并配置当前 SpringBoot 应用将要使用的 Environment<br><br>4、完成之后，依然由 SpringApplicationRunListener 来发出 environmentPrepared 消息<br><br>5、创建 ApplicationContext<br><br>6、初始化 ApplicationContext，并设置 Environment，加载相关配置等<br><br>7、由 SpringApplicationRunListener 来发出 contextPrepared 消息，告知SpringBoot 应用使用的 ApplicationContext 已准备OK<br><br>8、将各种 beans 装载入 ApplicationContext，继续由 SpringApplicationRunListener 来发出 contextLoaded 消息，告知 SpringBoot 应用使用的 ApplicationContext 已装填OK<br><br>9、refresh ApplicationContext，完成IoC容器可用的最后一步<br><br>10、由 SpringApplicationRunListener 来发出 started 消息<br><br>11、完成最终的程序的启动<br><br>12、由 SpringApplicationRunListener 来发出 running 消息，告知程序已运行起来了<br><br></details>
-
-<h4 id="问：Spring-Boot-的核心注解？"><a href="#问：Spring-Boot-的核心注解？" class="headerlink" title="问：Spring Boot 的核心注解？"></a><strong>问：Spring Boot 的核心注解？</strong></h4><details><br><br>核心注解是@SpringBootApplication 由以下三种组成<br><br><em> @SpringBootConfiguration：组合了 @Configuration 注解，实现配置文件的功能。
-</em> @EnableAutoConfiguration：打开自动配置的功能，根据类路径下的 jar 包和配置动态加载配置和注入bean。<br>* @ComponentScan：Spring组件扫描。<br><br></details>
-
-<h4 id="问：SpringBoot常用starter都有哪些？"><a href="#问：SpringBoot常用starter都有哪些？" class="headerlink" title="问：SpringBoot常用starter都有哪些？"></a><strong>问：SpringBoot常用starter都有哪些？</strong></h4><details><br><br><em> spring-boot-starter-web - Web 和 RESTful 应用程序；
-</em>  spring-boot-starter-test - 单元测试和集成测试；<br><em>  spring-boot-starter-jdbc - 传统的 JDBC；
-</em>   spring-boot-starter-security - 使用 SpringSecurity 进行身份验证和授权；<br><em>    spring-boot-starter-data-jpa - 带有 Hibernate 的 Spring Data JPA； 
-</em>    spring-boot-starter-data-rest - 使用 Spring Data REST 公布简单的 REST 服务<br><br></details>
-
-<h4 id="问：Spring-Boot-常用配置文件？"><a href="#问：Spring-Boot-常用配置文件？" class="headerlink" title="问：Spring Boot 常用配置文件？"></a><strong>问：Spring Boot 常用配置文件？</strong></h4><details><br><br>1. properties文件<br>2. yml文件<br><br></details>
-
-<h4 id="问：SpringBoot自动配置的原理？"><a href="#问：SpringBoot自动配置的原理？" class="headerlink" title="问：SpringBoot自动配置的原理？"></a><strong>问：SpringBoot自动配置的原理？</strong></h4><details><br><br><em> @EnableAutoConfiguration找到META-INF/spring.factories（需要创建的bean在里面）配置文件
-</em> 读取每个starter中的spring.factories文件<br><br></details>
-
-<h3 id="问：SpringBoot的自动配置流程？"><a href="#问：SpringBoot的自动配置流程？" class="headerlink" title="问：SpringBoot的自动配置流程？"></a><strong>问：SpringBoot的自动配置流程？</strong></h3><details><br><br><br><br></details>
-
-<h3 id="问：SpringBoot把对象注入容器的几种方法？"><a href="#问：SpringBoot把对象注入容器的几种方法？" class="headerlink" title="问：SpringBoot把对象注入容器的几种方法？"></a><strong>问：SpringBoot把对象注入容器的几种方法？</strong></h3><details><br><em> 通过注解注入：<strong>@Configuration</strong> + <strong>@Bean</strong> + <strong>new Object()</strong>
-</em> 通过构造方法注入：<strong>@Component</strong> + <strong>@Autowired</strong> + <strong>构造器</strong><br>  <em> @Controller / @Service / @Repository / @ComponentScan 都是细化的 @Component
-</em> 通过set方法注入：<strong>@Component</strong> + <strong>@Autowired</strong> + <strong>set()</strong><br>* 通过属性注入：<strong>@Autowired</strong> + <strong>private Object obj</strong><br><br><br><br></details>
-
-<h3 id="问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？"><a href="#问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？" class="headerlink" title="问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？"></a><strong>问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？</strong></h3><details><br>通过构造器注入的方式<br><br><br></details>
-
+        <h1 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a><strong>Spring Boot</strong></h1><h2 id="第一节-综合"><a href="#第一节-综合" class="headerlink" title="第一节 综合"></a><strong>第一节 综合</strong></h2><h3 id="问：SpringBoot和Spring对比？"><a href="#问：SpringBoot和Spring对比？" class="headerlink" title="问：SpringBoot和Spring对比？"></a><strong>问：SpringBoot和Spring对比？</strong></h3><ul>
+<li>Spring提供了很多好用的功能：SpringJDBC、SpringMVC、SpringSecurity、SpringAOP、SpringORM、SpringTest等。</li>
+<li>SpringBoot可以看作是Spring的扩展和进化。</li>
+<li>首先设计理念约定大于配置，使用大量默认配置，可以快速搭建项目。</li>
+<li>嵌入应用服务器如Tomcat、 Jetty、 Undertow容器等，不需要再单独配置Web服务器。</li>
+<li>支持JavaConfig可以减少笨重的xml配置</li>
+<li>支持自动配置</li>
+</ul>
+<h4 id="问：SpringBoot启动流程？"><a href="#问：SpringBoot启动流程？" class="headerlink" title="问：SpringBoot启动流程？"></a><strong>问：SpringBoot启动流程？</strong></h4><ul>
+<li>由SpringFactoriesLoader</li>
+<li>首先 prepareEnvironment 配置环境：prepareEnvironment</li>
+<li>然后准备 Context 上下文：createApplicationContext </li>
+<li>ApplicationContext 的后置处理器：postProcessApplicationContext </li>
+<li>初始化 lnitializers：applylnitializers </li>
+<li>通知处理上下文准备和加载时间：listeners.contextPrepared  listeners.contextLoaded</li>
+<li>然后开始refresh：refreshContext</li>
+</ul>
+<p>通过 SpringFactoriesLoader 加载 META-INF/spring.factories 文件，获取并创建 SpringApplicationRunListener 对象</p>
+<p>2、然后由 SpringApplicationRunListener 来发出 starting 消息</p>
+<p>3、创建参数，并配置当前 SpringBoot 应用将要使用的 Environment</p>
+<p>4、完成之后，依然由 SpringApplicationRunListener 来发出 environmentPrepared 消息</p>
+<p>5、创建 ApplicationContext</p>
+<p>6、初始化 ApplicationContext，并设置 Environment，加载相关配置等</p>
+<p>7、由 SpringApplicationRunListener 来发出 contextPrepared 消息，告知SpringBoot 应用使用的 ApplicationContext 已准备OK</p>
+<p>8、将各种 beans 装载入 ApplicationContext，继续由 SpringApplicationRunListener 来发出 contextLoaded 消息，告知 SpringBoot 应用使用的 ApplicationContext 已装填OK</p>
+<p>9、refresh ApplicationContext，完成IoC容器可用的最后一步</p>
+<p>10、由 SpringApplicationRunListener 来发出 started 消息</p>
+<p>11、完成最终的程序的启动</p>
+<p>12、由 SpringApplicationRunListener 来发出 running 消息，告知程序已运行起来了</p>
+<h4 id="问：Spring-Boot-的核心注解？"><a href="#问：Spring-Boot-的核心注解？" class="headerlink" title="问：Spring Boot 的核心注解？"></a><strong>问：Spring Boot 的核心注解？</strong></h4><p>核心注解是@SpringBootApplication 由以下三种组成</p>
+<ul>
+<li>@SpringBootConfiguration：组合了 @Configuration 注解，实现配置文件的功能。</li>
+<li>@EnableAutoConfiguration：打开自动配置的功能，根据类路径下的 jar 包和配置动态加载配置和注入bean。</li>
+<li>@ComponentScan：Spring组件扫描。</li>
+</ul>
+<h4 id="问：SpringBoot常用starter都有哪些？"><a href="#问：SpringBoot常用starter都有哪些？" class="headerlink" title="问：SpringBoot常用starter都有哪些？"></a><strong>问：SpringBoot常用starter都有哪些？</strong></h4><ul>
+<li>spring-boot-starter-web - Web 和 RESTful 应用程序；</li>
+<li>spring-boot-starter-test - 单元测试和集成测试； </li>
+<li>spring-boot-starter-jdbc - 传统的 JDBC；</li>
+<li>spring-boot-starter-security - 使用 SpringSecurity 进行身份验证和授权；</li>
+<li>spring-boot-starter-data-jpa - 带有 Hibernate 的 Spring Data JPA； </li>
+<li>spring-boot-starter-data-rest - 使用 Spring Data REST 公布简单的 REST 服务</li>
+</ul>
+<h4 id="问：Spring-Boot-常用配置文件？"><a href="#问：Spring-Boot-常用配置文件？" class="headerlink" title="问：Spring Boot 常用配置文件？"></a><strong>问：Spring Boot 常用配置文件？</strong></h4><ol>
+<li>properties文件</li>
+<li>yml文件</li>
+</ol>
+<h4 id="问：SpringBoot自动配置的原理？"><a href="#问：SpringBoot自动配置的原理？" class="headerlink" title="问：SpringBoot自动配置的原理？"></a><strong>问：SpringBoot自动配置的原理？</strong></h4><ul>
+<li>@EnableAutoConfiguration找到META-INF/spring.factories（需要创建的bean在里面）配置文件</li>
+<li>读取每个starter中的spring.factories文件</li>
+</ul>
+<h3 id="问：SpringBoot的自动配置流程？"><a href="#问：SpringBoot的自动配置流程？" class="headerlink" title="问：SpringBoot的自动配置流程？"></a><strong>问：SpringBoot的自动配置流程？</strong></h3><h3 id="问：SpringBoot把对象注入容器的几种方法？"><a href="#问：SpringBoot把对象注入容器的几种方法？" class="headerlink" title="问：SpringBoot把对象注入容器的几种方法？"></a><strong>问：SpringBoot把对象注入容器的几种方法？</strong></h3><ul>
+<li>通过注解注入：<strong>@Configuration</strong> + <strong>@Bean</strong> + <strong>new Object()</strong></li>
+<li>通过构造方法注入：<strong>@Component</strong> + <strong>@Autowired</strong> + <strong>构造器</strong><ul>
+<li>@Controller / @Service / @Repository / @ComponentScan 都是细化的 @Component</li>
+</ul>
+</li>
+<li>通过set方法注入：<strong>@Component</strong> + <strong>@Autowired</strong> + <strong>set()</strong></li>
+<li>通过属性注入：<strong>@Autowired</strong> + <strong>private Object obj</strong></li>
+</ul>
+<h3 id="问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？"><a href="#问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？" class="headerlink" title="问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？"></a><strong>问：假如现在在一个类了要引用到几十个Bean，难道要在类里声明这些bean然后加注解吗，有没有更好的做法？</strong></h3><p>通过构造器注入的方式</p>
 <hr>
 <blockquote>
 <p><a href="https://zhuanlan.zhihu.com/p/138951555" target="_blank" rel="noopener">后端面试的所有知识点</a></p>
