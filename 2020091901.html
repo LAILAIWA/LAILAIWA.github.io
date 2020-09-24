@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="distributed,mom,rabbitmq,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="学习RabbitMQ，第一章《简介和入门》，内容来自于《RabbitMQ实战指南》。">
+<meta name="keywords" content="distributed,mom,rabbitmq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ（一）简介和入门">
+<meta property="og:url" content="http://linyishui.top/2020091901.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="学习RabbitMQ，第一章《简介和入门》，内容来自于《RabbitMQ实战指南》。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010154.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010155.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010143.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010144.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010145.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010146.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010147.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010148.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010149.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010150.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010151.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010152.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010153.png">
+<meta property="og:updated_time" content="2020-09-24T07:07:48.501Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ（一）简介和入门">
+<meta name="twitter:description" content="学习RabbitMQ，第一章《简介和入门》，内容来自于《RabbitMQ实战指南》。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010154.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020091901.html">
+
+
+
+
+
+  <title>RabbitMQ（一）简介和入门 | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020091901.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Speciosity">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RabbitMQ（一）简介和入门</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-19T12:30:19+08:00">
+                2020-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  8,313
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  37
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  学习RabbitMQ，第一章《简介和入门》，内容来自于《RabbitMQ实战指南》。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RabbitMQ（一）简介和入门"><a href="#RabbitMQ（一）简介和入门" class="headerlink" title="RabbitMQ（一）简介和入门"></a><strong>RabbitMQ（一）简介和入门</strong></h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a><strong>第一节 概述</strong></h2><h3 id="1-1-什么是消息中间件"><a href="#1-1-什么是消息中间件" class="headerlink" title="1.1 什么是消息中间件"></a><strong>1.1 什么是消息中间件</strong></h3><p><strong>消息</strong>指在应用间传送的数据。可以只包含字符串、JSON等，也可以包括内嵌对象。</p>
+<p><strong>消息队列中间件</strong>（Message Queue Middleware，即MQ）指利用高效可靠的消息传递机制进行与平台无关的数据交流，并基于数据通信来进行分布式系统的集成。<strong>通过消息传递和消息排队模型，可以在分布式环境下扩展进程间通信</strong>。</p>
+<p>两种传递模式：</p>
+<ul>
+<li><strong>点对点模式</strong>（P2P）：基于队列，消息生产者发送消息到队列，消息消费者从队列接受消息。队列使消息的<strong>异步传输</strong>成为可能。</li>
+<li><strong>发布/订阅模式</strong>（Pub/Sub）：订阅了如何向一个内容节点发布和订阅消息，内容节点被称为<strong>主题</strong>（topic），可以看作是消息传递的中介，消息发布者将消息发布到某个主题，订阅者从主题订阅消息。主题使发布者和订阅者相互独立，可以在消息的<strong>一对多广播</strong>时采用。</li>
+</ul>
+<p>消息中间件提供了基于存储和转发的应用程序之间的异步数据发生，即应用程序间不直接通信，而是作为中介的消息中间件通信。消息中间件封装了远程过程调用（RPC）和网络通信协议的细节。</p>
+<h3 id="1-2-常见的消息中间件"><a href="#1-2-常见的消息中间件" class="headerlink" title="1.2 常见的消息中间件"></a><strong>1.2 常见的消息中间件</strong></h3><p>常见的几款开源消息中间件：</p>
+<ul>
+<li>RabbitMQ：基于AMQP协议，主流消息中间件之一，适合数据量没那么大的项目；</li>
+<li>Kafka：诞生于LinkedIn公司，吞吐量大，可用性高，常用于大数据领域。</li>
+<li>ActiveMQ：Apache老牌消息引擎；</li>
+<li>RocketMQ：阿里巴巴开源产品，Java实现，参考了Kafka的设计，可用性和吞吐量很高，适合于电商和金融互联网场景。</li>
+<li>Apollo：Apache的ActiveMQ子项目。</li>
+</ul>
+<h3 id="1-3-消息中间件的作用"><a href="#1-3-消息中间件的作用" class="headerlink" title="1.3 消息中间件的作用"></a><strong>1.3 消息中间件的作用</strong></h3><ul>
+<li><strong>解耦</strong>：只要遵守同样的接口约束，我们可以独立的扩展和修改通信两端的处理过程。</li>
+<li><strong>冗余（存储）</strong>：消息中间件可以把数据进行持久化直到被完全处理，可以规避数据丢失的风险。即消息在被从中间件删除前，需要处理系统明确的指出此消息已被处理完成。</li>
+<li><strong>扩展性</strong>：因为解耦了应用的处理过程，所以提高消息的入队和处理效率很容易，只须增加处理过程，不需改动代码也不需调节参数。</li>
+<li><strong>削峰</strong>：访问量剧增时，这种情况不一定是常态，如果以此为标准投入资源无疑是巨大的浪费。消息中间件可以使关键组件支撑突发访问压力，不会因为突发的超负荷请求而崩溃。</li>
+<li><strong>可恢复性</strong>：消息中间件降低了进程间的耦合度，即使一个处理消息的进程挂掉，消息仍可以等到系统恢复后进行处理。</li>
+<li><strong>顺序保证</strong>：大部分消息中间件支持一定程度上的数据处理的顺序性。</li>
+<li><strong>缓冲</strong>：消息中间件通过一个缓冲层帮助任务以最高效率执行，有助于控制和优化数据流经过系统的速度。</li>
+<li><strong>异步通信</strong>：有时应用不想也不需要立即处理消息，消息中间件提供了异步处理机制，应用可以放入一些消息但不立即处理。</li>
+</ul>
+<h3 id="1-4-RabbitMQ的发展历程"><a href="#1-4-RabbitMQ的发展历程" class="headerlink" title="1.4 RabbitMQ的发展历程"></a><strong>1.4 RabbitMQ的发展历程</strong></h3><p>RabbitMQ基于 Erlang 语言实现 <strong>AMQP</strong>（Advanced Message Queuing Protocol，高级消息队列协议）的消息中间件，起源于金融系统，用于在分布式系统中存储转发消息。</p>
+<p>之前，商业的消息中间件如微软的MSMQ、IBM的WebSphere等没有创建标准来实现MQ产品的互通或允许应用自定义MQ平台。<strong>JMS</strong>（Java Message Service）应运而生，<strong>试图通过提供公共Java API的方式隐藏单独MQ产品的实际接口，来解决互通问题</strong>。<strong>ActiveMQ</strong>就是基于JMS的一种实现，但这种使用单独标准化接口来胶合不同的接口最终还是会暴露问题，所以业内需要一种新的消息通信标准化方案。</p>
+<p>2006年6月，Cisco、Redhat、iMatix等联合制定了AMQP标准，它是应用层协议的一个开放标准，来解决众多消息中间件的需求和拓扑结构问题。<strong>面向消息的中间件设计，基于此协议的客户端和消息中间件可以传递消息，不受产品、开发语言的限制。</strong></p>
+<p>RabbitMQ早期即实现了AMQP的一个特性：使用协议本身就可以对队列和交换器这样的资源进行配置。而商业MQ进行资源配置需要管理终端的特定工具。</p>
+<h3 id="1-5-RabbitMQ的特点"><a href="#1-5-RabbitMQ的特点" class="headerlink" title="1.5 RabbitMQ的特点"></a><strong>1.5 RabbitMQ的特点</strong></h3><ul>
+<li><strong>可靠性</strong>：通过如持久化、传输确认及发布确认等保障可靠性。</li>
+<li><strong>灵活路由</strong>：消息进入队列前，通过交换器来路由消息。基本的路由功能由内置的交换器来实现，复杂的路由功能可以绑定多个路由器实现，也可以通过插件机制实现自定义的交换器。</li>
+<li><strong>扩展性</strong>：多个RabbitMQ节点可以组成集群，可以根据实际业务情况动态扩展节点。</li>
+<li><strong>高可用性</strong>：队列可以在集群的机器上设置镜像，在部分节点出现问题时仍能使用队列。</li>
+<li><strong>多种协议</strong>：除了原生AMQP协议，还支持STOMP、MQTT等多种消息中间件协议。</li>
+<li><strong>多语言客户端</strong>：支持几乎所有常用语言，如Java、Python、Ruby、PHP、C#、JavaScript等。</li>
+<li><strong>管理界面</strong>：提供了一个易用的用户界面，可以监控和管理消息、集群中的节点等。</li>
+<li><strong>插件机制</strong>：提供了许多插件，可以进行扩展，也可以自定义插件。</li>
+</ul>
+<hr>
+<h2 id="第二节-RabbitMQ的安装和简单实用"><a href="#第二节-RabbitMQ的安装和简单实用" class="headerlink" title="第二节 RabbitMQ的安装和简单实用"></a><strong>第二节 RabbitMQ的安装和简单实用</strong></h2><h3 id="2-1-安装"><a href="#2-1-安装" class="headerlink" title="2.1 安装"></a><strong>2.1 安装</strong></h3><p>首先要安装Erlang，官网地址：<a href="http://www.erlang.org/downloads" target="_blank" rel="noopener">Erlang-Download</a> 。以下基于Linux操作系统安装。</p>
+<h4 id="（1）安装Erlang"><a href="#（1）安装Erlang" class="headerlink" title="（1）安装Erlang"></a><strong>（1）安装Erlang</strong></h4><p>创建安装目录 <code>/opt/erlang</code> ，并下载安装包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ ~]# cd /opt</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ opt]# ls</span><br><span class="line">containerd  gitlab</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ opt]# mkdir /erlang</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ opt]# cd /erlang</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# wget http://erlang.org/download/otp_src_23.0.tar.gz</span><br><span class="line">--2020-09-21 16:20:16--  http://erlang.org/download/otp_src_23.0.tar.gz</span><br><span class="line">Resolving erlang.org (erlang.org)... 192.121.151.106</span><br><span class="line">Connecting to erlang.org (erlang.org)|192.121.151.106|:80... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 88865562 (85M) [application/gzip]</span><br><span class="line">Saving to: ‘otp_src_23.0.tar.gz’</span><br><span class="line"></span><br><span class="line"><span class="meta"> 2%</span><span class="bash"> [=&gt;                                                                                                                   ] 1,907,973   6.64KB/s  eta 2h 40m</span></span><br></pre></td></tr></table></figure>
+<p>官网下载速度太慢，访问 <a href="https://www.erlang-solutions.com/resources/download.html" target="_blank" rel="noopener">RabbitMQ - Erlang</a> 选择对应服务器，复制下载地址：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010154.png" alt></p>
+<p>先删除未下载完成的文件，重新下载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# ls</span><br><span class="line">otp_src_23.0.tar.gz</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# rm -f otp_src_23.0.tar.gz</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# ls</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# wget https://packages.erlang-solutions.com/erlang/rpm/centos/7/x86_64/esl-erlang_23.0.3-1~centos~7_amd64.rpm</span><br><span class="line">--2020-09-21 16:37:11--  https://packages.erlang-solutions.com/erlang/rpm/centos/7/x86_64/esl-erlang_23.0.3-1~centos~7_amd64.rpm</span><br><span class="line">Resolving packages.erlang-solutions.com (packages.erlang-solutions.com)... 13.227.21.48, 13.227.21.118, 13.227.21.90, ...</span><br><span class="line">Connecting to packages.erlang-solutions.com (packages.erlang-solutions.com)|13.227.21.48|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 43642720 (42M) [application/x-rpm]</span><br><span class="line">Saving to: ‘esl-erlang_23.0.3-1~centos~7_amd64.rpm’</span><br><span class="line"></span><br><span class="line"><span class="meta">100%</span><span class="bash">[====================================================================================================================&gt;] 43,642,720  23.1KB/s   <span class="keyword">in</span> 24m 34s</span></span><br><span class="line"></span><br><span class="line">2020-09-21 17:01:49 (28.9 KB/s) - ‘esl-erlang_23.0.3-1~centos~7_amd64.rpm’ saved [43642720/43642720]</span><br></pre></td></tr></table></figure>
+<p>通过 <code>yum install</code> 安装程序：（会安装到默认目录）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# ls</span><br><span class="line">esl-erlang_23.0.3-1~centos~7_amd64.rpm</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# yum install esl-erlang_23.0.3-1~centos~7_amd64.rpm</span><br><span class="line">Loaded plugins: fastestmirror</span><br><span class="line">Examining esl-erlang_23.0.3-1~centos~7_amd64.rpm: esl-erlang-23.0.3-1.x86_64</span><br><span class="line">Marking esl-erlang_23.0.3-1~centos~7_amd64.rpm to be installed</span><br><span class="line">Resolving Dependencies</span><br><span class="line"><span class="meta">--&gt;</span><span class="bash"> Running transaction check</span></span><br><span class="line"><span class="meta">---&gt;</span><span class="bash"> Package esl-erlang.x86_64 0:23.0.3-1 will be installed</span></span><br><span class="line"><span class="meta">--&gt;</span><span class="bash"> Processing Dependency: libodbc.so.2()(64bit) <span class="keyword">for</span> package: esl-erlang-23.0.3-1.x86_64</span></span><br><span class="line">Determining fastest mirrors</span><br><span class="line">base                                                                                                                                   | 3.6 kB  00:00:00     </span><br><span class="line">docker-ce-stable                                                                                                                       | 3.5 kB  00:00:00     </span><br><span class="line">epel                                                                                                                                   | 4.7 kB  00:00:00</span><br><span class="line">......</span><br><span class="line">gitlab_gitlab-ee/x86_64/primary                                                                                                        | 2.6 MB  00:00:06     </span><br><span class="line">gitlab_gitlab-ee                                                                                                                                      623/623</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">Dependencies Resolved</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">Total size: 107 M</span><br><span class="line">Total download size: 462 k</span><br><span class="line">Installed size: 107 M</span><br><span class="line">Is this ok [y/d/N]: y</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">Complete!</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 通过rpm查看软件是否安装</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# rpm -qa | grep erlang</span><br><span class="line">esl-erlang-23.0.3-1.x86_64</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看软件安装目录</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# rpm -ql esl-erlang-23.0.3-1.x86_64</span><br><span class="line">/usr/bin/cpu_sup</span><br><span class="line">/usr/bin/ct_run</span><br><span class="line">/usr/bin/dialyzer</span><br><span class="line">/usr/bin/epmd</span><br><span class="line">/usr/bin/erl</span><br><span class="line">/usr/bin/erl_call</span><br><span class="line">/usr/bin/erlc</span><br><span class="line">/usr/bin/escript</span><br><span class="line">/usr/bin/etop</span><br><span class="line">/usr/bin/getop</span><br><span class="line">/usr/bin/heart</span><br><span class="line">/usr/bin/memsup</span><br><span class="line">/usr/bin/run_erl</span><br><span class="line">/usr/bin/run_test</span><br><span class="line">/usr/bin/start_erl</span><br><span class="line">/usr/bin/start_webtool</span><br><span class="line">/usr/bin/to_erl</span><br><span class="line">/usr/bin/typer</span><br><span class="line">/usr/lib/erlang/COPYRIGHT</span><br><span class="line">/usr/lib/erlang/Install</span><br><span class="line"><span class="meta">#</span><span class="bash"> 或者直接查看目录</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# rpm -qal | grep erlang</span><br></pre></td></tr></table></figure>
+<p>若出现报错：No curses library functions found 。需要安装 ncurses：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install ncurses-devel</span><br></pre></td></tr></table></figure>
+<p>若继续出现如 No XXXXX found 的提示，可以自行安装对应包，之后再次尝试安装Erlang直到提示安装完毕。</p>
+<p>修改 <code>/etc/profile</code> 配置文件，添加如下环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# cd /</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# vi /etc/profile</span><br><span class="line"></span><br><span class="line">export PATH=$PATH:/usr/bin</span><br></pre></td></tr></table></figure>
+<p>修改完，执行如下命令使配置文件生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>通过 <code>erl</code> 命令验证是否安装成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ erlang]# erl -version</span><br><span class="line">Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 11.0.3</span><br></pre></td></tr></table></figure>
+<h4 id="（2）安装RabbitMQ"><a href="#（2）安装RabbitMQ" class="headerlink" title="（2）安装RabbitMQ"></a><strong>（2）安装RabbitMQ</strong></h4><p>首先下载安装包，官网地址：<a href="http://www.rabbitmq.com/releases/rabbitmq-server/" target="_blank" rel="noopener">RabbitMQ</a> 。</p>
+<p>然后可以将RabbitMQ和Erlang安装在同一目录（/opt）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.15/rabbitmq-server-3.6.15-1.el7.noarch.rpm</span><br><span class="line">--2020-09-21 17:39:13--  https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.15/rabbitmq-server-3.6.15-1.el7.noarch.rpm</span><br><span class="line">Resolving www.rabbitmq.com (www.rabbitmq.com)... 104.20.11.224, 172.67.16.25, 104.20.10.224, ...</span><br><span class="line">Connecting to www.rabbitmq.com (www.rabbitmq.com)|104.20.11.224|:443... connected.</span><br><span class="line">HTTP request sent, awaiting response... 200 OK</span><br><span class="line">Length: 5075721 (4.8M) [application/x-redhat-package-manager]</span><br><span class="line">Saving to: ‘rabbitmq-server-3.6.15-1.el7.noarch.rpm’</span><br><span class="line"></span><br><span class="line"><span class="meta">100%</span><span class="bash">[====================================================================================================================&gt;] 5,075,721   1.73MB/s   <span class="keyword">in</span> 2.8s   </span></span><br><span class="line"></span><br><span class="line">2020-09-21 17:39:18 (1.73 MB/s) - ‘rabbitmq-server-3.6.15-1.el7.noarch.rpm’ saved [5075721/5075721]</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# ls</span><br><span class="line">rabbitmq-server-3.6.15-1.el7.noarch.rpm</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# yum install rabbitmq-server-3.6.15-1.el7.noarch.rpm</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">Complete!</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 通过rpm查看软件是否安装</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# rpm -qa | grep rabbitmq</span><br><span class="line">rabbitmq-server-3.6.15-1.el7.noarch</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看软件安装目录</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# rpm -ql rabbitmq-server-3.6.15-1.el7.noarch</span><br><span class="line">/etc/logrotate.d/rabbitmq-server</span><br><span class="line">/etc/rabbitmq</span><br><span class="line">/usr/lib/ocf/resource.d/rabbitmq/rabbitmq-server</span><br><span class="line">/usr/lib/ocf/resource.d/rabbitmq/rabbitmq-server-ha</span><br><span class="line">......</span><br><span class="line">/usr/lib/rabbitmq/lib/rabbitmq_server-3.6.15/sbin/rabbitmq-plugins</span><br><span class="line">/usr/lib/rabbitmq/lib/rabbitmq_server-3.6.15/sbin/rabbitmq-server</span><br><span class="line">/usr/lib/rabbitmq/lib/rabbitmq_server-3.6.15/sbin/rabbitmqctl</span><br><span class="line">/usr/lib/systemd/system/rabbitmq-server.service</span><br><span class="line">/usr/lib/tmpfiles.d/rabbitmq-server.conf</span><br><span class="line">/usr/sbin/rabbitmq-plugins</span><br><span class="line">/usr/sbin/rabbitmq-server</span><br><span class="line">/usr/sbin/rabbitmqctl</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>同样修改 <code>/etc/profile</code> 文件，添加如下环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# vi /etc/profile</span><br><span class="line"></span><br><span class="line">export PATH=$PATH:/usr/sbin</span><br></pre></td></tr></table></figure>
+<p>同样使配置文件生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# source /etc/profile</span><br></pre></td></tr></table></figure>
+<h4 id="（3）卸载"><a href="#（3）卸载" class="headerlink" title="（3）卸载"></a><strong>（3）卸载</strong></h4><p>卸载前先停掉rabbitmq服务，执行命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> service rabbitmq-server stop</span></span><br></pre></td></tr></table></figure>
+<p>查看rabbitmq安装的相关列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum list | grep rabbitmq</span></span><br></pre></td></tr></table></figure>
+<p>卸载rabbitmq已安装的相关内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum -y remove rabbitmq-server.noarch</span></span><br></pre></td></tr></table></figure>
+<p>查看erlang安装的相关列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum list | grep erlang</span></span><br></pre></td></tr></table></figure>
+<p>卸载erlang已安装的相关内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum -y remove erlang-*</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum -y remove erlang.x86_64</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-2-运行"><a href="#2-2-运行" class="headerlink" title="2.2 运行"></a><strong>2.2 运行</strong></h3><p>任意开启Shell，运行RabbitMQ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> detached参数使RabbitMQ以守护进程的方式在后台运行，不会因为Shell的关闭而影响服务</span></span><br><span class="line">rabbitmq-server -detached</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看RabbitMQ是否正常启动</span></span><br><span class="line">rabbitmqctl status</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看集群信息，当前只有一个节点</span></span><br><span class="line">rabbitmqctl cluster_status</span><br></pre></td></tr></table></figure>
+<p>运行失败：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# rabbitmq-server -detached</span><br><span class="line">Warning: PID file not written; -detached was passed.</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# rabbitmqctl status</span><br><span class="line">Status of node rabbit@iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">Error: unable to connect to node rabbit@iZ2zeet6kto8eqx1w7sluzZ: nodedown</span><br><span class="line"></span><br><span class="line">DIAGNOSTICS</span><br><span class="line">===========</span><br><span class="line"></span><br><span class="line">attempted to contact: [rabbit@iZ2zeet6kto8eqx1w7sluzZ]</span><br><span class="line"></span><br><span class="line">rabbit@iZ2zeet6kto8eqx1w7sluzZ:</span><br><span class="line">  * connected to epmd (port 4369) on iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">  * epmd reports: node 'rabbit' not running at all</span><br><span class="line">                  no other nodes on iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">  * suggestion: start the node</span><br><span class="line"></span><br><span class="line">current node details:</span><br><span class="line">- node name: 'rabbitmq-cli-57@iZ2zeet6kto8eqx1w7sluzZ'</span><br><span class="line">- home dir: /var/lib/rabbitmq</span><br><span class="line">- cookie hash: 63rISb5yZX97fhoF8LdjSg==</span><br></pre></td></tr></table></figure>
+<p>首先排除是否是防火墙的问题：（不是这个原因）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看防火墙开放端口</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# firewall-cmd --zone=public --list-ports</span><br><span class="line">8025/tcp 6725/tcp</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# systemctl stop firewalld.service</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# service rabbitmq-server start</span><br><span class="line">Redirecting to /bin/systemctl start rabbitmq-server.service</span><br><span class="line">Job for rabbitmq-server.service failed because the control process exited with error code. See "systemctl status rabbitmq-server.service" and "journalctl -xe" for details.</span><br></pre></td></tr></table></figure>
+<p>删除 <code>/var/lib/rabbitmq/mnesia</code> 目录下的文件，再重启：（不是这个原因）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# cd /var/lib/rabbitmq/mnesia</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ mnesia]# ls -AF</span><br><span class="line">rabbit@iZ2zeet6kto8eqx1w7sluzZ.pid</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ mnesia]# rm -rf rabbit@iZ2zeet6kto8eqx1w7sluzZ.pid</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ mnesia]# service rabbitmq-server start</span><br><span class="line">Redirecting to /bin/systemctl start rabbitmq-server.service</span><br><span class="line">Job for rabbitmq-server.service failed because the control process exited with error code. See "systemctl status rabbitmq-server.service" and "journalctl -xe" for details.</span><br></pre></td></tr></table></figure>
+<p>查看详细错误信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ /]# systemctl status rabbitmq-server.service</span><br><span class="line">● rabbitmq-server.service - RabbitMQ broker</span><br><span class="line">   Loaded: loaded (/usr/lib/systemd/system/rabbitmq-server.service; disabled; vendor preset: disabled)</span><br><span class="line">   Active: activating (auto-restart) (Result: exit-code) since Tue 2020-09-22 10:19:51 CST; 3s ago</span><br><span class="line">  Process: 27630 ExecStop=/bin/sh -c while ps -p $MAINPID &gt;/dev/null 2&gt;&amp;1; do sleep 1; done (code=exited, status=0/SUCCESS)</span><br><span class="line">  Process: 27488 ExecStop=/usr/sbin/rabbitmqctl stop (code=exited, status=0/SUCCESS)</span><br><span class="line"><span class="meta">  #</span><span class="bash"> rabbitmq-server启动失败</span></span><br><span class="line">  Process: 27187 ExecStart=/usr/sbin/rabbitmq-server (code=exited, status=1/FAILURE)</span><br><span class="line"> Main PID: 27187 (code=exited, status=1/FAILURE)</span><br><span class="line"></span><br><span class="line">Sep 22 10:19:51 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: Failed to start RabbitMQ broker.</span><br><span class="line">Sep 22 10:19:51 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: Unit rabbitmq-server.service entered failed state.</span><br><span class="line">Sep 22 10:19:51 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: rabbitmq-server.service failed.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ mnesia]# journalctl -xe</span><br><span class="line">Sep 22 10:26:04 iZ2zeet6kto8eqx1w7sluzZ rabbitmq-server[8731]: /var/log/rabbitmq/rabbit@iZ2zeet6kto8eqx1w7sluzZ-sasl.log</span><br><span class="line">Sep 22 10:26:04 iZ2zeet6kto8eqx1w7sluzZ rabbitmq-server[8731]: Stack trace:</span><br><span class="line">Sep 22 10:26:04 iZ2zeet6kto8eqx1w7sluzZ rabbitmq-server[8731]: []</span><br><span class="line">Sep 22 10:26:05 iZ2zeet6kto8eqx1w7sluzZ rabbitmq-server[8731]: &#123;"init terminating in do_boot",noproc&#125;</span><br><span class="line">Sep 22 10:26:05 iZ2zeet6kto8eqx1w7sluzZ rabbitmq-server[8731]: init terminating in do_boot (noproc)</span><br><span class="line">Sep 22 10:26:05 iZ2zeet6kto8eqx1w7sluzZ rabbitmq-server[8731]: Crash dump is being written to: erl_crash.dump...done</span><br><span class="line">Sep 22 10:26:05 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: rabbitmq-server.service: main process exited, code=exited, status=1/FAILURE</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: Stopping and halting node rabbit@iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: Error: unable to connect to node rabbit@iZ2zeet6kto8eqx1w7sluzZ: nodedown</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: DIAGNOSTICS</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: ===========</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: attempted to contact: [rabbit@iZ2zeet6kto8eqx1w7sluzZ]</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: rabbit@iZ2zeet6kto8eqx1w7sluzZ:</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: * connected to epmd (port 4369) on iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: * epmd reports: node 'rabbit' not running at all</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: no other nodes on iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: * suggestion: start the node</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: current node details:</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: - node name: 'rabbitmq-cli-55@iZ2zeet6kto8eqx1w7sluzZ'</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: - home dir: .</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ rabbitmqctl[9029]: - cookie hash: 63rISb5yZX97fhoF8LdjSg==</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: Failed to start RabbitMQ broker.</span><br><span class="line">-- Subject: Unit rabbitmq-server.service has failed</span><br><span class="line">-- Defined-By: systemd</span><br><span class="line">-- Support: http://lists.freedesktop.org/mailman/listinfo/systemd-devel</span><br><span class="line">-- </span><br><span class="line">-- Unit rabbitmq-server.service has failed.</span><br><span class="line">-- </span><br><span class="line">-- The result is failed.</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: Unit rabbitmq-server.service entered failed state.</span><br><span class="line">Sep 22 10:26:06 iZ2zeet6kto8eqx1w7sluzZ systemd[1]: rabbitmq-server.service failed.</span><br><span class="line">lines 1389-1419/1419 (END)</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 尝试重启</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ sbin]# rabbitmq-server restart</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">BOOT FAILED</span><br><span class="line">===========</span><br><span class="line"></span><br><span class="line">Error description:</span><br><span class="line">   noproc</span><br><span class="line"></span><br><span class="line">Log files (may contain more information):</span><br><span class="line">   /var/log/rabbitmq/rabbit@iZ2zeet6kto8eqx1w7sluzZ.log</span><br><span class="line">   /var/log/rabbitmq/rabbit@iZ2zeet6kto8eqx1w7sluzZ-sasl.log</span><br><span class="line"></span><br><span class="line">Stack trace:</span><br><span class="line">   []</span><br><span class="line"></span><br><span class="line">=INFO REPORT==== 22-Sep-2020::20:41:05.655469 ===</span><br><span class="line">Error description:</span><br><span class="line">   noproc</span><br><span class="line"></span><br><span class="line">Log files (may contain more information):</span><br><span class="line">   /var/log/rabbitmq/rabbit@iZ2zeet6kto8eqx1w7sluzZ.log</span><br><span class="line">   /var/log/rabbitmq/rabbit@iZ2zeet6kto8eqx1w7sluzZ-sasl.log</span><br><span class="line"></span><br><span class="line">Stack trace:</span><br><span class="line">   []</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#123;"init terminating in do_boot",noproc&#125;</span><br><span class="line">init terminating in do_boot (noproc)</span><br><span class="line"></span><br><span class="line">Crash dump is being written to: erl_crash.dump...done</span><br></pre></td></tr></table></figure>
+<p>根据提示 <code>noproc</code> 考虑是否是版本不匹配，<a href="https://www.rabbitmq.com/which-erlang.html" target="_blank" rel="noopener">rabbitmq - erlang</a> 官网查询确认是否匹配：</p>
+<ul>
+<li>Erlang：23.0.3</li>
+<li>RabbitMQ：3.6.15</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010155.png" alt></p>
+<p>卸载当前RabbitMQ，再重新下载一个3.8.8版本的RabbitMQ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.8/rabbitmq-server-3.8.8-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
+<p>阿里云服务器下载GitHub实在是太慢了，选择用Docker拉取镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ ~]# service docker restart</span><br><span class="line">Redirecting to /bin/systemctl restart docker.service</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ ~]# docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management</span><br><span class="line">Unable to find image 'rabbitmq:3-management' locally</span><br><span class="line">3-management: Pulling from library/rabbitmq</span><br><span class="line">5d9821c94847: Downloading [=======================&gt;                           ]  12.53MB/26.7MB</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>仍然很慢，还是直接下载RPM文件，加上断点：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -c https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.8/rabbitmq-server-3.8.8-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
+<p>下载成功后，重新安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# ls -AF</span><br><span class="line">rabbitmq-server-3.8.8-1.el7.noarch.rpm</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ rabbitmq]# yum install rabbitmq-server-3.8.8-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
+<p>重新启动：(终于成功)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ ~]# rabbitmq-server -detached</span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ ~]# rabbitmqctl status</span><br><span class="line">Status of node rabbit@iZ2zeet6kto8eqx1w7sluzZ ...</span><br><span class="line">Runtime</span><br><span class="line"></span><br><span class="line">OS PID: 4074</span><br><span class="line">OS: Linux</span><br><span class="line">Uptime (seconds): 89</span><br><span class="line">Is under maintenance?: false</span><br><span class="line">RabbitMQ version: 3.8.8</span><br><span class="line">Node name: rabbit@iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line">Erlang configuration: Erlang/OTP 23 [erts-11.0.3] [source] [64-bit] [smp:2:2] [ds:2:2:10] [async-threads:64] [hipe]</span><br><span class="line">Erlang processes: 275 used, 1048576 limit</span><br><span class="line">Scheduler run queue: 1</span><br><span class="line">Cluster heartbeat timeout (net_ticktime): 60</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看集群状态</span></span><br><span class="line">[root@iZ2zeet6kto8eqx1w7sluzZ ~]# rabbitmqctl cluster_status</span><br><span class="line">Cluster status of node rabbit@iZ2zeet6kto8eqx1w7sluzZ ...</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-生产和消费消息"><a href="#2-3-生产和消费消息" class="headerlink" title="2.3 生产和消费消息"></a><strong>2.3 生产和消费消息</strong></h3><p>RabbitMQ的默认用户名和密码都是 <code>guest</code>，此账户只能本地访问，远程网络访问会受限，所以我们要首先<strong>添加一个用户</strong>，并<strong>设置访问权限</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 新增用户</span></span><br><span class="line">rabbitmqctl add_user root root</span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置所有权限</span></span><br><span class="line">rabbitmqctl set_permissions -p / root ".*" ".*" ".*"</span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置管理员角色</span></span><br><span class="line">rabbitmqctl set_user_tags root administrator</span><br></pre></td></tr></table></figure>
+<p>若在使用RabbitMQ的过程中有 <code>com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN</code> 类似报错，很可能就是账户的问题。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Exception <span class="keyword">in</span> thread <span class="string">"main"</span> com.rabbitmq.client.AuthenticationFailureException: ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. <span class="keyword">For</span> details see the broker logfile.</span><br><span class="line"></span><br><span class="line"><span class="builtin-name">ERROR</span> com.rabbitmq.client.impl.ForgivingExceptionHandler - An unexpected<span class="built_in"> connection </span>driver <span class="builtin-name">error</span> occured</span><br><span class="line">java.net.SocketException: Socket Closed</span><br></pre></td></tr></table></figure>
+<p>在Java项目中引入RabbitMQ客户端的Maven依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.rabbitmq<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>amqp-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.8.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>创建消息生产者，发送一条消息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitProducer</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXCHANGE_NAME = <span class="string">"exchange_demo"</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ROUTING_KEY = <span class="string">"routingkey_demo"</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String QUEUE_NAME = <span class="string">"queue_demo"</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String IP_ADDRESS = <span class="string">"xxx.xxx.xxx.xxx"</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">5672</span>;<span class="comment">//RabbitMQ 服务端默认端口号为 5672</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException,</span></span><br><span class="line"><span class="function">                TimeoutException, InterruptedException </span>&#123;</span><br><span class="line">                ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">                factory.setHost(IP_ADDRESS);</span><br><span class="line">                factory.setPort(PORT);</span><br><span class="line">                factory.setUsername(<span class="string">"root"</span>);</span><br><span class="line">                factory.setPassword(<span class="string">"root"</span>);</span><br><span class="line">                Connection connection = factory.newConnection(); <span class="comment">//创建连接</span></span><br><span class="line">                Channel channel = connection.createChannel(); <span class="comment">//创建信道</span></span><br><span class="line">                <span class="comment">// 创建一个 type direct 、持久化的、非自动删除的交换器</span></span><br><span class="line">                channel.exchangeDeclare(EXCHANGE_NAME, <span class="string">"direct"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">                <span class="comment">//创建一个持久化、非排他的、非自动删除的队列</span></span><br><span class="line">                channel.queueDeclare(QUEUE_NAME, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">                <span class="comment">//将交换器与队列通过路由键绑定</span></span><br><span class="line">                channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);</span><br><span class="line">                <span class="comment">//发送一条持久化的消息 hello world !</span></span><br><span class="line">                String message = <span class="string">"Hello World!"</span>;</span><br><span class="line">                channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY,</span><br><span class="line">                        MessageProperties.PERSISTENT_TEXT_PLAIN,</span><br><span class="line">                        message.getBytes());</span><br><span class="line">                <span class="comment">//关闭资源</span></span><br><span class="line">                channel.close();</span><br><span class="line">                connection.close();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后是消费者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitConsumer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String QUEUE_NAME = <span class="string">"queue_demo"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String IP_ADDRESS = <span class="string">"xxx.xxx.xxx.xxx"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">5672</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException,</span></span><br><span class="line"><span class="function">            TimeoutException, InterruptedException </span>&#123;</span><br><span class="line">        Address[] addresses = <span class="keyword">new</span> Address[]&#123;</span><br><span class="line">                <span class="keyword">new</span> Address(IP_ADDRESS, PORT)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">        factory.setUsername(<span class="string">"root"</span>);</span><br><span class="line">        factory.setPassword(<span class="string">"root"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//这里的连接方式与生产者的 demo 略有不同，注意辨别区别</span></span><br><span class="line">        Connection connection = factory.newConnection(addresses); <span class="comment">//创建连接</span></span><br><span class="line">        <span class="keyword">final</span> Channel channel = connection.createChannel(); <span class="comment">//创建信道</span></span><br><span class="line">        channel.basicQos(<span class="number">64</span>); <span class="comment">//设置客户端最多接收未被 ack 的消息的个数</span></span><br><span class="line">        Consumer consumer = <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"recv message : "</span> + <span class="keyword">new</span> String(body));</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                channel.basicAck(envelope.getDeliveryTag(), <span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        channel.basicConsume(QUEUE_NAME, consumer);</span><br><span class="line">        <span class="comment">//等待回调函数执行完毕之后 关闭资源</span></span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">        channel.close();</span><br><span class="line">        connection.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台打印：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recv message : <span class="type">Hello</span> World!</span><br></pre></td></tr></table></figure>
+<p>此处采用继承 <code>DefaultConsumer</code> 的方式来实现消费，也可以使用 <code>QueueingConsumer</code> 来实现，但会有些隐患，并且这种实现已被废弃。</p>
+<hr>
+<h2 id="第三节-Rabbit入门"><a href="#第三节-Rabbit入门" class="headerlink" title="第三节 Rabbit入门"></a><strong>第三节 Rabbit入门</strong></h2><p>RabbitMQ的模型架构是什么？AMQP协议是什么？两者间又有何种联系？消息从生产者发出到消费者消费的过程要经历什么？</p>
+<h3 id="3-1-RabbitMQ基本概念"><a href="#3-1-RabbitMQ基本概念" class="headerlink" title="3.1 RabbitMQ基本概念"></a><strong>3.1 RabbitMQ基本概念</strong></h3><h4 id="（1）生产者和消费者模型"><a href="#（1）生产者和消费者模型" class="headerlink" title="（1）生产者和消费者模型"></a><strong>（1）生产者和消费者模型</strong></h4><p>RabbitMQ 整体上是一个<strong>生产者与消费者模型</strong>，主要<strong>负责接收、存储和转发消息</strong>。可以把消息传递的过程想象成当你将一个包裹送到邮局，邮局会暂存并最终将邮件通过邮递员送到收件人的手上，RabbitMQ就好比由邮局、邮箱和邮递员组成的一个系统。</p>
+<p>从计算机术语层面来说， RabbitMQ模型更像是一种<strong>交换机模型</strong>。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010143.png" alt></p>
+<p>消息一般包含2个部分：</p>
+<ul>
+<li><strong>消息体</strong>：消息体也可以称之为 payload ，在实际应用中，消息体一般是一个带有业务逻辑结构的数据，比如一个 JSON 字符串。当然可以进一步对这个消息体进行序列化操作。</li>
+<li><strong>标签</strong>（Label）：用来表述这条消息，比如一个交换器的名称和一个路由键。</li>
+</ul>
+<p>大致流程：</p>
+<ul>
+<li><strong>生产者（Producer）</strong>将业务数据封装（序列化）成消息（指定Exchange和RoutingKey等），把消息交由RabbitMQ，即发送给Broker （AMQP协议中对应命令为Basic.Publish）。</li>
+<li><strong>Broker （消息中间件的服务节点）</strong>，大多数情况下可以将 RabbitMQ Broker 看作一台 RabbitMQ 服务器。RabbitMQ之后会根据标签把消息发送给感兴趣的<strong>消费者（Consumer）</strong>。</li>
+<li>消费者连接到 RabbitMQ 服务器，并订阅到队列上。当消费者消费一条消息时，<strong>只是消费消息的消息体</strong>（ payload ）。在消息路由的过程中，消息的标签会丢弃，<strong>存入到队列中的消息只有消息体</strong>，消费者也只会消费到消息体，也就<strong>不知道消息的生产者是谁</strong>，当然消费者也不需要知道。</li>
+<li>消费者受到消息体后（AMQP协议中对应命令为Basic.Consume或Basic.Get）进行反序列化，得到对应的业务数据，并进行业务处理。</li>
+</ul>
+<p>消费者进行业务处理可以不和接收消息的逻辑使用同一线程，比如使用一个线程去接收消息存入内存（<code>BlockingQueue</code>），使用另一个线程从内存读取数据，这样可以进一步解耦，提高整体处理效率。 </p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010144.png" alt></p>
+<h4 id="（2）队列"><a href="#（2）队列" class="headerlink" title="（2）队列"></a><strong>（2）队列</strong></h4><p><strong>队列</strong>（Queue）是 RabbitMQ 的内部对象，用来<strong>存储消息</strong>。<strong>消息只能存储在队列中</strong>，这与Kafka这种消息中间件相反（<strong>Kafka消息存储在主题topic逻辑层面</strong>），相对应的队列逻辑只是主题实际存储文件中的位移标识。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010145.png" alt></p>
+<p>多个消费者可以订阅同一个队列，队列中的消息会被<strong>平均分摊</strong>（Round-Robin，即轮询）给多个消费者处理，<strong>不是每个消费者都收到所有的消息并处理</strong>。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010146.png" alt></p>
+<p>RabbitMQ<strong>不支持队列层面的广播消费</strong>，如果需要只能进行二次开发。</p>
+<h4 id="（3）交换器、路由键、绑定、交换器类型"><a href="#（3）交换器、路由键、绑定、交换器类型" class="headerlink" title="（3）交换器、路由键、绑定、交换器类型"></a><strong>（3）交换器、路由键、绑定、交换器类型</strong></h4><p>上面我们理解为生产者将消息直接投递到队列上，但其实并非如此。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010147.png" alt></p>
+<p><strong>交换器</strong>（Exchange），生产者会先将消息发送到交换器，交换器负责将消息路由到一个或多个队列中。若路由不到，可以返回给生产者或直接丢弃。</p>
+<p><strong>路由键</strong>（RoutingKey），生产者将消息发给交换器时，会指定一个路由键，用来指定消息的路由规则，可以决定消息流向哪里。路由键需要与<strong>交换器类型</strong>和<strong>绑定键</strong>（BindingKey）联合使用。</p>
+<p><strong>绑定键</strong>（BindingKey），属于路由键的一种，通过绑定键将交换器和队列关联起来。<strong>某些情形下绑定键与路由键可以看作同一个东西。</strong></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010148.png" alt></p>
+<p>可以这样区别路由键和绑定键：</p>
+<ul>
+<li>使用绑定时，需要的路由键是 BindingKey 。<ul>
+<li>涉及的客户端方法：<code>channel.exchangeBind</code> 、<code>channel.queueBind</code> </li>
+<li>对应AMQP命令：<code>Exchange.Bind</code> 、<code>Queue.Bind</code> 。</li>
+</ul>
+</li>
+<li>发送消息时，需要的路由键是 RoutingKey 。<ul>
+<li>涉及的客户端方法：<code>channel.basicPublish</code> </li>
+<li>对应AMQP命令：<code>Basic.Publish</code> </li>
+</ul>
+</li>
+</ul>
+<p><strong>交换器类型</strong>：</p>
+<ul>
+<li><p><strong>fanout</strong>：会把发送到该交换器的消息路由到所有绑定的队列中。</p>
+</li>
+<li><p><strong>direct</strong>：会把消息路由到BindingKey和RoutingKey完全匹配的队列中。</p>
+<p>如下案例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">//路由键为warning，消息会路由到Queue1和Queue2</span></span><br><span class="line">	channel.basicPublish(EXCHANGE_NAME, <span class="string">"warning"</span>, MessageProperties.PERSISTENT_TEXT_PLAIN,</span><br><span class="line">message.getBytes());</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010149.png" alt></p>
+<p>若设置路由键为“info”或“debug”，消息只会路由到Queue2。</p>
+</li>
+<li><p><strong>topic</strong>：在匹配规则上相比direct进行了扩展，也是把消息路由到BindingKey和RoutingKey匹配的队列中，但匹配规则包括：</p>
+<ul>
+<li>RoutingKey和BindingKey为 <code>.</code> 分隔的字符串，如 <code>com.rabbitmq.client</code> 。</li>
+<li>BindingKey中可以存着两个特殊字符串 <code>*</code> 和 <code>#</code> ，用于模糊匹配，<code>*</code> 用于匹配一个单词，<code>#</code> 用于匹配多规格单词。</li>
+</ul>
+<p>如下案例：</p>
+<ul>
+<li>路由键 <code>com.rabbitmq.client</code> 的消息同时路由到Queue1和Queue2；</li>
+<li>路由键 <code>com.hidden.client</code> 的消息只路由到Queue2；</li>
+<li>路由键 <code>com.hidden.demo</code> 的消息只路由到Queue2；</li>
+<li>路由键 <code>java.rabbitmq.demo</code> 的消息只路由到Queue1；</li>
+<li>路由键 <code>java.util.concurrent</code> 的消息会被丢弃或返回给生产者；</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010150.png" alt></p>
+</li>
+<li><p><strong>headers</strong>：不依赖于路由键的匹配规则来路由消息，而是根据发送的消息内容中的headers属性进行匹配。在绑定队列和交换器时会制定一组键值对，消息到交换器时也有键值对形式的headers，对比若完全匹配就路由到此队列。<strong>这一类型性能很差且不实用</strong>。</p>
+</li>
+</ul>
+<h4 id="（4）RabbitMQ运转流程"><a href="#（4）RabbitMQ运转流程" class="headerlink" title="（4）RabbitMQ运转流程"></a><strong>（4）RabbitMQ运转流程</strong></h4><p>生产者发送消息（最初状态）：</p>
+<ol>
+<li>生产者连接到 RabbitMQ Broker 建立一个<strong>连接</strong>（Connection），开启一个<strong>信道</strong>（Channel） ；</li>
+<li>生产者声明一个交换器，并设置相关属性，比如交换机类型、是否持久化等；</li>
+<li>生产者声明一个队列井设置相关属性，比如是否排他、是否持久化、是否自动删除等；</li>
+<li>生产者通过路由键将交换器和队列绑定起来；</li>
+<li>生产者发送消息至 RabbitMQ Broker，其中包含路由键、交换器等信息；</li>
+<li>相应的交换器根据接收到的路由键查找相匹配的队列；</li>
+<li>如果找到，则将从生产者发送过来的消息存入相应的队列中。</li>
+<li>如果没有找到，则根据生产者配置的属性选择丢弃还是回退给生产者。</li>
+<li>关闭信道。</li>
+<li>关闭连接。 </li>
+</ol>
+<p>消费者接收消息的过程： </p>
+<ol>
+<li>消费者连接到 RabbitMQ Broker ，建立一个<strong>连接</strong>（Connection），开启一个<strong>信道</strong>（Channel)；</li>
+<li>消费者向 RabbitMQ Broker 请求消费相应队列中的消息，可能会设置相应的回调函数，以及做一些准备工作。 </li>
+<li>等待 RabbitMQ Broker 回应并投递相应队列中的消息，消费者接收消息。</li>
+<li>消费者确认（ack）接收到的消息。</li>
+<li>RabbitMQ 从队列中删除相应己经被确认的消息。</li>
+<li>关闭信道。</li>
+<li>关闭连接。</li>
+</ol>
+<h4 id="（5）连接和信道"><a href="#（5）连接和信道" class="headerlink" title="（5）连接和信道"></a><strong>（5）连接和信道</strong></h4><p><strong>连接</strong>（Connection），即一条TCP连接。当TCP连接建立起来，客户端紧接着创建一个AMQP<strong>信道</strong>（Channel)，每个信道都会被指派一个唯一的ID。信道是虚拟链接，<strong>RabbitMQ处理每条AMQP指令都是通过信道完成</strong>。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010151.png" alt></p>
+<p><strong>信道的作用？</strong></p>
+<p>一个应用程序会有很多线程需要从MQ中消费消息或生产消息，所以要建立很多TCP连接。对于操作系统而言，<strong>建立和销毁TCP连接都需要昂贵的开销</strong>，所以 RabbitMQ 采用类似 NIO（Non-blocking I/O）的做法，选择<strong>TCP连接复用</strong>，既减少性能开销也便于管理。</p>
+<p><strong>每个线程持有一个信道，信道复用了TCP连接，而 RabbitMQ 还可以保证每个线程的私密性和持有独立的连接一样。</strong>当单个信道流量很大时，多个信道复用一个连接就会产生性能瓶颈，此时可以开辟多个连接并进行均摊。</p>
+<h3 id="3-2-AMQP协议"><a href="#3-2-AMQP协议" class="headerlink" title="3.2 AMQP协议"></a><strong>3.2 AMQP协议</strong></h3><p>AMQP协议的模型架构和 RabbitMQ的模型架构一样：生产者将消息发送给交换器，交换器与队列绑定，当生产者发送消息时所携带的 RoutingKey 与绑定时的 BindingKey 相匹配时，消息即被存入相应的队列之中。消费者可以订阅相应的队列来获取消息。</p>
+<p>AMQP协议包括三层：</p>
+<ul>
+<li><strong>Module Layer</strong>：位于协议<strong>最高层</strong>，主要定义了一些供客户端调用的命令，客户端可以利用这些命令实现自己的业务逻辑。例如客户端可以使用 <code>Queue.Declare</code> 命令声明一个队列或者使用 <code>Basic.Consume</code> 订阅消费一个队列中的消息。 </li>
+<li><strong>Session Layer</strong>：位于<strong>中间层</strong>，主要负责将客户端的命令发送给服务器，再将服务端的应答返回给客户端，主要为客户端与服务器之间的通信提供可靠性同步机制和错误处理。</li>
+<li><strong>Transport Layer</strong> ：位于<strong>最底层</strong>，主要传输二进制数据流，提供帧的处理、信道复用、错误检测和数据表示等。</li>
+</ul>
+<p><strong>AMQP说到底还是一个通信协议，都会涉及到报文交互</strong>，从 low level 举例来说，AMQP <strong>本身是应用层的协议，其填充于 TCP 协议层的数据部分</strong>。而从 high-level 来说 AMQP 是通过协议命令进行交互的。AMQP 协议可以看作一系列结构化命令的集合，这里的命令代表一种操作，类似于 HTTP 中的方法（GET、POST、PUT、DELETE 等）。</p>
+<h4 id="（1）AMQP生产者流转过程"><a href="#（1）AMQP生产者流转过程" class="headerlink" title="（1）AMQP生产者流转过程"></a><strong>（1）AMQP生产者流转过程</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Connection connection = factory.newConnection(); <span class="comment">//创建连接</span></span><br><span class="line">Channel channel = connection.createChannel(); <span class="comment">//创建信道</span></span><br><span class="line"><span class="comment">// 创建一个 type direct 、持久化的、非自动删除的交换器</span></span><br><span class="line">channel.exchangeDeclare(EXCHANGE_NAME, <span class="string">"direct"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line"><span class="comment">//创建一个持久化、非排他的、非自动删除的队列</span></span><br><span class="line">channel.queueDeclare(QUEUE_NAME, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line"><span class="comment">//将交换器与队列通过路由键绑定</span></span><br><span class="line">channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);</span><br><span class="line"><span class="comment">//发送一条持久化的消息 hello world !</span></span><br><span class="line">String message = <span class="string">"Hello World!"</span>;</span><br><span class="line">channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY,</span><br><span class="line">        MessageProperties.PERSISTENT_TEXT_PLAIN,</span><br><span class="line">        message.getBytes());</span><br><span class="line"><span class="comment">//关闭资源</span></span><br><span class="line">channel.close();</span><br><span class="line">connection.close();</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010152.png" alt></p>
+<h4 id="（2）AMQP消费者者流转过程"><a href="#（2）AMQP消费者者流转过程" class="headerlink" title="（2）AMQP消费者者流转过程"></a><strong>（2）AMQP消费者者流转过程</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里的连接方式与生产者的 demo 略有不同，注意辨别区别</span></span><br><span class="line">        Connection connection = factory.newConnection(addresses); <span class="comment">//创建连接</span></span><br><span class="line">        <span class="keyword">final</span> Channel channel = connection.createChannel(); <span class="comment">//创建信道</span></span><br><span class="line">        channel.basicQos(<span class="number">64</span>); <span class="comment">//设置客户端最多接收未被 ack 的消息的个数</span></span><br><span class="line">        Consumer consumer = <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"recv message : "</span> + <span class="keyword">new</span> String(body));</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                channel.basicAck(envelope.getDeliveryTag(), <span class="keyword">false</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        channel.basicConsume(QUEUE_NAME, consumer);</span><br><span class="line">        <span class="comment">//等待回调函数执行完毕之后 关闭资源</span></span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">        channel.close();</span><br><span class="line">        connection.close();</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010153.png" alt></p>
+<h4 id="（3）AMQP命令概览"><a href="#（3）AMQP命令概览" class="headerlink" title="（3）AMQP命令概览"></a><strong>（3）AMQP命令概览</strong></h4><p>AMQP命令：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>是否包含内容体</th>
+<th>对应客户端中的方法</th>
+<th>简要描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Connection.Start</td>
+<td>否</td>
+<td>factory.newConnection</td>
+<td>建立连接相关</td>
+</tr>
+<tr>
+<td>Connection.Start-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Connection.Tune</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Connection.Tune-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Connection.Open</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Connection.Open-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Connection.Close</td>
+<td>否</td>
+<td>connection.close</td>
+<td>关闭连接</td>
+</tr>
+<tr>
+<td>Connection.Close-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Channel.Open</td>
+<td>否</td>
+<td>connection.openChannel</td>
+<td>开启信道</td>
+</tr>
+<tr>
+<td>Channel.Open-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Channel.Close</td>
+<td>否</td>
+<td>channel.close</td>
+<td>关闭信道</td>
+</tr>
+<tr>
+<td>Channel.Close-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Exchange.Declare</td>
+<td>否</td>
+<td>channel.exchangeDeclare</td>
+<td>声明交换器</td>
+</tr>
+<tr>
+<td>Exchange.Declare-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Exchange.Delete</td>
+<td>否</td>
+<td>channel.exchangeDelete</td>
+<td>删除交换器</td>
+</tr>
+<tr>
+<td>Exchange.Delete-Ok</td>
+<td>否</td>
+<td>向上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Exchange.Bind</td>
+<td>否</td>
+<td>channel.exchangeBind</td>
+<td>交换器与交换器绑定</td>
+</tr>
+<tr>
+<td>Exchange.Bind-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Exchange.Unbind</td>
+<td>否</td>
+<td>channel.exchangeUnbind</td>
+<td>交换器与交换器解绑</td>
+</tr>
+<tr>
+<td>Exchange.Unbind-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Queue.Declare</td>
+<td>否</td>
+<td>channel.queueDeclare</td>
+<td>声明队列</td>
+</tr>
+<tr>
+<td>Queue.Declare-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Queue.Bind</td>
+<td>否</td>
+<td>channel.queueBind</td>
+<td>队列与交换器绑定</td>
+</tr>
+<tr>
+<td>Queue.Bind-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Queue.Purge</td>
+<td>否</td>
+<td>channel.queuePurge</td>
+<td>清除队列中的内容</td>
+</tr>
+<tr>
+<td>Queue.Purge-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Queue.Delete</td>
+<td>否</td>
+<td>channel.queueDelete</td>
+<td>删除队列</td>
+</tr>
+<tr>
+<td>Queue.Delete-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>向上</td>
+</tr>
+<tr>
+<td>Queue.Unbind</td>
+<td>否</td>
+<td>channel.queueUnbind</td>
+<td>队列与交换器解绑</td>
+</tr>
+<tr>
+<td>Queue.Unbind-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Basic.Qos</td>
+<td>否</td>
+<td>channel.basicQos</td>
+<td>设置未被确认消费的个数</td>
+</tr>
+<tr>
+<td>Basic.Qos-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Basic.Consume</td>
+<td>否</td>
+<td>channel.basicConsume</td>
+<td>消费消息（推模式）</td>
+</tr>
+<tr>
+<td>BasiιConsume-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Basic.Cancel</td>
+<td>否</td>
+<td>channel.basicCancel</td>
+<td>取消</td>
+</tr>
+<tr>
+<td>Basic.Cancel-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Basic.Publish</td>
+<td>否</td>
+<td>channel.basicPublish</td>
+<td>发送消息</td>
+</tr>
+<tr>
+<td>Basic.Return</td>
+<td>否</td>
+<td>无</td>
+<td>未能成功路由的消息返回</td>
+</tr>
+<tr>
+<td>Basic.Deliver</td>
+<td>否</td>
+<td>无</td>
+<td>Broker 推送消息</td>
+</tr>
+<tr>
+<td>Basic.Get</td>
+<td>否</td>
+<td>channel.basicGet</td>
+<td>消费消息（拉模式〉</td>
+</tr>
+<tr>
+<td>Basic.Get-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Basic.Ack</td>
+<td>否</td>
+<td>channel.basicAck</td>
+<td>确认</td>
+</tr>
+<tr>
+<td>Basic.Reject</td>
+<td>否</td>
+<td>channel.basicReject</td>
+<td>拒绝（单条拒绝）</td>
+</tr>
+<tr>
+<td>Basic.Recover</td>
+<td>否</td>
+<td>channel.basicRecover</td>
+<td>请求 Broker 重新发送未被确认的消息</td>
+</tr>
+<tr>
+<td>Basic.Recover-Ok</td>
+<td>否</td>
+<td>向上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Basic.Nack</td>
+<td>否</td>
+<td>channel.basicNack</td>
+<td>拒绝（可批量拒绝〉</td>
+</tr>
+<tr>
+<td>Tx.Select</td>
+<td>否</td>
+<td>channel.txSelect</td>
+<td>开启事务</td>
+</tr>
+<tr>
+<td>Tx.Select-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Tx.Commit</td>
+<td>否</td>
+<td>channel.txCommit</td>
+<td>事务提交</td>
+</tr>
+<tr>
+<td>Tx.Commit-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Tx.Rollback</td>
+<td>否</td>
+<td>channel.txRollback</td>
+<td>事务回滚</td>
+</tr>
+<tr>
+<td>Tx.Rollback-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>Confirm Select</td>
+<td>否</td>
+<td>channel.confinnSelect</td>
+<td>开启发送端确认模式</td>
+</tr>
+<tr>
+<td>Confirm.Select-Ok</td>
+<td>否</td>
+<td>同上</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>参考：</p>
+<blockquote>
+<p>《RabbitMQ实战指南》</p>
+</blockquote>
+<p><em>若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/mom/" rel="tag"># mom</a>
+          
+            <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020091201.html" rel="next" title="分布式概览（持续更新）">
+                <i class="fa fa-chevron-left"></i> 分布式概览（持续更新）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020092001.html" rel="prev" title="RabbitMQ（二）客户端开发">
+                RabbitMQ（二）客户端开发 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="Speciosity">
+            
+              <p class="site-author-name" itemprop="name">Speciosity</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">287</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">97</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RabbitMQ（一）简介和入门"><span class="nav-number">1.</span> <span class="nav-text">RabbitMQ（一）简介和入门</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是消息中间件"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是消息中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-常见的消息中间件"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 常见的消息中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-消息中间件的作用"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 消息中间件的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-RabbitMQ的发展历程"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 RabbitMQ的发展历程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-RabbitMQ的特点"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 RabbitMQ的特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-RabbitMQ的安装和简单实用"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 RabbitMQ的安装和简单实用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-安装"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）安装Erlang"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">（1）安装Erlang</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）安装RabbitMQ"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">（2）安装RabbitMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）卸载"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">（3）卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-运行"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-生产和消费消息"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 生产和消费消息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-Rabbit入门"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 Rabbit入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-RabbitMQ基本概念"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 RabbitMQ基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）生产者和消费者模型"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">（1）生产者和消费者模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）队列"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">（2）队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）交换器、路由键、绑定、交换器类型"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">（3）交换器、路由键、绑定、交换器类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）RabbitMQ运转流程"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">（4）RabbitMQ运转流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（5）连接和信道"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">（5）连接和信道</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-AMQP协议"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 AMQP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）AMQP生产者流转过程"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">（1）AMQP生产者流转过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）AMQP消费者者流转过程"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">（2）AMQP消费者者流转过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）AMQP命令概览"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">（3）AMQP命令概览</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Speciosity</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

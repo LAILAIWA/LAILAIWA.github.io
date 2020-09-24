@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="distributed,mom,rabbitmq,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="学习RabbitMQ，第二章《客户端开发》，内容来自于《RabbitMQ实战指南》。">
+<meta name="keywords" content="distributed,mom,rabbitmq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ（二）客户端开发">
+<meta property="og:url" content="http://linyishui.top/2020092001.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="学习RabbitMQ，第二章《客户端开发》，内容来自于《RabbitMQ实战指南》。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010156.png">
+<meta property="og:updated_time" content="2020-09-23T14:41:54.156Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ（二）客户端开发">
+<meta name="twitter:description" content="学习RabbitMQ，第二章《客户端开发》，内容来自于《RabbitMQ实战指南》。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010156.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020092001.html">
+
+
+
+
+
+  <title>RabbitMQ（二）客户端开发 | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020092001.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Speciosity">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RabbitMQ（二）客户端开发</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-20T12:34:35+08:00">
+                2020-09-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,708
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  学习RabbitMQ，第二章《客户端开发》，内容来自于《RabbitMQ实战指南》。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="客户端开发"><a href="#客户端开发" class="headerlink" title="客户端开发"></a><strong>客户端开发</strong></h1><h2 id="第一节-连接-RabbitMQ"><a href="#第一节-连接-RabbitMQ" class="headerlink" title="第一节 连接 RabbitMQ"></a><strong>第一节 连接 RabbitMQ</strong></h2><p>客户端给定参数（IP地址、端口号、用户名、密码等）连接RabbitMQ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">factory.setUsername(USERNAME);</span><br><span class="line">factory.setPassword(PASSWORD);</span><br><span class="line">factory.setVirtualHost(virtualHost);</span><br><span class="line">factory.setHost(IP_ADDRESS);</span><br><span class="line">factory.setPort(PORT);</span><br><span class="line">Connection conn = factory.newConnection();</span><br></pre></td></tr></table></figure>
+<p>也可以用URL的方式实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</span><br><span class="line">factory.setUri(<span class="string">"amqp://userName:password@ipAddress:portNumber/virtualHost"</span>);</span><br><span class="line">Connection conn = factory.newConnection();</span><br><span class="line"><span class="comment">//Connection 接口被用来创建一个 Channel:</span></span><br><span class="line">Channel channel= conn.createChannel();</span><br><span class="line"><span class="comment">//在创建之后，Channel可以用来发送或者接收消息了</span></span><br></pre></td></tr></table></figure>
+<p>Connection 可以用来创建多个 Channel 实例，但是 Channel 实例不能在线程问共享， 应用程序应该为每一个线程开辟一个 Channel 。多线程问共享 Channel 实例是非线程安全的。</p>
+<p>Channel 或者 Connection 中有个 <code>isOpen</code> 方法可以用来检测其是否己处于开启状态，这个方法的返回值依赖于 <code>shutdownCause</code> ，不推荐在生产环境使用，可能会产生竞争。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isOpen</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">synchronized</span>(<span class="keyword">this</span>.monitor) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.shutdownCause == <span class="keyword">null</span>; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>错误地使用 <code>isOpen</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">brokenMethod</span><span class="params">(Channel channel)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (channel.isOpen())&#123;</span><br><span class="line">        <span class="comment">//The following code depends on the channel being in opeηstate.</span></span><br><span class="line">        <span class="comment">//However there is a possibility of the change in the channel state</span></span><br><span class="line">        <span class="comment">//between isOpen() and basicQos(l) call</span></span><br><span class="line">        ...</span><br><span class="line">        channel.basicQos(l);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通常情况下，在调用 <code>createXXX</code> 或者 <code>newXXX</code> 方法之后，我们可以简单地认为 Connection 或者 Channel 已经成功地处于开启状态，而并不会在代码中使用 <code>isOpen</code> 这个检测方法。如果在使用 Channel 的时候其己经处于关闭状态，那么程序会抛出一个 <code>com.rabbitmq.client.ShutdownSignalException</code> ，我们只需捕获这个异常即可。当然同时也要试着捕获 <code>IOException</code> 或者 <code>SocketException</code> ，以防 Connection 意外关闭。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">validMethod</span><span class="params">(Channel channel)</span></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">		channel.basicQos(l);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (ShutdownSignalException sse) &#123;</span><br><span class="line">        <span class="comment">//possibly check if channel was closed</span></span><br><span class="line">        <span class="comment">//by the time we started action and reasons for</span></span><br><span class="line">        <span class="comment">//closing it</span></span><br><span class="line">        ...</span><br><span class="line">	&#125; <span class="keyword">catch</span> (IOException ioe) &#123;</span><br><span class="line">        <span class="comment">//check why connection was closed </span></span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="第二节-使用交换器和队列"><a href="#第二节-使用交换器和队列" class="headerlink" title="第二节 使用交换器和队列"></a><strong>第二节 使用交换器和队列</strong></h2><p>交换器和队列是 AMQP high-level 层面的构建模块，应用程序需确保在使用它们的时候就已经存在了，在使用之前需要先声明（declare）它们。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建一个持久化的、非自动删除的、绑定类型为 direct 交换器</span></span><br><span class="line">channel.exchangeDeclare(exchangeName, <span class="string">"direct"</span>, <span class="keyword">true</span>);</span><br><span class="line"><span class="comment">//同时也创建一个非持久化的、排他的、自动删除的队列（此队列的名称由 RabbitMQ 自动生成）</span></span><br><span class="line">String queueName = channel.queueDeclare().getQueue();</span><br><span class="line"><span class="comment">//使用路由键将队列和交换器绑定起来</span></span><br><span class="line">channel.queueBind(queueName, exchangeName, routingKey);</span><br></pre></td></tr></table></figure>
+<p>上面声明的队列具备如下特性：只对当前应用中同一个 Connection 层面可用，同一个 Connection 的不同 Channel 可共用，并且也会在应用连接断开时自动删除。</p>
+<p>如果要在应用中共享一个队列，可以做如下声明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//同上</span></span><br><span class="line">channel.exchangeDeclare(exchangeName , <span class="string">"direct"</span>, <span class="keyword">true</span>) ;</span><br><span class="line"><span class="comment">//队列被声明为持久化的 非排他的、非自动删除的，而且也被分配另一个确定的己知的名称（由客户端分配而非 RabbitMQ 自动生成）</span></span><br><span class="line">channel.queueDeclare(queueName, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">channel.queueBind(queueName , exchangeName , routingKey) ;</span><br></pre></td></tr></table></figure>
+<p>生产者和消费者都可以声明一个交换器或者队列。</p>
+<h3 id="2-1-exchangeDeclare"><a href="#2-1-exchangeDeclare" class="headerlink" title="2.1 exchangeDeclare()"></a><strong>2.1 exchangeDeclare()</strong></h3><p><code>exchangeDeclare()</code> 用来声明交换器，有多种重载方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Exchange.<span class="function">DeclareOk <span class="title">exchangeDeclare</span><span class="params">(String exchange, String type, <span class="keyword">boolean</span> durable,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">boolean</span> autoDelete, <span class="keyword">boolean</span> internal,</span></span></span><br><span class="line"><span class="function"><span class="params">Map&lt;String , Object&gt; arguments)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Exchange.DeclareOk</code> ：用来标识成功声明了一个交换器。</li>
+<li>exchange：交换器的<strong>名称</strong>。</li>
+<li>type：交换器的<strong>类型</strong>。<ul>
+<li>常见的如fanout，direct，topic。</li>
+</ul>
+</li>
+<li>durable：设置<strong>是否持久化</strong>。<ul>
+<li>持久化可以将交换器存盘，在服务器重启的时候不会丢失相关信息。</li>
+</ul>
+</li>
+<li>autoDelete：设置<strong>是否自动删除</strong>。<ul>
+<li>自动删除的前提是至少有一个队列或者交换器与这个交换器绑定，之后所有与这个交换器绑定的队列或者交换器都与此解绑。</li>
+<li>注意不能错误地把这个参数理解为：当与此交换器连接的客户端都断开时， RabbitMQ 会自动删除本交换器。</li>
+</ul>
+</li>
+<li>internal：设置<strong>是否是内置的的交换器</strong>。<ul>
+<li>客户端程序无法直接发送消息到这个交换器中，只能通过交换器路由到交换器这种方式。</li>
+</ul>
+</li>
+<li>argument：其他一些<strong>结构化参数</strong>，比如 <code>alternate-exchange</code> </li>
+</ul>
+<p>类似的方法：</p>
+<ul>
+<li>exchangeDeclareNoWait：无返回值，不建议使用，刚声明完交换器紧接着就使用，可能导致因交换器未创建而发生异常。</li>
+<li>exchangeDeclarePassive：用来检测相应的交换器是否存在，不存在抛出异常 <code>404 channel exception</code> 同时关闭 Channel 。</li>
+<li>exchangeDelete：删除交换器。</li>
+<li>exchangeDeleteNoWait：无返回删除。</li>
+</ul>
+<h3 id="2-2-queueDeclare"><a href="#2-2-queueDeclare" class="headerlink" title="2.2 queueDeclare()"></a><strong>2.2 queueDeclare()</strong></h3><p><code>queueDeclare()</code> 创建一个队列：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Queue.<span class="function">DeclareOk <span class="title">queueDeclare</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>; </span><br><span class="line">Queue.<span class="function">DeclareOk <span class="title">queueDeclare</span><span class="params">(String queue, <span class="keyword">boolean</span> durable, <span class="keyword">boolean</span> exclusive, <span class="keyword">boolean</span> autoDelete, Map&lt;String, Object&gt; arguments)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>无参方法默认构建一个 RabbitMQ命名的、排他的、自动删除的、非持久化的队列。</li>
+<li>queue：队列<strong>名称</strong></li>
+<li>durable：设置<strong>是否持久化</strong>。<ul>
+<li>持久化的队列会存盘，在服务器重启的时候可以保证不丢失相关信息。</li>
+</ul>
+</li>
+<li>exclusive：设置<strong>是否排他</strong>。<ul>
+<li>如果一个队列被声明为排他队列，该队列仅对首次声明它的连接可见，并在连接断开时自动删除。</li>
+<li>这里需要注意三点：<ul>
+<li>排他队列是基于连接（ Connection ）可见的，同一个连接的不同信道（Channel) 是可以同时访问同一连接创建的排他队列；</li>
+<li>“首次”是指如果一个连接己经声明了一个排他队列，其他连接是不允许建立同名的排他队列的，这个与普通队列不同；</li>
+<li>即使该队列是持久化的，一旦连接关闭或者客户端退出，该排他队列都会被自动删除，这种队列适用于一个客户端同时发送和读取消息的应用场景。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>autoDelete：设置是否自动删除。<ul>
+<li>自动删除的前提是：至少有一个消费者连接到这个队列，之后所有与这个队列连接的消费者都断开时，才会自动删除。不能把这个参数错误地理解为：“当连接到此队列的所有客户端断开时，这个队列自动删除”，因为生产者客户端创建这个队列，或者没有消费者客户端与这个队列连接时，都不会自动删除这个队列。</li>
+</ul>
+</li>
+<li>arguments：设置队列的其他一些参数。<ul>
+<li>如 <code>x-message-ttl</code> <code>x-expires</code> <code>x-max-length</code> <code>x-max-length-bytes</code> <code>x-dead-letter-exchange</code> <code>x-dead-letter-routing-key</code> , <code>x-max-priority</code> 等。</li>
+</ul>
+</li>
+</ul>
+<p>注意：生产者和消费者都能够使用 queueDeclare 来声明一个队列，但是如果消费者在同一个信道上订阅了另一个队列，就无法再声明队列了。必须先取消订阅，然后将信道置为“传输”模式，之后才能声明队列。</p>
+<p>类似的方法这里不再赘述。</p>
+<h3 id="2-3-queueBind"><a href="#2-3-queueBind" class="headerlink" title="2.3 queueBind()"></a><strong>2.3 queueBind()</strong></h3><p><code>queueBind()</code> 将队列与交换器绑定/解绑。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Queue.<span class="function">BindOk <span class="title">queueBind</span><span class="params">(String queue, String exchange, String routingKey, Map&lt;String, Object&gt; arguments)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">Queue.<span class="function">UnbindOk <span class="title">queueUnbind</span><span class="params">(String queue, String exchange, String routingKey, Map&lt;String, Object&gt; arguments)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>queue：队列名称；</li>
+<li>exchange：交换器的名称；</li>
+<li>routingKey：用来绑定队列和交换器的路由键；</li>
+<li>arguments：定义绑定的一些参数。</li>
+</ul>
+<h3 id="2-4-exchangeBind"><a href="#2-4-exchangeBind" class="headerlink" title="2.4 exchangeBind()"></a><strong>2.4 exchangeBind()</strong></h3><p><code>exchangeBind()</code> 将交换器与交换器绑定：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exchange.<span class="function">BindOk <span class="title">exchangeBind</span><span class="params">(String destination, String source , String routingKey, Map&lt;String, Object&gt; arguments)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<p>绑定之后，消息从 source 交换器转发到 destination 交换器，后者可以看作是一个队列。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分别声明source和destination交换器</span></span><br><span class="line">channel.exchangeDeclare(<span class="string">"source"</span>, <span class="string">"direct"</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">null</span>) ;</span><br><span class="line">channel.exchangeDeclare(<span class="string">"destination"</span>, <span class="string">"fanout"</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">null</span>);</span><br><span class="line"><span class="comment">//绑定两者</span></span><br><span class="line">channel.exchangeBind(<span class="string">"destination"</span>, <span class="string">"source"</span>, <span class="string">"exKey"</span>);</span><br><span class="line"><span class="comment">//声明队列</span></span><br><span class="line">channel.queueDeclare(<span class="string">"queue"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">null</span>);</span><br><span class="line"><span class="comment">//绑定destination交换器和队列</span></span><br><span class="line">channel.queueBind(<span class="string">"queue"</span>, <span class="string">"destination"</span>，<span class="string">""</span>);</span><br><span class="line"><span class="comment">//source推送消息</span></span><br><span class="line">channel.basicPublish(<span class="string">"source"</span>, <span class="string">"exKey"</span>, <span class="keyword">null</span>, <span class="string">"exToExDemo"</span>. getBytes());</span><br></pre></td></tr></table></figure>
+<p>生产者发送消息至交换器 source 中，交换器 source 根据路由键找到与其匹配 的另一个交换器 destination 井把消息转发到 destination 中，进而存储在 destination 绑定的队列 queue 中：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010156.png" alt></p>
+<h3 id="2-5-何时创建"><a href="#2-5-何时创建" class="headerlink" title="2.5 何时创建"></a><strong>2.5 何时创建</strong></h3><p>RabbitMQ 的<strong>消息存储在队列中</strong>，交换器的使用并不真正耗费服务器的性能，而队列会。 如果要衡量 RabbitMQ 当前的 QPS ，只需看队列的即可。<strong>在实际业务应用中，需要对所创建的队列的流量、内存占用及网卡占用有一个清晰的认知，预估其平均值和峰值</strong>，以便在固定硬件资源的情况下能够进行合理有效的分配。 </p>
+<p>按照 RabbitMQ 官方建议，<strong>生产者和消费者都应该尝试创建（这里指声明操作）队列</strong>。这是一个很好的建议，但不适用于所有的情况。如果业务本身在架构设计之初己经充分地预估了队列的使用情况，完全可以在业务程序上线之前在服务器上创建好（<strong>比如通过页面管理、 RabbitMQ 命令或者更好的是从配置中心下发</strong>），这样业务程序也可以免去声明的过程，直接使用即可。 </p>
+<p>预先创建好资源还有一个好处是，<strong>可以确保交换器和队列之间正确地绑定匹配</strong>。很多时候， 由于人为因素、代码缺陷等，发送消息的交换器并没有绑定任何队列，那么消息将会丢失；或者交换器绑定了某个队列，但是发送消息时的路由键无法与现存的队列匹配，那么消息也会丢失。 当然<strong>可以配合 mandatory 参数或者备份交换器来提高程序的健壮性</strong>。 </p>
+<p>与此同时，预估好队列的使用情况非常重要，如果在后期运行过程中超过预定的阈值，可以根据实际情况对当前集群进行扩容或者将相应的队列迁移到其他集群。迁移的过程也可以对业务程序完全透明。此种方法也更有利于开发和运维分工，便于相应资源的管理。 </p>
+<p>如果集群资源充足，而即将使用的队列所占用的资源又在可控的范围之内，为了增加业务程序的灵活性，<strong>也完全可以在业务程序中声明队列</strong>。 至于是使用预先分配创建资源的静态方式还是动态的创建方式，需要从业务逻辑本身、公司运维体系和公司硬件资源等方面考虑。</p>
+<hr>
+<h2 id="第三节-发送消息"><a href="#第三节-发送消息" class="headerlink" title="第三节 发送消息"></a><strong>第三节 发送消息</strong></h2><hr>
+<h2 id="第四节"><a href="#第四节" class="headerlink" title="第四节 "></a><strong>第四节 </strong></h2><hr>
+<h2 id="第五节"><a href="#第五节" class="headerlink" title="第五节 "></a><strong>第五节 </strong></h2><hr>
+<p>参考：</p>
+<blockquote>
+<p>《RabbitMQ实战指南》</p>
+</blockquote>
+<p><em>若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/mom/" rel="tag"># mom</a>
+          
+            <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020091901.html" rel="next" title="RabbitMQ（一）简介和入门">
+                <i class="fa fa-chevron-left"></i> RabbitMQ（一）简介和入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="Speciosity">
+            
+              <p class="site-author-name" itemprop="name">Speciosity</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">287</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">97</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#客户端开发"><span class="nav-number">1.</span> <span class="nav-text">客户端开发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-连接-RabbitMQ"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 连接 RabbitMQ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-使用交换器和队列"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 使用交换器和队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-exchangeDeclare"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 exchangeDeclare()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-queueDeclare"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 queueDeclare()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-queueBind"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 queueBind()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-exchangeBind"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 exchangeBind()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-何时创建"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 何时创建</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-发送消息"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 发送消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 </span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 </span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Speciosity</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
