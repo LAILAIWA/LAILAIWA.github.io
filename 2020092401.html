@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="sql,oracle,">
+  <meta name="keywords" content="mysql,sql,oracle,">
 
 
 
@@ -89,19 +89,21 @@
 
 
 <meta name="description" content="简单整理一下SqlLoader相关内容，简单使用，实战案例等。">
-<meta name="keywords" content="sql,oracle">
+<meta name="keywords" content="mysql,sql,oracle">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SqlLoader">
 <meta property="og:url" content="http://linyishui.top/2020092401.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="简单整理一下SqlLoader相关内容，简单使用，实战案例等。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010157.png">
-<meta property="og:updated_time" content="2020-09-26T12:26:08.999Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010160.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010161.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010162.png">
+<meta property="og:updated_time" content="2020-09-27T08:38:21.272Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SqlLoader">
 <meta name="twitter:description" content="简单整理一下SqlLoader相关内容，简单使用，实战案例等。">
-<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010157.png">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010160.png">
 
 
 
@@ -410,7 +412,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,800
+                  4,867
                 </span>
               
 
@@ -426,7 +428,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  20
                 </span>
               
             </div>
@@ -474,6 +476,7 @@
 <li>skip：跳过的行数，比如导出的数据文件前面几行是表头或其他描述。</li>
 </ul>
 <p>sqlldr是在处理大数据量的操作中建议采用的方式，它有许多性能相关的开关，能最大程度的减少 redo，undo 的生成。</p>
+<p>MySql中对应的语句：<code>load data infile</code> 。</p>
 <h3 id="1-3-SqlLoader用法"><a href="#1-3-SqlLoader用法" class="headerlink" title="1.3 SqlLoader用法"></a>1.3 SqlLoader用法</h3><p>控制文件 <code>.ctl</code> 格式：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 控制文件标识</span></span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span>   </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 2. 要导入的数据文件名</span></span><br><span class="line"><span class="keyword">INFILE</span> <span class="string">'xxx.txt'</span>      </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 3. 将文件插入到数据库的 test 表中</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> <span class="keyword">test</span>   </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 4. 用于分割一行中各个属性值的符号（例如每个属性值用逗号分割， 那么就把 X'09' 改为','）</span></span><br><span class="line"><span class="keyword">Fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> X<span class="string">'09'</span> </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 5. test表中对应的属性名</span></span><br><span class="line">(<span class="keyword">id</span>, username, passwprd, ......)</span><br></pre></td></tr></table></figure>
 <p>操作类型有：</p>
@@ -489,13 +492,191 @@
 <ul>
 <li>数据文件：可以是PL/SQL或Toad导出、SqlPlus的Spool格式化产出、UTL_FILE包生成。</li>
 </ul>
+<h3 id="1-4-LOAD-DATA-INFILE用法"><a href="#1-4-LOAD-DATA-INFILE用法" class="headerlink" title="1.4 LOAD DATA INFILE用法"></a>1.4 LOAD DATA INFILE用法</h3><p><code>LOAD DATA INFILE</code> 是  <code>SELECT ... INTO OUTFILE</code> 的相对语句。把表的数据备份到文件使用 <code>SELECT ... INTO OUTFILE</code> ，从备份文件恢复表数据，使用  <code>LOAD DATA INFILE</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> [<span class="keyword">LOW_PRIORITY</span> | <span class="keyword">CONCURRENT</span>] [<span class="keyword">LOCAL</span>] <span class="keyword">INFILE</span> <span class="string">'file_name.txt'</span></span><br><span class="line">    [<span class="keyword">REPLACE</span> | <span class="keyword">IGNORE</span>]</span><br><span class="line">    <span class="keyword">INTO</span> <span class="keyword">TABLE</span> tbl_name</span><br><span class="line">    [<span class="keyword">FIELDS</span></span><br><span class="line">        [<span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'string'</span>]</span><br><span class="line">        [[<span class="keyword">OPTIONALLY</span>] <span class="keyword">ENCLOSED</span> <span class="keyword">BY</span> <span class="string">'char'</span>]</span><br><span class="line">        [<span class="keyword">ESCAPED</span> <span class="keyword">BY</span> <span class="string">'char'</span> ]</span><br><span class="line">    ]</span><br><span class="line">    [<span class="keyword">LINES</span></span><br><span class="line">        [<span class="keyword">STARTING</span> <span class="keyword">BY</span> <span class="string">'string'</span>]</span><br><span class="line">        [<span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'string'</span>]</span><br><span class="line">    ]</span><br><span class="line">    [<span class="keyword">IGNORE</span> <span class="built_in">number</span> <span class="keyword">LINES</span>]</span><br><span class="line">    [(col_name_or_user_var,...)]</span><br><span class="line">    [<span class="keyword">SET</span> col_name = expr,...)]</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">LOCAL</span> <span class="keyword">INFILE</span> <span class="string">'data.txt'</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> tbl_name </span><br><span class="line"><span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">','</span> </span><br><span class="line"><span class="keyword">OPTIONALLY</span> <span class="keyword">ENCLOSED</span> <span class="keyword">BY</span> <span class="string">'"'</span> </span><br><span class="line"><span class="keyword">LINES</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'\n'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 只载入部分列</span></span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">LOCAL</span> <span class="keyword">INFILE</span> <span class="string">'persondata.txt'</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> persondata (col1,col2)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<ul>
+<li><p>LOW_PRIORITY：适用于表锁存储引擎，比如MyISAM, MEMORY, 和 MERGE，在写入过程中如果有客户端程序读表，写入将会延后，直至没有任何客户端程序读表再继续写入。</p>
+</li>
+<li><p>CONCURRENT：使用该参数，允许在写入过程中其它客户端程序读取表内容。</p>
+</li>
+<li><p>LOCAL：关键字影响数据文件定位和错误处理，影响在哪里找到数据文件。只有当 mysql-server 和 mysql-client 同时在配置中指定允许使用，LOCAL关键字才会生效。</p>
+<ul>
+<li><p>LOCAL load operations：如果指定了LOCAL，数据文将被客户端程序从客户端主机读取，然后发送给服务器主机。将在服务器主机的临时目录创建一个数据文件的副本，如果临时目录剩余空间不足，将导致语句执行失败。</p>
+</li>
+<li><p>Non-LOCAL load operations：如果没有指定LOCAL，数据文件必须位于服务器值机上，直接由 mysql-server 读取。mysql-serve 使用如下规则来定位文件：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1. </span>数据文件使用绝对路径，直接使用</span><br><span class="line"></span><br><span class="line"><span class="bullet">2. </span>数据文件使用相对路径并且有前导的部分，将相对于 mysql-server 的数据目录查找，例如 ./myfile.txt</span><br><span class="line"></span><br><span class="line"><span class="bullet">3. </span>数据文件使用相对路径并且没有前导的部分，将相对于默认数据库的数据文件目录查找,例如 myfile.txt</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>根据上面的规则，./myfile.txt  将被定位到 mysql-server 的 data directory,而 myfile.txt 将被定位到 default database 的  database directory。
+
+如果 db1 时默认数据库，则下面的语句将从 db1 的数据库目录读取 data.txt,即使明确指定把数据装载到 db2：
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span> <span class="string">'data.txt'</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> db2.my_table;</span><br></pre></td></tr></table></figure>
+
+
+Non-LOCAL load operations 从服务器主机上读取数据文将。出于安全原因，这个操作需要文件权限。 如果secure_file_priv 系统变量的value 不为空，数据文件必须放在该变量指定的目录。如果该变量为空，数据文件必须可读。
+
+使用LOCAL将比让服务器直接存取文件慢些，因为文件的内容必须从客户主机传送到服务器主机。在另一方面，你不需要file权限装载本地文件。
+</code></pre><ul>
+<li><p>LOCAL关键字对错误处理的影响：</p>
+<ol>
+<li>使用 LOAD DATA INFILE,data-interpretation 和 duplicate-key 错误会终止操作；</li>
+<li>使用 LOAD DATA LOCAL INFILE，data-interpretation 和 duplicate-key 错误会发出警告，操作将继续执行。对于duplicate-key错误，效果和指定了 IGNORE 关键字一样。</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><p>REPLACE | IGNORE：控制对现有的唯一键记录的重复的处理。</p>
+<ul>
+<li>指定REPLACE，新行将代替有相同的唯一键值的现有行。</li>
+<li>指定IGNORE，跳过有唯一键的现有行的重复行的输入。</li>
+<li>不指定任何一个选项，当找到重复键键时，出现一个错误，并且文本文件的余下部分被忽略时。</li>
+</ul>
+</li>
+<li><p>FIELDS：</p>
+<ul>
+<li><p>基本用法：如果指定一个FIELDS子句，它的每一个子句(TERMINATED BY, [OPTIONALLY] ENCLOSED BY和ESCAPED BY)也是可选的，但是必须至少指定一个。</p>
+<p>如果你指定 FIELDS 或 LINES ，缺省值为：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FIELDS TERMINATED BY '\t' ENCLOSED BY '' ESCAPED BY '\\'</span><br><span class="line">LINES TERMINATED BY '\n' STARTING BY ''</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>缺省值导致读取输入时，LOAD DATA INFILE表现如下：
+
+1. 在 \n 处寻找行边界
+2. 在 \t 处将行分进字段
+3. 不要期望字段由任何引号字符封装
+4. 将由“\”开头的定位符、换行符或“\”解释成转义序列。例如 \t, \n, and \ 分别解释成 定位符，换行，反斜杠。
+
+相反，缺省值导致在写入输出时，SELECT ... INTO OUTFILE表现如下：
+
+1. 在字段之间写 \t
+2. 不用任何引号字符封装字段
+3. 使用“\”转义出现在字段中的 定位符、换行符或“\”字符
+4. 在行尾处写换行符
+</code></pre><ul>
+<li><p>FIELDS [OPTIONALLY] ENCLOSED BY：控制哪些字段应该包裹在引号里面。</p>
+<p>对于SELECT … INTO OUTFILE 输出，如果不包含OPTIONALLY选项，所有的字段将会被ENCLOSED BY指定的字符包裹，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"1"</span>,<span class="string">"a string"</span>,<span class="string">"100.20"</span>  </span><br><span class="line"><span class="string">"2"</span>,<span class="string">"a string containing a , comma"</span>,<span class="string">"102.20"</span>  </span><br><span class="line"><span class="string">"3"</span>,<span class="string">"a string containing a \" quote"</span>,<span class="string">"102.20"</span>  </span><br><span class="line"><span class="string">"4"</span>,<span class="string">"a string containing a \", quote and comma"</span>,<span class="string">"102.20"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>如果我们指定OPTIONALLY，只有string数据类型（如 CHAR, BINARY, TEXT, 或 ENUM）的字段才会被ENCLOSED BY指定的字符包裹，例如：
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1,<span class="string">"a string"</span>,100.20  </span><br><span class="line">2,<span class="string">"a string containing a , comma"</span>,102.20  </span><br><span class="line">3,<span class="string">"a string containing a \" quote"</span>,102.20  </span><br><span class="line">4,<span class="string">"a string containing a \", quote and comma"</span>,102.20</span><br></pre></td></tr></table></figure>
+
+
+注意，如果在字段值内出现ENCLOSED BY字符，则通过使用ESCAPED BY字符作为前缀，对ENCLOSED BY字符进行转义。另外，要注意，如果指定了一个空ESCAPED BY值，则可能会生成不能被LOAD DATAINFILE 正确读取的输出值。例如：
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1,<span class="string">"a string"</span>,100.20  </span><br><span class="line">2,<span class="string">"a string containing a , comma"</span>,102.20  </span><br><span class="line">3,<span class="string">"a string containing a "</span> quote<span class="string">",102.20  </span></span><br><span class="line"><span class="string">4,"</span>a string containing a <span class="string">", quote and comma"</span>,102.20</span><br></pre></td></tr></table></figure>
+</code></pre><ul>
+<li><p>FIELDS ESCAPED BY：用来控制如何对特殊字符进行读写。</p>
+<p>如上面一个例子，导出和导入时指定FIELDS ESCAPED BY为双引号[“]才能被正确的导入，导出的格式如下，对字段内的双引号[“]进行了转义。</p>
+</li>
+</ul>
+<pre><code><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1,<span class="string">"a string"</span>,100.20  </span><br><span class="line">2,<span class="string">"a string containing a , comma"</span>,102.20  </span><br><span class="line">3,<span class="string">"a string containing a #"</span> quote<span class="string">",102.20  </span></span><br><span class="line"><span class="string">4,"</span>a string containing a <span class="comment">#", quote and comma",102.20</span></span><br></pre></td></tr></table></figure>
+
+
+对于输入：
+ 假如FIELDS ESCAPED BY指定字符非空，则输入时该字符被移除，后续的内容被添加到字段里。一些两个字符的字符串序列且第一个字符是转义字符的例外 。这些字符序列见下表：
+
+| Character | Escape Sequence                |
+| :-------: | ------------------------------ |
+|    \0     | An ASCII NUL (X&apos;00&apos;) character |
+|    \b     | A backspace character          |
+|    \n     | A newline (linefeed) character |
+|    \r     | A carriage return character    |
+|    \t     | A tab character.               |
+|    \Z     | ASCII 26 (Control+Z)           |
+|    \N     | NULL                           |
+
+假如FIELDS ESCAPED BY指定字符为空，将不会发生转义序列的解释。
+
+对于输出，如果FIELDS ESCAPED BY指定字符非空，字符作为以下输出的前缀：
+
+1. FIELDS ESCAPED BY 字符，例如 \
+2. FIELDS [OPTIONALLY] ENCLOSED BY 字符，例如 &quot;
+3. FIELDS TERMINATED BY and LINES TERMINATED BY 的 value 的第一个字符,例如\n
+4. ASCII 0
+
+如果LINES TERMINATED BY是空字符串，FIELDS TERMINATED BY非空,字符将不会被转义，NULL 将输出为 NULL而不是 \N。指定LINES TERMINATED BY为空字符串并不是个好主意，特别当内容中包含上表列出的特殊字符时。
+</code></pre><ul>
+<li><p>LINES STARTING BY：如果所有希望读入的行都含有一个我们希望忽略的共用前缀，则可以使用 LINES STARTING BY ‘prefix_string’  来跳过前缀（以及该前缀前的所有字符）。如果某行不包括前缀，则整个行被跳过。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span> <span class="string">'/tmp/test.txt'</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> <span class="keyword">test</span> </span><br><span class="line">   <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">','</span>  <span class="keyword">LINES</span> <span class="keyword">STARTING</span> <span class="keyword">BY</span> <span class="string">'xxx'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>假如/tmp/test.txt文件内容如下：
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xxx"abc",1  </span><br><span class="line">something xxx"def",2  </span><br><span class="line">"ghi",3</span><br></pre></td></tr></table></figure>
+
+
+则我们读入的内容包括(&quot;abc&quot;,1) 和 (&quot;def&quot;,2)，第三行直接被跳过。
+</code></pre><ul>
+<li><p>IGNORE number LINES：该选项可以被用于在文件的开始处忽略行。例如，我们可以使用IGNORE 1 LINES来跳过一个包含列名称的起始标题行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span> <span class="string">'/tmp/test.txt'</span> <span class="keyword">INTO</span> <span class="keyword">TABLE</span> <span class="keyword">test</span> <span class="keyword">IGNORE</span> <span class="number">1</span> <span class="keyword">LINES</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>在特定情况下，field-和line-handling选项相互影响：</p>
+<ol>
+<li>如果LINES TERMINATED BY是空字符串，FIELDS TERMINATED BY非空,行以FIELDS TERMINATED BY指定的字符串作为结尾。</li>
+<li>如果FIELDS TERMINATED BY 与 FIELDS ENCLOSED BY值均为空(‘’)，将使用固定行（无分割）格式。使用固定行格式，字段之间将没有分隔符（行终止符依然可使用），列字段数据的读取和写入均按照字段定义的宽度去操作，如 TINYINT, SMALLINT, MEDIUMINT, INT, 和 BIGINT, 字段宽度分别为4, 6, 8, 11, 和 20。</li>
+</ol>
+</li>
+<li><p>不适合使用 LOAD DATA INFILE 的情况：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 使用固定行格式（即FIELDS TERMINATED BY 和 FIELDS ENCLOSED BY 均为空）,列字段类型为BLOB或TEXT。</span><br><span class="line">2. 指定分隔符与其它选项前缀一样，<span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span>不能对输入做正确的解释。例如：</span><br><span class="line">   <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">'"'</span> <span class="keyword">ENCLOSED</span> <span class="keyword">BY</span> <span class="string">'"'</span>  </span><br><span class="line"><span class="number">3.</span> 如果 <span class="keyword">FIELDS</span> <span class="keyword">ESCAPED</span> <span class="keyword">BY</span> 为空，字段值包含 <span class="keyword">FIELDS</span> <span class="keyword">ENCLOSED</span> <span class="keyword">BY</span> 指定字符，或者 <span class="keyword">LINES</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> 的字符在 <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> 之前，都会导致过早的停止 <span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span>操作。因为<span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span>不能准确的确定行或列的结束。</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>IGNORE number LINES 选项：IGNORE number LINES选项可以被用于在文件的开始处忽略行。<br>您可以使用IGNORE 1 LINES来跳过一个包含列名称的起始标题行：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span> <span class="keyword">INFILE</span> <span class="string">'/tmp/test.txt'</span>  <span class="keyword">INTO</span> <span class="keyword">TABLE</span> <span class="keyword">test</span> <span class="keyword">IGNORE</span> <span class="number">1</span> <span class="keyword">LINES</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选择导入的列：</p>
+<p>下面的语句会导入文件的所有列</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE <span class="string">'persondata.txt'</span> INTO TABLE persondata;</span><br></pre></td></tr></table></figure>
+<p>如果我们想导入表的某些列，需要指定列的列表</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE <span class="string">'persondata.txt'</span> <span class="function">INTO TABLE <span class="title">persondata</span> (<span class="params">col1,col2,...</span>)</span>;</span><br></pre></td></tr></table></figure>
+<p>如果输入文件与表的列顺序不同，我们必须指定一个列清单，否则mysql不能把输入文件的字段与表的列匹配起来。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; LOAD DATA INFILE <span class="string">'/tmp/loadtest.txt'</span> INTO TABLE loadtest </span><br><span class="line">   FIELDS TERMINATED BY <span class="string">','</span> </span><br><span class="line">   OPTIONALLY ENCLOSED BY <span class="string">'"'</span> </span><br><span class="line">   ESCAPED BY <span class="string">'#'</span> </span><br><span class="line">   LINES TERMINATED BY <span class="string">'\n'</span> </span><br><span class="line">   (c1, c2, c4, c3);</span><br></pre></td></tr></table></figure>
+<p>列的清单可以包含列名或者用户变量，在写入列前我们需要使用SET语句对用户变量进行转换。对set语句及用户变量有如下使用方法：</p>
+<p>方法1：在用户变量用于第一列之前，先把第一列的值赋予用户变量，进行除法操作后输入到c1。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE <span class="string">'file.txt'</span></span><br><span class="line">  INTO TABLE t1</span><br><span class="line">  (column1, <span class="meta">@var</span>1)</span><br><span class="line">  SET column2 = <span class="meta">@var</span>1/<span class="number">100</span>;</span><br></pre></td></tr></table></figure>
+<p>方法2The SET clause can be used to supply values not derived from the input file. 。使用下面例子把c3列设为当前时间</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE <span class="string">'file.txt'</span></span><br><span class="line">  INTO TABLE t1</span><br><span class="line">  (column1, column2)</span><br><span class="line">  SET column3 = CURRENT_TIMESTAMP;</span><br></pre></td></tr></table></figure>
+<p>方法3：把输入赋予用户变量，而不把用户变量赋予表中的列，来丢弃此输入值。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE <span class="string">'file.txt'</span></span><br><span class="line">  INTO TABLE t1</span><br><span class="line">  (column1, <span class="meta">@dummy</span>, column2, <span class="meta">@dummy</span>, column3);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过管道导入数据：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">在unix系统中，如果我们想要从管道（pipe）中load data，需要用如下方法：</span><br><span class="line">[root<span class="symbol">@localhost</span> tmp]<span class="meta"># mkfifo /tmp/ls.dat  </span></span><br><span class="line">[root<span class="symbol">@localhost</span> tmp]<span class="meta"># chmod 666 /tmp/ls.dat  </span></span><br><span class="line">[root<span class="symbol">@localhost</span> tmp]<span class="meta"># find / -ls &gt; /tmp/ls.dat &amp;  </span></span><br><span class="line">[root<span class="symbol">@localhost</span> tmp]<span class="meta"># mysql -e <span class="string">"LOAD DATA INFILE '/tmp/ls.dat' INTO TABLE test.tb1 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"</span><span class="string">' ESCAPED BY '</span>#<span class="string">' LINES TERMINATED BY '</span>\n<span class="string">'"</span></span></span><br></pre></td></tr></table></figure>
+<p>注意：sql-mode使用严格事物模式STRICT_TRANS_TABLES会报错</p>
+<p>在另一窗口将数据写入管道</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="meta">@localhost</span> <span class="regexp">/]# cat /</span>tmp<span class="regexp">/loadtest.txt &gt; /</span>tmp/ls.dat</span><br></pre></td></tr></table></figure>
+<p>注：可以先读或者先写管道，谁先谁后都可以，在写入管道的数据被全部读出前，处于阻塞状态。</p>
+</li>
+</ul>
 <h2 id="第二节-实战"><a href="#第二节-实战" class="headerlink" title="第二节 实战"></a>第二节 实战</h2><h3 id="2-1-导出SQL"><a href="#2-1-导出SQL" class="headerlink" title="2.1 导出SQL"></a>2.1 导出SQL</h3><p>导出一千万条数据，耗时-5分钟，sql文件大小-1.17 GB</p>
 <p>直接执行SQL文件，耗时54分41秒</p>
-<h3 id="2-2-SqlLoader"><a href="#2-2-SqlLoader" class="headerlink" title="2.2 SqlLoader"></a>2.2 SqlLoader</h3><p>导出CSV格式文件，耗时，文件大小：</p>
-<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010157.png" alt></p>
-<p>创建控制文件：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">OPTIONS (skip=1,rows=128) <span class="comment">-- sqlldr 命令显示的 选项可以写到这里边来,skip=1 用来跳过数据中的第一行  </span></span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span>  </span><br><span class="line"><span class="keyword">INFILE</span> <span class="string">"users_data.csv"</span> <span class="comment">--指定外部数据文件，可以写多 个 INFILE "another_data_file.csv" 指定多个数据文件  </span></span><br><span class="line"><span class="comment">--这里还可以使 用 BADFILE、DISCARDFILE 来指定坏数据和丢弃数据的文件，  </span></span><br><span class="line"><span class="keyword">truncate</span> <span class="comment">--操作类型，用 truncate table 来清除表中原有 记录  </span></span><br><span class="line"><span class="keyword">INTO</span> <span class="keyword">TABLE</span> <span class="keyword">users</span> <span class="comment">-- 要插入记录的表  </span></span><br><span class="line"><span class="keyword">Fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">","</span> <span class="comment">-- 数据中每行记录用 "," 分隔  </span></span><br><span class="line"><span class="keyword">Optionally</span> <span class="keyword">enclosed</span> <span class="keyword">by</span> <span class="string">'"'</span> <span class="comment">-- 数据中每个字段用 '"' 框起，比如字段中有 "," 分隔符时  </span></span><br><span class="line">trailing nullcols <span class="comment">--表的字段没有对应的值时允 许为空  </span></span><br><span class="line">(  </span><br><span class="line">  virtual_column FILLER, <span class="comment">--这是一个虚拟字段，用来跳 过由 PL/SQL Developer 生成的第一列序号  </span></span><br><span class="line">  user_id <span class="built_in">number</span>, <span class="comment">--字段可以指定类型，否则认 为是 CHARACTER 类型, log 文件中有显示  </span></span><br><span class="line">  user_name,  </span><br><span class="line">  login_times,  </span><br><span class="line">  last_login <span class="built_in">DATE</span> <span class="string">"YYYY-MM-DD HH24:MI:SS"</span> <span class="comment">-- 指定接受日期的格式，相当用 to_date() 函数转换  </span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>执行命令：<code>sqlldr dbuser/dbpass@dbservice control=users.ctl</code></p>
+<h3 id="2-2-load-data-infile"><a href="#2-2-load-data-infile" class="headerlink" title="2.2 load data infile"></a>2.2 load data infile</h3><p>1.在源数据库导出数据文件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> logs1 <span class="keyword">into</span> <span class="keyword">outfile</span> <span class="string">'logs1.txt'</span>;</span><br></pre></td></tr></table></figure>
+<p>执行耗时：（只需半分钟）</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010160.png" alt></p>
+<p>文件大小：676MB</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010161.png" alt></p>
+<p>生成文件格式：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">1811</span>	<span class="selector-tag">1</span>	/<span class="selector-tag">index</span>	<span class="selector-tag">0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:1</span>	\<span class="selector-tag">N</span>	\<span class="selector-tag">N</span>	<span class="selector-tag">null</span>	<span class="selector-tag">2020-01-01</span> <span class="selector-tag">00</span><span class="selector-pseudo">:00</span><span class="selector-pseudo">:00</span>	首页</span><br><span class="line"><span class="selector-tag">1812</span>	<span class="selector-tag">2</span>	/<span class="selector-tag">index</span>	<span class="selector-tag">0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:1</span>	\<span class="selector-tag">N</span>	\<span class="selector-tag">N</span>	<span class="selector-tag">null</span>	<span class="selector-tag">2020-01-01</span> <span class="selector-tag">00</span><span class="selector-pseudo">:00</span><span class="selector-pseudo">:01</span>	首页</span><br><span class="line"><span class="selector-tag">1813</span>	<span class="selector-tag">1</span>	/<span class="selector-tag">index</span>	<span class="selector-tag">0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:1</span>	\<span class="selector-tag">N</span>	\<span class="selector-tag">N</span>	<span class="selector-tag">null</span>	<span class="selector-tag">2020-01-01</span> <span class="selector-tag">00</span><span class="selector-pseudo">:00</span><span class="selector-pseudo">:02</span>	首页</span><br><span class="line"><span class="selector-tag">1814</span>	<span class="selector-tag">1</span>	/<span class="selector-tag">index</span>	<span class="selector-tag">0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:1</span>	\<span class="selector-tag">N</span>	\<span class="selector-tag">N</span>	<span class="selector-tag">null</span>	<span class="selector-tag">2020-01-01</span> <span class="selector-tag">00</span><span class="selector-pseudo">:00</span><span class="selector-pseudo">:03</span>	首页</span><br><span class="line"><span class="selector-tag">1815</span>	<span class="selector-tag">1</span>	/<span class="selector-tag">index</span>	<span class="selector-tag">0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:0</span><span class="selector-pseudo">:1</span>	\<span class="selector-tag">N</span>	\<span class="selector-tag">N</span>	<span class="selector-tag">null</span>	<span class="selector-tag">2020-01-01</span> <span class="selector-tag">00</span><span class="selector-pseudo">:00</span><span class="selector-pseudo">:04</span>	首页</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>3.目标数据库执行命令：（需要先导入表结构）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> <span class="keyword">data</span> <span class="keyword">infile</span> <span class="string">'logs1.txt'</span> <span class="keyword">into</span> <span class="keyword">table</span> logs1(<span class="keyword">id</span>, logtype, logurl, logip, logdz, ladduser, lfadduser, laddtime, htmlname);</span><br></pre></td></tr></table></figure>
+<p>执行耗时：（只需5分钟左右）</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200901/202009010162.png" alt></p>
+<p>对比导出SQL文件，耗时从将近1小时缩短到5分钟。</p>
+<h3 id="2-3-SqlLoader"><a href="#2-3-SqlLoader" class="headerlink" title="2.3 SqlLoader"></a>2.3 SqlLoader</h3><p>1.导出数据文件，可以是任意支持格式，如 <code>.txt</code>，<code>.csv</code> 等。</p>
+<p>2.创建控制文件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">OPTIONS (skip=1,rows=128) <span class="comment">-- sqlldr 命令显示的 选项可以写到这里边来,skip=1 用来跳过数据中的第一行  </span></span><br><span class="line"><span class="keyword">LOAD</span> <span class="keyword">DATA</span>  </span><br><span class="line"><span class="keyword">INFILE</span> <span class="string">"users_data.csv"</span> <span class="comment">--指定外部数据文件，可以写多 个 INFILE "another_data_file.csv" 指定多个数据文件  </span></span><br><span class="line"><span class="comment">--这里还可以使 用 BADFILE、DISCARDFILE 来指定坏数据和丢弃数据的文件，  </span></span><br><span class="line"><span class="keyword">truncate</span> <span class="comment">--操作类型，用 truncate table 来清除表中原有 记录  </span></span><br><span class="line"><span class="keyword">INTO</span> <span class="keyword">TABLE</span> <span class="keyword">users</span> <span class="comment">-- 要插入记录的表  </span></span><br><span class="line"><span class="keyword">Fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">","</span> <span class="comment">-- 数据中每行记录用 "," 分隔  </span></span><br><span class="line"><span class="keyword">Optionally</span> <span class="keyword">enclosed</span> <span class="keyword">by</span> <span class="string">'"'</span> <span class="comment">-- 数据中每个字段用 '"' 框起，比如字段中有 "," 分隔符时  </span></span><br><span class="line">trailing nullcols <span class="comment">--表的字段没有对应的值时允 许为空  </span></span><br><span class="line">(  </span><br><span class="line">  virtual_column FILLER, <span class="comment">--这是一个虚拟字段，用来跳 过由 PL/SQL Developer 生成的第一列序号  </span></span><br><span class="line">  user_id <span class="built_in">number</span>, <span class="comment">--字段可以指定类型，否则认 为是 CHARACTER 类型, log 文件中有显示  </span></span><br><span class="line">  user_name,  </span><br><span class="line">  login_times,  </span><br><span class="line">  last_login <span class="built_in">DATE</span> <span class="string">"YYYY-MM-DD HH24:MI:SS"</span> <span class="comment">-- 指定接受日期的格式，相当用 to_date() 函数转换  </span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 <p>执行完 sqlldr 后可以留意一下生成的几个文件，如 users.log 日志文件、users.bad 坏数据文件等。特别是要看看日志文件，从中可让你更好的理解 Sql Loader，里面有对控制文件的解析、列出每个字段的类型、加载记录的统计、出错原因等信息。</p>
 <h2 id="第三节-SqlLoader细节"><a href="#第三节-SqlLoader细节" class="headerlink" title="第三节 SqlLoader细节"></a>第三节 SqlLoader细节</h2><p>SqlLoader 的性能与并发操作：</p>
 <ol>
@@ -518,6 +699,12 @@
 <p>参考：</p>
 <blockquote>
 <p><a href="https://blog.csdn.net/shadow_zed/article/details/82661118" target="_blank" rel="noopener">oracle sqlldr 用法详解</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/load-data.html" target="_blank" rel="noopener">MySql官方文档-LOAD DATA Statement</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/bcafd8f3ad8e" target="_blank" rel="noopener">LOAD DATA INFILE 导入数据</a></p>
 </blockquote>
 <p><em>若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
@@ -548,6 +735,8 @@
       
         <div class="post-tags">
           
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
             <a href="/tags/sql/" rel="tag"># sql</a>
           
             <a href="/tags/oracle/" rel="tag"># oracle</a>
@@ -572,6 +761,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020092701.html" rel="prev" title="数据迁移">
+                数据迁移 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -660,7 +853,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">288</span>
+                  <span class="site-state-item-count">291</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -781,7 +974,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SqlLoader"><span class="nav-number">1.</span> <span class="nav-text">SqlLoader</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-常见的几种数据迁移方式"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 常见的几种数据迁移方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-什么是SqlLoader"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 什么是SqlLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-SqlLoader用法"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 SqlLoader用法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-实战"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-导出SQL"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 导出SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-SqlLoader"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 SqlLoader</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-SqlLoader细节"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 SqlLoader细节</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SqlLoader"><span class="nav-number">1.</span> <span class="nav-text">SqlLoader</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-常见的几种数据迁移方式"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 常见的几种数据迁移方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-什么是SqlLoader"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 什么是SqlLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-SqlLoader用法"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 SqlLoader用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-LOAD-DATA-INFILE用法"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 LOAD DATA INFILE用法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-实战"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-导出SQL"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 导出SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-load-data-infile"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 load data infile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-SqlLoader"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 SqlLoader</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-SqlLoader细节"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 SqlLoader细节</span></a></li></ol></li></ol></div>
             
 
           </div>
