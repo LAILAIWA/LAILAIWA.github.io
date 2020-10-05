@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="distributed,mom,rabbitmq,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="学习RabbitMQ，第四章《管理》，内容来自于《RabbitMQ实战指南》，从服务端的角度介绍 RabbitMQ 的一些工具应用，内容包括：rabbitmqctl 工具和 rabbitmq management 插件。">
+<meta name="keywords" content="distributed,mom,rabbitmq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ（四）管理">
+<meta property="og:url" content="http://linyishui.top/2020100201.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="学习RabbitMQ，第四章《管理》，内容来自于《RabbitMQ实战指南》，从服务端的角度介绍 RabbitMQ 的一些工具应用，内容包括：rabbitmqctl 工具和 rabbitmq management 插件。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010106.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010107.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010108.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010109.png">
+<meta property="og:updated_time" content="2020-10-05T17:01:53.077Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ（四）管理">
+<meta name="twitter:description" content="学习RabbitMQ，第四章《管理》，内容来自于《RabbitMQ实战指南》，从服务端的角度介绍 RabbitMQ 的一些工具应用，内容包括：rabbitmqctl 工具和 rabbitmq management 插件。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010101.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020100201.html">
+
+
+
+
+
+  <title>RabbitMQ（四）管理 | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020100201.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RabbitMQ（四）管理</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-02T15:08:31+08:00">
+                2020-10-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7,962
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  32
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  学习RabbitMQ，第四章《管理》，内容来自于《RabbitMQ实战指南》，从服务端的角度介绍 RabbitMQ 的一些工具应用，内容包括：rabbitmqctl 工具和 rabbitmq management 插件。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RabbitMQ（四）管理"><a href="#RabbitMQ（四）管理" class="headerlink" title="RabbitMQ（四）管理"></a>RabbitMQ（四）管理</h1><h2 id="第一节-多租户与权限"><a href="#第一节-多租户与权限" class="headerlink" title="第一节 多租户与权限"></a>第一节 多租户与权限</h2><h3 id="1-1-什么是vhost？"><a href="#1-1-什么是vhost？" class="headerlink" title="1.1 什么是vhost？"></a>1.1 什么是vhost？</h3><p>每个 RabbitMQ 服务器都能创建虚拟的消息服务器，我们称之为虚拟主机（virtual host，简称为 vhost)。</p>
+<ul>
+<li>每一个 vhost 本质上是一个独立的小型 RabbitMQ 服务器；</li>
+<li>拥有自己独立的队列、交换器及绑定关系等；</li>
+<li>井且它拥有自己独立的权限。 </li>
+<li>vhost 之间是绝对隔离的，无法将 vhostl 中的交换器与 vhost2 中的队列进行绑定，既保证了安全性，又可以确保可移植性。</li>
+<li>建议用户对业务功能、场景进行归类 区分，并为之分配独立的 vhost。</li>
+<li>vhost 是 AMQP 概念的基础，客户端在连接的时候必须制定一个 vhost。</li>
+<li>默认的 vhost 是 <code>/</code> ，使用默认的用户名 guest 和密码 guest 就可以访问它。</li>
+</ul>
+<h3 id="1-2-常用指令"><a href="#1-2-常用指令" class="headerlink" title="1.2 常用指令"></a>1.2 常用指令</h3><p>创建新 vhost ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl add_vhost &#123;vhost&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl add_vhost vhost1</span></span><br></pre></td></tr></table></figure>
+<p>列表当前所有  vhost ：</p>
+<ul>
+<li>name：vhost名称；</li>
+<li>tracing：是否使用trace功能。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_vhosts &#123;vhostinfoitem...&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_vhosts name tracing</span></span><br><span class="line">Listing vhosts</span><br><span class="line">vhost1 false</span><br><span class="line">/      false</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl trace_on</span></span><br><span class="line">Starting tracing for host "/"</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_vhosts name tracing</span></span><br><span class="line">Listing vhosts</span><br><span class="line">vhost1 false</span><br><span class="line">/      true</span><br></pre></td></tr></table></figure>
+<p>删除 vhost ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl delete_vhost &#123;vhost&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl delete_vhost vhost1</span></span><br><span class="line">Deleting vhost "vhost1"</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_vhosts</span></span><br><span class="line">Listing vhosts</span><br></pre></td></tr></table></figure>
+<p>vhost 授予用户权限：</p>
+<ul>
+<li>vhost：授予用户权限的vhost名称；</li>
+<li>user：可以访问vhost的用户名；</li>
+<li>conf：用于匹配用户在哪些资源上拥有可配置权限的正则表达式（指队列和交换器的创建和删除操作）；</li>
+<li>write：用于匹配用户在哪些资源上拥有可写权限的正则表达式（指发布消息）；</li>
+<li>read：用于匹配用户在哪些资源上拥有可读权限的正则表达式（指与消息有关的操作，如读取消息或清空队列）；</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_permissions &#123;-p vhost&#125; &#123;user&#125; &#123;conf&#125; &#123;write&#125; &#123;<span class="built_in">read</span>&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 授予root：可访问vhost1，所有资源可配置 + 可写 + 可读权限</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_permissions -p vhost1 root <span class="string">".*"</span> <span class="string">".*"</span> <span class="string">".*"</span></span></span><br><span class="line">Setting permissions for user "root" in vhost "vhost1"</span><br><span class="line"><span class="meta">#</span><span class="bash"> 授予root：可访问vhost2，<span class="string">"queue"</span>开头资源上可配置，所有资源可写 + 可读权限</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_permissions -p vhost2 root <span class="string">"^queue.*"</span> <span class="string">".*"</span> <span class="string">".*"</span></span></span><br><span class="line">Setting permissions for user "root" in vhost "vhost2"</span><br></pre></td></tr></table></figure>
+<p>不同AMQP命令的列表和对应权限：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010101.png" alt></p>
+<p>vhost 清除用户权限：禁止用户访问vhost</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_permissions &#123;-p vhost&#125; &#123;username&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_permissions -p vhost1 root</span></span><br><span class="line">Clearing permissions for user "root" in vhost "vhost1"</span><br></pre></td></tr></table></figure>
+<p>列表查询权限信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 显式虚拟主机上的权限</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_permissions &#123;-p vhost&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 显式用户的权限</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_user_permissions &#123;username&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_permissions -p vhost1</span></span><br><span class="line">Listing permissions in vhost "vhost1"</span><br><span class="line">root .* .* .*</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_user_permissions root</span></span><br><span class="line">Listing permissions for user "root"</span><br><span class="line">/      .* .* .*</span><br><span class="line">vhost1 .* .* .*</span><br></pre></td></tr></table></figure>
+<p>rabbitmqctl 工具是用来管理 RabbitMQ 中间件的命令行工具，它通过连接各个 RabbitMQ 节点来执行所有操作。如果有节点没有运行，将显示诊断信息：不能到达或因不匹配的 Erlang cookie 而拒绝连接。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 标准语法</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl [-n node] [-t timeout] [-q] &#123;<span class="built_in">command</span>&#125; [<span class="built_in">command</span> options]</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>[-n node]</code> ：默认节点 <code>rabbit@hostname</code> ，通常 <code>hostname -s</code> 命令输出是 <code>@</code> 标志后的东西。</li>
+<li><code>[-t timeout]</code> ：操作超时时间。</li>
+<li><code>[-q]</code> ：启用quiet模式，可以屏蔽一些消息。</li>
+</ul>
+<h2 id="第二节-用户管理"><a href="#第二节-用户管理" class="headerlink" title="第二节 用户管理"></a>第二节 用户管理</h2><p>在 RabbitMQ 中，用户是访问控制（Access Control) 的基本单元，且单个用户可以跨越多个 vhost 进行授权，同个用户针对多个 vhost 可以被赋予不同级别的访问权限。</p>
+<h3 id="2-1-常用指令"><a href="#2-1-常用指令" class="headerlink" title="2.1 常用指令"></a>2.1 常用指令</h3><p>创建用户：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl add_user &#123;username&#125; &#123;password&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl add_user root root123</span></span><br><span class="line">Creating user "root"</span><br></pre></td></tr></table></figure>
+<p>修改密码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl change_password &#123;username&#125; &#123;newpassword&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl change_password root root321</span></span><br></pre></td></tr></table></figure>
+<p>清除密码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_password &#123;username&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_password root</span></span><br></pre></td></tr></table></figure>
+<p>密码验证：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl authenticate_user &#123;username&#125; &#123;password&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl authenticate_user root root321</span></span><br></pre></td></tr></table></figure>
+<p>删除用户：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl delete_user &#123;username&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl delete_user root</span></span><br></pre></td></tr></table></figure>
+<p>列表查询用户：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_users</span></span><br></pre></td></tr></table></figure>
+<p>用户包括5种角色类型：</p>
+<ul>
+<li>none：无任何角色，新用户默认为none。</li>
+<li>management：允许访问Web管理界面。</li>
+<li>policymaker：可以管理策略和参数。</li>
+<li>monitoring：可以看到所有连接、信道及节点的相关信息。</li>
+<li>administrator：可以管理用户、虚拟主机、权限、策略、参数等。</li>
+</ul>
+<p>设置用户角色：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_user_tags &#123;username&#125; &#123;tag ...&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_user_tags root monitoring</span></span><br></pre></td></tr></table></figure>
+<h2 id="第三节-Web端管理"><a href="#第三节-Web端管理" class="headerlink" title="第三节 Web端管理"></a>第三节 Web端管理</h2><h3 id="3-1-RabbitMQ-management"><a href="#3-1-RabbitMQ-management" class="headerlink" title="3.1 RabbitMQ management"></a>3.1 RabbitMQ management</h3><p>为了能够运行 rabbitmqctl 工具，当前的用户需要拥有访问 Erlang cookie 的权限，由于服务器可能是 guest 或者 root 用户身份来运行的，因此你需要获得这些文件的访问权限，这样就引申出来一些权限管理的问题。</p>
+<p>RabbitMQ 开发了 RabbitMQ management ，由 Erlang 言编写，并且和 RabbitMQ 服务运行在同一个 Erlang 虚拟机中。提供了 Web 管理界面用来管理如前面所述的虚拟主机、用户等，也可以用来管理队列、交换器、绑定关系、策略、 参数等，还可以用来监控 RabbitMQ 服务的状态及一些数据统计类信息，可谓是功能强大，基本上能够涵盖所有 RabbitMQ 管理的功能。</p>
+<h3 id="3-2-指令开启和关闭"><a href="#3-2-指令开启和关闭" class="headerlink" title="3.2 指令开启和关闭"></a>3.2 指令开启和关闭</h3><p>RabbitMQ插件的默认存放目录：<code>$RABBITMQ_HOME/plugins</code> ，格式为 <code>.ez</code> 。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> rabbitmq-plugins语法格式</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins [-n node] &#123;<span class="built_in">command</span>&#125; [<span class="built_in">command</span> options...]</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动插件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> [plugin-name]</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 关闭插件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">disable</span> [plugin-name]</span></span><br></pre></td></tr></table></figure>
+<p>开启 rabbitmq_management 插件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_management</span></span><br><span class="line">Enabling plugins on node rabbit@iZ2zeet6kto8eqx1w7sluzZ:</span><br><span class="line">rabbitmq_management</span><br><span class="line">The following plugins have been configured:</span><br><span class="line">  rabbitmq_management</span><br><span class="line">  rabbitmq_management_agent</span><br><span class="line">  rabbitmq_web_dispatch</span><br><span class="line">Applying plugin configuration to rabbit@iZ2zeet6kto8eqx1w7sluzZ...</span><br><span class="line">The following plugins have been enabled:</span><br><span class="line">  rabbitmq_management</span><br><span class="line">  rabbitmq_management_agent</span><br><span class="line">  rabbitmq_web_dispatch</span><br><span class="line"></span><br><span class="line">started 3 plugins.</span><br></pre></td></tr></table></figure>
+<p>查看当前插件的使用情况：<code>[E*]</code> 表示显示启动，<code>[e*]</code> 表示隐式启动。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins list</span></span><br><span class="line">Listing plugins with pattern ".*" ...</span><br><span class="line"> Configured: E = explicitly enabled; e = implicitly enabled</span><br><span class="line"> | Status: * = running on rabbit@iZ2zeet6kto8eqx1w7sluzZ</span><br><span class="line"> |/</span><br><span class="line">[  ] rabbitmq_amqp1_0                  3.8.8</span><br><span class="line">[  ] rabbitmq_auth_backend_cache       3.8.8</span><br><span class="line">[  ] rabbitmq_auth_backend_http        3.8.8</span><br><span class="line">[  ] rabbitmq_auth_backend_ldap        3.8.8</span><br><span class="line">[  ] rabbitmq_auth_backend_oauth2      3.8.8</span><br><span class="line">[  ] rabbitmq_auth_mechanism_ssl       3.8.8</span><br><span class="line">[  ] rabbitmq_consistent_hash_exchange 3.8.8</span><br><span class="line">[  ] rabbitmq_event_exchange           3.8.8</span><br><span class="line">[  ] rabbitmq_federation               3.8.8</span><br><span class="line">[  ] rabbitmq_federation_management    3.8.8</span><br><span class="line">[  ] rabbitmq_jms_topic_exchange       3.8.8</span><br><span class="line">[E*] rabbitmq_management               3.8.8</span><br><span class="line">[e*] rabbitmq_management_agent         3.8.8</span><br><span class="line">[  ] rabbitmq_mqtt                     3.8.8</span><br><span class="line">[  ] rabbitmq_peer_discovery_aws       3.8.8</span><br><span class="line">[  ] rabbitmq_peer_discovery_common    3.8.8</span><br><span class="line">[  ] rabbitmq_peer_discovery_consul    3.8.8</span><br><span class="line">[  ] rabbitmq_peer_discovery_etcd      3.8.8</span><br><span class="line">[  ] rabbitmq_peer_discovery_k8s       3.8.8</span><br><span class="line">[  ] rabbitmq_prometheus               3.8.8</span><br><span class="line">[  ] rabbitmq_random_exchange          3.8.8</span><br><span class="line">[  ] rabbitmq_recent_history_exchange  3.8.8</span><br><span class="line">[  ] rabbitmq_sharding                 3.8.8</span><br><span class="line">[  ] rabbitmq_shovel                   3.8.8</span><br><span class="line">[  ] rabbitmq_shovel_management        3.8.8</span><br><span class="line">[  ] rabbitmq_stomp                    3.8.8</span><br><span class="line">[  ] rabbitmq_top                      3.8.8</span><br><span class="line">[  ] rabbitmq_tracing                  3.8.8</span><br><span class="line">[  ] rabbitmq_trust_store              3.8.8</span><br><span class="line">[e*] rabbitmq_web_dispatch             3.8.8</span><br><span class="line">[  ] rabbitmq_web_mqtt                 3.8.8</span><br><span class="line">[  ] rabbitmq_web_mqtt_examples        3.8.8</span><br><span class="line">[  ] rabbitmq_web_stomp                3.8.8</span><br><span class="line">[  ] rabbitmq_web_stomp_examples       3.8.8</span><br></pre></td></tr></table></figure>
+<p>还要再重启 RabbitMQ 服务使之生效。</p>
+<p>关闭 <code>rabbitmq_management</code> 插件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">disable</span> rabbitmq_management</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-3-简单使用图形化工具"><a href="#3-3-简单使用图形化工具" class="headerlink" title="3.3 简单使用图形化工具"></a>3.3 简单使用图形化工具</h3><p>注意：阿里云服务器要在管理端配置入方向规则，开放15672端口。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010102.png" alt></p>
+<p>尝试使用 guest 账号登录，但被拦截（如下），只允许本地地址访问。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010103.png" alt></p>
+<p>使用 root 登录：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010104.png" alt></p>
+<p>用户管理可以实现上节所有指令的功能：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010105.png" alt></p>
+<p>可以指定用户角色：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010106.png" alt></p>
+<p>新增了用户 <code>user01</code> ：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010107.png" alt></p>
+<p>点击一个用户名，进入详情界面：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010108.png" alt></p>
+<p>新用户没有指定虚拟主机，可以设置一个：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010109.png" alt></p>
+<p>注意：有时Web管理界面可以正常登陆，但进入后显式部分页面，这种情况清空一下浏览器缓存即可。</p>
+<h2 id="第四节-应用与集群管理"><a href="#第四节-应用与集群管理" class="headerlink" title="第四节 应用与集群管理"></a>第四节 应用与集群管理</h2><h3 id="4-1-应用管理"><a href="#4-1-应用管理" class="headerlink" title="4.1 应用管理"></a>4.1 应用管理</h3><p>停止 Erlang 虚拟机和 RabbitMQ 服务应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl stop [pid_file]</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl shutdown</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl stop /opt/rabbitmq/var/lib/rabbitmq/mnesia/rabbit\@nodel.pid</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>stop [pid_file]</code> ：<ul>
+<li>如果指定了 pid_file, 还需要等待指定进程的结束。</li>
+<li>pid_file 是通过调用 <code>rabbitmq-server</code> 命令启动 RabbitMQ 服务时创建的，默认情况下存放于 Mnesia 目录中，可以通过 <code>RABBITMQ_PID_FILE</code> 这个环境变量来改变存放路径。</li>
+<li>使用 <code>rabbitmq-server -detach</code> 这个带有 <code>-detach</code> 后缀的命令来启动 RabbitMQ 服务则不会生成 pid_file 文件。</li>
+</ul>
+</li>
+<li><code>shutdown</code> ：<ul>
+<li>执行这个命令会阻塞直到 Erlang 虚拟机进程退出。</li>
+<li>和stop不同的是，不需要指定pid_file即可阻塞等待指定进程的关闭。</li>
+</ul>
+</li>
+</ul>
+<p>停止 RabbitMQ 服务应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl stop_app</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>只停止 RabbitMQ 服务应用，Erlang 虚拟机还处于运行状态。</li>
+</ul>
+<p>启动 RabbitMQ 服务应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl start_app</span></span><br></pre></td></tr></table></figure>
+<p>等待 RabbitMQ 应用的启动：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl <span class="built_in">wait</span> [pid_file]</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl <span class="built_in">wait</span></span></span><br><span class="line">/opt/rabbitmq/var/lib/rabbitmq/mnes a/rabbit\@nodel.pid</span><br></pre></td></tr></table></figure>
+<ul>
+<li>等待 pid_file 的创建，和对应进程启动。</li>
+</ul>
+<p>重置 RabbitMQ 节点（以及强制重置）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl reset</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl force_reset</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>重置操作将节点还原至最初状态。<ul>
+<li>从所在集群删除此节点</li>
+<li>从管理数据库中删除所有配置数据，如已配置的用户、vhost等</li>
+<li>删除所有持久化消息。</li>
+</ul>
+</li>
+<li>重置前要先停止 RabbitMQ 应用。</li>
+<li>强制重置不同的是不会考虑集群和管理数据库的状态</li>
+</ul>
+<p>指示 RabbitMQ 节点轮换日志文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl rotate_logs &#123;suffix&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">pwd</span> </span></span><br><span class="line">/opt/rabbitmq/var/log/rabbitmq</span><br><span class="line"><span class="meta">$</span><span class="bash"> ll</span></span><br><span class="line">-rw-r--r-- 1 root root 1024127 Oct 18 11:56 rabbit@node1.log</span><br><span class="line">-rw-r--r-- 1 root root 720553 Oct 17 19:16 rabbit@node1-sasl.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 原日志文件为 rabbit@node1.log 和 rabbit@node1-sasl.log</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl rotate_logs .1</span></span><br><span class="line">Rotating logs to files with suffix ".1"</span><br><span class="line"><span class="meta">#</span><span class="bash"> 轮换日志之后，原日志文件中的内容就被迫加到 rabbit@nodel.log.1 rabbit@node1-sasl.log.1 日志中</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ll</span></span><br><span class="line">-rw-r--r-- 1 root root 0 Oct 18 12:05 rabbit@node1.log</span><br><span class="line">-rw-r--r-- 1 root root 1024202 Oct 18 12:05 rabbit@node1.log.1</span><br><span class="line">-rw-r--r-- 1 root root 0 Oct 18 12:05 rabbit@node1-sasl.log</span><br><span class="line">-rw-r--r-- 1 root root 720553 Oct 18 12:05 rabbit@node1-sasl.log.1 </span><br><span class="line"><span class="meta">#</span><span class="bash"> 之后重新建立 rabbit@node1.log 和 rabbit@node1-sasl.log 文件用来接收新的日志。</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>将原日志文件的内容追加到“原始名称+后缀”的日志文件中；</li>
+<li>将新日志内容记录到新创建的日志中（同名），不存在会创建文件；</li>
+<li>若不指定后缀，只会打开文件而不进行轮换。</li>
+</ul>
+<p>将 RabbitMQ 代码用 HiPE 编译，生成的 <code>.beam</code> 文件保存到指定文件目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl hipe_compile &#123;directory&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl hipe compile</span></span><br><span class="line">/opt/rabbitmq/tmp/rabbit-hipe/ebin</span><br><span class="line">HiPE compiling: |-----------------------------------------------|</span><br><span class="line">                |###############################################|</span><br><span class="line">Compiled 57 modules in 55s</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果要使用预编译的这些文件，则需要设置 RABBITMQ_SERVER_CODE_PATH 这个环境变量来指定 hipe_compile 调用的路径。</li>
+</ul>
+<h3 id="4-2-集群管理"><a href="#4-2-集群管理" class="headerlink" title="4.2 集群管理"></a>4.2 集群管理</h3><p>将节点加入指定集群中：（在这个命令执行前需要停止 RabbitMQ 应用并重置节点）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl join_cluster &#123;cluster_node&#125; [--ram]</span></span><br></pre></td></tr></table></figure>
+<p>显式集群的状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl cluster_status</span></span><br></pre></td></tr></table></figure>
+<p>修改集群节点的类型：（在这个命令执行前需要停止 RabbitMQ 应用）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl change_cluster_node_type &#123;disc|ram&#125;</span></span><br></pre></td></tr></table></figure>
+<p>将节点从集群中删除，允许离线执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl forget_cluster_node [--offline]</span></span><br></pre></td></tr></table></figure>
+<p>在集群中的节点应用启动前咨询 clusternode 节点的最新信息，并更新相应的集群信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl update_cluster_nodes &#123;clusternode&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>和 join_cluster 不同 ，它不加入集群。</p>
+</li>
+<li><p>使用案例：考虑这样一种情况，节点A和节点B都在集群 中，当节点A离线了，节点C又和节点B组成了一个集群，然后节点B又离开了集群，当A醒来的时候，它会尝试联系节点B但是这样会失败，因为节点B经不在集群中了。 <code>Rabbitmqctl update_cluster_nodes -n A C</code> 可以解决这种场景下出现的问题。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 假设己有 node1 和 node 组成的集群</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 1. 初始状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl cluster_status</span></span><br><span class="line">[</span><br><span class="line"> &#123;nodes, [&#123;disc , [rabbit@node1, rabbit@node2]&#125;]</span><br><span class="line"> &#125;,</span><br><span class="line"> &#123;running_nodes, [rabbit@node2, rabbit@node1]&#125;,</span><br><span class="line"> &#123;cluster_name, &lt;&lt;"rabbit@node1"&gt;&gt;&#125;,</span><br><span class="line"> &#123;partitions, []&#125;,</span><br><span class="line"> &#123;alarms, [</span><br><span class="line"> 	 	   &#123;rabbit@node2, []&#125;, </span><br><span class="line">           &#123;rabbit@node1, []&#125; </span><br><span class="line">          ]</span><br><span class="line"> &#125; </span><br><span class="line">]</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#2. 关闭 node1 节点的应用</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl stop_app</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#3. 之后将 node3 加入到集群中 </span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl join_cluster rabbit@node2</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#4. 再将 node2 节点的应用关闭</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#5. 最后启动 node1 节点的应用，此时会报错</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl start_app </span></span><br><span class="line">Starting node rabbit@node1</span><br><span class="line">BOOT FAILED</span><br><span class="line">==========</span><br><span class="line">Timeout contacting cluster nodes : [rabbit@node2] . </span><br><span class="line">......</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#6. 如果在启动 node1 节点的应用之前咨询 node3 并更新相关集群信息则可以解决这个问题</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl update_cluster_nodes rabbit@node3</span></span><br><span class="line">Updating cluster nodes for rabbit@node1 from rabbit@node3</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl start_app </span></span><br><span class="line">Starting node rabbit@node1</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#7. 查看最终集群状态</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl cluster_status</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>确保节点可以启动，即使它不是最后一个关闭的节点：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl force_boot</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>通常情况下，当关闭整个 RabbitMQ 集群时，重启的第一个节点应该是最后关闭的节点，因为它可以看到其他节点所看不到的事情。</li>
+<li>有时会有一些异常情况出现，比如整个集群都掉电而所有节点都认为它不是最后关闭 的。</li>
+<li>这时可以调用 <code>rabbitmqctl force_boot</code> 命令，告诉节点可以无条件地启动节点 。在此节点关闭后，集群的任何变化，它都会丢失。</li>
+<li>如果最后一个关闭的节点永久 丢失了，那么需要优先使用 <code>rabbitmqctl forget_cluster_node --offline</code> 命令，因 为它可以确保镜像队列的正常运转。</li>
+</ul>
+<p>指示未同步队列 queue 的 slave 镜像可以同步 master 镜像行的内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl sync_queue [-p vhost] &#123;queue&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>同步期间此队列会被阻塞（所有此队列的生产消费者都会被阻塞），直到同步完成。</li>
+<li>执行成功的前提是队列 queue 配置了镜像。</li>
+<li>未同步队列中的消息被耗尽后，最终也会变成同步，此命令主要用于未耗尽的队列。</li>
+</ul>
+<p>取消队列 queue 同步镜像的操作：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl cancel_sync_queue [-p vhost] &#123;queue&#125;</span></span><br></pre></td></tr></table></figure>
+<p>设置集群名称：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_cluster_name &#123;name&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>集群名称在客户端连接时会通报给客户端。</li>
+<li>默认是集群中第一个节点的名称。</li>
+</ul>
+<h2 id="第五节-服务端状态"><a href="#第五节-服务端状态" class="headerlink" title="第五节 服务端状态"></a>第五节 服务端状态</h2><p>服务器状态的查询会返回一个以制表符分隔的列表，此类命令接受一个可选 vhost 参数以显示其结果， 默认值为 <code>/</code> ：</p>
+<ul>
+<li>list_queues </li>
+<li>list_exchanges </li>
+<li>list_bindings </li>
+<li>list_consumers </li>
+</ul>
+<h3 id="5-1-list-queues"><a href="#5-1-list-queues" class="headerlink" title="5.1 list_queues"></a>5.1 list_queues</h3><p>此命令返回队列的详细信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_queues [-p vhost] [queueinfoitem ...]</span></span><br></pre></td></tr></table></figure>
+<p><code>queueinfoitem</code> 参数用于指示哪些队列的信息项会包含在结果集中，结果集的列顺序将匹配参数的顺序，取值可以是：</p>
+<ul>
+<li>name ：队列名称。</li>
+<li>durable ：队列是否持久化。</li>
+<li>auto_delete ：队列是否自动删除。</li>
+<li>arguments ：队列的参数。</li>
+<li>policy ：应用到队列上的策略名称。</li>
+<li>pid：队列关联的 Erlang 进程的 ID。</li>
+<li>owner_pid ：处理排他队列连接的 Erlang 进程。如果此队列是非排他的，此值将为空。 </li>
+<li>exclusive ：队列是否是排他的。</li>
+<li>exclusive_consumer_pid ：订阅到此排他队列的消费者相关的信道关联的 Erlang 进程。如果此队列是非排他的，此值将为空。</li>
+<li>exclusive_consumer_tag ：订阅到此排他队列的消费者的 consumerTag 如果此队列是非排他的，此值将为空。 </li>
+<li>messages_ready ：准备发送给客户端的消息个数。</li>
+<li>messages_unacknowledged ：发送给客户端但尚未应答的消息个数。messages ：准备发送给客户端和未应答消息的总和。</li>
+<li>messages_ready_ram ：驻留在内存中 messages_ready 的消息个数。</li>
+<li>messages_unacknowledged_ram ：驻留在内存中。messages_unacknowledged 的消息个数。</li>
+<li>messages ram ：驻留在内存中的消息总数。</li>
+<li>messages_persistent ：队列中持久化消息的个数，对于非持久化队列来说总是0。</li>
+<li>messages_bytes ：队列中所有消息的大小总和。不包括消息属性或者任何其他开销。 </li>
+<li>messages_bytes_ready ：准备发送给客户端的消息的大小总和。 </li>
+<li>messages_bytes_unacknowledged ：发送给客户端但尚未应答的消息的大小总和。</li>
+<li>messages_bytes_ram：驻留在内存中的 messages_bytes。</li>
+<li>messages_bytes_persiste ：队列中持久化的 messages_bytes。</li>
+<li>disk_reads ：从队列启动开始，己从磁盘中读取该队列的消息总次数。 </li>
+<li>disk_writes ：从队列启动开始，己向磁盘队列写消息的总次数。 </li>
+<li>consumer ：消费者数目。 </li>
+<li>consumer_utilisation ：队列中的消息能够立刻投递给消费者的比率，介于0或1之间 。这个受网络拥塞或者 Basic.Qos 的影响而小于1。</li>
+<li>memory ：与队列相关的 Erlang 进程所消耗的内存字节数，包括栈、堆及内部结构。</li>
+<li>slave_pids ：如果队列是镜像的，列出所有 slave 镜像的 pid。</li>
+<li>synchronised_slave_pids ：如果队列是镜像的，列出所有己经同步的 slave 镜像 pid。</li>
+<li>state ：队列状态。正常情况下是 running ；如果队列正常同步数据可能会有 <code>{syncing, MsgCount}</code> 的状态；如果队列所在的节点掉线了，则队列显示状态为 down （此时大多数的 queueinfoitems 也将不可用）。</li>
+</ul>
+<p>如果没有指定 queueinfoitems ，那么此命令将显示队列的名称和消息的个数。</p>
+<h3 id="5-2-list-exchanges"><a href="#5-2-list-exchanges" class="headerlink" title="5.2 list_exchanges"></a>5.2 list_exchanges</h3><p>返回交换器的详细细节：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_exchanges [-p vhost] [exchangeinfoitem ...]</span></span><br></pre></td></tr></table></figure>
+<p><code>exchangeinfoitem</code> 参数用于指示哪些信息项会包含在结果集中，结果集的列顺序将匹配参数的顺序，取值可以是：</p>
+<ul>
+<li>name ：交换器的名称。 </li>
+<li>type ：交换器的类型。 </li>
+<li>durable ：设置是否持久化。 durable 设置为 true 表示持久化，反之是非持久化。持久化可以将交换器信息存盘而在服务器重启的时候不会丢失相关信息。 </li>
+<li>auto_delete ：设直是否自动删除。 </li>
+<li>internal ：是否是内置的。 </li>
+<li>arguments ：其他一些结构化参数，比如 alternate-exchange </li>
+<li>policy ：应用到交换器上的策略名称。</li>
+</ul>
+<p><code>exchangeinfoitem</code> 的内容和客户端中的 <code>channel.exchangeDeclare</code> 方法的参数基本一致。</p>
+<h3 id="5-3-list-bindings"><a href="#5-3-list-bindings" class="headerlink" title="5.3 list_bindings"></a>5.3 list_bindings</h3><p>返回绑定关系的细节：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_bindings [-p vhost] [bindinginfoitem ...]</span></span><br></pre></td></tr></table></figure>
+<p><code>bindinginfoitem</code> 参数用于指示哪些信息项会包含在结果集中，结果集的列顺序将匹配参数的顺序，取值可以是：</p>
+<ul>
+<li>source_name ：绑定中消息来源的名称。 </li>
+<li>source_kind ：绑定中消息来源的类别。 </li>
+<li>destination_name ：绑定中消息目的地的名称。 </li>
+<li>destination_kind ：绑定中消息目的地的种类。 </li>
+<li>routing_key ：绑定的路由键。 </li>
+<li>arguments ：绑定的参数。</li>
+</ul>
+<h3 id="5-4-list-connections"><a href="#5-4-list-connections" class="headerlink" title="5.4 list_connections"></a>5.4 list_connections</h3><p>返回 TCP/IP 连接的统计信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_connections [connectioninfoitem ...]</span></span><br></pre></td></tr></table></figure>
+<p><code>connectioninfoitem</code> 参数用于指示哪些信息项会包含在结果集中，结果集的列顺序将匹配参数的顺序，取值可以是：</p>
+<ul>
+<li>pid ：与连接相关的 Erlang 进程 ID </li>
+<li>name ：连接的名称。 </li>
+<li>port ：服务器端口。</li>
+<li>host ：返回反向 DNS 获取的服务器主机名称，或者 IP 地址，或者未启用。</li>
+<li>peer_port ：服务器对端端口。当一个客户端与服务器连接时，这个客户端的端口就是 peer_port 。</li>
+<li>peer_host ：返回反向 DNS 获取的对端主机名称，或者 IP 地址， 或者未启用。 </li>
+<li>ssl ：是否启用 SSL 。</li>
+<li>ssl_protocol ：SSL 协议，如 tlsvl 。</li>
+<li>ssl_key_exchange ：SSL 密钥交换算法，如 rsa 。</li>
+<li>ssl_cipher ：SSL 加密算法，如 aes_256_cbc 。</li>
+<li>ssl_hash ：SSL 哈希算法，如 sha 。</li>
+<li>peer_cert_subject ：对端的 SSL 安全证书的主题，基于 RFC4514 的形式。 peer_cert_issuer ：对端 SSL 安全证书的发行者， 基于 RFC4514 的形式。 </li>
+<li>peer_cert_validity ：对端 SSL 安全证书的有效期。 </li>
+<li>state ：连接状态，包括 starting、tuning、opening、running、flow、blocking、blocked、closing、closed 这几种。 </li>
+<li>channels ：该连接中的信道个数。 </li>
+<li>protocol ：使用的 AMQP 协议的版本，当前是｛0,9,1｝或者｛0,8,0｝。注意，如果客户端请求的是 AMQP 0-9 的连接， RabbitMQ 也会将其视为 0-9-1 。</li>
+<li>auth_mechanism ：使用的 SASL 认证机制，如 PLAIN、AMQPLAIN、EXTERNAL、RABBIT-CR-DEMO 等。</li>
+<li>user ：与连接相关的用户名。 </li>
+<li>vhost ：与连接相关的 vhost 的名称。 </li>
+<li>timeout ：连接超时／协商的心跳间隔，单位为秒。 </li>
+<li>frame_max ：最大传输帧的大小，单位为 B 。</li>
+<li>channel_max ：此连接上信道的最大数量。如果值 0，则表示无上限，但客户端一般会将0转变为 65535 。</li>
+<li>client_properties ：在建立连接期间由客户端发送的信息属性。 </li>
+<li>recv_oct ：收到的字节数。 </li>
+<li>recv_cnt ：收到的数据包个数。</li>
+<li>send_oct ：发送的字节数。 </li>
+<li>send_cnt ：发送的数据包个数。 </li>
+<li>send_pend ：发送队列大小。 </li>
+<li>connected_at ：连接建立的时间戳。</li>
+</ul>
+<h3 id="5-5-list-channels"><a href="#5-5-list-channels" class="headerlink" title="5.5 list_channels"></a>5.5 list_channels</h3><p>返回当前所有信道的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_channels [channelinfoitem ...]</span></span><br></pre></td></tr></table></figure>
+<p><code>channelinfoitem</code> 参数用于指示哪些信息项会包含在结果集中，结果集的列顺序将匹配参数的顺序，取值可以是：</p>
+<ul>
+<li>pid ：与连接相关的 Erlang 进程 ID 。</li>
+<li>connection ：信道所属连接的 Erlang 进程 ID 。</li>
+<li>name ：信道的名称。 </li>
+<li>number ：信道的序号。 </li>
+<li>user ：与信道相关的用户名称。 </li>
+<li>vhost ：与信道相关的 vhost 。</li>
+<li>transactional ：信道是否处于事务模式。 </li>
+<li>confirm ：信道是否处于 publiser confirm 模式。 </li>
+<li>consumer_count ：信道中的消费者的个数。 </li>
+<li>messages_unacknowledged ：已投递但是还未被 ack 的消息个数。</li>
+<li>messages_uncommitted ：已接收但是还未提交事务的消息个数。</li>
+<li>acks_uncommitted ：已 ack 收到但是还未提交事务的消息个数。</li>
+<li>messages_unconfirmed ：已发送但是还未确认的消息个数。如果信道不处于 publisher confirm 模式下，则此值为 0 。</li>
+<li>perfetch_count ：新消费者的 Qos 个数限制，0 表示无上限。</li>
+<li>global_prefetch_count ：整个信道的 Qos 个数限制，0 表示无上限。</li>
+</ul>
+<h3 id="5-6-list-consumers"><a href="#5-6-list-consumers" class="headerlink" title="5.6 list_consumers"></a>5.6 list_consumers</h3><p>列举消费者信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_consumers [-p vhost]</span></span><br></pre></td></tr></table></figure>
+<p>每行将显示由制表符分隔的己订阅队列的名称、相关信道的进程标识、 consumerTag、是否需要消费端确认、 prefetch_count 及参数列表这些信息。</p>
+<h3 id="5-7-其它"><a href="#5-7-其它" class="headerlink" title="5.7 其它"></a>5.7 其它</h3><p>显示 Broker 状态，比如当前 Erlang 节点上运行的应用程序、RabbitMQ/Erlang 的版本信息、 OS 的名称、内存及文件描述符等统计信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl status</span></span><br></pre></td></tr></table></figure>
+<p>对 RabbitMQ 节点进行健康检查，确认应用是否正常运行、list_queues 和 list_channels 是否能够正常返回等：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl node_health_check</span></span><br></pre></td></tr></table></figure>
+<p>显示每个运行程序环境中每个变量的名称和值：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl environment</span></span><br></pre></td></tr></table></figure>
+<p>为所有服务器状态生成一个服务器状态报告，井将输出重定向到一个文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl report</span></span><br></pre></td></tr></table></figure>
+<p>执行任意 Erlang 表达式：（此处暂时不作eval扩展）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl <span class="built_in">eval</span> &#123;expr&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="第六节-HTTP-API接口管理"><a href="#第六节-HTTP-API接口管理" class="headerlink" title="第六节 HTTP API接口管理"></a>第六节 HTTP API接口管理</h2><h3 id="6-1-HTTP-API接口功能"><a href="#6-1-HTTP-API接口功能" class="headerlink" title="6.1 HTTP API接口功能"></a>6.1 HTTP API接口功能</h3><p>RabbitMQ Management 插件不仅提供了 Web 管理界面，还提供了 HTTP API 接口来方便调用。比如创建一个队列，就可以通过 PUT 方法调用 <code>/api/queues/vhost/name</code> 接口来实现。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:root123 -H <span class="string">"content-type:application/json"</span></span></span><br><span class="line">-XPUT -d '&#123;"auto_delete":false,"durable":true,"node":"rabbit@node2"&#125;' </span><br><span class="line">http://192.168.0.2:15672/api/queues/%2F/queue</span><br><span class="line"></span><br><span class="line">HTTP/1.1 201 Created</span><br><span class="line">server: Cowboy</span><br><span class="line">date: Fri, 25 Aug 2017 06:03:17 GMT</span><br><span class="line">content-length: 0</span><br><span class="line">content-type: application/json</span><br><span class="line">vary: accept, accept-encoding, origin</span><br></pre></td></tr></table></figure>
+<p><code>%2F</code> 即 <code>/</code> 默认的 vhost，特殊字符需要在HTTP URL中进行转义。</p>
+<p>完全基于 RESTful 风格：</p>
+<ul>
+<li>GET 方法一般用来获取如集群、节点、队列、交换器等信息。</li>
+<li>PUT 方法用来创建资源，如交换器、队列之类的。</li>
+<li>DELETE 方法用来删除资源。</li>
+<li>POST 方法也是用来创建资源的，与 PUT 不同的是，POST 创建的是无法用具体名称的资源。比如绑定关系（bindings）和发布消息（publish）无法指定一个具体的名称。</li>
+</ul>
+<h3 id="6-2-接口列表"><a href="#6-2-接口列表" class="headerlink" title="6.2 接口列表"></a>6.2 接口列表</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">GET</th>
+<th style="text-align:center">PUT</th>
+<th style="text-align:center">DELETE</th>
+<th style="text-align:center">POST</th>
+<th>Path &amp; Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/overview <br><br>描述整个系统的各种信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/cluster-name <br><br>集群的名称</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/nodes <br><br>集群中节点的信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/nodes/name <br><br>集群中单个节点的信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/extensions <br><br>管理插件的扩展列表</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/definitions <br><br>GET 方法列出集群中所有的元数据信息，包括交换器、队列、绑定关系、用户、 host 权限及参数。<br><br>POST 方法用来加载新的元数据信息，不过需要注意如下内容： <br><br>(1）新的原数据信息会与原本的合并，如果旧的元数据信息中某些项在新加载的 元数据中没有定义， 则不受任何影响<br><br> (2）对于交换器、队列及绑定关系等不可变的内容，如果新旧元数据有冲突，则会报错 <br><br>(3）对于其他的可变的内容，如果新旧元数据有冲突，则新的会替换旧的<br><br> (4）如果在加载过程中发生错误，加载过程会停止，最终只能加载到部分新的元数据信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/definitions/vhost<br><br>将/api/definitions 接口细化到 vhost 级别，其余内容同上</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/connections<br><br>所有的连接信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/vhosts/vhost/connections<br><br>指定的 vhost 中所有连接信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/connections/name<br><br> GET 方法列出指定连接的信息. DELETE 方法可以 close 指定的连接</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/connections/name/channels<br> <br>指定连接的所有信道信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/channels<br><br> 所有信道的信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/vhosts/vhost/channels <br><br>指定的 vhost 中所有信道信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/channels/channel <br><br>指定的信道信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/consumers <br><br>所有的消费者信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/consumers/vhost <br><br>指定 vhost 中的所有消费者信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/exchanges <br><br>所有交换器信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/exchanges/vhost <br><br>指定 vhost 中所有交换器信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/exchanges/vhost/name<br><br> GET 方法列出一个指定的交换器信息. PUT 方法可以声明 个交换器，对应的内 容可以参考如下： x x x ’＇ type””directγauto_ delete”： false，” durable true ntemal fa se ，” arguments”：｛｝｝ 其中 type 是必需的，其他都是可选的. ELETE 方法可以删除指定的交换器，其 中可以添加 if-unused=tru 参数用来防止有队列与其绑定时能够被删除</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/exchanges/vhost/name/bindings/source<br><br> 列出指定交换器的所有绑定关系 此交换器需为绑定关系的源端</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/exchanges/vhost/name/bindings/destination<br><br> 列出指定交换器的所有绑定关系，此交换器帘为绑定关系的目的端</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/exchanges/vhost/name/publish<br><br> 向指定的交换器中发送 条消息，对应的内容可以参考： {”properties”;{},”routing_ key”,”my key”,”payload…’my body”, x ”payload_ encoding”:”string”} 这里所有的项都是必需的，如果发送成功， 会返回 ｛” routed”阳的 。这个接口 不适合做稳定、高效的发送之用 可以采用其他的方式比如通过 AMQP 议或者 其他长连接的协议</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/queues<br><br> 列出所有的队列信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/queues/vhost<br><br> 列出指定的 vhost 下所有的队列信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/queues/vhost/name<br><br> GET 方法列出执行的队列信息. PUT 方法可 声明一个队列，对应的内容可以参 考： x x x ｛飞uto_delete”： false，” able”： true,”arguments”: {},”node”:”rabbit@smacmullen”} 其中所有的项都是可选的。 DELETE 方法用来删除 个队列，当然可以指定 1ιempty 1ιunused 参数</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/queues/vhost/name/bindings<br><br> 列出指定队列的所有绑定关系</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/queues/vhost/name/contents<br><br> 清空（ ge ）指定的队列</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/queues/vhost/name/actions<br><br> 对指定的队列附加一些动作，对应的内容可以参考： x ｛” action ”｝ 目前仅支持 sync cance l_sync</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/queues/vhost/name/get<br><br> 从指定队列中获取消息，对应的内容可以参考： {”count”:5,”requeue”:true, ”encoding”:”auto”,”truncate”:50000} count 表示最大能获取的消息个数 实际可能小于这个值； ueue 表示获取到这 x 些消息时是否从队列中删除，如果 ueue 为阳 ，则消息不会被删除，但是消息 redelivered 标示会被设置； encoding 表示编码格式，两种取值 auto e64, auto 指如果消息符合 UTF-8 格式则返回 string 类型，否则为 e64 类型； cate 表示如果消息的 payload 过指定大小 会被截断．除了 truncate 其余项都是必 帘的。注意这个接口是用来做测试用 的，如果要持续的消费队列的消息 需要采 用其他的方法</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/bindings<br><br> 列出所有绑定关系的信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/bindings/vhost<br><br> 列出指定的 vbost 中所有绑定关系的信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/bindings/vhost/e/exchange/q/queue<br><br> GET 方法列出一个指定的交换器和一个指定的队列中的所有绑定关系的信息．注 意一个交换器和一个队列之间可以绑定多次. POST 用来添加绑定关系，对应的内 x x 容可以参考 {”routing_ key川’my_routing_ key”，”町guments ·｛｝｝ 其中所有的项都是可边的</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/bindings/vhost/e/exchange/q/queue/props<br><br> GET 方法列出 个交换器和一个队列的 个单独的绑定关系的信息 DELETE 方法 x x 用来解绑相应的绑定关系，其中 props 表示的是／api/bindings 返回的绑定关系列表 里的 properties_key 的值，具体是指绑定时 routingkey arguments 的哈希值的组 合， arguments 为空，此时 properties_key 等于 routingkey</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td>/api/bindings/vhost/e/source/e/destination<br><br> x x GET 方法用来列出两个交换器的所有绑定关系的信息， POST 方法用来添加绑定 关系，与接口 pi!bindings/vhost/e/exchangelqlqueue 相似</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/bindings/vhost/e/source/e/destination/props<br><br>与接口/api/bindings/vhost/e/exchange/q/queue/props 相似，只不过是两个交换器之 的关系</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/vhosts<br><br> 列出所有 vbost 的信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/vhosts/name <br><br> GET 方法列出指定 vhost 的信息 PUT 方法用来添加 vhost, host 通常只有 个名字，所以不需要任何内容以做请求之用 DELETE 方法用来删除 vhost</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/vhosts/name/permissions<br><br> 列出指定 vhost 的所有权限信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/users<br><br> 列出所有的用户信息</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/users/name<br><br> GET 方法列出指定的用户信息. POST 方法用来添加 个用户，对应的内容参考： ｛” password”：” secret飞”tags川’ administrato x x x 或者 {”password_ hash…’2lmotb814HODViLaK9Fxi619ds8 ”，”tags”” 由咀inistrator”｝ 其中 tags 是必需的，用来标识用户角色，详细内容可以参考 5.2 节．对于 password 或者 sword_basb ，两者可以择其一． 如果 password_hash 为“”，则用户可 以无密码登录 DELETE 方法用来删除指定的用户</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/users/user/permissions<br><br> 用来获取指定用户的所有权限</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/wboami<br><br> 当前的登录用户</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/perrnissions<br><br> 列出所有用户的所有权限</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/permissions/vhost/user<br><br> GET 方法列出指定的权限. PUT 方法添加指定的权限，对应的内容 考： x x x ｛” configure”：”．事”，”write＂：”．申”，吁ead＂：”．’”｝ 所有项都是必需的，对应 configure write read 的细节可以参考 5.1 DELETE 方法用来删除指定的权限</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/parameters<br><br> 列出所有 vhost 级别的 Parameter. 有关 Parameter 的更多细节可以参考 6.3 节的内 ~</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/parameters/component<br><br> 列出指定组件（比如 federation-upstream shovel 等〉的所有 vhost 级别的 Parameter</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/parameters/component/vhost<br><br> 列出指定 vbost 和组件的所有 vhost 级别的 Parameter</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/parameters/component/vhost/name<br><br> GET 方法列出一个指定的 vbost 级别的 Parameter. PUT 方法用来设置 x x x Parameter ，对应的内容参考如下： ｛～host”：” ”，” component”：” federation”，”name”：” local_username飞～alue”：”刷刷”｝ DELETE 方法用来删除 个指定的 vhost 级别的 Parameter</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/global-parameters<br><br> 列出所有的 global 级别的 Parameter</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/global-parameters/name<br><br> GET 方法列出 个指定的 gl bat 级别的 Parameter PUT 方法用来设置 个指定的 x x x global 级别的 arneter ，对应的内容参考： {”name”:”user_ vhost_mapping”，” value＂：｛est ＂：＇川’rabbit”：” en”｝｝ DELETE 方法用来删除 个指定的 global 级别的 Parameter</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/policies<br><br> 列出所有的 Policy 有关 Policy 的所有细节可以参考 6.3</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/policies/vhost<br><br> 列出指定 vhost 下的所有 Policy</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td>/api/policies/vhost/name<br><br> GET 方法列出指定的 Policy PUT 方法用来设置 Policy 对应的内容可以参  {”pattern”:””runq,”, ”definition”: {”federation-upstream-set”.”all”}, ”priority”:0, apply-t。””all ”｝ 其中 pattern definition 是必需的，其余可逃。 ELETE 方法用来删除 个指定的 Policy</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>api/aliveness-test/vhost<br><br>声明一个队列，并基于其上生产和消费一条消息，用来测试系统是否运行完好． 这个接口可以方便一些监控工具〈如 Zabbix ）的调用．如果系统运行完好 调用 这接口会返回｛“status”。”。 ”｝，状态码为 200. 更多内容可以参考 7.6.3</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/healthchecks/node<br><br> 对当前节点中进行基本的健康检查，包括 RabbitMQ 应用、信道、队列是否正常运 行且无告警．如果一切正常则接口返回． x ｛“status”：”。 ”｝ 如果有异常则接口返回： ｛” sta ”：” failed”，” re on”’＂ string”｝ 不管正常与否，状态都是 200</td>
+</tr>
+<tr>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td>/api/healthchecks/node/node<br><br> 对指定节点进行基本的健康检查，其余同／ pi/healthchecks/node</td>
+</tr>
+</tbody>
+</table>
+<p>创建、显示和删除队列 queue 可以这样实现：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<hr>
+<p>参考：</p>
+<p>🔗 《RabbitMQ实战指南》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2020100201.html" title="RabbitMQ（四）管理">http://linyishui.top/2020100201.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/mom/" rel="tag"># mom</a>
+          
+            <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020092801.html" rel="next" title="RabbitMQ（三）进阶">
+                <i class="fa fa-chevron-left"></i> RabbitMQ（三）进阶
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">292</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">98</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RabbitMQ（四）管理"><span class="nav-number">1.</span> <span class="nav-text">RabbitMQ（四）管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-多租户与权限"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 多租户与权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是vhost？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是vhost？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-常用指令"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 常用指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-用户管理"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 用户管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-常用指令"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 常用指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-Web端管理"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 Web端管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-RabbitMQ-management"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 RabbitMQ management</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-指令开启和关闭"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 指令开启和关闭</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-简单使用图形化工具"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 简单使用图形化工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-应用与集群管理"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 应用与集群管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-应用管理"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 应用管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-集群管理"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 集群管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-服务端状态"><span class="nav-number">1.5.</span> <span class="nav-text">第五节 服务端状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-list-queues"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 list_queues</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-list-exchanges"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 list_exchanges</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-list-bindings"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 list_bindings</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-list-connections"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 list_connections</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-list-channels"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 list_channels</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-list-consumers"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 list_consumers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-7-其它"><span class="nav-number">1.5.7.</span> <span class="nav-text">5.7 其它</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-HTTP-API接口管理"><span class="nav-number">1.6.</span> <span class="nav-text">第六节 HTTP API接口管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-HTTP-API接口功能"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 HTTP API接口功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-接口列表"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 接口列表</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
