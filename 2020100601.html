@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="distributed,mom,rabbitmq,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="学习RabbitMQ，第五章《配置》，内容来自于《RabbitMQ实战指南》，内容包括：环境变量，配置文件，参数及策略。">
+<meta name="keywords" content="distributed,mom,rabbitmq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ（五）配置">
+<meta property="og:url" content="http://linyishui.top/2020100601.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="学习RabbitMQ，第五章《配置》，内容来自于《RabbitMQ实战指南》，内容包括：环境变量，配置文件，参数及策略。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010112.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010113.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010115.png">
+<meta property="og:updated_time" content="2020-10-07T14:49:16.182Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ（五）配置">
+<meta name="twitter:description" content="学习RabbitMQ，第五章《配置》，内容来自于《RabbitMQ实战指南》，内容包括：环境变量，配置文件，参数及策略。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010112.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020100601.html">
+
+
+
+
+
+  <title>RabbitMQ（五）配置 | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020100601.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RabbitMQ（五）配置</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-06T21:00:41+08:00">
+                2020-10-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,037
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  学习RabbitMQ，第五章《配置》，内容来自于《RabbitMQ实战指南》，内容包括：环境变量，配置文件，参数及策略。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RabbitMQ（五）配置"><a href="#RabbitMQ（五）配置" class="headerlink" title="RabbitMQ（五）配置"></a>RabbitMQ（五）配置</h1><h2 id="第一节-概述"><a href="#第一节-概述" class="headerlink" title="第一节 概述"></a>第一节 概述</h2><p>一般情况下，只需要使用默认的内建配置来运行 RabbitMQ，也可以利用调节系统范围内的参数来达到定制化的需求。</p>
+<p>RabbitMQ 提供了三种方式来定制化服务：</p>
+<ol>
+<li>环境变量（Enviroment Variables）：RabbitMQ 服务端参数可以通过环境变量进行配置，例如：节点名称、 RabbitMQ 配直文件的地址、节点内部通信端口等。</li>
+<li>配置文件（ Configuration File）：可以定义 RabbitMQ 服务和插件设置，例如：TCP 听端口，以及其他网络相关的设直、内存限制、磁盘限制等。</li>
+<li>运行时参数和策略（ Runtime Parameters and Policies）：可以在运行时定义集群层面的服务设置。</li>
+</ol>
+<h2 id="第二节-环境变量"><a href="#第二节-环境变量" class="headerlink" title="第二节 环境变量"></a>第二节 环境变量</h2><h3 id="2-1-配置方式"><a href="#2-1-配置方式" class="headerlink" title="2.1 配置方式"></a>2.1 配置方式</h3><p>RabbitMQ 的环境变量都是以 <code>RABBITMQ_</code> 开头的，可以在 Shell 环境中设置，也可以在 <code>rabbitmq-env.conf</code> 这个 RabbitMQ 环境变量的定义文件中设置。在非 Shell 环境中配置，则需要将 <code>RABBITMQ_</code> 这个前缀去除。</p>
+<p>指令 <code>rabbitmq-server -detached</code> 启动 RabbitMQ 服务的时候，此服务节点默认以 <code>rabbit＠</code> 加上当前的 Shell 环境的 hostname（主机名）来命名，即 <code>rabbit@$HOSTNAME</code> 。可以在 <code>rabbitmq-server</code> 命令前添 <code>RABBITMQ_NODENAME</code> 变量来设定指定的名称。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> RABBITMQ_NODENAME=rabbit@node2 rabbitmq-server -detached</span></span><br><span class="line">Warning: PIO file not written; -detached was passed.</span><br></pre></td></tr></table></figure>
+<p>优先级顺序：Shell环境 &gt; <code>rabbitmq-env.conf</code> 配置文件 &gt; 默认配置。</p>
+<p>配置 <code>rabbitmq-env.conf</code> ：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># RabbitMQ 环境变量的定义文件</span></span><br><span class="line"><span class="comment"># 定义节点名称</span></span><br><span class="line"><span class="string">NODENAME=rabbit@node1</span></span><br><span class="line"><span class="comment"># 定义 RabbitMQ 的对外通信端口号</span></span><br><span class="line"><span class="string">NODE_PORT=5672</span></span><br><span class="line"><span class="comment"># 定义 RabbitMQ 配置文件的目录，注意对于 rabbitmq.config</span></span><br><span class="line"><span class="comment"># 文件来说这里不用添加".config后缀"</span></span><br><span class="line"><span class="string">CONFIG_FILE=/opt/rabbitmq/etc/rabbitmq/rabbitmq</span></span><br></pre></td></tr></table></figure>
+<p>默认配置记录在 <code>$RABBITMQ HOME/sbin/rabbitmq-defaults</code> 文件。</p>
+<h3 id="2-2-常见的RabbitMQ变量"><a href="#2-2-常见的RabbitMQ变量" class="headerlink" title="2.2 常见的RabbitMQ变量"></a>2.2 常见的RabbitMQ变量</h3><table>
+<thead>
+<tr>
+<th>变量名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RABBITMQ_NODE_IP_ADDRESS</td>
+<td>绑定某个特定的网络接口。默认值是空字符串，即绑定到所有网络接口上。如果要绑定两个或者更多的网络接口，可以参考 rabbitmq.config 中的 tcp_listeners 配置</td>
+</tr>
+<tr>
+<td>RABBITMQ_NODE_PORT</td>
+<td>监听客户端连接的端口号，默认为 5672</td>
+</tr>
+<tr>
+<td>RABBITMQ_DIST_PORT</td>
+<td>RabbitMQ 节点内部通信的端口号，默认值为 RABBITMQ_NODE_PORT+20000, 即25672。如果设置了 kernel.inet_dist_listen_min 或者 kemel.inect_dist_listen_max</td>
+</tr>
+<tr>
+<td>RABBITMQ_NODENAME</td>
+<td>RabbitMQ 的节点名称，默认为 rabbit@$HOSTNAME 。在每个 Erlang 节点和机器的组合中，节点名称必须唯一</td>
+</tr>
+<tr>
+<td>RABBITMQ_CONF_ENV_FILE</td>
+<td>RabbitMQ 环境变量的配置文件（rabbitmq-env.conf）的地址，默认值为 $RABBITMQ_HOME/etc/rabbitmq/rabbi tmq-env.conf 注意这里与 RabbitMQ 配置文件 rabbitmq.config 的区别</td>
+</tr>
+<tr>
+<td>RABBITMQ_USE_LONGNAME</td>
+<td>如果当前的 hostname 为 node1.longname ，那么默认情况下创建的节点名称为 rabbit@node1 ，将此参数设置为 true 时，创建的节点名称就为 <a href="mailto:rabbit@node1.longname" target="_blank" rel="noopener">rabbit@node1.longname</a>，即使用了长名称命名，默认值为空</td>
+</tr>
+<tr>
+<td>RABBITMQ_CONFIG_FILE</td>
+<td>RabbitMQ 配置文件（rabbitmq.config）的路径，注意没有“.config”的后缀．默认值为 $RABBITMQ_HOME/etc/rabbitmq/rabbitmq</td>
+</tr>
+<tr>
+<td>RABBITMQ_MNESIA_BASE</td>
+<td>RABBITMQ_MNESIA_DIR 的父目录。除非明确设置了 RABBITMQ_MNESIA _DIR 目录，否则每个节点都应该配置这个环境变量。默认值为 $RABBITMQ_HOME/var/lib/rabbitmq/mnesia  注意对于 RabbitMQ 的操作用户来说，需要有对当前目录可读、可写、可创建文件及子目录的权限</td>
+</tr>
+<tr>
+<td>RABBITMQ_MNESA_DIR</td>
+<td>包含 RabbitMQ 服务节点的数据库、数据存储及集群状态等目录，默认值为 <code>$RABBITMQ_MNESIA_BASE/$RABBITMQ_NODENAME</code></td>
+</tr>
+<tr>
+<td>RABBITMQ_LOG_BASE</td>
+<td>RabbitMQ 服务日志所在基础目录．默认值为$RABBITMQ_HOME/var/log/rabbitmq</td>
+</tr>
+<tr>
+<td>RABBITMQ_LOGS</td>
+<td>RabbitMQ 服务与 Erlang 相关的日志，默认值为 <code>$RABBITMQ_LOG_BASE/$RABBITMQ_NODENAME.log</code></td>
+</tr>
+<tr>
+<td>RABBITMQ_SASL_LOGS</td>
+<td>RabbitMQ 服务于 Erlang 的 SASL(System Application Support Libraries）相关的日志，默认值为 <code>$RABBITMQ_LOG_BASE/$RABBITMQ_NODENAME-sasl.log</code></td>
+</tr>
+<tr>
+<td>RABBITMQ_PLUGINS_DIR</td>
+<td>插件所在路径。默认值为$RABBITMQ_HOME/plugins</td>
+</tr>
+</tbody>
+</table>
+<p>一般不建议修改环境变量，如果生产环境有特殊要求，可以参考：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置文件的地址</span></span><br><span class="line"><span class="string">CONFIG_FILE=/apps/conf/rabbitmq/rabbitmq</span></span><br><span class="line"><span class="comment"># 环境变量的配置文件的地址</span></span><br><span class="line"><span class="string">CONF_ENV_FILE=/apps/conf/rabbitmq/rabbitmq-env.conf</span></span><br><span class="line"><span class="comment"># 服务日志的地址</span></span><br><span class="line"><span class="string">LOG_BASE=/apps/logs/rabbitmq</span></span><br><span class="line"><span class="comment"># Mnesia 的路径</span></span><br><span class="line"><span class="string">MNESIA_BASE=/apps/dbdat/rabbitmq/mnesia</span></span><br></pre></td></tr></table></figure>
+<h2 id="第三节-配置文件"><a href="#第三节-配置文件" class="headerlink" title="第三节 配置文件"></a>第三节 配置文件</h2><p>在启动 RabbitMQ 服务的时候会打印相关信息，可以检查服务日志来判断配置文件地址。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010112.png" alt></p>
+<p>配置失效的情况：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config <span class="keyword">file</span>(s) : <span class="regexp">/opt/</span>rabbitmq<span class="regexp">/sbin/</span>..<span class="regexp">/etc/</span>rabbitmq<span class="regexp">/rabbitmq. config(not found)</span></span><br></pre></td></tr></table></figure>
+<p>检查对应路径下是否有相关配置文件，以及配置文件地址是否设置正确（通过 RABBITMQ_CONFIG_FILE 变量或者 <code>rabbitmq-env.conf</code> 文件设置）。</p>
+<p>还可以通过查看进程信息的方式来检查配直文件的位置。通过 <code>ps aux|grep rabbitmq</code> 命令查看到 RabbitMQ 进程的信息，如果 <code>rabbitmq.config</code> 文件不处于默认的路径中，则会有 <code>-config</code> 选项标记正在使用的路径。</p>
+<h3 id="3-1-配置项"><a href="#3-1-配置项" class="headerlink" title="3.1 配置项"></a>3.1 配置项</h3><p>极简的 <code>rabbitmq.config</code> 文件：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">	&#123;</span><br><span class="line">		rabbit, [</span><br><span class="line">			&#123;tcp_listeners, [<span class="number">5673</span>]&#125;</span><br><span class="line">		]</span><br><span class="line">	&#125;</span><br><span class="line">].</span><br></pre></td></tr></table></figure>
+<p>上面的配置将 RabbitMQ 监听 AMQP 0-9-1 客户端连接的默认端口号从 5672 修改为 5673。</p>
+<p>RabbitMQ 服务相关配置表格暂略。</p>
+<h3 id="3-2-配置加密"><a href="#3-2-配置加密" class="headerlink" title="3.2 配置加密"></a>3.2 配置加密</h3><p>配置文件中有些敏感的配置项可以被加密，在 RabbitMQ 启动时可以对这些项进行解密。在配置文件中将加密之后的值以 <code>{encrypted, 加密的值}</code> 形式包裹。</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">	&#123;</span><br><span class="line">		rabbit, [</span><br><span class="line">			&#123;default_user,&lt;&lt;<span class="string">"guest"</span>&gt;&gt;&#125;,</span><br><span class="line">			&#123;default_pass,</span><br><span class="line">				&#123;</span><br><span class="line">					&#123;encrypted,&lt;&lt;<span class="string">"HuVPYgSUdbogWL+2jGsgDMGZpDfiz+HurDuedpG8dQX/U+DMHcBluA15a5jRnAbs+OviX5EmsJJ+c0XgRRcADA=="</span>&gt;&gt;&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;,</span><br><span class="line">			&#123;loopback_users,[]&#125;,</span><br><span class="line">			&#123;config_entry_decoder,[</span><br><span class="line">				&#123;passphrase,&lt;&lt;<span class="string">"zzhpassphrase"</span>&gt;&gt;&#125;</span><br><span class="line">			]&#125;</span><br><span class="line">		]</span><br><span class="line">	&#125;</span><br><span class="line">].</span><br></pre></td></tr></table></figure>
+<p>config_entry_decoder 项中的 passphrase 配置的就是口令。注意这里将 loopback_users 项配置为 <code>[]</code> ，就可以使用非本地网络访问 RabbitMQ 了，如果开启了 RabbitMQ Management 插件，就可以使用 guest/guest 的用户及密码来访问 Web 管理界面了。</p>
+<p>passphrase 内容可以以单独的文件来赋值：</p>
+<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;config_entry_decoder,[</span><br><span class="line">	&#123;passphrase,<span class="string">"/path/to/passphrase/file"</span>&#125;</span><br><span class="line">]&#125;</span><br></pre></td></tr></table></figure>
+<p>加密解密：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl encode &lt;&lt;<span class="string">"guest"</span>&gt;&gt; zzhpassphrase </span></span><br><span class="line">&#123;encrypted,&lt;&lt;"HuVPYgSUdbogWL+2jGsgDMGZpDfiz+HurDuedpG8dQX/U+DMHcBluA15a5jRnAbs+OviX5EmsJJ+c0XgRRcADA=="&gt;&gt;&#125;</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl encode --DECODE &lt;&lt;<span class="string">"guest"</span>&gt;&gt; <span class="string">'&#123;encrypted,&lt;&lt;"HuVPYgSUdbogWL+2jGsgDMGZpDfiz+HurDuedpG8dQX/U+DMHcBluA15a5jRnAbs+OviX5EmsJJ+c0XgRRcADA=="&gt;&gt;&#125;'</span> zzhpassphrase</span></span><br></pre></td></tr></table></figure>
+<p>默认情况下，加密机制 PBKDF2 用来从口令中派生出密钥。默认的 Hash 算法是 SHA512，默认的迭代次数是 1000 ，以及默认的加密算法为 AES_256_CBC。可以在配置文件中进行修改：</p>
+<figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;config_entry_decoder,[</span><br><span class="line">	&#123;passphrase,<span class="string">"zzhpassphrase"</span>&#125;,</span><br><span class="line">	&#123;cipher, blowfish_cfb64&#125;,</span><br><span class="line">	&#123;hash, sha256&#125;,</span><br><span class="line">	&#123;iterations, <span class="number">10000</span>&#125;</span><br><span class="line">]&#125;</span><br></pre></td></tr></table></figure>
+<p>或者通过 rabbitmqctl encode 命令设置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl encode --cipher blowfish_cfb64 --<span class="built_in">hash</span> sha256 --iterations 10000 <span class="string">'&lt;&lt;"guest"&gt;&gt;'</span> zzhpassphrase</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-3-优化网络配置"><a href="#3-3-优化网络配置" class="headerlink" title="3.3 优化网络配置"></a>3.3 优化网络配置</h3><p>RabbitMQ 支持的所有协议都是基于 TCP 层面的，除了操作系统内核参数和 DNS，所有的 RabbitMQ 设置都可以通过在 rabbitmq.config 配置文件中配置来实现。</p>
+<h4 id="3-3-1-监听端口"><a href="#3-3-1-监听端口" class="headerlink" title="3.3.1 监听端口"></a>3.3.1 监听端口</h4><p>RabbitMQ 在等待接收客户端连接时需要绑定一个或者多个网络接口（可以理解成IP地址)，井监听特定的端口。网络接口使用 rabbit.tcp_listeners 选项来配置。默认情况下，RabbitMQ 会在所有可用的网络接口上监听 5672 端口。</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">	&#123;</span><br><span class="line">		rabbit, [</span><br><span class="line">			# 在一个指定的地址和端口上进行监听，同时在 <span class="symbol">IPv4</span> 和 <span class="number">1</span><span class="symbol">Pv6</span> 上监听</span><br><span class="line">			&#123;tcp_listeners, [&#123;<span class="string">"192.168.0.2"</span>, <span class="number">5672</span>&#125;,</span><br><span class="line">							 &#123;<span class="string">"::1"</span>, <span class="number">5672</span>&#125;]&#125;</span><br><span class="line">							 </span><br><span class="line">		]</span><br><span class="line">	&#125;</span><br><span class="line">].</span><br></pre></td></tr></table></figure>
+<h4 id="3-3-2-提高吞吐量"><a href="#3-3-2-提高吞吐量" class="headerlink" title="3.3.2 提高吞吐量"></a>3.3.2 提高吞吐量</h4><p>优化网络配置的一个重要目标就是提高吞吐量，比如禁用 Nagle 算法、增大 TCP 缓冲区的大小。每个 TCP 连接都分配了缓冲区。一般来说，缓冲区越大，吞吐量也会越高，但是每个连接上耗费的内存也就越多，从而使总体服务的内存增大，这是一个权衡的问题。在 Linux 操作系统中，默认会自动调节 TCP 缓冲区的大小，通常会设置为 80KB 到 120KB 之间。</p>
+<p>要提高吞吐量可以使用 rabbit.tcp_listen_options 来加大配置：</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">	&#123;</span><br><span class="line">		rabbit, [</span><br><span class="line">			&#123;tcp_listen_options, [</span><br><span class="line">			                 &#123;backlog, <span class="number">128</span>&#125;,</span><br><span class="line">			                 &#123;nodelay, true&#125;,</span><br><span class="line">			                 &#123;linger, &#123;true,<span class="number">0</span>&#125;&#125;,</span><br><span class="line">			                 &#123;exit_on_close, false&#125;,</span><br><span class="line">			                 &#123;sndbuf, <span class="number">196608</span>&#125;,</span><br><span class="line">			                 &#123;recbuf, <span class="number">196608</span>&#125;]&#125;			 </span><br><span class="line">		]</span><br><span class="line">	&#125;</span><br><span class="line">].</span><br></pre></td></tr></table></figure>
+<p>大部分操作系统都限制了同一时间可以打开的文件句柄数。在优化并发连接数的时候，需要确保系统有足够的文件句柄数来支撑客户端和 Broker 的交互。可以用每个节点上连接的数目乘以1.5来粗略的估算限制。例如，要支撑 10 万个 TCP 连接，需要设置文件句柄数为 15 万。当 然，略微增加文件句柄数可以增加闲置机器内存的使用量，但这需要合理权衡。</p>
+<p>如上所述，增大 TCP 缓冲区的大小可以提高吞吐量，如果减小 TCP 缓冲区的大小，这样 就可以减小每个连接上的内存使用量。如果并发量比吞吐量更重要，可以修改此值。</p>
+<p>禁用 Nagle 算法可以提高吞吐量，但是其主要还是用于减少延迟。RabbitMQ 内部节点交互时可以在 kernel.inet_default_connect_options 和 kernel.inet_default_listen_options 配置项中配置 {nodelay, true} 来禁用 Nagle 算法。</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">	&#123;</span><br><span class="line">		kernel, [</span><br><span class="line">			&#123;inet_default_connect_options, [&#123;nodelay, true&#125;]&#125;,</span><br><span class="line">			&#123;inet_default_listen_options, [&#123;nodelay, true&#125;]&#125;</span><br><span class="line">		]		</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		rabbit, [</span><br><span class="line">			&#123;tcp_listen_options, [</span><br><span class="line">			                 &#123;backlog, <span class="number">4096</span>&#125;,</span><br><span class="line">			                 &#123;nodelay, true&#125;,</span><br><span class="line">			                 &#123;linger, &#123;true,<span class="number">0</span>&#125;&#125;,</span><br><span class="line">			                 &#123;exit_on_close, false&#125;]&#125;</span><br><span class="line">		]</span><br><span class="line">	&#125;</span><br><span class="line">].</span><br></pre></td></tr></table></figure>
+<h4 id="3-3-3-设置线程池大小"><a href="#3-3-3-设置线程池大小" class="headerlink" title="3.3.3 设置线程池大小"></a>3.3.3 设置线程池大小</h4><p>Erlang 在运行时使用线程池来异步执行 IO 操作。线程池的大小可以通过 RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS 这个环境变量来调节。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS</span>=<span class="string">"+A 128"</span></span><br></pre></td></tr></table></figure>
+<p>当机器的内核个数大于等于8时，建议将此值设置为大于等于 96 ，这样可以确保每个内核上可以运行大于等于 12 个 I/O 线程。</p>
+<h4 id="3-3-4-连接量大"><a href="#3-3-4-连接量大" class="headerlink" title="3.3.4 连接量大"></a>3.3.4 连接量大</h4><p>当只有少量的客户端时，新建立的连接分布是非常不均匀的，但是由于数量足够小，所以没有太大的差异。当连接数量到达数万或者更多时，重要的是确保服务器能够接受入站连接。未接受的 TCP 连接将会放在有长度限制的队列中。这个通过 rabbit.tcp_listen_options.backlog 参数来设置，默认值为 128 ，当挂起的连接队列的长度超过此值时，连接将被操作系统拒绝。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010113.png" alt></p>
+<h4 id="3-3-5-一些可配置的内核选项"><a href="#3-3-5-一些可配置的内核选项" class="headerlink" title="3.3.5 一些可配置的内核选项"></a>3.3.5 一些可配置的内核选项</h4><p>与操作系统有关的网络设置也会影响到 RabbitMQ 的运行，注意这一类型的内核参数在 <code>/etc/sysctl.conf</code> 文件（Linux 操作系统）中配置，而不是 rabbitmq.config 这个文件中。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010114.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010115.png" alt></p>
+<h2 id="第四节-参数及策略"><a href="#第四节-参数及策略" class="headerlink" title="第四节 参数及策略"></a>第四节 参数及策略</h2><p>有些配置不太适合在 rabbitmq.config 中实现，比如某项配置不需要同步到集群中的其他节点中，或者某项配置需要在运行时更改，因为 rabbitmq.config 需要重启 Broker 才能生效。 这种类型的配置在 RabbitMQ 中的另一种称呼为参数（ Paramter），也可以称之为运行时参数（Runtime Parameter）。</p>
+<p>Parameter的设置方式：</p>
+<ul>
+<li>通过 rabbitmqctl 工具；</li>
+<li>通过 RabbitMQ Management 插件提供的 HTTP API 接口来设置。</li>
+</ul>
+<p>RabbitMQ 一共有两种类型的 Parameter:：</p>
+<ul>
+<li>vhost 级别的 Parameter ，由一个组件名称（component name）、名称（name）和值 (value）组成。</li>
+<li>global 级别的 Parameter ，由一个名称和值组成。</li>
+</ul>
+<p>不管什么类型，值都是JSON类型的。例如 Federation upstream 是一个 vhost 级别的 Parameter ，它用来定义 Federation link 的上游信息，其对应的 Parameter 的组件名称为 “federation-upstream” ，名称对应于其自身的名称，而值对应于与上游的相关的连接参数等；对 Shovel 而言也可以通过 Parameter 设置，其对应组件名称为 “shovel”。</p>
+<h3 id="4-1-vhost级别Parameter"><a href="#4-1-vhost级别Parameter" class="headerlink" title="4.1 vhost级别Parameter"></a>4.1 vhost级别Parameter</h3><p>vhost 级别的参数对应的 rabbitmqctl 相关的命令有3种：</p>
+<ul>
+<li><p>set_parameter：用来设置一个参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_parameter [-p vhost] &#123;component_name&#125; &#123;name&#125; &#123;value&#125; </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_federation </span></span><br><span class="line">The following plugins have been enabled: </span><br><span class="line">  rabbitmq_federation </span><br><span class="line">Applying plugin configuration to rabbit@node1... started 1 plugin. </span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_parameter federation-upstream f1 <span class="string">'&#123;"uri":"amqp://root:root123@192.168.0.2:5672","ack-mode":"on-confirm"&#125;'</span></span></span><br><span class="line">Setting runtime parameter "f1" for component "federation-upstream" to "&#123;\"uri\":\"amqp://root:root123@192.168.0.2:5672\",\"ack-mode\":\"on-confirm\"&#125;"</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>list_parameters：用来列出指定虚拟主机上所有的Parameter。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_parameters [-p vhost] </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_parameters -p /</span></span><br><span class="line">Listing runtime parameters </span><br><span class="line">federation-upstream f1 &#123;"uri":"amqp://root:root123@192.168.0.2:5672","ack-mode":"on-confirm"&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>clear_parameter：用来清除指定的参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_parameter [-p vhost] &#123;componenet_name&#125; &#123;key&#125; </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_parameter -p / federation-upstream f1 </span></span><br><span class="line">Clearing runtime parameter "fl" for component "federation-upstream"</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_parameters -p /</span></span><br><span class="line">Listing runtime parameters</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>HTTP API接口：</p>
+<ul>
+<li>设置一个参数：PUT /api/parameters/{componenet_name}/vhost/name</li>
+<li>清除一个参数：DELETE /api/parameters/{componenet_name}/vhost/name</li>
+<li>列出指定 vhost 中的所有参数：GET /api/parameters</li>
+</ul>
+<h3 id="4-2-global级别Parameter"><a href="#4-2-global级别Parameter" class="headerlink" title="4.2 global级别Parameter"></a>4.2 global级别Parameter</h3><p>global 级别的 Parameter 的操作：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>详细内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rabbitmqctl</td>
+<td>rabbitmqctl set_global_parameter name value<br>rabbitmqctl list_global_parameters<br>rabbitmqctl clear_global_parameter name</td>
+</tr>
+<tr>
+<td>HTTP API接口</td>
+<td>PUT /api/global-parameters/name<br>DELETE /api/global-parameters/name<br>GET /api/global-parameters/</td>
+</tr>
+</tbody>
+</table>
+<p>示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list global parameters</span></span><br><span class="line">Listing global runtime parameters</span><br><span class="line">cluster_name "rabbit@node1"</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_global_parameter name1 <span class="string">'&#123;&#125;'</span></span></span><br><span class="line">Setting global runtime parameter "name1" to "&#123;&#125;"</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_global_parameters</span></span><br><span class="line">Listing global runtime parameters</span><br><span class="line">cluster_name "rabbit@node1"</span><br><span class="line">name1        []</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_global_parameter name1</span></span><br><span class="line">Clearing global runtime parameter "name1"</span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_global_parameters</span></span><br><span class="line">Listing global runtime parameters</span><br><span class="line">cluster_name "rabbit@node1"</span><br></pre></td></tr></table></figure>
+<h3 id="4-3-Policy"><a href="#4-3-Policy" class="headerlink" title="4.3 Policy"></a>4.3 Policy</h3><p>除了一些固定参数（ 比如 durable 或者 exclusive），客户端在创建交换器或者队列的时候可以配置一些可选参数来获得一些不同的功能，比如 x-message-ttl 或 x-expires 或 x-max-length 等。通过客户端设定的这些属性参数一旦设置成功就不能再改变（不能修改也不能添加），除非删除原来的交换器或队列之后再重新创建新的。</p>
+<p>Policy 的介入就可以很好的解决这类问题，是一种特殊的Parameter的用法。</p>
+<ul>
+<li>Policy 是 vhost 级别的，一个 Policy 可以匹配多个队列或交换器，便于批量管理。</li>
+<li>Policy 也支持动态的修改一些属性参数，提高了应用的灵活度。</li>
+<li>一般用来配置Federation、镜像、备份交换器、死信等功能。</li>
+</ul>
+<p>rabbitmq_managemet 本身就提供了 Policy 的支持。可以在 【Admin】-&gt;【Policies】-&gt; 【Add / update a policy】中添加一个 Policy 。</p>
+<p>参数： </p>
+<ul>
+<li>Virtual host ：表示当前 Policy 所在的 vhost 是哪个。 </li>
+<li>Name ：表示当前 Policy 的名称。</li>
+<li>Pattern ：一个正则表达式，用来匹配相关的队列或者交换器。 </li>
+<li>Apply to ：用来指定当前 Policy 作用于哪一方。 共有三个选项：<ul>
+<li>Exchanges and queues：表示作用与 Pattern 所匹配的所有队列和交换器；</li>
+<li>Exchanges：表示作用于 Pattern 所匹配的所有交换器；</li>
+<li>Queues：表示作用于与 Pattern 所匹配的所有队列。 </li>
+</ul>
+</li>
+<li>Priority ：定义优先级，如果有多个 Policy 作用于同一个交换器或者队列，那么 Priority 最大的那个 Policy 才会有用 。</li>
+<li>Definition ：定义一组或者多组键值对，为匹配的交换器或者队列附加相应的功能。</li>
+</ul>
+<p>作为一种 Paramter, Policy 也可以通过 rabbitmqctl 工具或者 HTTP API 接口来操 。与前面所讲的 Parameter 对应， rabbitmqctl 工具或者 HTTP API 接口各种都有 set、clear、list 的功能。</p>
+<ul>
+<li><p>用来设置一个 Policy：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_policy [-p vhost] [--priority priority] [--apply-to apply-to] &#123;name&#125; &#123;pattern&#125; &#123;definition&#125;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例，设置默认的 vhost 中所有以<span class="string">"^amq."</span>开头的交换器为联邦交换器</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_policy --apply-to exchanges --priority 1 p1 <span class="string">"^amq."</span> <span class="string">'&#123;"federation-upstream":"f1"&#125;'</span></span></span><br><span class="line">Setting policy</span><br><span class="line"><span class="meta">#</span><span class="bash"> HTTP API</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:root123 -XPUT -d <span class="string">'&#123;"pattern":"^amq\.","definition":&#123;"federation-upstream":"f1"&#125;,"priority":1,"apply-to":"exchanges"&#125;'</span> http://192.168.0.2:15672/api/policies/%2F/p1</span></span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">server: Cowboy</span><br><span class="line">date: Mon, 21 Aug 2017 12:36:20 GMT</span><br><span class="line">content-length: 0</span><br><span class="line">content-type : application/json</span><br><span class="line">vary: accept, accept-encoding, origin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列出默认 vhost 所有的 Policy ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_policies [-p vhost] </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl list_policies </span></span><br><span class="line">Listing policies </span><br><span class="line">/  p1 exchanges ^amq. &#123;"federation-upstream":"f1"&#125;1</span><br><span class="line"><span class="meta">#</span><span class="bash"> HTTP API</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:rootl23 -XGET http://192.168.0.2:15672/api/policies/%2F</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">server: Cowboy</span><br><span class="line">date: Mon, 21 Aug 2017 12:37:30 GMT</span><br><span class="line">content-length: 125</span><br><span class="line">content-type: application/json</span><br><span class="line">vary: accept, accept-encoding, origin</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">[&#123;"vhost":"/","name":"pl","pattern":"^amq\\.","apply-to":"exchanges","definition":&#123;"federation-upstream":"f1"&#125;,"priority":1&#125;]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清除指定的 Policy ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_policy [-p vhost] &#123;name&#125; </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 示例</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl clear_policy p1</span></span><br><span class="line">Clearing policy "p1"</span><br><span class="line"><span class="meta">#</span><span class="bash"> HTTP API</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:rootl23 -XDELETE http://192.168.0.2:15672/api/policies/%2F/p1</span></span><br><span class="line"></span><br><span class="line">HTTP/1.1 204 No Content</span><br><span class="line">server: Cowboy</span><br><span class="line">date: Mon, 21 Aug 2017 12:38:55 GMT</span><br><span class="line">content-length: 0</span><br><span class="line">content-type: application/json</span><br><span class="line">vary: accept, accept-encoding, origin</span><br></pre></td></tr></table></figure>
+<p>如果两个或多个 Policy 都作用到同一个交换器或者队列上，且这些 Policy 的优先级都是一样的，则参数项最多的 Policy 具有决定权。如果参数一样多，则最后添加的 Policy 具有决定权。</p>
+</li>
+</ul>
+<hr>
+<hr>
+<p>参考：</p>
+<p>🔗 《RabbitMQ实战指南》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2020100601.html" title="RabbitMQ（五）配置">http://linyishui.top/2020100601.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/mom/" rel="tag"># mom</a>
+          
+            <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020100201.html" rel="next" title="RabbitMQ（四）管理">
+                <i class="fa fa-chevron-left"></i> RabbitMQ（四）管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">293</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">98</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RabbitMQ（五）配置"><span class="nav-number">1.</span> <span class="nav-text">RabbitMQ（五）配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-概述"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-环境变量"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-配置方式"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 配置方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-常见的RabbitMQ变量"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 常见的RabbitMQ变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-配置文件"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-配置项"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 配置项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-配置加密"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 配置加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-优化网络配置"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 优化网络配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-1-监听端口"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">3.3.1 监听端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-2-提高吞吐量"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">3.3.2 提高吞吐量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-3-设置线程池大小"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">3.3.3 设置线程池大小</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-4-连接量大"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">3.3.4 连接量大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-5-一些可配置的内核选项"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">3.3.5 一些可配置的内核选项</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-参数及策略"><span class="nav-number">1.4.</span> <span class="nav-text">第四节 参数及策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-vhost级别Parameter"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 vhost级别Parameter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-global级别Parameter"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 global级别Parameter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Policy"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 Policy</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
