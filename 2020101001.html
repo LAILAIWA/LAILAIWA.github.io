@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="distributed,mom,rabbitmq,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="学习RabbitMQ，第七章《集群》，内容来自于《RabbitMQ实战指南》，内容：RabbitMQ有3种方式实现分布式部署（集群、Federation和Shovel）可以任意组合实现拓扑部署。">
+<meta name="keywords" content="distributed,mom,rabbitmq">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ（七）Federation与Shovel">
+<meta property="og:url" content="http://linyishui.top/2020101001.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="学习RabbitMQ，第七章《集群》，内容来自于《RabbitMQ实战指南》，内容：RabbitMQ有3种方式实现分布式部署（集群、Federation和Shovel）可以任意组合实现拓扑部署。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010129.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010130.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010131.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010132.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010133.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010134.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010135.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010136.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010137.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010138.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010139.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010140.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010150.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010143.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010144.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010145.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010146.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010147.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010151.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010149.png">
+<meta property="og:updated_time" content="2020-10-12T13:23:06.462Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ（七）Federation与Shovel">
+<meta name="twitter:description" content="学习RabbitMQ，第七章《集群》，内容来自于《RabbitMQ实战指南》，内容：RabbitMQ有3种方式实现分布式部署（集群、Federation和Shovel）可以任意组合实现拓扑部署。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010129.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020101001.html">
+
+
+
+
+
+  <title>RabbitMQ（七）Federation与Shovel | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020101001.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RabbitMQ（七）Federation与Shovel</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-10T16:26:47+08:00">
+                2020-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  7,831
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  30
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  学习RabbitMQ，第七章《集群》，内容来自于《RabbitMQ实战指南》，内容：RabbitMQ有3种方式实现分布式部署（集群、Federation和Shovel）可以任意组合实现拓扑部署。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RabbitMQ（七）集群"><a href="#RabbitMQ（七）集群" class="headerlink" title="RabbitMQ（七）集群"></a>RabbitMQ（七）集群</h1><h2 id="第一节-Federation"><a href="#第一节-Federation" class="headerlink" title="第一节 Federation"></a>第一节 Federation</h2><p>Federation 插件的设计目标是<strong>使 RabbitMQ 在不同的 Broker 节点之间进行消息传递而无须建立集群</strong>。</p>
+<p>适用场景下：</p>
+<ul>
+<li>Federation 插件能够在不同管理域（可能设置了不同的用户和 vhost ，也可能运行在不同版本的 RabbitMQ Erlang 上）中的 Broker 或者集群之间传递消息。</li>
+<li>Federation 插件基于 AMQP 0-9-1 协议在不同的 Broker 之间进行通信，并设计成能够容忍不稳定的网络连接情况。</li>
+<li>一个 Broker 节点中可以同时存在联邦交换器（或队列）或者本地交换器（或队列），只需要对特定的交换器（或队列）创建 Federation 连接（Federation link ）</li>
+<li>Federation 需要在 Broker 节点之间创建 O(N^2^）个连接（尽管这是最简单的使用方式），这也就意味着 Federation 在使用时更容易扩展。</li>
+</ul>
+<p>Federation 插件可以让多个交换器或者多个队列进行<strong>联邦</strong>。一个联邦交换器（federated exchange）或者一个联邦队列（federated queue）接收上游（upstream）的消息，这里的<strong>上游是指位于其他 Broker 上的交换器或者队列</strong>。</p>
+<ul>
+<li><strong>联邦交换器能够将原本发送给上游交换器（upstream exchange）的消息路由到本地的某个队列中</strong>；</li>
+<li><strong>联邦队列则允许一个本地消费者接收到来自上游队列（upstream queue）的消息</strong>。</li>
+</ul>
+<h3 id="1-1-联邦交换器"><a href="#1-1-联邦交换器" class="headerlink" title="1.1 联邦交换器"></a>1.1 联邦交换器</h3><h4 id="1-1-1-案例：Federation优化服务器通信网络延迟问题"><a href="#1-1-1-案例：Federation优化服务器通信网络延迟问题" class="headerlink" title="1.1.1 案例：Federation优化服务器通信网络延迟问题"></a>1.1.1 案例：Federation优化服务器通信网络延迟问题</h4><p>例如有如下集群：broker1部署于北京，broker2部署于上海，broker3部署于广州，因为物理距离的问题，所以要考虑网络延迟问题。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010129.png" alt></p>
+<p>有一个广州的业务ClientA需要连接 broker3 ，并向其中的交换器 exchangeA 发送消息，此时的网络延迟很小，<strong>ClientA 可以迅速将消息发送至 exchangeA 中</strong>，就算在开启了 publisher confirm 机制或者事务机制的情况下，也可以迅速收到确认信息。</p>
+<p>此时又有一个在北京的业务 ClientB 需要向 exchangeA 发送消息，那么 <strong>ClientB 与 broker3 之间有很大的网络延迟</strong>， ClientB 将发送消息至 exchangeA 会经历一定的延迟，尤其是在开启了 publisher confirm 机制或者事务机制的情况下， ClientB 会等待很长的延迟时间来接收 broker3 的确认信息，进而必然造成这条 发送线程的性能降低，甚至造成一定程度上的阻塞。</p>
+<p>那么要<strong>怎么优化业务 ClientB </strong>呢？将业务 ClientB 部署到广州的机房中可以解决这个问题，但是如果 ClientB 调用的另一些服务都部署在北京，那么又会引发新的时延问题，总不见得将所有业务全部部署在一个机房，那么容灾又何以实现？这里<strong>使用 Federation 插件就可以很好地解决这个问题</strong>。</p>
+<p>如图 8-2 所示，在广州的 broker3 中为交换器 exchangeA（broker3 中的队列 queueA 通过 <code>rkA</code> 与 exchangeA 进行了绑定）与北京的 broker1 之间建立一条单向的 Federation link ：</p>
+<ul>
+<li>此时 Federation 插件会在 broker1 上建立一个同名的交换器 exchangeA（这个名称可以配置，默认同名），</li>
+<li>同时建立一个内部的交换器 <code>exchangeA-&gt;broker3 B</code> ，并通过路由键 <code>rkA</code> 将这两个交换器绑定起来。</li>
+<li>这个交换器 <code>exchangeA-&gt;broker3 B</code> 名字中的 <code>broker3</code> 是集群名，可以通过 <code>rabbitmqctl set_cluster_name {new name}</code> 命令进行修改。</li>
+<li>与此同时 Federation 插件还会在 broker1 上建立一个队列 <code>federation: exchangeA-&gt;broker3 B</code> 并与交换器 <code>exchangeA-&gt;broker3 B</code> 进行绑定。 </li>
+<li>Federation 插件会在队列 <code>federation: exchangeA-&gt;broker3 B</code> 与 broker3 中的交换器 exchangeA 之间建立一条 AMQP 连接来实时地消费队列 <code>federation: exchangeA-&gt;broker3 B</code> 中的数据。</li>
+<li>这些操作都是内部的，对外部业务客户端来说这条 Federation link 建立在 broker1 的 exchangeA 和broker3 的 exchangeA 之间。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010130.png" alt></p>
+<p>因此部署在北京的业务 ClientB 可以连接 broker1（北京）并向 exchangeA 发送消息，这样 ClientB 可以迅速发送完消息并收到确认信息，而之后消息通过 Federation link 转发到 broker3（广州）的交换器 exchangeA 中。最终消息会存入与 exchangeA 绑定的队列 queueA 中，消费者最终可以消费队列 queueA 中的消息。</p>
+<p>经过 Federation link 转发的消息会带有特殊的 headers 性标记。例如向 broker1 中的交换器 exchangeA 发送一条内容为“federation test payload ”的持久化消息，之后可以在 broker3 中的队列 queueA 消费到这条消息：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010131.png" alt></p>
+<h4 id="1-1-2-联邦交换器和普通无明显差异"><a href="#1-1-2-联邦交换器和普通无明显差异" class="headerlink" title="1.1.2 联邦交换器和普通无明显差异"></a>1.1.2 联邦交换器和普通无明显差异</h4><p>Federation 不仅便利于消息生产方，同样也便利于消息消费方。假设某生产者将消息存入 broker1 中的某个队列 queueB，在广州的业务 ClientC 想要消费 queueB 消息，消息的流转及确认必然要忍受较大的网络延迟，内部编码逻辑也会因这一因素变得更加复杂，这样不利于 ClientC 的发展。</p>
+<p>不如将这个消息转发的过程以及内部复杂的编程逻辑交给 Federation 去完成， 而业务方在编码时不必再考虑网络延迟的问题。 Federation 使得生产者和消费者可以异地部署而又让这两方感受不到过多的差异（类似RPC的特性？）。</p>
+<p>上个案例的队列 <code>federation: exchangeA-&gt;broker3 B</code> 是一个相对普通的队列，可以直接通过客户端进行消费。假设此时还有一个客户端 ClientD 通过 <code>Basic.Consume</code> 来消费队列 <code>federation: exchangeA-&gt;broker3 B</code> 的消息，会导致发往 broker1 的 exchangeA 中的消息会有一半被 ClientD 消费掉，另一半会发往 broker3 的 exchangeA 。<strong>如果业务方要求所有发往 broker1 的 exchangeA 中的消息都要转发到 broker3 的 exchangeA 中，要注意不要使队列 <code>federation: exchangeA-&gt;broker3 B</code> 有其他消费者</strong>。</p>
+<p>但也可以注意到，队列 <code>federation: exchangeA-&gt;broker3 B</code> 本身就是普通的队列，天然支持“异地均摊消费”类似的需求。一个 federated exchange 同样可以成为另一个交换器的 upstream exchange 。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010132.png" alt></p>
+<p>两方的交换器可以互为 federated exchange 和 upstream exchange 其中 <code>max_hops=1</code> 表示一条消息最多被转发的次数为1。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010133.png" alt></p>
+<p>注意：<strong>对于默认的交换器（每个 vhost 下都会默认创建一个名为“”的交换 器）和内部交换器而言，不能对其使用 Federation 功能</strong>。</p>
+<h4 id="1-1-3-联邦交换器组成复杂的拓扑逻辑部署方式"><a href="#1-1-3-联邦交换器组成复杂的拓扑逻辑部署方式" class="headerlink" title="1.1.3 联邦交换器组成复杂的拓扑逻辑部署方式"></a>1.1.3 联邦交换器组成复杂的拓扑逻辑部署方式</h4><p>“fan-out”的多叉树形式：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010134.png" alt></p>
+<p>“三足鼎立”形式：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010135.png" alt></p>
+<p>环形的拓扑部署：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010136.png" alt></p>
+<h3 id="1-2-联邦队列"><a href="#1-2-联邦队列" class="headerlink" title="1.2 联邦队列"></a>1.2 联邦队列</h3><p>联邦队列（federated queue）：可以在多个 Broker 节点（或者集群）之间为单个队列提供均衡负载的功能。一个联邦队列可以连接一个或者多个上游队列（upstream queue），并从这些上游队列中获取消息以满足本地消费者消费消息的需求。</p>
+<p>图 8-9 演示了两个Broker中的联邦队列（灰色）和非联邦队列（白色）部署：queue1 和 queue2 位于 broker2，配置为联邦队列并设置 broker1 为上游， Federation 插件会在 broker1 创建两个同名队列，并且分别和 broker2 的队列建立单向独立的 Federation link 。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010137.png" alt></p>
+<p>当有消费者 ClientA 连接 broker2 并通过 <code>Basic.Consume</code> 消费队列 queue1 （或 queue2 ）中的消息时：</p>
+<ul>
+<li>如果此时队列已有消息堆积就可以直接被消费，且 broker2 的队列不会拉取 broker1 的队列中的消息；</li>
+<li>如果此时队列没有消息，会通过 Federation link 拉取在 broker1 的上游队列中的消息，然后存储到本地，再被 ClientA 消费。</li>
+</ul>
+<p><strong>既可以消费联邦队列，又可以消费上游队列，这种分布式队列的部署可以提高单个队列的容量</strong>。如果上游一端部署的消费者来不及消费上游队列的消息，下游的消费者可以帮其分担消费，有一定的负载均衡的效果。</p>
+<p><strong>与联邦交换器不同的是，一条消息可以在联邦队列间转发无限次</strong>，因为队列可以互为联邦队列：消息会转向有多余消费能力的一方，所以可能会导致消费在队列间来回转发。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010138.png" alt></p>
+<p>如下图，broker2 的队列 queue 没有消息堆积或者消息被消费完之后并不能通过 <code>Basic.Get</code> 来获取 broker1 中队列 queue 消息。因为 <code>Basic.Get</code> 是一个异步的方法，如果要从 broker1 中队列 queue 拉取消息，必须要阻塞等待通过 Federation link 拉取消息存入 broker2 中的队列 queue 之后再消费消息，所以<strong>对于 federated queue 而言只能使用 <code>Basic.Consume</code> 进行消费</strong>。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010139.png" alt></p>
+<p><strong>联邦队列不具备传递性</strong>：队列 queue2 作为联邦队列与 queue1 进行联邦，而队列 queue2 又作为队列 queue3 的上游队列，但是这样队列 queue1 和 queue3 之间并没有产生任何联邦的关系。如果队列 queue1 有消息堆积，消费者连接 broker3 消费 queue3 中的消息，无论 queue3 处于何种状态，这些消费者都消费不到 queue1 中的消息， 除非 queue2 有消费者。</p>
+<h3 id="1-3-Federation的使用"><a href="#1-3-Federation的使用" class="headerlink" title="1.3 Federation的使用"></a>1.3 Federation的使用</h3><p>使用Federation前要配置两个内容：</p>
+<ul>
+<li>需要配置一个或多个 upstream，每个 upstream 均定义了到其他节点的 Federation link。这个配置可以通过设置运行时的参数（Runtime Parameter）来完成，也可以通过 federation management 插件来完成。</li>
+<li>需要定义匹配交换器或者队列的一种/多种策略（Policy）。</li>
+</ul>
+<h4 id="1-3-1-启用Federation"><a href="#1-3-1-启用Federation" class="headerlink" title="1.3.1 启用Federation"></a>1.3.1 启用Federation</h4><p>开启Federation功能：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_federation </span></span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>开启Federation的管理插件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_federation_management</span></span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>开启后在RabbitMQ的管理界面中【Admin】右侧会多出两个Tab页：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010140.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010150.png" alt></p>
+<p>注意：<strong>当需要在集群中使用 Federation 功能的时候，集群中所有的节点都应该开启 Federation 插件</strong>。</p>
+<h4 id="1-3-2-相关配置和工具"><a href="#1-3-2-相关配置和工具" class="headerlink" title="1.3.2 相关配置和工具"></a>1.3.2 相关配置和工具</h4><p>有关 Federation upstream 信息全部都保存在 RabbitMQ 的 Mnesia 数据库中，包括用户信息、权限信息、队列信息等。</p>
+<p>在Federation中有三种级别的配置：</p>
+<ul>
+<li>Upstreams：每个 upstream 用于定义与其他 Broker 建立连接的信息。 属于运行时参数。</li>
+<li>Upstream sets：每个 upstream set 用于对一系列使用 Federation 功能的 upstream 行分组。 实际的简单使用场景可忽略，所有upstreambuild添加到一个名叫 <code>all</code> 且隐式定义的 upstream set 中。</li>
+<li>Policies：每一个 Policy 会选定出一组交换器，或者队列，亦或者两者皆有而进行限定，进而作用于一个单独的 upsteam 或者 upstream set 之上。</li>
+</ul>
+<p>Federation 相关的运行时参数和策略都可以通过3种方式进行设置：</p>
+<ul>
+<li>通过 rabbitmqctl 工具；</li>
+<li>通过 RabbitMQ Management 插件提供的 HTTP API 接口；</li>
+<li>通过 rabbitmq federation management 插件提供的 Web 管理界面的方式（最方便且通用）。不过基于 Web 管理界面的方式不能提供全部功能，比如无法针对 upstream set 进行管理。</li>
+</ul>
+<h4 id="1-3-3-使用流程"><a href="#1-3-3-使用流程" class="headerlink" title="1.3.3 使用流程"></a>1.3.3 使用流程</h4><p>以图 8-2 中broker1和broker3为例描述<strong>如何建立联邦交换器</strong>：</p>
+<ul>
+<li><p>第一步，在 broker1 和 broker3 中开启 <code>rabbitmq_federation</code> 插件，最好同时开启 <code>rabbitmq_federation_management</code> 插件。</p>
+</li>
+<li><p>第二步，在 broker3 中定义一个 upstream，有三种设置方式：</p>
+<ul>
+<li><p>第一种是通过 rabbitmqctl 工具的方式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_parameter federation-upstream f1</span></span><br><span class="line">uri '&#123;"uri":"amqp://root:root123 192.168.0.2:5672","ack-mode":"on-confirm"&#125;'</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第二种是通过调用 HTTP API 接口的方式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:rootl23 -XPUT -d</span></span><br><span class="line">'&#123;"value":&#123;"uri":"amqp://root:root123 192.168.0.2:5672","ack-mode":"on-confirm"&#125;&#125;' </span><br><span class="line">http://192.168.0.4:15672/api/parameters/federation-upstream/%2f/f1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三种是通过在Web管理界面中添加的方式，【Admin】-&gt;【Federation Upstreams】-&gt;【Add a new upstream】，各个参数的含义：</p>
+<ul>
+<li><p>Name ：定义这个 upstream 的名称，必填项。</p>
+</li>
+<li><p>URI (uri）：定义 upstream 的 AMQP 连接，必填项。本示例中可以填写为 <code>amqp://root:root123 192.168.0.2:5672</code> 。</p>
+</li>
+<li><p>Prefetch count（prefetch count）：定义 Federation 内部缓存的消息条数，即在收到上游消息之后且在发送到下游之前缓存的消息条数。 </p>
+</li>
+<li><p>Reconnect delay（reconnect-delay）: Federation link 由于某种原因断开之后， 需要等待多少秒开始重新建立连接。 </p>
+</li>
+<li><p>Acknowledgement Mode（ack-mode）：定义 Federation link 的消息确认方式。共有3种： </p>
+<ul>
+<li>on-confirm：默认为 on-confirm，表示在接收到下游的确认消息（等待下游的 Basic.Ack ）之后再向上游发送消息确认，这个选项 可以确保网络失败或者 Broker 密机时不会丢失消息，但也是处理速度最慢的选项。</li>
+<li>on-publish：表示消息发送到下游后（并需要等待下游的 <code>Basic.Ack</code> ) 再向上游发送消息确认，这个选项可以确保在网络失败的情况下不会丢失消息，但不能确保 Broker 岩机时不会丢失消息。</li>
+<li>no-acko：表示无须进行消息确认，这个选项处理速度最快，但也最容易丢失消息。  </li>
+</ul>
+</li>
+<li><p>Trust User-ID（trust-user-id）：设定 Federation 是否使用 <code>Validated User-ID</code> 这个功能。如果设置为 false 或者没有设置，那么 Federation 会忽略消息的 user_id 这个属性；如果设置为 true ，则 Federation 只会转发 user_id 为上游任意有效的用户的消息。</p>
+</li>
+<li><p>所谓的 <code>Validated User-ID</code> 功能是指发送消息时验证消息的 user_id 的属性。<code>channel.basicPublish</code> 方法中有个参数是 <code>BasicProperties</code> 有一个属性 user_id ：</p>
+<ul>
+<li><p>设置 user_id 属性为 root ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AMQP.BasicProperties properties = <span class="keyword">new</span> AMQP.BasicProperties();</span><br><span class="line">properties.setUserid(<span class="string">"root"</span>);</span><br><span class="line">channel.basicPublish(<span class="string">"amq.fanout"</span>,<span class="string">""</span>, properties,<span class="string">"test user id"</span>.getBytes());</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果在连接 Broker 时所用的用户名为 root，当发送 test user id 这条消息时设置的 user_id 的属性为 guest ，那么这条消息会发送失败，具体报错为 <code>406 PRECONDITION_FAILED - user_id property set to &#39;guest&#39; but authenticated user was &#39;root&#39;</code> ，只有当 user_id 设置为 root 时，这条消息才会发送成功。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>第三步，定义一个 Policy 用于匹配交换器 exchangeA ，并使用第二步中所创建的 upstream ，有三种设置方式：</p>
+<ul>
+<li><p>第一种是通过 rabbitmqctl 工具的方式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 定义所有以exchange开头的交换器作为 federated exchange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_policy --apply-to exchanges p1 <span class="string">"^exchange"</span> <span class="string">'&#123;"federation upstream":"f1"&#125;'</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第二种是通过调用 HTTP API 接口的方式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:rootl23 -XPUT -d <span class="string">'&#123;"pattern":"^exchange","definition":&#123;"federation-upstream":"f1"&#125;,"apply-to":"exchanges"&#125;'</span> </span></span><br><span class="line">http://192.168.0.4:15672/api/policies/%2F/p1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三种是通过在Web管理界面中添加的方式，【Admin】-&gt;【Federation Upstreams】-&gt;【Add/Update a policy】，创建一个 Federation link ，可以 Web 管理界面中【Admin】-&gt;【Federation Status】-&gt;【Running Links 】查看到相应的链接（或者通过指令 <code>rabbitmqctl eval &#39;rabbit federation_status:status().</code> 查看相应的 Federation link）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>如何建立联邦队列</strong>：</p>
+<ul>
+<li><p>首先同样也是定义一个 upstream 。</p>
+</li>
+<li><p>之后定义 Policy 的时候略微有变化，比如使用 rabbitmqctl 工具的情况：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 定义所有以exchange开头的交换器作为 federated queue</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_policy --apply-to queues p2 <span class="string">"^queue"</span> <span class="string">'&#123;"federation upstream":"f1"&#125;'</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通常情况下，针对每个 upstream 会有一条 Federation link。此Federation link 对应到一个交换器上。例如， 3个交换器与2个upstream分别建立 Federation link 的情况下 ，会有6条连接。</p>
+</li>
+</ul>
+<p>只适用联邦交换器的参数：</p>
+<ul>
+<li>Exchange (exchange）：指定 upstream exchange 的名称，默认情况下和 federated exchange 同名，即图 8-2 中的 exchangeA 。</li>
+<li>Max hops (max-hops）：指定消息被丢弃前在 Federation link 中最大的跳转次数，默认为1。注意即使设置 <code>max-hops</code> 参数为大于1的值，同一条消息也不会在同一个 Broker 中出现2次，但是有可能会在多个节点中被复制。 </li>
+<li>Expires (expires）：指定 Federation link 断开之后，federated queue 所对应的 upstream queue（即图 8-2 中的队列 <code>federation: exchangeA-&gt;broker3</code> ）的超时时间，默认为 none，表示为不删除，单位为 ms 。这个参数相当于设置普通队列的 <code>x-expires</code> 参数。设置这个值可以避免 Federation link 断开之后，生产者一直在向 broker1 中的 exchangeA 发送消息，这些消息又不能被转发到 broker3 中而被消费掉，进而造成 broker1 中有大量的消息堆积。</li>
+<li>Message TTL (message-ttl）：为 federated queue 所对应的 upstream  queue （即 8-2 中的队列 <code>federation: exchangeA-&gt;broker3</code> ）设置，相当于普通队列的 <code>x-message-ttl</code> 参数，默认为 none 。表示消息没有超时时间。 </li>
+<li>HA policy (ha-policy）：为 federated queue 所对应的 upstream queue （即 8-2 中的队列 <code>federation: exchangeA-&gt;broker3</code> ）设置，相当于普通队列的 <code>x-ha-policy</code> 参数，默认为 none，表示队列没有任何 HA。</li>
+</ul>
+<p>只适用联邦队列的参数：</p>
+<ul>
+<li>Queue (queue）：执行 upstream queue 的名称，默认情况下和 federated queue 同名。</li>
+</ul>
+<h2 id="第二节-Shovel"><a href="#第二节-Shovel" class="headerlink" title="第二节 Shovel"></a>第二节 Shovel</h2><h3 id="2-1-简介"><a href="#2-1-简介" class="headerlink" title="2.1 简介"></a>2.1 简介</h3><p>与 Federation 具备的数据转发功能类似， <strong>Shovel 能够可靠、持续地从一个 Broker 中的队列拉取数据并转发至另一个 Broker 中的交换器</strong>。 </p>
+<p><strong>作为源端的队列和作为目的端的交换器可以同时位于同一个 Broker ，也可以位于不同的 Broker 上</strong>。</p>
+<p>Shovel 可以翻译为“铲子”，是一种比较形象的比喻，这个“铲子”可以将消息从一方“挖到”另一方。 Shovel 的行为就像优秀的客户端应用程序，能够负责连接源和目的地、负责消息的读写及负责连接失败问题的处理。</p>
+<h4 id="2-1-1-优势"><a href="#2-1-1-优势" class="headerlink" title="2.1.1 优势"></a>2.1.1 优势</h4><p>Shovel 的主要优势在于：</p>
+<ul>
+<li><strong>松耦合</strong>： Shovel 可以移动位于不同管理域中的 Broker（或者集群）上的消息，这些 Broker（或者集群）可以包含不同的用户和 vhost ，也可以使用不同的 RabbitMQ Erlang 版本。 </li>
+<li><strong>支持广域网</strong>：Shovel 插件同样基于 AMQP 协议在 Broker 之间进行通信，被设计成可以容忍时断时续的连通情形，并且能够保证消息的可靠性。</li>
+<li><strong>高度定制</strong>：当 Shovel 成功连接后，可以对其进行配置以执行相关的 AMQP 命令。</li>
+</ul>
+<h3 id="2-2-原理"><a href="#2-2-原理" class="headerlink" title="2.2 原理"></a>2.2 原理</h3><p>Shovel 的结构示意图：两个Broker，broker1 中有交换器 exchange1 和队列 queue1 ，且这两者通过路由键 <code>rk1</code> 进行绑定；broker2 中有交换器 exchange2 和队列 queue2 ，且这两者通过路由键 <code>rk2</code> 进行绑定。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010143.png" alt></p>
+<p>在队列 queue1 和交换器 exchange2 之间配置一个 Shovel link，当一条内容为  <code>shovel test payload</code> 的消息从客户端发送至交换器 exchange1 的时候，这条消息会经过图 8-15 中的数据流转最后存储在队列 queue2 中。</p>
+<p>如果在配置 Shovel link 时设置了 <code>add_forward_headers</code> 参数为 true ，则在消费到队列 queue2 中这条消息的时候会有特殊的 headers 属性标记，详细内容可参考图 8-16 ：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010144.png" alt></p>
+<p>通常情况下，使用 Shovel 时配置队列作为源端，交换器作为目的端，但同样可以<strong>将队列配置为目的端</strong>：（虽然看起来像队列queue1直接通过 Shovel link 将消息转发给queue2，但其实还经过了broker2的默认交换器转发）</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010145.png" alt></p>
+<p><strong>配置交换器为源端</strong>也可以，虽然看起来像交换器 exchange1 直接通过 Shovel link 将消息转发给 exchange2 ，但其实broker1会创建一个队列并绑定 exchange1 ，消息从 exchange1 过来后先存储在这个队列，然后Shovel再从这个队列中拉取消息并转发到exchange2。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010146.png" alt></p>
+<p>Shovel 可以为源端或者目的端配置多个 Broker 的地址，这样可以使得源端或者目的端的 Broker 失效后能够尝试重连到其他 Broker 之上（随机挑选）。</p>
+<p>可以设置 <code>reconnect_delay</code> 参数以避免由于重连行为导致的网络泛洪， 或者可以在重连失败后直接停止连接。针对源端和目的端的所有配置声明会在重连成功之后被重新发送。</p>
+<h3 id="2-3-使用"><a href="#2-3-使用" class="headerlink" title="2.3 使用"></a>2.3 使用</h3><p>开启Shovel：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_shovel</span></span><br></pre></td></tr></table></figure>
+<p>开启Shovel管理插件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_shovel_management</span></span><br></pre></td></tr></table></figure>
+<p>在 RabbitMQ 的管理界面中【Admin】的右侧会多出【Shovel Status 】和【Shovel Management】两个 Tab 页：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010147.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010151.png" alt></p>
+<p>Shovel 既可以部署在源端，也可以部署在目的端。</p>
+<p>有两种方式可以部署 Shovel：</p>
+<ul>
+<li><strong>静态方式</strong>（static）：指在 <code>rabbitmq.config</code> 配置文件中设置。</li>
+<li><strong>动态方式</strong>（dynamic）：指通过 <code>Runtime Parameter</code> 设置。</li>
+</ul>
+<h4 id="2-3-1-静态方式"><a href="#2-3-1-静态方式" class="headerlink" title="2.3.1 静态方式"></a>2.3.1 静态方式</h4><p>在 <code>rabbitmq.config</code> 配置文件中针对 Shovel 插件的配置信息是一种 Erlang 项式，由单条 Shovel 条目构成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#123;rabbitmq_shovel,</span> <span class="string">[</span> <span class="string">&#123;shovels,</span> <span class="string">[</span> <span class="string">&#123;shovel_name,</span> <span class="string">[</span> <span class="string">...</span> <span class="string">]</span> <span class="string">&#125;,</span> <span class="string">...</span> <span class="string">]&#125;</span> <span class="string">]&#125;</span></span><br></pre></td></tr></table></figure>
+<p>每一条 Shovel 条目定义了源端与目的端的转发关系，其名称（Shovel name）必须是独一无二的：（其中 sources、destination 和 queue 三项是必需的，其余的都可以默认）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#123;shovel_name,</span> <span class="string">[</span> <span class="string">&#123;sources,</span> <span class="string">[</span> <span class="string">...</span> <span class="string">]</span> <span class="string">&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;destinations,</span> <span class="string">[</span> <span class="string">...</span> <span class="string">]</span> <span class="string">&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;queue,</span> <span class="string">queue_name&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;prefetch_count,</span> <span class="string">count&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;ack_mode,</span> <span class="string">a_mode&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;publish_properties,</span> <span class="string">[</span> <span class="string">...</span> <span class="string">]</span> <span class="string">&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;publish_fields</span> <span class="string">,</span> <span class="string">[</span> <span class="string">...</span> <span class="string">]</span> <span class="string">&#125;</span></span><br><span class="line">			  <span class="string">,</span> <span class="string">&#123;reconnect_delay,</span> <span class="string">reconn_delay&#125;</span></span><br><span class="line">			  <span class="string">]&#125;</span></span><br></pre></td></tr></table></figure>
+<p>详细配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">[&#123;rabbitmq_shovel,</span> </span><br><span class="line">	<span class="string">[&#123;shovels,</span> </span><br><span class="line">		<span class="string">[&#123;hidden</span> <span class="string">shovel,</span></span><br><span class="line">			<span class="string">[&#123;sources,</span></span><br><span class="line">				<span class="comment"># broker项配置的是URI，定义了用于连接Shovel两端的服务器地址、用户名、密码、vhost和端口号等。</span></span><br><span class="line">				<span class="string">[&#123;broker,</span> <span class="string">"amqp://root:root123@192.168.0.2:5672 "</span><span class="string">&#125;,</span></span><br><span class="line">		         <span class="comment"># declarations这一项是可选的，declaration_list指定了可以使用的AMQP，声明了队列、交换器和绑定关系。</span></span><br><span class="line">				 <span class="string">&#123;declarations,</span></span><br><span class="line">				 <span class="string">[</span></span><br><span class="line">				 	<span class="comment"># 声明了队列，&lt;&lt;告诉Erlang是binary类型字符串</span></span><br><span class="line">				 	<span class="string">&#123;'queue.declare',</span> <span class="string">[&#123;queue,</span> <span class="string">&lt;&lt;"queue1"&gt;&gt;&#125;,</span> <span class="string">durable]&#125;,</span></span><br><span class="line">				 	<span class="comment"># 声明了交换器，durable需要赋值时才要加上&#123;&#125;</span></span><br><span class="line">				 	<span class="string">&#123;'exchange.declare',[</span></span><br><span class="line">				 			<span class="string">&#123;exchange,</span> <span class="string">&lt;&lt;"exchange1"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">&#123;type,</span> <span class="string">&lt;&lt;"direct"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">durable</span></span><br><span class="line">				 		<span class="string">]</span></span><br><span class="line">				 	<span class="string">&#125;,</span></span><br><span class="line">				 	<span class="comment"># 声明了绑定关系</span></span><br><span class="line">				 	<span class="string">&#123;'queue.bind',</span> <span class="string">[</span></span><br><span class="line">				 			<span class="string">&#123;exchange,</span> <span class="string">&lt;&lt;"exchange1"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">&#123;queue,</span> <span class="string">&lt;&lt;"queue1"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">&#123;routing_key,</span> <span class="string">&lt;&lt;"rk1"&gt;&gt;&#125;</span></span><br><span class="line">				 	<span class="string">&#125;]&#125;]&#125;,</span></span><br><span class="line">		 <span class="string">&#123;destinations,</span></span><br><span class="line">		 	<span class="string">[&#123;broker，"amqp://root:root123@192.168.0.2:5672"&#125;,</span></span><br><span class="line">				 <span class="string">&#123;declarations,</span></span><br><span class="line">				 <span class="string">[</span></span><br><span class="line">				 	<span class="string">&#123;'queue.declare',</span> <span class="string">[&#123;queue,</span> <span class="string">&lt;&lt;"queue2"&gt;&gt;&#125;,</span> <span class="string">durable]&#125;,</span></span><br><span class="line">				 	<span class="string">&#123;'exchange.declare',[</span></span><br><span class="line">				 			<span class="string">&#123;exchange,</span> <span class="string">&lt;&lt;"exchange2"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">&#123;type,</span> <span class="string">&lt;&lt;"direct"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">durable</span></span><br><span class="line">				 		<span class="string">]</span></span><br><span class="line">				 	<span class="string">&#125;,</span></span><br><span class="line">				 	<span class="string">&#123;'queue.bind',</span> <span class="string">[</span></span><br><span class="line">				 			<span class="string">&#123;exchange,</span> <span class="string">&lt;&lt;"exchange2"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">&#123;queue,</span> <span class="string">&lt;&lt;"queue2"&gt;&gt;&#125;,</span></span><br><span class="line">				 			<span class="string">&#123;routing_key,</span> <span class="string">&lt;&lt;"rk2"&gt;&gt;&#125;</span></span><br><span class="line">				 	<span class="string">&#125;]&#125;]&#125;,</span></span><br><span class="line">		 <span class="comment"># 表示源端服务器上的队列名称，&lt;&lt;&gt;&gt;则表示匿名队列</span></span><br><span class="line">		 <span class="string">&#123;queue,</span> <span class="string">&lt;&lt;"queue1"&gt;&gt;&#125;,</span></span><br><span class="line">		 <span class="comment"># 表示在完成转发消息时的确认模式</span></span><br><span class="line">		 <span class="comment"># no_ack表示无须任何消息确认行为</span></span><br><span class="line">		 <span class="comment"># no_publish表示Shovel会把每一条消息发送到目的端之后再向源端发送消息确认</span></span><br><span class="line">		 <span class="comment"># no_confirm表示Shovel会使用publisher confirm机制，在收到目的端的消息确认之后再向源端发送消息确认</span></span><br><span class="line">		 <span class="string">&#123;ack_mode,</span> <span class="string">no_ack&#125;,</span></span><br><span class="line">		 <span class="comment"># 表示Shovel内部缓存的消息条数，Shovel的内部缓存是源端服务器和目的端服务器之间的中间缓存部分</span></span><br><span class="line">		 <span class="string">&#123;prefetch_count,</span> <span class="number">64</span><span class="string">&#125;,</span></span><br><span class="line">		 <span class="comment"># 指消息发往目的端时需要特别设置的属性列表</span></span><br><span class="line">		 <span class="string">&#123;publish_properties,</span> <span class="string">[&#123;delivery_mode,</span> <span class="number">2</span><span class="string">&#125;]&#125;,</span></span><br><span class="line">		 <span class="comment"># 设置为true，会在转发的消息内添加x-shovelled的header属性</span></span><br><span class="line">		 <span class="string">&#123;add_forward_headers,</span> <span class="literal">true</span><span class="string">&#125;,</span></span><br><span class="line">		 <span class="comment"># 定义了消息需要发往目的端服务器上的交换器以及标记在消息上的路由键。如果交换器和路由键没有定义，则Shovel会从原始消息上复制这些被忽略的设置。</span></span><br><span class="line">		 <span class="string">&#123;publish_fields,</span> <span class="string">[&#123;exchange,</span> <span class="string">&lt;&lt;"exchange2"&gt;&gt;&#125;,</span></span><br><span class="line">		 	<span class="string">&#123;routing_key,</span> <span class="string">&lt;&lt;"rk2"&gt;&gt;&#125;]&#125;,</span></span><br><span class="line">		 <span class="comment"># 指定在Shovel link失效情况下，重新建立连接前需要等待的时间。如果设置为0，则不会进行重连动作，即Shovel会在首次连接失效时停止工作。默认为5秒。</span></span><br><span class="line">		 <span class="string">&#123;reconnect_delay,</span> <span class="number">5</span><span class="string">&#125;</span> <span class="string">J</span></span><br><span class="line">		<span class="string">&#125;]</span> </span><br><span class="line">	<span class="string">&#125;]</span></span><br><span class="line"><span class="string">&#125;].</span></span><br></pre></td></tr></table></figure>
+<p>如果 sources 或者 destinations 是 RabbitMQ 集群，那么就使用 brokers ，并在其后用多个URI字符串以 <code>[]</code> 的形式包裹起来。</p>
+<h4 id="2-3-2-动态方式"><a href="#2-3-2-动态方式" class="headerlink" title="2.3.2 动态方式"></a>2.3.2 动态方式</h4><p>Federation upstream 类似 Shovel 动态部署方式的配置信息会被保存 RabbitMQ Mnesia 数据库中，包括权限信息、用户信息和队列信息等内容。</p>
+<p>每一个Shovel link都由一个相应的Parameter定义，Parameter设置方式：</p>
+<ul>
+<li><p>第一种，通过 rabbitmqctl 工具的方式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl set_parameter shovel hidden_shovel \</span></span><br><span class="line">'&#123;"src-uri":"amqp://root:root123@192.168.0.2:5672",</span><br><span class="line">"src-queue":"queue1",</span><br><span class="line">"dest-uri":"amqp://root:rootl23@192.168.0.3:5672","src- exchange-key":"rk2",</span><br><span class="line">"prefetch-count":64,"reconnect-delay":5,"publish-properties":[],</span><br><span class="line">"add-forward-headers":true,"ack-mode":"on-confirm"&#125;'</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第二种，通过调用 HTTP API 接口的方式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl -i -u root:rootl23 -XPUT d</span></span><br><span class="line">'&#123;"value":&#123;"src-uri":"amqp://root:root123@192.168.0.2:5672","src-queue":"queue1",</span><br><span class="line">"dest-uri":"amqp://root:rootl23@192.168.0.3:5672","src-exchange-key":"rk2",</span><br><span class="line">"prefetch-count":64, "reconnect-delay":5,"publish-properties":[],</span><br><span class="line">"add-forward-headers":true,"ack_mode":"confirm"&#125;&#125;'</span><br><span class="line">http://192.168.0.2:15672/api/parameters/shovel/%2f/hidden_shovel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三种，通过在Web管理界面中添加的方式，【Admin】-&gt;【Shovel Management】-&gt;【Add a new shovel】。</p>
+<ul>
+<li>在创建了一个 Shovel link 之后，可以在【Admin】-&gt;【Shovel Status】 中查看状态信息。</li>
+<li>也可以通过 <code>rabbitmqctl eval &#39;rabbit shovel_status:status().</code> 查看相应的 Shovel link。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-4-案例：消息堆积的治理"><a href="#2-4-案例：消息堆积的治理" class="headerlink" title="2.4 案例：消息堆积的治理"></a>2.4 案例：消息堆积的治理</h3><p><strong>消息堆积</strong>是在使用消息中间件过程中遇到的最正常不过的事情。消息堆积是一把双刃剑，适量的堆积可以有削峰、缓存之用 ，但是如果堆积过于严重，就可能影响到其他队列的使用，导致整体服务质量的下降。</p>
+<p>对于一台普通的服务器来说，在一个队列中堆积1万至10万条消息，丝毫不会影响什么。但是如果这个队列中堆积超过1千万乃至一亿条消息时，可能会引起一些严 重的问题，比如引起内存或者磁盘告警而造成所有 Connection 阻塞。</p>
+<p>解决方案：</p>
+<ul>
+<li>消息堆积严重时，可以选择清空队列，或者采用空消费程序丢弃掉部分消息。不过对于重要的数据而言，丢弃消息的方案并无用武之地。</li>
+<li>另一种方案是增加下游消费者的消费能力，这个思路可以通过后期优化代码逻辑或者增加消费者的实例数来实现。但是后期的代码优化在面临紧急情况时总归是“远水解不了近渴”，并且有些业务场景也井非可以简单地通过增加消费实例而得以增强消费能力。</li>
+<li>当某个队列中的消息堆积严重时，比如超过某个设定的阑值，就可以通过 Shovel 将队列中的消息移交给另一个集群。</li>
+</ul>
+<p>几种情形：</p>
+<ul>
+<li>情形1：当检测到当前运行集群 cluster1 中的队列 queue1 中有严重消息堆积，比如通过 <code>/api/queues/vhost/name</code> 接口获取到队列的消息个数（messages）超过2千万或者消息占用大小（messages_bytes）超过 10GB 时，就启用 shovel1 将队列 queue1 中的消息转发至备份集群 cluster2 中的队列 queue2。</li>
+<li>情形2：紧随情形1，当检测到队列 queue1 中的消息个数低于1百万或者消息占用大小低于1GB 时就停止 shovel1，然后让原本队列 queue1 中的消费者慢慢处理剩余的堆积。</li>
+<li>情形3：当检测到队列 queue1 中的消息个数低于 10 万或者消息占用大小低于100MB时， 就开启 shovel2 将队列 queue2 中暂存的消息返还给队列 queue1。</li>
+<li>情形4：紧随情形3，当检测到队列 queue1 中的消息个数超过1百万或者消息占用大小高于 1GB 时就将 shovel2 停掉。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201001/202010010149.png" alt></p>
+<p>如此，队列 queue1 就拥有了队列 queue2 这个“保镖”为它保驾护航。这里是一备一的情形，如果需要一备多，可以采用镜像队列或者引入 Federation。</p>
+<h2 id="第三节-Federation-Shovel-与集群的区别和联系"><a href="#第三节-Federation-Shovel-与集群的区别和联系" class="headerlink" title="第三节 Federation/Shovel 与集群的区别和联系"></a>第三节 Federation/Shovel 与集群的区别和联系</h2><p>集群、Federation、Shovel这三种部署方式：</p>
+<p>集群是最为通用的一种方式。集群将多个 Broker 节点连接起来组成逻辑上独立的单个 Broker 。集群内部借助 Erlang 进行消息传输，所以集群中的每个节点的 Erlang cookie 务必要保持一致。同时，集群内部的网络必须是可靠的，RabbitMQ Erlang 的版本也必须一致。虚拟主机、交换器、用户、权限等都会自动备份到集群中的各个节点。队列可能部署单个节点或被镜像到多个节点中。连接到任意节点的客户端能够看到集群中所有的队列，即使该队列不在所连接的节点之上。通常使用集群的部署方式来提高可靠性和吞吐量，不过集群只能部署在局域网内。</p>
+<p>Federation，可以翻译为“联邦”。 Federation 可以通过 AMQP 协议（可配置 SSL）让原本发送到某个 Broker （或集群）中的交换器（或队列）上的消息能够转发到另一个 Broker （或集群）中的交换器（或队列）上，两方的交换器（或队列）看起来是以一种“联邦”的形式在运作。当然必须要确保这些“联邦”的交换器或者队列都具备合适的用户和权限。</p>
+<p>联邦交换器（federated exchange）通过单向点对点的连接（Federation link）形式进行通信。默认情况下，消息只会由 Federation 连接转发一次，可以允许有复杂的路由拓扑来提高转发次数。在 Federation 连接上，消息可能不会被转发，如果消息到达了联邦交换器之后路由不到合适的队列，那么它也不会被再次转发到原来的地方（这里指上游交换器，即 upstream exchange）可以通过 Federation 连接广域网中的各个 RabbitMQ 服务器来生产和消费消息。联邦队列（federated queue）也是通过单向点对点连接进行通信的，消息可以根据具体的配置消费者的状态在联邦队列中游离任意次数。</p>
+<p>通过 Shovel 来连接各个 RabbitMQ Broker ，概念上 Federation 的情形类似，不过 Shovel 工作在更低一层。鉴于 Federation 从一个交换器中转发消息到另一个交换器（如果必要可以确认消息是否被转发）， Shovel 只是简单地从某个 Broker 上的队列中消费消息，然后转发消息到 Broker 上的交换器而已。Shovel 也可以在单独的一台服务器上去转发消息，比如将队列中的数据移动到另一个队列中。如果想获得比 Federation 更多的控制，可以在广域网中使用 Shovel 连接各个 RabbitMQ Broker 来生产或消费消息。</p>
+<table>
+<thead>
+<tr>
+<th>Federation/Shovel</th>
+<th>集群</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>各个 Broke 节点之间逻缉分离</td>
+<td>逻辑上是个 Broker 节点</td>
+</tr>
+<tr>
+<td>各个 Broker 节点之间可以运行不同版本的 Erlang 和 RabbitMQ</td>
+<td>各个 Broker 节点之间必须运行相同版本的 Erlang 和 RabbitMQ</td>
+</tr>
+<tr>
+<td>各个 Broker 节点之间可以在广域网中相连，当然必须要授予适当的用户和权限</td>
+<td>各个 Broker 节点之间必须在可信赖的局域网中相连，通过 Erlang 内部节点传递消息，但节点问需要有相同的 Erlang cookie</td>
+</tr>
+<tr>
+<td>各个 Broker 节点之间能以任何拓扑逻辑部署，连接可以是单向的或者是双向的</td>
+<td>所有 Broker 节点都双向连续所有其他节点</td>
+</tr>
+<tr>
+<td>从 CAP 理论中选择可用性和分区耐受性，即 AP</td>
+<td>从 CAP 理论中选择致性和可用性，CA</td>
+</tr>
+<tr>
+<td>一个 Broker 中的交换器可以是 Federation 生成的或者是本地的</td>
+<td>集群中所有 Broker 节点中的交换器都是一样的，要么全有要么全无</td>
+</tr>
+<tr>
+<td>客户端所能看到它所连接的 Broker 节点上的队列</td>
+<td>客户端连接到集群中的任何 Broker 节点都可以看到所有 的队列</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>参考：</p>
+<p>🔗 《RabbitMQ实战指南》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2020101001.html" title="RabbitMQ（七）Federation与Shovel">http://linyishui.top/2020101001.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/mom/" rel="tag"># mom</a>
+          
+            <a href="/tags/rabbitmq/" rel="tag"># rabbitmq</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020100801.html" rel="next" title="RabbitMQ（六）运维">
+                <i class="fa fa-chevron-left"></i> RabbitMQ（六）运维
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">295</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">98</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RabbitMQ（七）集群"><span class="nav-number">1.</span> <span class="nav-text">RabbitMQ（七）集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-Federation"><span class="nav-number">1.1.</span> <span class="nav-text">第一节 Federation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-联邦交换器"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 联邦交换器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-案例：Federation优化服务器通信网络延迟问题"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">1.1.1 案例：Federation优化服务器通信网络延迟问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-联邦交换器和普通无明显差异"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">1.1.2 联邦交换器和普通无明显差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-联邦交换器组成复杂的拓扑逻辑部署方式"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">1.1.3 联邦交换器组成复杂的拓扑逻辑部署方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-联邦队列"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 联邦队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Federation的使用"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 Federation的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-启用Federation"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">1.3.1 启用Federation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-相关配置和工具"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">1.3.2 相关配置和工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-使用流程"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">1.3.3 使用流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-Shovel"><span class="nav-number">1.2.</span> <span class="nav-text">第二节 Shovel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-简介"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-优势"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">2.1.1 优势</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-原理"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-使用"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-静态方式"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">2.3.1 静态方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-动态方式"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">2.3.2 动态方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-案例：消息堆积的治理"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 案例：消息堆积的治理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-Federation-Shovel-与集群的区别和联系"><span class="nav-number">1.3.</span> <span class="nav-text">第三节 Federation/Shovel 与集群的区别和联系</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
