@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="mysql,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="《高性能MySQL》读书笔记，内容：MySQL逻辑架构，并发控制，事务，多版本并发控制，存储引擎，时间线等。">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《高性能MySQL》（一）架构和历史">
+<meta property="og:url" content="http://linyishui.top/2020120801.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="《高性能MySQL》读书笔记，内容：MySQL逻辑架构，并发控制，事务，多版本并发控制，存储引擎，时间线等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010101.png">
+<meta property="og:updated_time" content="2020-12-17T12:11:57.242Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《高性能MySQL》（一）架构和历史">
+<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：MySQL逻辑架构，并发控制，事务，多版本并发控制，存储引擎，时间线等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010101.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020120801.html">
+
+
+
+
+
+  <title>《高性能MySQL》（一）架构和历史 | 俺的部落格</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020120801.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《高性能MySQL》（一）架构和历史</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-08T20:03:19+08:00">
+                2020-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6,819
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  24
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  《高性能MySQL》读书笔记，内容：MySQL逻辑架构，并发控制，事务，多版本并发控制，存储引擎，时间线等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="《高性能MySQL》（一）架构和历史"><a href="#《高性能MySQL》（一）架构和历史" class="headerlink" title="《高性能MySQL》（一）架构和历史"></a>《高性能MySQL》（一）架构和历史</h1><p>MySQL的存储引擎架构将<strong>查询处理</strong>及其他<strong>系统任务</strong>和<strong>数据的存储/提取</strong>相分离。从而可以在使用时根据性能、特性等需求来选择数据存储的方式。</p>
+<h2 id="一-MySQL逻辑架构"><a href="#一-MySQL逻辑架构" class="headerlink" title="一. MySQL逻辑架构"></a>一. MySQL逻辑架构</h2><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010101.png" alt></p>
+<ul>
+<li>第一层：连接处理、授权认证、安全等等。</li>
+<li>第二层：查询解析、分析、优化、缓存以及所有的内置函数，还有所有的跨存储引擎的实现：存储过程、触发器、视图。</li>
+<li>第三层：存储引擎，服务器通过API与存储引擎进行通信，包括几十个底层函数，如“开始一个事务”、“根据主键提取一行记录”。存储引擎不会解析SQL（Innodb会解析外键，因为MySQL服务器本身没有实现此功能），存储引擎只会简单的响应上层服务器的请求。</li>
+</ul>
+<h3 id="1-1-连接与安全"><a href="#1-1-连接与安全" class="headerlink" title="1.1 连接与安全"></a>1.1 连接与安全</h3><p>每个客户端连接对应服务器进程中的一个线程，连接的所有查询都在此线程中进行，服务器会负责缓存线程而不必每次都创建新线程，MySQL 5.5后支持线程池来支持大量连接。</p>
+<p>认证基于用户名、原始主机信息和密码。使用安全套接字SSL的方式连接，可以使用X5.09证书认证。连接成功后会继续验证用户是否有相应请求的权限。</p>
+<h3 id="1-2-优化与执行"><a href="#1-2-优化与执行" class="headerlink" title="1.2 优化与执行"></a>1.2 优化与执行</h3><p>MySQL会解析查询，并创建内部数据结构-解析树，然后对其进行各种优化，包括重写查询、决定表的读写顺序、选择合适的索引等。</p>
+<ul>
+<li>可以通过特殊关键字 <strong>hint</strong> 提示优化器，影响其决策过程；</li>
+<li>可以通过 <strong>explain</strong> 请求优化器解释优化过程的各个因素，从而了解到服务的优化决策，便于用户重构查询和schema、修改相关配置。</li>
+</ul>
+<p>对于如 SELECT 语句，在解析查询前会检查查询缓存，若有相应查询就可以直接返回结果。 </p>
+<h2 id="二-并发控制"><a href="#二-并发控制" class="headerlink" title="二. 并发控制"></a>二. 并发控制</h2><p>MySQL在两个层控制并发：服务器层和存储引擎层。</p>
+<h3 id="2-1-读写锁"><a href="#2-1-读写锁" class="headerlink" title="2.1 读写锁"></a>2.1 读写锁</h3><p>并发读数据不会有问题，但当一个用户读取数据，另外一个用户删除数据时，可能读取会报错，也可能读到了不一致的数据。</p>
+<p>通过实现共享锁（shared lock）和排它锁（exclusive lock），也叫读锁和写锁，这两种锁组成的锁系统来解决问题。写锁会阻塞其他写锁和读锁，</p>
+<h3 id="2-2-锁粒度"><a href="#2-2-锁粒度" class="headerlink" title="2.2 锁粒度"></a>2.2 锁粒度</h3><p>为了提高共享资源的并发性，减少锁定的对象，避免锁住所有资源。但锁的所有操作，如获取锁、检查是否锁已释放、释放锁等都会增加系统开销。<strong>锁策略就是在锁的开销和数据的安全性之间寻找平衡</strong>。</p>
+<ul>
+<li><strong>表锁</strong>：<ul>
+<li>表锁是开销最小的锁，会锁定整张表，写操作时会阻塞其他读写操作，写锁未被持有时其他用户才能获取读锁，读锁间不相互阻塞。</li>
+<li>写锁的优先级比读锁要高，所以写请求可能会被插入到读请求前，服务器可能会忽略存储引擎的表锁实现为如 <code>ALTER TABLE</code> 之类的语句加表锁。</li>
+</ul>
+</li>
+<li><strong>行锁</strong>：<ul>
+<li>行锁可以提供更好的并发性，但也带来了最大的锁开销。行锁由存储引擎实现（InnoDB和XtraDB等）</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-3-锁类型"><a href="#2-3-锁类型" class="headerlink" title="2.3 锁类型"></a>2.3 锁类型</h3><p>MySQL包括如下锁类型：</p>
+<ul>
+<li><p><strong>读写锁</strong>：同Java一样，写锁持有时其他事务不能获取任何锁，读锁持有时其他事务可以获取读锁，但不能获取写锁。</p>
+<ul>
+<li><strong>互斥锁</strong>：简称X锁，又叫写锁。</li>
+<li><strong>共享锁</strong>：简称S锁，又叫读锁。</li>
+</ul>
+</li>
+<li><p><strong>意向锁</strong>：更容易的支持多粒度的封锁，在同时存在行级锁和表级锁的情况下，事务想要对表加锁，要首先分别检查是否有其他事务加表锁或行锁，这个过程需要对每一行都进行一次检测，这相当耗时。</p>
+<p><strong>意向锁在 X/S 锁之上引入了 IX/IS，二者都是表锁，规定事务获取某行的X或S锁前要先获取IX或IS锁</strong>。这样当事务想对表加写锁时只需检测是否有其他事务对表加了 X/IX/S/IS 锁，只需做一次检测。（<strong>任意 IS/IX 锁之间都是兼容的，因为它们只表示想要对表加锁，而不是真正加锁</strong>）</p>
+<ul>
+<li><strong>意向共享锁</strong>（IS Lock）：事务想要获得一张表中某几行的共享锁；</li>
+<li><strong>意向排他锁</strong>（IX Lock）：事务想要获得一张表中某几行的排他锁；</li>
+<li><strong>插入意向锁</strong>（Insert Intention Lock）：插入意向锁是间隙锁的一种，专门针对insert操作的。即多个事务在同一个索引、同一个范围区间内插入记录时，如果插入的位置不冲突，则不会阻塞彼此</li>
+</ul>
+</li>
+<li><p><strong>自增锁</strong>（Auto-inc Locks）：自增锁是一种特殊的<strong>表级别锁</strong>，专门针对事务插入 AUTO-INCREMENT 类型的列。即一个事务正在往表中插入记录时，其他事务的插入必须等待，以便第1个事务插入的行得到的主键值是连续的。</p>
+</li>
+<li><p><strong>记录锁</strong>（Record Locks）：</p>
+<ul>
+<li>记录锁是的单个行记录上的锁，会阻塞其他事务对其插入、更新、删除；</li>
+<li><code>locks rec but not gap</code> 。</li>
+</ul>
+</li>
+<li><p><strong>间隙锁</strong>（Gap Lock）：间隙锁锁定记录的一个间隔，但不包含记录本身。</p>
+</li>
+<li><p><strong>临键锁</strong>（Next-Key Lock）：</p>
+<ul>
+<li><code>Next-Key Lock = Gap Lock + Record Lock</code> 临建锁是记录锁与间隙锁的组合，即：既包含索引记录，又包含索引区间，主要是为了解决幻读。</li>
+</ul>
+</li>
+</ul>
+<p>总结：</p>
+<ul>
+<li>表锁：意向锁，自增锁。</li>
+<li>行锁：读写锁，记录锁，间隙锁，临键锁。</li>
+</ul>
+<h2 id="三-事务"><a href="#三-事务" class="headerlink" title="三. 事务"></a>三. 事务</h2><h3 id="3-1-什么是事务？"><a href="#3-1-什么是事务？" class="headerlink" title="3.1 什么是事务？"></a>3.1 什么是事务？</h3><p>事务是<strong>一组原子性的SQL查询</strong>，一个独立的工作单元。全部语句能够被数据库引擎成功应用，则执行该组查询；有任一语句无法执行，事务的所有语句都不会执行。<strong>要么全部执行成功，要么全部执行失败</strong>。</p>
+<h3 id="3-2-ACID"><a href="#3-2-ACID" class="headerlink" title="3.2 ACID"></a>3.2 ACID</h3><ul>
+<li><strong>原子性（Atomicity）</strong>：事务作为一个不可分割的整体被执行，包含在其中的对数据库的操作要么全部被执行，要么都不执行。</li>
+<li><strong>一致性（Consistency）</strong>：事务应确保数据库的状态从一个一致状态转变为另一个一致状态。一致状态的含义是数据库中的数据应满足完整性约束。</li>
+<li><strong>隔离性（Isolation）</strong>：一个事务在最终提交前应该对其他事务是不可见的；多个事务并发执行时，一个事务的执行不应影响其他事务的执行。</li>
+<li><strong>持久性（Durability）</strong>：已被提交的事务对数据库的修改应该永久保存在数据库中。系统发生奔溃可以用重做日志（Redo Log）进行恢复，从而实现持久性。</li>
+</ul>
+<p>事务所带来的安全性也需要额外的工作和开销，而MySQL的存储引擎架构可以支持用户根据业务是否需要事务选择合适的存储引擎。</p>
+<h3 id="3-3-并发一致性问题"><a href="#3-3-并发一致性问题" class="headerlink" title="3.3 并发一致性问题"></a>3.3 并发一致性问题</h3><p>在并发环境下，事务的隔离性很难保证，所以有几种并发一致性问题：</p>
+<ol>
+<li><strong>修改丢失</strong>：即一个事务的更新背另一个事务的更新替换。</li>
+<li><strong>读脏数据</strong>：指当前事务读到另外事务未提交的数据。</li>
+<li><strong>不可重复读</strong>：指一个事务多次读取同一数据集合，在此期间另外事务也访问了此集合并做出修改，导致前个事务两次读取数据不一致。</li>
+<li><strong>幻影读</strong>：本质也是不可重复读，指一个事务读取某个范围的数据，另一事务在此范围插入新数据，导致前个事务再次读取结果不一致。<strong>区别在要避免幻读需要锁整张表，而避免不可重复读只需锁住行即可</strong>。</li>
+</ol>
+<p>通过锁机制来解决此问题，MySql提供了对应的封锁机制来实现，<strong>通过三级封锁协议来处理并发一致性问题</strong>。</p>
+<h3 id="3-4-封锁协议"><a href="#3-4-封锁协议" class="headerlink" title="3.4 封锁协议"></a>3.4 封锁协议</h3><ul>
+<li><strong>三级封锁协议</strong>：<ul>
+<li>一级：<strong>事务 T 要修改数据 A 时必须加写锁，直到 T 结束才释放锁</strong>。可以解决修改丢失问题，因为不能同时有两个事务对同一个数据进行修改，那么事务的修改就不会被覆盖。</li>
+<li>二级：<strong>在一级的基础上，要求读取数据 A 时必须加读锁，读取完马上释放读锁</strong>。可以解决读脏数据问题，因为如果一个事务在对数据 A 进行修改，根据 1 级封锁协议，会加 X 锁，那么就不能再加 S 锁了，也就是不会读入数据。</li>
+<li>三级：<strong>在二级的基础上，要求读取数据 A 时必须加读锁，直到事务结束了才能释放读锁</strong>。可以解决不可重复读的问题，因为读 A 时，其它事务不能对 A 加 X 锁，从而避免了在读的期间数据发生改变。</li>
+</ul>
+</li>
+<li><strong>两段封锁协议</strong>：<strong>加锁和解锁分为两个阶段进行</strong>。</li>
+</ul>
+<h3 id="3-5-隔离级别"><a href="#3-5-隔离级别" class="headerlink" title="3.5 隔离级别"></a>3.5 隔离级别</h3><ol>
+<li><strong>读未提交</strong>（READ UNCOMMITTED）：<ul>
+<li>事务中的修改，即使没有提交，对其它事务也是可见的。</li>
+<li>会<strong>导致脏读</strong>（读到未提交的数据），性能也并未比其它级别好很多。</li>
+</ul>
+</li>
+<li><strong>读已提交</strong>（READ COMMITTED）： <ul>
+<li>一个事务只能读取已经提交的事务所做的修改。换句话说，一个事务所做的修改在提交之前对其它事务是不可见的。</li>
+<li>也叫不可重复读，因为两次执行相同的查询可能会得到不同的结果。</li>
+<li>大部分数据库的默认隔离级别，MySQL因为历史遗留问题，默认隔离级别是可重复读。</li>
+</ul>
+</li>
+<li><strong>可重复读</strong>（REPEATABLE READ）：<ul>
+<li>保证在同一个事务中多次读取同一数据的结果是一样的。</li>
+</ul>
+</li>
+<li><strong>可串行化</strong>（SERIALIZABLE）：强制事务串行执行，这样多个事务互不干扰，不会出现并发一致性问题。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th style="text-align:center">脏读</th>
+<th style="text-align:center">不可重复读</th>
+<th style="text-align:center">幻读</th>
+<th style="text-align:center">加锁读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>READ UNCOMMITTED</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">No</td>
+</tr>
+<tr>
+<td>READ COMMITTED</td>
+<td style="text-align:center">No</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">No</td>
+</tr>
+<tr>
+<td>REPEATABLE READ</td>
+<td style="text-align:center">No</td>
+<td style="text-align:center">No</td>
+<td style="text-align:center">Yes</td>
+<td style="text-align:center">No</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td style="text-align:center">No</td>
+<td style="text-align:center">No</td>
+<td style="text-align:center">No</td>
+<td style="text-align:center">Yes</td>
+</tr>
+</tbody>
+</table>
+<h4 id="（1）为什么MySQL默认是可重复读？"><a href="#（1）为什么MySQL默认是可重复读？" class="headerlink" title="（1）为什么MySQL默认是可重复读？"></a>（1）为什么MySQL默认是可重复读？</h4><p>MySql的历史版本中，主从复制基于binlog（记录数据库修改的文件），当时binlog只有 <strong>statement</strong> 这种模式（记录修改SQL语句），后来还有<strong>row</strong>（记录每行数据变更）和 <strong>mixed</strong>（前两种模式混合）总共三种模式。</p>
+<p><strong>statement</strong>模式在<strong>读已提交</strong>下进行主从复制有BUG，在master上执行的顺序为先删后插，而binlog的记录顺序为先插后删，所以slave同步binlog后导致执行顺序和master不一致。</p>
+<p>解决方法：</p>
+<ol>
+<li>调整隔离级别为<strong>可重复读</strong>。</li>
+<li>更新模式为<strong>row</strong>（5.1版本后引入）。</li>
+</ol>
+<h4 id="（2）为什么选择读已提交？"><a href="#（2）为什么选择读已提交？" class="headerlink" title="（2）为什么选择读已提交？"></a>（2）为什么选择读已提交？</h4><p>首先排除<strong>读未提交</strong>和<strong>可串行化</strong>，前者会出现脏读，后者每次读操作都要加锁。</p>
+<p>选读已提交/不可重复读的原因：</p>
+<ol>
+<li><strong>可重复读下，存在间隙锁</strong>（封锁索引记录中的间隔）导致死锁概率增加：如 <code>SELECT * FROM test WHERE id BETWEEN 5 AND 7</code> ，表中有id（1，5，7，10），所以存在5个间隙，上述sql会锁住(5,7]和(7,10]这两个区间，导致区间无法插入数据。而<strong>读已提交不存在间隙锁</strong>。</li>
+<li><strong>可重复读下，条件未命中索引会锁表</strong>，而<strong>读已提交，只会锁行</strong>。</li>
+<li><strong>读已提交，因为半一致性读的特性会增加update操作的并发性</strong>。一个事务执行完update操作，但尚未提交，另一事务获取锁时发现已占用，InnoDB开启半一致性读返回最新的已提交版本，MySql会重新发起一次读操作，此时可以读到此行的最新版本并加锁，而可重复读这时事务只能等待前一事务提交。</li>
+<li><strong>不可重复读问题可以接受</strong>，已经提交了数据，即使不一样通常也不会造成问题。</li>
+</ol>
+<h3 id="3-6-死锁"><a href="#3-6-死锁" class="headerlink" title="3.6 死锁"></a>3.6 死锁</h3><ul>
+<li>死锁指两个或多个事务在同一资源上相互占用，并请求锁定对方占用的资源，从而导致恶性循环的现象。</li>
+<li>InnoDB有死锁检测和死锁超时机制，处理死锁时会将持有最少行级排他锁的事务进行回滚。</li>
+<li>死锁可能是因为真正的数据冲突，有时可能完全是由于存储引擎的实现方式导致的。</li>
+<li>应用程序需要考虑如何处理死锁，大部分情况只需重新执行因死锁回滚的事务即可。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--查看数据库隔离级别</span></span><br><span class="line"><span class="keyword">select</span> @@tx_isolation;</span><br><span class="line"><span class="keyword">select</span> @@global.tx_isolation,@@tx_isolation;</span><br><span class="line"></span><br><span class="line"><span class="comment">--查看innodb状态，打印死锁日志，NaviCat复制出去看</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">engine</span> <span class="keyword">innodb</span> <span class="keyword">status</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--设置隔离级别</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">transaction</span> <span class="keyword">isolation</span> <span class="keyword">level</span> XXX;</span><br><span class="line"><span class="comment">--只改变当前会话的隔离级别</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">session</span> <span class="keyword">transaction</span> <span class="keyword">isolation</span> <span class="keyword">level</span> <span class="keyword">READ</span> COMMITED;</span><br></pre></td></tr></table></figure>
+<h3 id="3-7-事务日志"><a href="#3-7-事务日志" class="headerlink" title="3.7 事务日志"></a>3.7 事务日志</h3><p>事务日志用来提高事务的执行效率，存储引擎在修改表的数据时只需修改内存拷贝，再把修改行为记录在持久的硬盘上的事务日志中，而不是每次都把修改的数据持久到硬盘。</p>
+<p>事务日志通过追加的方式，操作是磁盘小块区域上的顺序I/O，要比随机I/O快得多。所以每次修改数据需要<strong>写两次磁盘</strong>。</p>
+<h3 id="3-8-存储引擎与事务"><a href="#3-8-存储引擎与事务" class="headerlink" title="3.8 存储引擎与事务"></a>3.8 存储引擎与事务</h3><p>MySQL有很多支持事务的存储引擎，如InnoDB、NDB Cluster、XtraDB和PBXT等。</p>
+<h4 id="（1）自动提交（AUTO-COMMIT）"><a href="#（1）自动提交（AUTO-COMMIT）" class="headerlink" title="（1）自动提交（AUTO COMMIT）"></a>（1）自动提交（AUTO COMMIT）</h4><p>MySQL默认采用自动提交模式。每个查询都会被当做一个事务执行提交操作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">VARIABLES</span> <span class="keyword">LIKE</span> <span class="string">'AUTOCOMMIT'</span></span><br><span class="line"></span><br><span class="line">Variable_name	<span class="keyword">Value</span></span><br><span class="line">autocommit	    <span class="keyword">ON</span></span><br><span class="line"><span class="comment">--1启用0禁用</span></span><br><span class="line"><span class="keyword">SET</span> AUTOCOMMIT = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">SET</span> AUTOCOMMIT = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>数据定义语言（DDL）中涉及大量数据改变的操作（如Alter Table、Lock Tables）会强制执行COMMIT提交当前活动事务。</p>
+<h4 id="（2）在事务中混合使用存储引擎"><a href="#（2）在事务中混合使用存储引擎" class="headerlink" title="（2）在事务中混合使用存储引擎"></a>（2）在事务中混合使用存储引擎</h4><p>事务由存储引擎实现，所以在一个事务中使用多种存储引擎不可靠，如果在事务中混合使用了多个包括事务型和非事务型存储引擎的表，正常提交不会有问题，但需要回滚时非事务型的表无法撤销变更。而且仅仅在回滚时提示一个警告，其余情况不会有提示。</p>
+<h4 id="（3）隐式和显式锁定"><a href="#（3）隐式和显式锁定" class="headerlink" title="（3）隐式和显式锁定"></a>（3）隐式和显式锁定</h4><ul>
+<li><p>隐式锁定：InnoDB采用<strong>两阶段锁定协议</strong>，事务执行过程中可以随时锁定，但只有事务提交或回滚时才会释放，并且是同一时刻释放。InnoDB根据隔离级别在需要时自动加锁。</p>
+</li>
+<li><p>显式锁定：通过特点语句进行锁定。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ... <span class="keyword">LOCK</span> <span class="keyword">IN</span> <span class="keyword">SHARE</span> <span class="keyword">MODE</span></span><br><span class="line"><span class="keyword">SELECT</span> ... <span class="keyword">FOR</span> <span class="keyword">UPDATE</span></span><br></pre></td></tr></table></figure>
+<p><code>LOCK TABLES</code> 和 <code>UNLOCK TABLES</code> 由服务器层实现，与存储引擎无关，不能用来代替事务。</p>
+</li>
+</ul>
+<h2 id="四-多版本并发控制-MVCC"><a href="#四-多版本并发控制-MVCC" class="headerlink" title="四. 多版本并发控制-MVCC"></a>四. 多版本并发控制-MVCC</h2><h3 id="4-1-什么是多版本并发控制？"><a href="#4-1-什么是多版本并发控制？" class="headerlink" title="4.1 什么是多版本并发控制？"></a>4.1 什么是多版本并发控制？</h3><p>大部分事务型存储引擎实现的都不是简单的行级锁，一般都同时实现了多版本并发控制-MVCC，<strong>该机制可以在很多情况下避免加锁操作，所以可以降低开销，一般都会实现非阻塞的读操作和只锁定必要行的写操作</strong>。</p>
+<p>MVCC实现机制各不相同：</p>
+<ul>
+<li>乐观并发控制</li>
+<li>悲观并发控制</li>
+</ul>
+<p><strong>MVCC只兼容于 REPEATABLE READ 和 READ COMMITED 这两个隔离级别，而 READ UNCOMMITED 总是读取最新的数据行而不是符合当前事务版本的数据行，SERIALIZABLE 则会对所有读取的行加锁</strong>。</p>
+<h3 id="4-2-如何实现多版本并发控制？"><a href="#4-2-如何实现多版本并发控制？" class="headerlink" title="4.2 如何实现多版本并发控制？"></a>4.2 如何实现多版本并发控制？</h3><p><strong>通过保存数据在某个时间点的快照来实现</strong>。</p>
+<p>InnoDB通过在每行记录后面保存两个隐藏的列，一个保存了行的创建时间，一个保存行的过期时间（实际存储的非时间而是系统版本号）。每开启一个新事务，版本号都会自动递增，事务开始时刻的版本号作为事务的版本号与查询到的每行记录进行比较。</p>
+<p>在REPEATABLE READ隔离级别下：</p>
+<ul>
+<li>SELECT：根据两个条件检查每行记录，符合才作为查询结果返回。<ul>
+<li>只查找版本早于当前事务版本的数据行，确保事务读取的行是事务开始前存在或自己修改过的。</li>
+<li>行的删除版本要么未定义，要么大于当前事务版本号，确保事务读取到的行在事务开始前未被删除。</li>
+</ul>
+</li>
+<li>INSERT：为新插入的每一行保存当前系统版本号作为<strong>行版本号</strong>。</li>
+<li>DELETE：为删除的每一行保存当前系统版本号作为<strong>行删除标识</strong>。</li>
+<li>UPDATE：插入一行新纪录，保存当前系统版本号作为<strong>行版本号</strong>，同时保存当前系统版本号到原来的行作为<strong>行删除标识</strong>。</li>
+</ul>
+<p>通过这两个版本号可以使大部分读操作都不需加锁（乐观），以少量的额外存储空间和检查维护工作换取好的性能。</p>
+<h2 id="五-存储引擎"><a href="#五-存储引擎" class="headerlink" title="五. 存储引擎"></a>五. 存储引擎</h2><p>文件系统中，MySQL将每个数据库保存为数据目录下的一个子目录。创建表时在数据库子目录下创建一个和表同名的 <code>.frm</code> 文件保存表的定义。表的定义统一在服务层处理，数据和索引则在不同的存储引擎中保存方式不同。</p>
+<p>正因为使用了文件系统的目录文件，所以MySQL大小写敏感和平台相关，Windows中不敏感，而类Unix中则敏感。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--查看表信息</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">TABLE</span> <span class="keyword">STATUS</span> <span class="keyword">LIKE</span> <span class="string">'表名'</span></span><br></pre></td></tr></table></figure>
+<p>返回字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>表名</td>
+<td>version</td>
+</tr>
+<tr>
+<td>Engine</td>
+<td>存储引擎类型</td>
+<td>InnoDB</td>
+</tr>
+<tr>
+<td>Version</td>
+<td></td>
+<td>10</td>
+</tr>
+<tr>
+<td>Row_format</td>
+<td>行格式：<br>-Dynamic的行长度可变，一般会有如VARCHAR或BLOB这种可变长字段<br>-Fixed的行长度固定，只包含如CHAR何INTEGER这种固定长度字段<br>-Compressed只在压缩表存在<br>….</td>
+<td>Compact</td>
+</tr>
+<tr>
+<td>Rows</td>
+<td>表的行数，对于InnoDB是估计值，MyISAM则是精确值</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Avg_row_length</td>
+<td>平均每行包含的字节数</td>
+<td>655</td>
+</tr>
+<tr>
+<td>Data_length</td>
+<td>表数据的大小，单位字节</td>
+<td>16384</td>
+</tr>
+<tr>
+<td>Max_data_length</td>
+<td>表数据的最大容量</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Index_length</td>
+<td>索引大小</td>
+<td>16384</td>
+</tr>
+<tr>
+<td>Data_free</td>
+<td>表示已分配但目前没有使用的空间。包括已删除的行以及后续可以被Insert利用的空间</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Auto_increment</td>
+<td>下一个自增的值</td>
+<td></td>
+</tr>
+<tr>
+<td>Create_time</td>
+<td>表的创建时间</td>
+<td>2020-12-02 13:04:02</td>
+</tr>
+<tr>
+<td>Update_time</td>
+<td>表数据的最后修改时间</td>
+<td></td>
+</tr>
+<tr>
+<td>Check_time</td>
+<td>使用CHECK TABLE命令或myisamchk等工具最后一次检查表的时间</td>
+<td></td>
+</tr>
+<tr>
+<td>Collation</td>
+<td>表的默认字符集和字符列排序规则</td>
+<td>gbk_chinese_ci</td>
+</tr>
+<tr>
+<td>Checksum</td>
+<td>启用时保存整个表的实时校验和</td>
+<td></td>
+</tr>
+<tr>
+<td>Create_options</td>
+<td>创建表时指定的其他选项</td>
+<td></td>
+</tr>
+<tr>
+<td>Comment</td>
+<td>额外信息，InnoDB表空间的剩余空间信息，视图VIEW文本等</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-1-InnoDB"><a href="#5-1-InnoDB" class="headerlink" title="5.1 InnoDB"></a>5.1 InnoDB</h3><p>MySQL默认的事务型存储引擎，设计用来执行大量<strong>短期事务</strong>，短期事务很少回滚。</p>
+<p>MySQL 5.1后，新的InnoDB plugin提供很多新特性，如利用排序创建索引、删除或增加索引时不需要复制全表数据、新的支持压缩的存储格式、新的大型列值如BLOB的存储方式、以及文件格式管理等。</p>
+<p>InnoDB：</p>
+<ul>
+<li>数据存储在<strong>表空间</strong>（tablespace）中，由一系列数据文件组成，InnoDB可以将每个表的数据和索引存放在单独的文件中。</li>
+<li>采用MVCC来支持高并发，实现了四个标准的隔离级别，默认是<strong>可重复读</strong>（REPEATABLE READ），<strong>通过间隙锁策略防止幻读出现</strong>，间隙锁使InnoDB不仅锁行，还未锁定索引中的间隙以防止幻影行的插入。</li>
+<li>表基于<strong>聚簇索引</strong>建立，主键查询有很好的性能，但其二级索引（非主键索引）必须包含主键列，若主键列很大会导致所有索引都很大（主键应尽量小一些）。</li>
+<li>内部优化：从磁盘读取数据时采用了<strong>可预测性预读</strong>、自动在内存中创建hash索引以加速读操作的<strong>自适应哈希索引</strong>、能够加速插入操作的<strong>插入缓冲区</strong>等。</li>
+<li>InnoDB支持热备份，如 MySQL Enterprise Backup、XtraBackup都可以实现。</li>
+</ul>
+<h3 id="5-2-MyISAM"><a href="#5-2-MyISAM" class="headerlink" title="5.2 MyISAM"></a>5.2 MyISAM</h3><p>支持如全文索引、压缩、空间函数等，但不支持事务和行级锁，崩溃后无法安全恢复。对于只读数据或小表且可以接受修复操作的场景仍可以继续使用该引擎。</p>
+<p>MyISAM：</p>
+<ul>
+<li><strong>存储</strong>：表存储在两个文件中：数据文件和索引文件，分别以 <code>.MYD</code> 和 <code>.MYI</code> 为扩展名。</li>
+<li><strong>加锁与并发</strong>：对整张表加锁，不能针对行；读取时对所有需要的表加共享锁，写入时则加排它锁，但允许表读取时向表中插入新纪录（<strong>允许并发插入</strong>）。</li>
+<li><strong>修复</strong>：可以手工或自动执行检查和修复操作，修复操作可能会导致数据丢失而且执行速度很慢。<ul>
+<li><code>CHECK TABLE mytable</code> 检查表错误。</li>
+<li><code>REPAIR TABLE mytable</code> 修复错误。</li>
+<li><code>myisamchk</code> 命令行工具。</li>
+</ul>
+</li>
+<li><strong>索引</strong>：即使是BLOB和TEXT等长字段，也可以基于前500个字符创建索引。支持全文索引，基于分词创建的索引，可以支持复杂查询。</li>
+<li><strong>延迟更新索引键</strong>：创建表时，若指定了 <code>DELAY_KEY_WRITE</code> 选项，在每次修改执行成功后不会马上把修改的索引数据写入磁盘，而是写入内存的键缓冲区，只有清理键缓冲区或关闭表时才写入磁盘；这种方式可以极大的提升写入性能，但在崩溃时会造成索引损坏，需要进行修复。</li>
+<li><strong>压缩表</strong>：使用 <code>myisampack</code> 将表压缩（打包pack），压缩状态不允许修改，可以极大的减少磁盘空间占用，压缩表支持索引，但索引也是只读的。</li>
+<li><strong>性能</strong>：数据以紧密格式存储，在某些场景下性能很好。主要问题是表锁，容易导致查询处于 Locked 状态。</li>
+</ul>
+<h3 id="5-3-MySQL内建其他存储引擎"><a href="#5-3-MySQL内建其他存储引擎" class="headerlink" title="5.3 MySQL内建其他存储引擎"></a>5.3 MySQL内建其他存储引擎</h3><ul>
+<li><p><strong>Archive引擎</strong>：</p>
+<ul>
+<li>只支持INSERT和SELECT操作。</li>
+<li><strong>高速插入和压缩</strong>：插入缓存所有的写，利用zli对插入的行进行压缩，比MyISAM更少的磁盘I/O。</li>
+<li>每次查询都要执行全表扫描，适合日志和数据采集类应用。</li>
+<li>支持行级锁和专用缓冲区，可以实现高并发的插入。</li>
+<li>查询在返回前会阻止其他查询执行以保证一致性读。</li>
+</ul>
+</li>
+<li><p><strong>Blackhole引擎</strong>：不保存任何数据，服务器会记录Blackhole表的日志，可以用于复制数据到备库或记录日志。</p>
+</li>
+<li><p><strong>CSV引擎</strong>：将CSV文件当做MySQL表来处理，不支持索引。可以作为一种数据交换的机制。</p>
+</li>
+<li><p><strong>Federated引擎</strong>：访问其他MySQL服务器的一个代理，创建一个客户端连接，并将查询传输到远程服务器执行，然后提取或发送需要的数据。市场化设计，经常有问题，默认禁用。</p>
+</li>
+<li><p><strong>Memory引擎</strong>：所有数据都存在内存，不需要磁盘I/O，表结构重启后仍能保留，但数据会丢失，比MyISAM要快一个数量级。</p>
+<ul>
+<li>支持Hash索引，只支持表级锁，不支持BLOB或TEXT类型，且行长度固定，即使指定VARCHAR实际存储时也会转换成CHAR。</li>
+<li>MySQL执行查询时如果需要临时表来保存中间结果，内部就是使用Memory表，如果结果太大超过内存表限制或含有BLOB和TEXT字段，会转换为MyISAM表。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>查找或映射表。</li>
+<li>缓存周期性聚合数据的结果。</li>
+<li>保存数据分析中产生的中间数据。</li>
+</ul>
+</li>
+<li><p><strong>Merge引擎</strong>：由多个MyISAM表合并成的虚拟表，引入分区功能后已被废弃。</p>
+</li>
+<li><p><strong>NDB引擎</strong>：MySQL服务器、NDB集群存储引擎，以及分布式的、share-nothing的、容灾的、高可用的NDB数据库的组合被称为MySQL集群。</p>
+</li>
+</ul>
+<h3 id="5-4-第三方存储引擎"><a href="#5-4-第三方存储引擎" class="headerlink" title="5.4 第三方存储引擎"></a>5.4 第三方存储引擎</h3><ul>
+<li><strong>OLTP类引擎</strong>：<ul>
+<li>Percona的XtraDB存储引擎基于InnoDB改进，可以作为InnoDB引擎的替代品</li>
+<li>PBXT，支持ACID事务和MVCC等。</li>
+<li>TokuDB，使用一种叫分形树的索引数据结构，是一种大数据存储引擎，拥有很高的压缩比。</li>
+<li>RethinkDB，采用只能追加的写时复制B树作为索引的数据结构。</li>
+</ul>
+</li>
+<li><strong>面向列的引擎</strong>：MySQL默认面向行，每行数据一起存储，查询也以行为单位处理。大数据量时面向列的方式可以传输更少的数据，压缩效率也更好。</li>
+<li><strong>社区引擎</strong>：如Aria、Groonga、OQGraph、Q4M、SphinxSE、Spider、VPForMySQL等。</li>
+</ul>
+<h3 id="5-5-如何选择合适的存储引擎"><a href="#5-5-如何选择合适的存储引擎" class="headerlink" title="5.5 如何选择合适的存储引擎"></a>5.5 如何选择合适的存储引擎</h3><p>大部分情况选择InnoDB，除非需要用到InnoDB不具备的特性，并且没有替代方案，否则请尽量选择InnoDB引擎。</p>
+<p>尽量不要混合使用多种存储引擎，会带来一系列复杂和预想不到的问题。</p>
+<h3 id="5-6-转换表的存储引擎"><a href="#5-6-转换表的存储引擎" class="headerlink" title="5.6 转换表的存储引擎"></a>5.6 转换表的存储引擎</h3><ul>
+<li><p><code>ALTER TABLE</code> ：<code>ALTER TABLE mytable ENGINE = InnoDB;</code> 需要执行较长时间，MySQL会按行将数据从原表复制到一张新表，复制期间可能会消耗系统所有I/O能力，同时对原表加上读锁。注意，即使后续再恢复原引擎，也会丢失如外键等和引擎相关的特性。</p>
+</li>
+<li><p><strong>导出与导入</strong>：使用 <code>mysqldump</code> 工具将数据导出到文件，修改文件中 CREATE TABLE 语句的存储引擎选项，注意修改表名（避免重复），工具默认会在 CREATE TABLE 语句前加上 DROP TABLE 可能会导致数据丢失。</p>
+</li>
+<li><p><strong>创建与查询</strong>：综合前两种方法，先创建一个新的存储引擎的表，然后利用 <code>INSERT...SELECT</code> 语句来导入数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> innodb_table <span class="keyword">LIKE</span> myisam_table;</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> innodb_table <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span>;</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> innodb_table <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> myisam_table;</span><br></pre></td></tr></table></figure>
+<p>数据量大时可以考虑分批处理，针对每一段数据执行事务提交操作，避免大事务产生过多的undo。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">START</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> innodb_table <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> myisam_table</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">id</span> <span class="keyword">BETWEEN</span> x <span class="keyword">AND</span> y;</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+<p>如果有必要，可以在执行时对原表加锁，以确保新表和原表数据一致。</p>
+<p>Percona Toolkit提供了 pt-online-schema-change 工具方便简单安全的执行上述过程。</p>
+</li>
+</ul>
+<h2 id="六-时间线-Timeline"><a href="#六-时间线-Timeline" class="headerlink" title="六. 时间线-Timeline"></a>六. 时间线-Timeline</h2><ul>
+<li>版本  3.23 2001</li>
+<li>版本  4.0   2003</li>
+<li>版本  4.1   2005</li>
+<li>版本  5.0   2006</li>
+<li>版本  5.1   2008</li>
+<li>版本  5.5   2010 ：Oracle收购，InnoDB成为默认存储引擎。</li>
+<li>版本  5.6   </li>
+<li>….</li>
+</ul>
+<hr>
+<p>参考：</p>
+<p>🔗 《高性能MySQL》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2020120801.html" title="《高性能MySQL》（一）架构和历史">http://linyishui.top/2020120801.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020112801.html" rel="next" title="微服务架构设计模式（三）进程间通信">
+                <i class="fa fa-chevron-left"></i> 微服务架构设计模式（三）进程间通信
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020121701.html" rel="prev" title="《高性能MySQL》（二）基准测试和服务器性能剖析">
+                《高性能MySQL》（二）基准测试和服务器性能剖析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">301</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（一）架构和历史"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（一）架构和历史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-MySQL逻辑架构"><span class="nav-number">1.1.</span> <span class="nav-text">一. MySQL逻辑架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-连接与安全"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 连接与安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-优化与执行"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 优化与执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-并发控制"><span class="nav-number">1.2.</span> <span class="nav-text">二. 并发控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-读写锁"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-锁粒度"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 锁粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-锁类型"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 锁类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-事务"><span class="nav-number">1.3.</span> <span class="nav-text">三. 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-什么是事务？"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 什么是事务？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-ACID"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-并发一致性问题"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 并发一致性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-封锁协议"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 封锁协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-隔离级别"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）为什么MySQL默认是可重复读？"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">（1）为什么MySQL默认是可重复读？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）为什么选择读已提交？"><span class="nav-number">1.3.5.2.</span> <span class="nav-text">（2）为什么选择读已提交？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-死锁"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-事务日志"><span class="nav-number">1.3.7.</span> <span class="nav-text">3.7 事务日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-存储引擎与事务"><span class="nav-number">1.3.8.</span> <span class="nav-text">3.8 存储引擎与事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）自动提交（AUTO-COMMIT）"><span class="nav-number">1.3.8.1.</span> <span class="nav-text">（1）自动提交（AUTO COMMIT）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）在事务中混合使用存储引擎"><span class="nav-number">1.3.8.2.</span> <span class="nav-text">（2）在事务中混合使用存储引擎</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）隐式和显式锁定"><span class="nav-number">1.3.8.3.</span> <span class="nav-text">（3）隐式和显式锁定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-多版本并发控制-MVCC"><span class="nav-number">1.4.</span> <span class="nav-text">四. 多版本并发控制-MVCC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-什么是多版本并发控制？"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 什么是多版本并发控制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-如何实现多版本并发控制？"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 如何实现多版本并发控制？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-存储引擎"><span class="nav-number">1.5.</span> <span class="nav-text">五. 存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-InnoDB"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-MyISAM"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-MySQL内建其他存储引擎"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 MySQL内建其他存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-第三方存储引擎"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 第三方存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-如何选择合适的存储引擎"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 如何选择合适的存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-转换表的存储引擎"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 转换表的存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-时间线-Timeline"><span class="nav-number">1.6.</span> <span class="nav-text">六. 时间线-Timeline</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
