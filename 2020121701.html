@@ -88,18 +88,20 @@
 
 
 
-<meta name="description" content="《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析等。">
+<meta name="description" content="《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析，MySQL查询剖析等。">
 <meta name="keywords" content="mysql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《高性能MySQL》（二）基准测试和服务器性能剖析">
 <meta property="og:url" content="http://linyishui.top/2020121701.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析等。">
+<meta property="og:description" content="《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析，MySQL查询剖析等。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-12-17T12:16:10.471Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010102.png">
+<meta property="og:updated_time" content="2020-12-29T12:27:10.166Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《高性能MySQL》（二）基准测试和服务器性能剖析">
-<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析等。">
+<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析，MySQL查询剖析等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010102.png">
 
 
 
@@ -140,6 +142,15 @@
 
 
 
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'G-Z0L5T0JQG7', 'auto');
+  ga('send', 'pageview');
+</script>
 
 
 
@@ -408,7 +419,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,246
+                  3,716
                 </span>
               
 
@@ -424,7 +435,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  14
                 </span>
               
             </div>
@@ -432,7 +443,7 @@
 
           
               <div class="post-description">
-                  《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析等。
+                  《高性能MySQL》读书笔记，内容：基准测试和服务器性能剖析，MySQL查询剖析等。
               </div>
           
 
@@ -496,12 +507,157 @@
 <li>等待时间：可能因为其他系统间接影响，任务间也可能因为竞争磁盘或CPU资源而相互影响，</li>
 </ul>
 <p>通过性能剖析可以分析定位是哪些子任务是优化的目标。</p>
-<h2 id="五-如何进行性能剖析"><a href="#五-如何进行性能剖析" class="headerlink" title="五. 如何进行性能剖析"></a>五. 如何进行性能剖析</h2><p>性能剖析包括两步：</p>
+<h2 id="五-如何进行性能剖析"><a href="#五-如何进行性能剖析" class="headerlink" title="五. 如何进行性能剖析"></a>五. 如何进行性能剖析</h2><h3 id="5-1-性能剖析步骤"><a href="#5-1-性能剖析步骤" class="headerlink" title="5.1 性能剖析步骤"></a>5.1 性能剖析步骤</h3><p>性能剖析包括两步：</p>
 <ul>
 <li>测量任务所花费的时间；</li>
 <li>对结果进行统计和排序，把重要的任务排在前面。</li>
 </ul>
-<p>性能剖析工具通常都是计时器，记录任务的开始和结束时间</p>
+<h3 id="5-2-性能剖析的输出信息"><a href="#5-2-性能剖析的输出信息" class="headerlink" title="5.2 性能剖析的输出信息"></a>5.2 性能剖析的输出信息</h3><p>性能剖析工具通常都是计时器，记录任务的开始和结束时间。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010102.png" alt></p>
+<p>性能剖析需要系统可测量化，系统需要有一些测量点可以捕获并收集数据，MySQL直到版本5.5才首次提供Performance Schema 包含一些基于时间的可测量点，在此之前只能收集到记录活动发生次数的 show status 计数器。而 Percona Server 可以提供更多更详细的查询级别测量点。</p>
+<p>性能剖析输出的排名、总计、平均值之外缺失的信息：</p>
+<ul>
+<li>值得优化的查询：性能剖析不会自动给出需要优化的查询，总响应时间占比小的查询不值得优化，优化成本大于收益的查询不值得优化。</li>
+<li>异常情况：有些查询虽然执行频率不高，但每次执行都很慢。</li>
+<li>未知的未知：丢失时间-任务的总时间和测量得到的时间之差，如CPU时间为10秒，剖析得到任务时间为9.7秒，存在300毫秒的丢失时间。可能会忽略某些重要信息。</li>
+<li>被隐藏的细节：只分析平均值会忽略到一些情况，如医院只看所有病人的平均体温，可以输出更多响应时间的信息，如直方图、百分比、标准差、偏差指数等。</li>
+</ul>
+<h2 id="六-剖析MySQL查询"><a href="#六-剖析MySQL查询" class="headerlink" title="六. 剖析MySQL查询"></a>六. 剖析MySQL查询</h2><h3 id="6-1-慢查询日志"><a href="#6-1-慢查询日志" class="headerlink" title="6.1 慢查询日志"></a>6.1 慢查询日志</h3><h4 id="（1）相关参数"><a href="#（1）相关参数" class="headerlink" title="（1）相关参数"></a>（1）相关参数</h4><ol>
+<li>slow_query_log ：是否开启慢查询日志，1表示开启，0表示关闭。</li>
+<li>log-slow-queries ：旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log</li>
+<li>slow-query-log-file：新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件host_name-slow.log</li>
+<li>long_query_time ：慢查询时间设置，当查询时间多于设定的时间值时，记录日志。</li>
+</ol>
+<h4 id="（2）慢查询日志配置"><a href="#（2）慢查询日志配置" class="headerlink" title="（2）慢查询日志配置"></a>（2）慢查询日志配置</h4><p>默认情况下slow_query_log的值为OFF，表示慢查询日志是禁用的，可以通过设置slow_query_log的值来开启，如下所示：</p>
+<ol>
+<li><p>查询慢日志是否开启</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--OFF 为关闭 ON为开启</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'%slow_query_log%'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>开启慢查询日志</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> slow_query_log=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>注意：使用set global slowquerylog=1开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果要永久生效，就必须修改配置文件my.cnf（其它系统变量也是如此）</strong></p>
+</li>
+<li><p>永久开启慢查询日志：</p>
+<p>修改my.cnf文件，增加或修改参数slow_query_log 和slow_query_log_file后，然后重启MySQL服务器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slow_query_log =1</span><br><span class="line">slow_query_log_file=/usr/local/mysql/data/localhost-slow.log</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="（3）慢查询时间设置"><a href="#（3）慢查询时间设置" class="headerlink" title="（3）慢查询时间设置"></a>（3）慢查询时间设置</h4><p>这个是由参数 long_query_time 控制，默认情况下 long_query_time 的值为10秒，可以使用命令修改，也可以在my.cnf参数里面修改。</p>
+<ol>
+<li><p>查询慢日志时间设置</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'long_query_time'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置慢查询日志时间。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> long_query_time=<span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="6-2-剖析服务器负载"><a href="#6-2-剖析服务器负载" class="headerlink" title="6.2 剖析服务器负载"></a>6.2 剖析服务器负载</h3><p>最简单的方式就是使用<strong>慢查询日志</strong>，是MySQL开销最低、精度最高的测量查询工具，使用时只需注意磁盘空间开销，MySQL 5.1 版本后可以通过 <code>long_query_time</code> 为 0 来捕获所有的查询，查询的响应时间可以做到微秒级。</p>
+<p>Percona Server 的慢查询日志相比MySQL会记录更多信息，如执行计划、锁、I/O活动等。</p>
+<p>可以在业务高峰期开启一个小时的记录查询，首先生成一个剖析报告，需要一个适合的剖析工具，如 <code>pt-query-digest</code> 分析 tcpdump。</p>
+<h3 id="6-3-剖析单条查询"><a href="#6-3-剖析单条查询" class="headerlink" title="6.3 剖析单条查询"></a>6.3 剖析单条查询</h3><p>定位到需要优化的查询语句后，</p>
+<ul>
+<li><p>SHOW PROFILE：</p>
+<ul>
+<li><p>作用：会测量所有服务器上执行的语句，记录耗费时间和执行状态变更相关的数据。</p>
+</li>
+<li><p>开启：<code>SET profiling = 1;</code> </p>
+</li>
+<li><p>使用：<code>SHOW PROFILES</code> 和 <code>SHOW PROFILE FOR QUERY 1;</code> 结果按照执行顺序排序，而不是花费时间。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> @query_id = <span class="number">252</span>;</span><br><span class="line"><span class="keyword">SELECT</span> STATE, <span class="keyword">SUM</span>(<span class="keyword">DURATION</span>) <span class="keyword">AS</span> Total_R,</span><br><span class="line">			 <span class="keyword">ROUND</span>(</span><br><span class="line">					<span class="number">100</span> * <span class="keyword">SUM</span>(<span class="keyword">DURATION</span>) /</span><br><span class="line">							(<span class="keyword">SELECT</span> <span class="keyword">SUM</span>(<span class="keyword">DURATION</span>)</span><br><span class="line">							 <span class="keyword">FROM</span> information_schema.PROFILING</span><br><span class="line">							 <span class="keyword">WHERE</span> QUERY_ID = @query_id), <span class="number">2</span></span><br><span class="line">			 ) <span class="keyword">AS</span> Pct_R, </span><br><span class="line">			 <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> Calls,</span><br><span class="line">			 <span class="keyword">SUM</span>(<span class="keyword">DURATION</span>) / <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> <span class="string">"R/Call"</span></span><br><span class="line"><span class="keyword">FROM</span> information_schema.PROFILING</span><br><span class="line"><span class="keyword">WHERE</span> QUERY_ID = @query_id</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> STATE</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> Total_R <span class="keyword">DESC</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>排序后可以明显的找到查询的耗时步骤，找到其中值得优化的部分去优化。</p>
+</li>
+</ul>
+</li>
+<li><p>SHOW STATUS：</p>
+<ul>
+<li><p>作用：返回一些计数器，有服务器级别和单个连接会话级别的计数器，如 <code>Queries</code> 在会话开始前为0，每提交一条查询增加1。</p>
+</li>
+<li><p>使用：<code>SHOW GLOBAL STATUS</code> 查看服务器级别的次数统计。<code>SHOW STATUS</code> 包含两种级别的数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--重置计数器</span></span><br><span class="line"><span class="keyword">FLUSH</span> <span class="keyword">STATUS</span>;</span><br><span class="line"><span class="comment">--执行SQL</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tv_tallymaster_bak <span class="keyword">where</span> book_id <span class="keyword">in</span> (<span class="string">'100199100'</span>,<span class="string">'100200000'</span>);</span><br><span class="line"><span class="comment">--查看指定计数器结果</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">STATUS</span> <span class="keyword">WHERE</span> Variable_name <span class="keyword">LIKE</span> <span class="string">'Handler%'</span> <span class="keyword">OR</span> Variable_name <span class="keyword">LIKE</span> <span class="string">'Created%'</span></span><br><span class="line"><span class="comment">-- Created_tmp_tables 表示使用临时表数目</span></span><br><span class="line"><span class="comment">-- Created_tmp_disk_tables 磁盘临时表</span></span><br><span class="line"><span class="comment">-- Handler_read_rnd_next 没有用到索引的读操作</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>只能显示某种活动的频繁程度（如读索引），只有一个参数指全局级别的操作时间（Innodb_row_lock_time）。</p>
+</li>
+<li><p>比较有用的计数器：</p>
+<ul>
+<li>句柄计数器（handler counter）</li>
+<li>临时文件</li>
+<li>表计数器</li>
+</ul>
+</li>
+<li><p>SHOW STATUS 本身也会创建一个临时表，通过句柄操作访问此表，会影响计数器数字。</p>
+</li>
+<li><p>EXPLAIN 有类似的结果，但基于统计；SHOW STATUS 的结果基于测量。</p>
+</li>
+</ul>
+</li>
+<li><p>检查慢查询日志的条目：</p>
+<ul>
+<li>使用 Percona Server 得到更详细有用的信息。</li>
+<li><code>pt-query-digest</code> 标题一般会打印出字节偏移值（3214），使用tail指令直接跳转到对应部分：<code>tail -c +3214 /path/to/query.log | head -n100</code></li>
+</ul>
+</li>
+<li><p>使用 <code>Performance Schema</code> </p>
+</li>
+</ul>
+<h3 id="6-4-诊断间歇性问题"><a href="#6-4-诊断间歇性问题" class="headerlink" title="6.4 诊断间歇性问题"></a>6.4 诊断间歇性问题</h3><p>例如一个简单查询，正常情况下使用很快，但有几次不合理的执行了很久。手工执行一遍，非常快；然后用EXPLAIN查询执行计划，也正确的使用了索引。修改WHERE条件的值，排除缓存命中的可能性。</p>
+<p>慢查询日志没有执行计划或详细的时间信息，可能是系统有其他东西消耗了资源，比如正在备份，或是某种类型的锁或争用阻塞了查询进度。</p>
+<p>尽量避免试错的诊断方式，以下是一些常见的案例，某些是数据库问题，但也有的不是：</p>
+<ul>
+<li>应用通过 curl 从一个运行很慢的外部服务获取汇率报价的数据。</li>
+<li>memcached 缓存中一些重要条目过期，导致大量请求落到MySQL重新生成缓存条目。</li>
+<li>DNS查询偶尔有超时现象。</li>
+<li>可能由于互斥锁争用，或者内部删除查询缓存的算法效率太低的缘故，MySQL的查询缓存有时候会导致服务有短暂的停顿。</li>
+<li>当并发度超过某个阈值时，InnoDB的扩展性限制导致查询计划的优化需要很长时间。</li>
+</ul>
+<p>只能在问题发生的地方通过观察资源的使用情况，并尽可能的测量出数据，才能避免在没问题的地方耗费精力。</p>
+<ul>
+<li><p><strong>确认单条查询问题还是服务器问题</strong>：</p>
+<ul>
+<li><p>服务器整体没问题，只是某条查询慢，可以将注意力放在这条特定的查询上面。</p>
+</li>
+<li><p>判断方法：</p>
+<ul>
+<li><p>使用 <code>SHOW GLOBAL STATUS</code> ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 每秒捕获一次SHOW GLOBAL STATUS的数据，输出给awk计算并输出每秒的查询数、Threads_connected和Threads_running表示当前正在执行查询的线程数。</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mysqladmin ext -i1 | awk <span class="string">'/Queries/&#123;q=$4-qp;qp=$4&#125; /Threads_connected/&#123;tc=$4&#125; /Threads_running/&#123;printf "%5d %5d %5d\n", q, tc, $4&#125;'</span></span></span><br></pre></td></tr></table></figure>
+<p>每秒查询数一般会下跌，其他两个至少会出现一个尖刺。可能是服务器内部碰到了某种瓶颈，导致新查询在开始执行前因为要获取老查询正在等待的锁而造成堆积（一般也会导致后端服务器出现排队）；也可能是服务区突然收到大量查询请求，比如前端memcached突然失效导致的查询风暴。</p>
+</li>
+<li><p>使用 <code>SHOW PROCESSLIST</code> ：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 通过不停捕获SHOW PROCESSLIST的输出，观察是否有大量现场处于不正常状态或有不正常的特征，如statistics状态一般服务器在查询优化阶段确定表关联顺序—非常快，所以查询不应长时间处与此状态</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> \G垂直输出结果，方便使用 sort|uniq|sort 计算某一列值出现次数，一般State列会很有用</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mysql -e <span class="string">'SHOW PROCESSLIST\G'</span> | grep State: | sort | uniq -c | sort -rn</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 大量线程处于freeing items说明出现了大量有问题查询</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>也可以直接查询表：<code>SELECT * FROM information_schema.PROCESSLIST</code></li>
+<li>使用 innotop 工具。</li>
+</ul>
+</li>
+<li><p>使用查询日志：</p>
+<ul>
+<li>开启慢查询日志，并在全局级别设置 <code>long_query_time=0</code> ，确认所有连接都采用了新设置，可能需要重置所有连接，或是使用 Percona Server。</li>
+<li>也可以通过 tcpdump 和 pt-query-digest 工具替代。</li>
+<li>找到吞吐量突然下降时间段的日志，一般是吞吐量下降后第一个完成的查询。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>捕获诊断数据</strong>：</p>
+<ul>
+<li><p>辅助工具：</p>
+<ul>
+<li>一个可靠且实时的触发器；</li>
+<li>一个收集诊断数据的工具。</li>
+</ul>
+</li>
+<li><p>找到能和正常时的阈值进行比较的指标，如正在运行的线程数量、处于“freeing items”状态的线程数量等：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mysql -e <span class="string">'SHOW PROCESSLIST/G'</span> | grep -c <span class="string">"State: freeing items"</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Percona Toolkit 的 pt-stalk 可以在触发条件时收集数据。</p>
+</li>
+<li><p>需要收集的数据：系统状态、CPU利用率、磁盘使用率和可用空间、ps的输出采样、内存使用率、MySQL的几个SHOW STATUS / SHOW PROCESSLIST / SHOW INNODB STATUS</p>
+</li>
+</ul>
+</li>
+</ul>
 <hr>
 <p>参考：</p>
 <p>🔗 《高性能MySQL》</p>
@@ -573,6 +729,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020122001.html" rel="prev" title="《高性能MySQL》（三）Schema与数据类型优化">
+                《高性能MySQL》（三）Schema与数据类型优化 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -661,7 +821,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">301</span>
+                  <span class="site-state-item-count">304</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -782,7 +942,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（二）基准测试和服务器性能剖析"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（二）基准测试和服务器性能剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-概述"><span class="nav-number">1.1.</span> <span class="nav-text">一. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是基准测试？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是基准测试？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-为什么需要基准测试？"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 为什么需要基准测试？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-基准测试的策略"><span class="nav-number">1.2.</span> <span class="nav-text">二. 基准测试的策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-测试指标"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 测试指标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-基准测试工具"><span class="nav-number">1.3.</span> <span class="nav-text">三. 基准测试工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-性能剖析概述"><span class="nav-number">1.4.</span> <span class="nav-text">四. 性能剖析概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-常见场景"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 常见场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-性能剖析的标准"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 性能剖析的标准</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-如何进行性能剖析"><span class="nav-number">1.5.</span> <span class="nav-text">五. 如何进行性能剖析</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（二）基准测试和服务器性能剖析"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（二）基准测试和服务器性能剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-概述"><span class="nav-number">1.1.</span> <span class="nav-text">一. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是基准测试？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是基准测试？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-为什么需要基准测试？"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 为什么需要基准测试？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-基准测试的策略"><span class="nav-number">1.2.</span> <span class="nav-text">二. 基准测试的策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-测试指标"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 测试指标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-基准测试工具"><span class="nav-number">1.3.</span> <span class="nav-text">三. 基准测试工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-性能剖析概述"><span class="nav-number">1.4.</span> <span class="nav-text">四. 性能剖析概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-常见场景"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 常见场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-性能剖析的标准"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 性能剖析的标准</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-如何进行性能剖析"><span class="nav-number">1.5.</span> <span class="nav-text">五. 如何进行性能剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-性能剖析步骤"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 性能剖析步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-性能剖析的输出信息"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 性能剖析的输出信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-剖析MySQL查询"><span class="nav-number">1.6.</span> <span class="nav-text">六. 剖析MySQL查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-慢查询日志"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 慢查询日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）相关参数"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">（1）相关参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）慢查询日志配置"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">（2）慢查询日志配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）慢查询时间设置"><span class="nav-number">1.6.1.3.</span> <span class="nav-text">（3）慢查询时间设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-剖析服务器负载"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 剖析服务器负载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-剖析单条查询"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 剖析单条查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-诊断间歇性问题"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 诊断间歇性问题</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

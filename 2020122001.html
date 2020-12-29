@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="mysql,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="《高性能MySQL》读书笔记，内容：数据类型优化，选择合适的标识列，常见Schema设计陷阱，范式与反范式，缓存表和汇总表，提高ALTER TABLE操作的速度等。">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《高性能MySQL》（三）Schema与数据类型优化">
+<meta property="og:url" content="http://linyishui.top/2020122001.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="《高性能MySQL》读书笔记，内容：数据类型优化，选择合适的标识列，常见Schema设计陷阱，范式与反范式，缓存表和汇总表，提高ALTER TABLE操作的速度等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-12-29T12:29:26.468Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《高性能MySQL》（三）Schema与数据类型优化">
+<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：数据类型优化，选择合适的标识列，常见Schema设计陷阱，范式与反范式，缓存表和汇总表，提高ALTER TABLE操作的速度等。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2020122001.html">
+
+
+
+
+
+  <title>《高性能MySQL》（三）Schema与数据类型优化 | 俺的部落格</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'G-Z0L5T0JQG7', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020122001.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《高性能MySQL》（三）Schema与数据类型优化</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-20T20:14:19+08:00">
+                2020-12-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,551
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  《高性能MySQL》读书笔记，内容：数据类型优化，选择合适的标识列，常见Schema设计陷阱，范式与反范式，缓存表和汇总表，提高ALTER TABLE操作的速度等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="《高性能MySQL》（三）Schema与数据类型优化"><a href="#《高性能MySQL》（三）Schema与数据类型优化" class="headerlink" title="《高性能MySQL》（三）Schema与数据类型优化"></a>《高性能MySQL》（三）Schema与数据类型优化</h1><h2 id="一-选择优化的数据类型"><a href="#一-选择优化的数据类型" class="headerlink" title="一. 选择优化的数据类型"></a>一. 选择优化的数据类型</h2><ul>
+<li>尽量使用能正确存储数据的最小数据类型；</li>
+<li>整型比字符串操作代价更低，字符比较的字符集和校对规则更复杂，如时间等应该用数字存储；</li>
+<li>尽量避免NULL，可为NULL的列需要更多的空间，索引构建更复杂，所以需要创建索引的列尽量是NOT NULL；</li>
+<li>相同类型的数据，但长度范围不同、精度不同、需要的物理空间也不同，例如 DATETIME 和 TIMESTAMP 都存储时间和日期，精确到秒，TIMESTAMP只会用DATETIME一半的空间</li>
+<li>MySQL的数字类型分整数类型和实数类型，其中 DECIMAL 支持高精度计算，如 DECIMAL(18, 9) 小数点两边将各存9个数字，小数点占一个字节，总共占9个字节。内部浮点计算统一使用 DOUBLE ，DECIMAL 只是存储类型。DECIMAL 会需要额外的空间和计算开销</li>
+<li>字符串类型：<ul>
+<li>VARCHAR：可变长字符串，仅使用必要空间（除非ROW_FORMAT=FIXED），使用一个或两个字节存储字符串长度。没有银弹，节省空间的带来的是UPDATE需要额外的开销（页已满InnoDB会分裂页使新行可以放入页内）</li>
+<li>CHAR：定长字符串，根据定义的长度分配足够的空间。适合存储定长或经常修改的字符串，因为定长类型不容易产生碎片；短列如CHAR(1)只需一个字节，而VARCHAR(2)需要两个字节，一个字节存放长度。</li>
+</ul>
+</li>
+<li>BLOB和TEXT：分别采用二进制和字符串存储较大数据。<ul>
+<li>不同类型家族：TINYBLOB、SMALLBLOB / BLOB、MEDIUMBLOB、LONGBLOB 和 TINYTEXT、SMALLTEXT / TEXT、MEDIUMTEXT、LONGTEXT</li>
+<li>当数据较大时，MySQL会使用外部区域存放值，行内需要为每个值放1~4个字节的指针。</li>
+<li>排序时只会对前 <code>max_sort_length</code> 个字节排序，也可以使用 <code>ORDER BY SUSTRING(column, length)</code> 。</li>
+</ul>
+</li>
+<li>日期和时间类型：<ul>
+<li>DATETIME：1001年到9999年，精度为秒，格式为YYYYMMDDHHMMSS的整数，与时区无关，占用8个字节的存储空间，时间值的显式会因为时区不同而不同。</li>
+<li>TIMESTAMP：1970年到2038年，保存从1970年1月1日午夜以来的秒数（格林尼治时间），只使用4个字节的存储空间，时间值的显式会因为时区不同而不同。</li>
+</ul>
+</li>
+<li>位数据类型：<ul>
+<li>BIT：旧版本BIT等价于TINYINT，BIT(1)存放一个位，最大为64位。BIT属于字符串类型，不建议使用。</li>
+<li>SET</li>
+</ul>
+</li>
+<li>特殊类型：<ul>
+<li>低于秒精度的时间戳</li>
+<li>IPv4地址，经常用 VARCHAR(15) 存放IP地址，实际上本质是32位无符号整数，小数点只是方便阅读，使用无符号整数存放，MySQL还提供了 <code>INET_ATON()</code> 和 <code>INET_NTOA()</code> 来在二者间转换。 </li>
+</ul>
+</li>
+</ul>
+<h2 id="二-选择合适的标识列"><a href="#二-选择合适的标识列" class="headerlink" title="二. 选择合适的标识列"></a>二. 选择合适的标识列</h2><p>标识列要常用于比较（如关联操作）、作为查询条件、外键等。不同表的相同标识列要保持数据类型一致，并且在选择数据类型时考虑MySQL如何执行计算和比较（如ENUM和SET使用整数存储，比较时转换为字符串）。</p>
+<ul>
+<li><strong>整数类型</strong>：最适合的标识列类型，效率高并且可以 AUTO_INCREMENT 。</li>
+<li><strong>ENUM和SET类型</strong>：糟糕的选择。</li>
+<li><strong>字符串类型</strong>：消耗空间，并且效率差于数字，特别是一些随机生成的字符串会任意分布在很大的空间内，导致INSERT或SELECT执行很慢。存储UUID应该去掉 <code>-</code> ，直接用 <code>UNHEX()</code> 函数转换为16字节数字存放在 BINARY(16) 列中，检索时使用 <code>HEX()</code> 格式化为十六进制格式。<ul>
+<li>插入值随机写到索引的不同位置，使INSERT变慢，会导致页分裂、磁盘随机访问、对于聚簇存储引擎产生聚簇索引碎片。</li>
+<li>逻辑上相邻的行分布在磁盘和内存的不同地方，使SELECT变慢。</li>
+<li>随机值导致缓存赖以工作的访问局部性原理失效，整个数据集都一样“热”，缓存带来的好处就消失了。</li>
+</ul>
+</li>
+</ul>
+<h2 id="三-常见设计陷阱"><a href="#三-常见设计陷阱" class="headerlink" title="三. 常见设计陷阱"></a>三. 常见设计陷阱</h2><ol>
+<li><strong>太多的列</strong>：MySQL存储引擎API工作时需要在服务器层和存储引擎层之间通过行缓冲格式拷贝数据，在服务器层将缓冲转码为各个列，将编码后的内容转码为各个行的数据格式操作代价较高，所以尽量避免上千个属性这种极端情况。</li>
+<li><strong>太多的关联</strong>：期望查询能够快速的执行且并发性好，单个查询不要超过12个表关联。</li>
+<li><strong>避免滥用枚举</strong>：修改枚举中值会进行一次 ALTER TABLE 操作。</li>
+</ol>
+<h2 id="四-范式和反范式"><a href="#四-范式和反范式" class="headerlink" title="四. 范式和反范式"></a>四. 范式和反范式</h2><p>范式化的数据库中，事实数据仅出现一次；反范式化的数据库中，信息是冗余的。</p>
+<p>范式的优点：</p>
+<ul>
+<li>更新操作更快；</li>
+<li>很少有重复数据，需要修改的数据更少；</li>
+<li>表空间更小，在内存中执行更快；</li>
+<li>很少有多余数据，所以更少需要 DISTINCT 或 GROUP BY 语句。</li>
+</ul>
+<p>范式的缺点：</p>
+<ul>
+<li>常常需要关联，不但代价昂贵，也可能使索引策略无效。</li>
+</ul>
+<p>反范式的优点：</p>
+<ul>
+<li>数据都在一张表，所以很少关联；</li>
+<li>全表扫描基本是顺序I/O，不需要关联表避免了随机I/O；</li>
+<li>可以构建有效的索引策略；</li>
+</ul>
+<p>真实的开发中很少会极端的遵循范式或反范式，而是混用二者；常见如<strong>复制</strong>或<strong>缓存</strong>，在不同的表存储相同的列，冗余的字段往往有其意义，比如排序需求、避免关联、避免多次查询等等。</p>
+<h2 id="五-缓存表和汇总表"><a href="#五-缓存表和汇总表" class="headerlink" title="五. 缓存表和汇总表"></a>五. 缓存表和汇总表</h2><p>虽然冗余数据能够很好的提升性能，但有时还是需要创建一张完全独立的汇总表或缓存表。</p>
+<p>一般缓存表用来存放那些可以简单获取但获取速度较慢的数据（逻辑上冗余的数据）；汇总表则存放使用 GROUP BY 语句聚合的数据。</p>
+<p>例如，一个网站需要计算之前24小时发送的消息数，可以每小时生成一张汇总表（Redis应该是更好的解决方案），这样比实时维护计数器要高效的多，但并不精确。这种方案要远远快于统计message中所有行，实时计算统计值需要扫描表中的大部分数据，需要的索引也一般会影响到UPDATE操作（所以一般不希望创建这类索引）。</p>
+<p>缓存表可以采用不同的存储引擎，比如主表是InnoDB，缓存表则使用MyISAM，这样可以得到更小的索引占用空间，并且可以做全文搜索。</p>
+<p>使用缓存表和汇总表需要决定是实时维护数据还是定期重建，重建需要保证数据在操作时依然可用，所以需要“影子表”实现，即根据真实表创建一张影子表，完成建表后，通过一个原子性的重命名操作切换影子表和原表。</p>
+<p><strong>更快的读，更慢的写</strong>，为了增加读查询的速度，会经常建一些额外索引、增加冗余列，甚至创建缓存表和汇总表。这些都会导致写查询变慢，开发难度提升，但能显著提高读操作的性能。</p>
+<h2 id="六-提高-ALTER-TABLE-操作的速度"><a href="#六-提高-ALTER-TABLE-操作的速度" class="headerlink" title="六. 提高 ALTER TABLE 操作的速度"></a>六. 提高 ALTER TABLE 操作的速度</h2><p>ALTER TABLE 对于大表会执行很慢，大部分修改表操作会按新结构创建一个新的空表，从旧表查出所有数据插入新表，最后删除旧表。<strong>大部分 ALTER TABLE 操作会导致MySQL服务中断</strong>。 </p>
+<p>常规场景的技巧：</p>
+<ul>
+<li>先在一台不提供服务的机器上执行 ALTER TABLE 操作，然后和提供服务的主库切换；</li>
+<li>“影子拷贝”，用要求的表结构创建一张和原表无关的新表，然后通过<strong>重命名</strong>和<strong>删表</strong>操作交换两张表。</li>
+</ul>
+<p>不是所有 ALTER TABLE 操作都要重建表，如下修改字段默认值，前者创建新表，后者直接修改 <code>.frm</code> 文件。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> XXX</span><br><span class="line"><span class="keyword">MODIFY</span> <span class="keyword">COLUMN</span> xxx TINYINT(<span class="number">3</span>)  <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">5</span>;</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> XXX</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">COLUMN</span> xxx <span class="keyword">SET</span> <span class="keyword">DEFAULT</span> <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="6-1-只修改-frm-文件，不重建表"><a href="#6-1-只修改-frm-文件，不重建表" class="headerlink" title="6.1 只修改 .frm 文件，不重建表"></a>6.1 只修改 .frm 文件，不重建表</h3><p>只修改 .frm 文件要远远快于重建表，而MySQL有时会在没必要重建表的时候仍去重建。比如移除一个列的 AUTO_INCREMENT 属性；增加、移除、修改ENUM和SET常量。</p>
+<p>这类情况可以创建新的 <code>.frm</code> 文件，替换旧的：</p>
+<ol>
+<li>创建一张有相同结构的空表，进行需要的修改；</li>
+<li>执行 <code>FLUSH TABLES WITH READ LOCK</code> ，会关闭所有正在使用的表，且禁止任何表被打开；</li>
+<li>交换 <code>.frm</code> 文件；</li>
+<li>执行 <code>UNLOCK TABLES</code> 释放第二步的读锁。</li>
+</ol>
+<h3 id="6-2-快速创建-MyISAM-索引"><a href="#6-2-快速创建-MyISAM-索引" class="headerlink" title="6.2 快速创建 MyISAM 索引"></a>6.2 快速创建 MyISAM 索引</h3><p>先禁用索引、载入数据，然后重新启用索引：因为构建索引的工作被延迟到数据完全载入后，这个时候可以利用排序来创建索引，相比会快很多，并且使索引树的碎片更少、更紧凑（只对非唯一索引有效）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> XXX <span class="keyword">DISABLE</span> <span class="keyword">KEYS</span>;</span><br><span class="line"><span class="comment">--LOAD THE DATA</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> XXX <span class="keyword">ENABLE</span> <span class="keyword">KEYS</span>;</span><br></pre></td></tr></table></figure>
+<p>InnoDB也可以先删除所有的非唯一索引，然后增加新的列，最后重新创建删除掉的索引。</p>
+<p>操作步骤：</p>
+<ol>
+<li>用需要的表结构创建一张新表，但不包含索引；</li>
+<li>载入数据到表中以构建 <code>.MYD</code> 文件；</li>
+<li>按照需要的结构创建另一张空表，并包含索引，创建出 <code>.frm</code> 和 <code>.MYI</code> 文件；</li>
+<li>获取读锁并刷新表；</li>
+<li>重命名第二张表的 <code>.frm</code> 和 <code>.MYI</code> 文件，使MySQL认为是第一张表的文件；</li>
+<li>释放读锁；</li>
+<li>使用 <code>REPAIR TABLE</code> 重建表的索引，此操作通过排序来构建所有索引，包括唯一索引。</li>
+</ol>
+<hr>
+<p>参考：</p>
+<p>🔗 《高性能MySQL》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2020122001.html" title="《高性能MySQL》（三）Schema与数据类型优化">http://linyishui.top/2020122001.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020121701.html" rel="next" title="《高性能MySQL》（二）基准测试和服务器性能剖析">
+                <i class="fa fa-chevron-left"></i> 《高性能MySQL》（二）基准测试和服务器性能剖析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020122501.html" rel="prev" title="《高性能MySQL》（四）创建高性能索引">
+                《高性能MySQL》（四）创建高性能索引 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">304</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（三）Schema与数据类型优化"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（三）Schema与数据类型优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-选择优化的数据类型"><span class="nav-number">1.1.</span> <span class="nav-text">一. 选择优化的数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-选择合适的标识列"><span class="nav-number">1.2.</span> <span class="nav-text">二. 选择合适的标识列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-常见设计陷阱"><span class="nav-number">1.3.</span> <span class="nav-text">三. 常见设计陷阱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-范式和反范式"><span class="nav-number">1.4.</span> <span class="nav-text">四. 范式和反范式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-缓存表和汇总表"><span class="nav-number">1.5.</span> <span class="nav-text">五. 缓存表和汇总表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-提高-ALTER-TABLE-操作的速度"><span class="nav-number">1.6.</span> <span class="nav-text">六. 提高 ALTER TABLE 操作的速度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-只修改-frm-文件，不重建表"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 只修改 .frm 文件，不重建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-快速创建-MyISAM-索引"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 快速创建 MyISAM 索引</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
