@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="mysql,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="《高性能MySQL》读书笔记，内容：分区表，视图，外键约束，内部存储代码，游标，绑定变量，用户自定义函数，全文索引，分布式事务，查询缓存等。">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《高性能MySQL》（六）高级特性">
+<meta property="og:url" content="http://linyishui.top/2021020101.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="《高性能MySQL》读书笔记，内容：分区表，视图，外键约束，内部存储代码，游标，绑定变量，用户自定义函数，全文索引，分布式事务，查询缓存等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010104.png">
+<meta property="og:updated_time" content="2021-03-03T13:23:42.593Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《高性能MySQL》（六）高级特性">
+<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：分区表，视图，外键约束，内部存储代码，游标，绑定变量，用户自定义函数，全文索引，分布式事务，查询缓存等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010101.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2021020101.html">
+
+
+
+
+
+  <title>《高性能MySQL》（六）高级特性 | 俺的部落格</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a73137787baf0001a5bc4063855efe8a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021020101.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《高性能MySQL》（六）高级特性</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-01T21:16:33+08:00">
+                2021-02-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  10,330
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  36
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  《高性能MySQL》读书笔记，内容：分区表，视图，外键约束，内部存储代码，游标，绑定变量，用户自定义函数，全文索引，分布式事务，查询缓存等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="《高性能MySQL》（六）高级特性"><a href="#《高性能MySQL》（六）高级特性" class="headerlink" title="《高性能MySQL》（六）高级特性"></a>《高性能MySQL》（六）高级特性</h1><h2 id="一-分区表"><a href="#一-分区表" class="headerlink" title="一. 分区表"></a>一. 分区表</h2><h3 id="1-1-什么是分区表？"><a href="#1-1-什么是分区表？" class="headerlink" title="1.1 什么是分区表？"></a>1.1 什么是分区表？</h3><p>分区表是一个独立的逻辑表，底层由多个物理子表组成。一组底层表的句柄对象的封装，对分区表的请求通过句柄对象转换为对存储引擎的接口调用。</p>
+<p>MySQL索引根据分区的子表定义，没有全局索引，不能像Oracle那样指定索引和表是否分区。</p>
+<p>创建表时使用 PARTITION BY 子句定义每个分区存放的数据。每次查询时优化器根据分区定义过滤掉其它分区，使查询只须扫描包含数据的分区。</p>
+<h3 id="1-2-使用场景"><a href="#1-2-使用场景" class="headerlink" title="1.2 使用场景"></a>1.2 使用场景</h3><ul>
+<li>无法全部放入内存的大表，或是大部分历史数据、只有少量热点数据。</li>
+<li>分区表的数据易于维护，批量删除大量数据可以直接清除整个分区；还可以对一个分区进行优化、检查、修复等操作。</li>
+<li>分区表的数据可以分布在不同的物理设备上。</li>
+<li>使用分区表可以避免一些特殊瓶颈，如InnoDB的单个索引的互斥访问、ext3文件系统的inode锁竞争等。</li>
+<li>可以备份和恢复独立的分区，在大数据集的场景有很好的效果。</li>
+</ul>
+<h3 id="1-3-使用限制"><a href="#1-3-使用限制" class="headerlink" title="1.3 使用限制"></a>1.3 使用限制</h3><ul>
+<li>一个表最多有1024个分区。</li>
+<li>MySQL 5.1中分区表达式必须返回整数，MySQL 5.5的某些场景可以直接使用列进行分区。</li>
+<li>若分区字段中有主键或唯一索引的列，那么所有主键列和唯一索引列都必须包含进来。</li>
+<li>分区表无法使用外键约束。</li>
+</ul>
+<h3 id="1-4-实现原理"><a href="#1-4-实现原理" class="headerlink" title="1.4 实现原理"></a>1.4 实现原理</h3><p>分区表由多个相关底层表实现，底层表由句柄对象表示，存储引擎管理分区的各个底层表与普通表相同，分区表的索引只是在各个底层表上各自加上一个完全相同的索引。</p>
+<p>几种操作的逻辑：虽然都要锁住所有底层表，但其实只是行级锁</p>
+<ul>
+<li>SELECT 查询：查询一个分区表时，分区层先打开并锁住所有的底层表，优化器先判断是否可以过滤部分分区，然后调用对应存储引擎接口访问各个分区的数据。</li>
+<li>INSERT 操作：写入一条记录时，分区层先打开并锁住所有的底层表，然后确定在哪个分区接收这条记录，并把记录写入底层表。</li>
+<li>DELETE 操作：删除一条记录时，分区层先打开并锁住所有底层表，然后确定数据对应的分区，最后对相应底层表进行删除操作。</li>
+<li>UPDATE 操作：更新一条记录时，分区层先打开并锁住所有底层表，MySQL要先确定更新的记录在哪个分区，然后取出数据并更新，再判断更新后的数据应该放在哪个分区，最后对底层表进行写入操作，并对原数据所在底层表进行删除操作。</li>
+</ul>
+<h3 id="1-5-分区表的类型"><a href="#1-5-分区表的类型" class="headerlink" title="1.5 分区表的类型"></a>1.5 分区表的类型</h3><p>分区表达式可以使用各种函数，但返回值一定要是一个确定的整数，且不能是一个常数（案例使用YEAR函数根据时间进行分区）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> sqles (</span><br><span class="line">	order_date DATETIME <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="comment">--other columns</span></span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">PARTITION</span> <span class="keyword">BY</span> <span class="keyword">RANGE</span>(<span class="keyword">YEAR</span>(order_date)) (</span><br><span class="line">	<span class="keyword">PARTITION</span> p_2010 <span class="keyword">VALUES</span> <span class="keyword">LESS</span> <span class="keyword">THAN</span> (<span class="number">2010</span>),</span><br><span class="line">	<span class="keyword">PARTITION</span> p_2011 <span class="keyword">VALUES</span> <span class="keyword">LESS</span> <span class="keyword">THAN</span> (<span class="number">2011</span>),</span><br><span class="line">	<span class="keyword">PARTITION</span> p_2012 <span class="keyword">VALUES</span> <span class="keyword">LESS</span> <span class="keyword">THAN</span> (<span class="number">2012</span>),</span><br><span class="line">	<span class="keyword">PARTITION</span> p_catchall <span class="keyword">VALUES</span> <span class="keyword">LESS</span> <span class="keyword">THAN</span> MAXVALUE</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>MySQL支持键值、哈希和列表分区，以及使用 RANGE COLUMNS 类型的分区。</p>
+<p>系统通过子分区可降低索引的互斥访问竞争。最近一年的分区数据会被频繁访问，导致大量的互斥量的竞争。使用哈希子分区可以将数据切成多个小片，大大降低互斥量的竞争问题。</p>
+<h3 id="1-6-合理使用分区表"><a href="#1-6-合理使用分区表" class="headerlink" title="1.6 合理使用分区表"></a>1.6 合理使用分区表</h3><p>假设一个需求：需要从一个大表中查出一段时间的记录，表中包含多年的历史数据，按照时间排序。仅仅几个月的数据可能会有上亿或十亿条记录。</p>
+<p>首先不能每次查询时扫描全表，并且考虑索引在空间和维护上的消耗也不能使用（可能会产生大量的碎片，导致一个查询有成千上万的随机I/O）。</p>
+<p>只能<strong>让所有的查询只在数据表上做顺序扫描</strong>，或者<strong>将数据表和索引都缓存在内存中</strong>。</p>
+<p><strong>数据量大时，除非是索引覆盖查询，否则B-Tree索引无法起作用了，数据库服务器需要根据索引扫描的结果回表，查询所有符合条件的记录，若数据量巨大，这将产生大量随机I/O，导致响应时间过长，并且索引的维护代价也很高</strong>。</p>
+<p>分区可以看作初始形态的索引，以非常小的代价定位到数据在哪一片区域，在区域内可以做顺序扫描、可以建索引、可以将数据缓存到内存。分区无需额外的数据结构记录每个分区有哪些数据（因为不需要精确定位数据位置）。</p>
+<p>保证大数据量可扩展性的策略：</p>
+<ul>
+<li><strong>全量扫描数据，不要任何索引</strong>：只要能用WHERE条件将需要的数据限制在少数分区中，效率是很高的，需要一些简单运算保证响应时间能够满足要求，此策略适用于正常方式访问大量数据时。</li>
+<li><strong>索引数据，并分离热点</strong>：当数据有明显的热点，此外的数据很少会被访问到，可以将这部分热点数据单独放在一个分区，从而有机会全部缓存到内存中，使查询只用访问一个很小的分区表，能够有效的使用索引和缓存。</li>
+</ul>
+<h3 id="1-7-常见问题"><a href="#1-7-常见问题" class="headerlink" title="1.7 常见问题"></a>1.7 常见问题</h3><p>上述两种分区策略都基于查询能够过滤到额外分区、分区本身并不会带来额外的代价，但在一些场景下这两种假设会有问题：</p>
+<ul>
+<li><strong>NULL值使分区过滤无效</strong>：<ul>
+<li>所有的NULL值或非法值会被存放到第一个分区；所以如查询 <code>WHERE order_date BETWEEN &#39;2012-01-01&#39; AND &#39;2012-01-31&#39;</code> 会检查2012分区和第一个分区，因为YEAR函数在接收非法值时可能会返回NULL。</li>
+<li>当第一个分区特别大时，代价会很高，尤其是策略<strong>全量扫描数据，不要任何索引</strong>；为了避免此状况，可以创建一个不用的第一分区，通过 <code>PARTITION p_nulls VALUES LESS THAN(0)</code> 来创建，这样如果插入的数据都是有效的情况下第一分区是空的，即使需要检测第一分区也不会有太高代价。</li>
+</ul>
+</li>
+<li><strong>分区列和索引列不匹配</strong>：二者不匹配会导致查询无法进行分区过滤，比如在列a上定义了索引，在列b上进行分区，这样每个分区都有独立的索引，所以扫描列b上的索引需要扫描每个分区对应的索引，虽然扫描速度并不是特别慢，但还是应该尽量避免建立和分区列不匹配的索引，除非查询中还同时包含了可以过滤分区的条件。</li>
+<li><strong>选择分区的成本可能很高</strong>：不同的分区类型实现方式不同，性能也不同；范围分区在判断记录数据属于哪一分区的成本很高，因为服务器要扫描所有的分区定义的列表，这样的线性搜索会随分区数增多成本变高。对于键分区或哈希分区则没有此问题，100个左右的分区数不会有问题。</li>
+<li><strong>打开并锁住所有底层表的成本可能很高</strong>：此操作发生于分区过滤之前，无法通过分区过滤降低开销，对于一些本来很快的操作，如根据主键查询单行，会带来额外的开销；可以通过批量操作的方式来降低单个开销，如批量插入或 LOAD DATA INFILE、一次删除多行数据等，同时需要限制分区的个数。</li>
+<li><strong>维护分区的成本可能很高</strong>：新增或删除分区等操作很快（不包括删除大分区），而重组分区（先创建一个临时分区，然后将数据复制到其中，最后删除原分区）或类似ALTER语句的操作需要复制数据。</li>
+</ul>
+<p>使用分区表的限制：</p>
+<ul>
+<li>所有分区要使用相同的存储引擎；</li>
+<li>分区可以使用的函数或表达式受限；</li>
+<li>一些存储引擎不支持分区或有更多限制；</li>
+</ul>
+<h3 id="1-8-优化查询"><a href="#1-8-优化查询" class="headerlink" title="1.8 优化查询"></a>1.8 优化查询</h3><p>分区这种粗粒度索引可以让查询扫描更少的数据，对于访问分区表来说，重要的一点是WHERE条件中加入分区列，即使看起来很多余，因为这样可以使优化器过滤掉无需访问的分区。</p>
+<p>通过EXPLAIN PARTITION观察优化器是否执行了分区过滤，需要注意的是MySQL只能在使用分区函数的列本身进行比较时才能过滤分区，而不能根据表达式的值去过滤分区：<strong>查询时只能通过列来过滤分区</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--无法过滤分区：</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sales_by_day <span class="keyword">WHERE</span> <span class="keyword">YEAR</span>(<span class="keyword">day</span>) = <span class="number">2010</span></span><br><span class="line"><span class="comment">--可以过滤分区：</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sales_by_day <span class="keyword">WHERE</span> <span class="keyword">day</span> <span class="keyword">BETWEEN</span> <span class="string">'2010-01-01'</span> <span class="keyword">AND</span> <span class="string">'2010-12-31'</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-9-合并表"><a href="#1-9-合并表" class="headerlink" title="1.9 合并表"></a>1.9 合并表</h3><p>合并表（Merge Table）是简单版的分区实现，分区表是一种逻辑上的概念，用户无法访问底层的各个分区，但用户可以单独访问合并表的各个子表。</p>
+<p>分区表与优化器更紧密结合，而合并表则是要被淘汰的技术。</p>
+<p>后续省略。</p>
+<h2 id="二-视图"><a href="#二-视图" class="headerlink" title="二. 视图"></a>二. 视图</h2><h3 id="2-1-什么是视图？"><a href="#2-1-什么是视图？" class="headerlink" title="2.1 什么是视图？"></a>2.1 什么是视图？</h3><ul>
+<li>视图在MySQL 5.0版本引入；</li>
+<li>本身是虚拟表，不存储数据，访问视图时从实体表获取数据；</li>
+<li>视图与表在同一个命名空间，不能对视图创建触发器；</li>
+</ul>
+<h3 id="2-2-视图的两种实现算法"><a href="#2-2-视图的两种实现算法" class="headerlink" title="2.2 视图的两种实现算法"></a>2.2 视图的两种实现算法</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> Oceania <span class="keyword">AS</span> </span><br><span class="line">	<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Country <span class="keyword">WHERE</span> Continent = <span class="string">'Oceania'</span></span><br><span class="line">	<span class="keyword">WITH</span> <span class="keyword">CHECK</span> <span class="keyword">OPTION</span>;</span><br><span class="line"><span class="keyword">SELECT</span> code, <span class="keyword">name</span> <span class="keyword">FROM</span> Oceania <span class="keyword">WHERE</span> <span class="keyword">name</span> = <span class="string">'Australia'</span>;</span><br></pre></td></tr></table></figure>
+<p>视图的两种实现：</p>
+<ul>
+<li><p><strong>临时表算法</strong>：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TEMPORARY</span> <span class="keyword">TABLE</span> TMP_Oceania <span class="keyword">AS</span> </span><br><span class="line">	<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Country <span class="keyword">WHERE</span> Continent = <span class="string">'Oceania'</span>;</span><br><span class="line"><span class="keyword">SELECT</span> code, <span class="keyword">name</span> <span class="keyword">FROM</span> TMP_Oceania <span class="keyword">WHERE</span> <span class="keyword">name</span> = <span class="string">'Australia'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>合并算法</strong>：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> code, <span class="keyword">name</span> <span class="keyword">FROM</span> Country <span class="keyword">WHERE</span> Continent = <span class="string">'Oceania'</span> <span class="keyword">AND</span> <span class="keyword">name</span> = <span class="string">'Australia'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>可以在 <code>EXPLAIN EXTENDED</code> 后使用 <code>SHOW WARNINGS</code> 查看使用视图的查询重写后的结果，临时表算法实现的视图会显示为派生表（DERIVED）：<code>EXPLAIN SELECT * FROM View</code> 。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010101.png" alt></p>
+<p>只要无法在原表记录和视图记录建立一对一映射的场景都无法使用临时表算法实现视图，如 GROUP BY，DISTINCT，聚合函数，UNION，子查询等。</p>
+<h3 id="2-3-可更新视图"><a href="#2-3-可更新视图" class="headerlink" title="2.3 可更新视图"></a>2.3 可更新视图</h3><p>可更新视图就是能够通过更新视图来更新视图涉及的表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> Oceania <span class="keyword">SET</span> Population = Population * <span class="number">1.1</span> <span class="keyword">WHERE</span> <span class="keyword">Name</span> = <span class="string">'Australia'</span>;</span><br></pre></td></tr></table></figure>
+<p>视图定义包含 GROUP BY，聚合函数，UNION等情况不能更新相关表，所有使用临时表算法实现的视图不能更新，被更新的列必须来自同一张表。</p>
+<p><code>CHECK OPTION</code> 表示任何通过视图更新的行，都必须符合视图本身的WHERE条件定义，不能更新视图定义列外的列。</p>
+<h3 id="2-4-视图对性能的影响"><a href="#2-4-视图对性能的影响" class="headerlink" title="2.4 视图对性能的影响"></a>2.4 视图对性能的影响</h3><p>视图在某些场景也可以帮助提高性能，</p>
+<ul>
+<li><p>重构Schema时使用视图，修改表结构时不会影响应用运行；</p>
+</li>
+<li><p>使用视图实现基于列的权限控制，不需要真正的在系统创建权限，没有额外开销。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> XX <span class="keyword">AS</span> </span><br><span class="line">	<span class="keyword">SELECT</span> ... <span class="keyword">FROM</span> XXX;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> public.* <span class="keyword">TO</span> public_user;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>视图并没有看起来那样简单，使用视图提示性能需要做比较详细的测试，临时表算法实现的视图在很多场景下性能很糟糕，合并算法实现的视图也会有额外开销，并且视图的性能很难预测。</p>
+</li>
+</ul>
+<h3 id="2-5-使用视图的一些限制"><a href="#2-5-使用视图的一些限制" class="headerlink" title="2.5 使用视图的一些限制"></a>2.5 使用视图的一些限制</h3><ul>
+<li>MySQL不支持物化视图，指将视图结果数据存放在一个可以查看的表，并定时从原始表刷新数据到这个表；</li>
+<li>MySQL视图不支持创建索引，但可以使用缓存表或汇总表模拟物化视图和索引；</li>
+<li>MySQL不会保存视图定义的原始SQL语句，可以通过使用视图的 <code>.frm</code> 文件最后一行获取信息2，如果有FILE权限，可以直接使用SQL语句的 <code>LOAD_FILE()</code> 读取 <code>.frm</code> 的视图创建信息，再处理掉转义字符等。</li>
+</ul>
+<h2 id="三-外键约束"><a href="#三-外键约束" class="headerlink" title="三. 外键约束"></a>三. 外键约束</h2><p>InnoDB引擎支持外键。</p>
+<p>优点：</p>
+<ul>
+<li>如果想确保两个表始终有一致性的数据，使用外键比在应用中保证一致性要高效的多，级联更新和删除也要更快。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>InnoDB强制外键使用索引，当外键列的选择性很低，会导致一个非常大且选择性很低的索引，且该索引除了做外键限制没有其他作用。</li>
+<li>使用外键需要成本，每次修改数据时都要在另一张表中多执行一次查询操作。</li>
+<li>查询需要额外访问一些表，意味着需要额外的锁。若向子表写入一条记录，外键约束使InnoDB检查父表中对应的记录进行加锁操作，确保该记录不会在事务完成时被删除，会导致额外的锁等待，甚至导致一些难以排查的死锁。</li>
+</ul>
+<p>可以使用触发器来代替外键，当外键只是用作数值约束。如果只是把外键做约束，在应用层实现会更好，因为外键会带来大量的额外消耗，很多过往的经验告诉我们在删除外键时性能会有大幅提升。</p>
+<h2 id="四-在MySQL内部存储代码"><a href="#四-在MySQL内部存储代码" class="headerlink" title="四. 在MySQL内部存储代码"></a>四. 在MySQL内部存储代码</h2><h3 id="4-1-存储代码的方式"><a href="#4-1-存储代码的方式" class="headerlink" title="4.1 存储代码的方式"></a>4.1 存储代码的方式</h3><p>主要区别在于执行的上下文—输入和输出</p>
+<ul>
+<li>触发器</li>
+<li>存储过程：可以接收参数返回值</li>
+<li>函数：可以接收参数返回值</li>
+<li>定时任务 / 事件</li>
+</ul>
+<h3 id="4-2-存储代码的优缺点"><a href="#4-2-存储代码的优缺点" class="headerlink" title="4.2 存储代码的优缺点"></a>4.2 存储代码的优缺点</h3><p>优点：</p>
+<ul>
+<li>服务器内部执行，离数据最近，可以节省带宽和网络延迟；</li>
+<li>这是一种代码重用，方便统一业务规则，保证某些行为总是一致，所以也带来了一定的安全性；</li>
+<li>简化代码的维护和版本更新；</li>
+<li>帮助提升安全性，提供了更细粒度的权限控制，应用可以通过存储过程的接口访问没有权限的表；</li>
+<li>服务器端可以缓存存储过程的执行计划，降低了需要反复调用的过程的消耗；</li>
+<li>在服务器端部署，备份和维护都在服务器端完成；</li>
+<li>可以在应用开发和数据库开发间更好的分工。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>MySQL没有提供好用的开发和调试工具，编写存储代码难度较高；</li>
+<li>存储代码相比应用代码效率要差一些，很难实现复杂逻辑；</li>
+<li>存储代码可能会带来额外的复杂性，原本只需部署应用代码和库表结构变更，还需要额外部署内部存储代码；</li>
+<li>部署在服务器会带来安全隐患，只要破解数据库就将功能和数据全部获取；</li>
+<li>存储过程给数据库服务器带来额外的压力，数据库服务器的扩展性要远差于应用服务器。</li>
+<li>无法控制存储程序的资源消耗，可能一个错误就把服务器拖死。</li>
+<li>存储代码的实现有很多限制，调试也很困难，难以定位问题。</li>
+<li>与基于语句的二进制日志复制合作的不好。</li>
+</ul>
+<h3 id="4-3-存储过程和函数"><a href="#4-3-存储过程和函数" class="headerlink" title="4.3 存储过程和函数"></a>4.3 存储过程和函数</h3><p>优化器对存储代码的限制：</p>
+<ul>
+<li>优化器无法使用关键字DETERMINISTIC来优化单个查询中多次调用存储函数的情况。</li>
+<li>优化器无法评估存储函数的执行成本。</li>
+<li>每个连接都有独立的存储过程的执行计划缓存，如果有多个连接需要调用同一个存储过程，就会浪费空间来反复缓存同样的执行计划（连接池或持久化连接会造成缓存更长的生命周期）。</li>
+<li>存储过程和复制是一对诡异的组合，最好不要复制对存储程序的调用，直接复制其改变的数据。MySQL 5.1 后引入行复制。</li>
+</ul>
+<h3 id="4-4-触发器"><a href="#4-4-触发器" class="headerlink" title="4.4 触发器"></a>4.4 触发器</h3><h4 id="4-4-1-什么是触发器？"><a href="#4-4-1-什么是触发器？" class="headerlink" title="4.4.1 什么是触发器？"></a>4.4.1 什么是触发器？</h4><ul>
+<li>触发器可以让你在执行 INSERT、UPDATE或DELETE时，执行一些特定的操作。</li>
+<li>可以指定是在SQL语句前或后触发，触发器本身没有返回值，但可以读取或改变触发SQL语句所影响的数据。</li>
+<li>使用触发器可以减少客户端和服务器之间的通信，简化应用逻辑，一定程度上提高性能。</li>
+</ul>
+<h4 id="4-4-2-使用注意"><a href="#4-4-2-使用注意" class="headerlink" title="4.4.2 使用注意"></a>4.4.2 使用注意</h4><ul>
+<li>对每个表的每个事件，最多只能定义一个触发器（如不能再AFTER INSERT上定义两个触发器）。</li>
+<li>MySQL只支持基于行的触发，即触发器始终针对一条记录，而不是针对整个SQL语句，当数据集变得很大时，效率会很低。</li>
+<li>触发器会掩盖服务器背后很多工作，而触发器的问题很难排查。</li>
+<li>触发器可能会导致死锁和锁等待，触发器执行失败会导致SQL也失败，但不会有直接明确的提示。</li>
+<li>触发器在InnoDB表上是在同一个事务中完成的，执行操作是原子的，原子操作和触发器操作会同时失败或成功。</li>
+<li>在InnoDB上使用触发器去检查数据一致性要小心MVCC，可能会得到错误结果。</li>
+</ul>
+<h3 id="4-5-事件"><a href="#4-5-事件" class="headerlink" title="4.5 事件"></a>4.5 事件</h3><ul>
+<li>MySQL 5.1 引入事件作为一种新的存储代码的方式，MySQL内部实现的类似于Linux的定时任务。</li>
+<li>指定MySQL在某个时间执行一段SQL代码，或者每隔一个时间间隔。其中复杂的SQL封装在一个存储过程中，事件执行时只需做一个简单的调用。</li>
+<li>事件在一个独立事件调度线程中被初始化，该线程和处理连接的线程没有关系，它不接收任何参数，也没有任何返回值。可以在MySQL的日志中看到命令的执行日志，在表 INFORMATION_SCHEMA.EVENTS 中看到各个事件状态。</li>
+<li>事件实现机制本身开销不大，但事件需要执行SQL，这可能会对性能有很大影响；事件和其他存储程序一样，在和基于语句的复制一起工作时可能会导致一些问题。</li>
+<li>定时事件可能会执行很久，前一个事件未执行完，后一个事件开始执行，开发要自己处理这种情况下的并发（可以使用 <code>GET_LOCK()</code> 确保当前总是只有一个事件在执行-加锁）。</li>
+<li>通过 <code>SET GLOBAL event_scheduler := 1;</code> 设置事件调度线程，设置后此线程执行各个用户指定的事件中的各段SQL代码。</li>
+<li>事件调度本身是一个单独的线程，MySQL创建一个新的进程用于事件执行，进程和线程的生命周期是事件的执行过程，状态总为 Connect 。</li>
+</ul>
+<h2 id="五-游标"><a href="#五-游标" class="headerlink" title="五. 游标"></a>五. 游标</h2><p>暂略。</p>
+<h2 id="六-绑定变量"><a href="#六-绑定变量" class="headerlink" title="六. 绑定变量"></a>六. 绑定变量</h2><h3 id="6-1-什么是绑定变量？"><a href="#6-1-什么是绑定变量？" class="headerlink" title="6.1 什么是绑定变量？"></a>6.1 什么是绑定变量？</h3><ul>
+<li><p>MySQL 4.1 版本引入绑定变量（prepared statement），用于提高客户端和服务器端数据传输的效率。</p>
+</li>
+<li><p>流程：创建一个绑定变量的SQL时，客户端向服务端发送一个SQL语句的原型；服务端收到后，解析并存储这个SQL语句的部分执行计划，返回给客户端一个SQL语句处理句柄，以后每次执行此类查询，客户端都指定使用这个句柄。</p>
+</li>
+<li><p>语法：用问号标记可以接收参数的位置，通过向服务器端发送各个问号的取值和这个SQL的句柄来执行查询</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb1(col1, col2, col3) <span class="keyword">VALUES</span> (?, ?, ?);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="6-2-绑定变量为何能提高性能？"><a href="#6-2-绑定变量为何能提高性能？" class="headerlink" title="6.2 绑定变量为何能提高性能？"></a>6.2 绑定变量为何能提高性能？</h3><ul>
+<li>在服务器端只需解析一次SQL语句。</li>
+<li>在服务器端某些优化器的工作只需执行一次，因为会缓存一部分执行计划。</li>
+<li>以二进制的方式只发送参数和句柄，比每次都发送ASCII码文本效率要高，比如一个二进制的日期只需三个字节，而后者则需要十个字节；可以分块传输，而无需一次性传输；还节省了将数据从原始格式转为文本格式的开销。</li>
+<li>只传输参数，而不是整个语句，网络开销降低。</li>
+<li>MySQL直接将参数存储到缓存，不需要在内存中多次复制。</li>
+</ul>
+<h3 id="6-3-优化"><a href="#6-3-优化" class="headerlink" title="6.3 优化"></a>6.3 优化</h3><p>比如当执行计划需要根据传入的参数计算时，MySQL无法缓存这部分计划。</p>
+<p>根据优化器工作阶段，划分三类优化：</p>
+<ol>
+<li><strong>准备阶段</strong>：服务器解析SQL语句，移除不可能条件，并且重写子查询。</li>
+<li><strong>第一次执行</strong>：服务器先简化嵌套循环的关联，并将外关联转换成内关联。</li>
+<li><strong>每次SQL语句执行</strong>：<ul>
+<li>过滤分区</li>
+<li>尽量移除 <code>COUNT()</code> 、<code>MIN()</code> 和 <code>MAX()</code> </li>
+<li>移除常数表达式</li>
+<li>做必要的等值传播</li>
+<li>分析和优化 ref 、range 和索引优化等访问数据的方法</li>
+<li>优化关联顺序</li>
+</ul>
+</li>
+</ol>
+<h3 id="6-4-SQL接口的绑定变量"><a href="#6-4-SQL接口的绑定变量" class="headerlink" title="6.4 SQL接口的绑定变量"></a>6.4 SQL接口的绑定变量</h3><p>MySQL 在 4.1 版本中支持了SQL接口的绑定变量，不需要使用二进制传输协议也可以直接以SQL的方式使用绑定变量。</p>
+<p>服务器会将SQL语句翻译，无需使用二进制协议：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> @<span class="keyword">sql</span> := <span class="string">'SELECT actor_id, first_name, last_name FROM actor WHERE first_name = ?'</span>;</span><br><span class="line"><span class="keyword">PREPARE</span> stmt_fetch_actor <span class="keyword">FROM</span> @<span class="keyword">sql</span></span><br><span class="line"><span class="keyword">SET</span> @actor_name := <span class="string">'Penelope'</span></span><br><span class="line"><span class="keyword">EXECUTE</span> stmt_fetch_actor <span class="keyword">USING</span> @actor_name;</span><br><span class="line">DEALLOATE <span class="keyword">PREPARE</span> stmt_fetch_actor;</span><br></pre></td></tr></table></figure>
+<p>这种写法的主要用途是在存储过程中使用，可以灵活的拼接字符串等参数构建SQL语句，除此外相比二进制协议就没什么优势了。</p>
+<p>使用限制：</p>
+<ul>
+<li>绑定变量是会话级别，连接之间不能共用绑定变量句柄。一旦连接断开，原来的句柄也不能使用，使用连接池和持久化连接可以缓解此问题。</li>
+<li>MySQL 5.1 之前版本，绑定变量的SQL不能使用查询缓存。</li>
+<li>只执行一次的SQL，使用绑定变量会多一次额外的准备阶段消耗，和一次额外的网络开销。</li>
+<li>不能在存储函数中使用。</li>
+<li>未释放的绑定变量资源容易造成资源泄露，对所有线程造成影响。</li>
+<li>如BEGIN等操作无法在绑定变量中完成。</li>
+</ul>
+<h3 id="6-5-三种绑定变量的区别"><a href="#6-5-三种绑定变量的区别" class="headerlink" title="6.5 三种绑定变量的区别"></a>6.5 三种绑定变量的区别</h3><ul>
+<li><strong>客户端模拟的绑定变量</strong>：接收一个带参数的SQL，将指定的值带入，最后将完整的查询发送到服务器端。</li>
+<li><strong>服务端的绑定变量</strong>：客户端使用特殊的二进制协议将带参数的字符串发送到服务器端，然后使用二进制协议将具体的参数值发送给服务器端并执行。</li>
+<li><strong>SQL接口的绑定变量</strong>：客户端先发送一个带参数的字符串到服务器，类似于使用PREPARE的SQL语句，然后发送设置参数的SQL，最后使用EXECUTE来执行SQL，使用普通的文本传输协议。</li>
+</ul>
+<h2 id="七-用户自定义函数"><a href="#七-用户自定义函数" class="headerlink" title="七. 用户自定义函数"></a>七. 用户自定义函数</h2><p>暂略。</p>
+<h2 id="八-插件"><a href="#八-插件" class="headerlink" title="八. 插件"></a>八. 插件</h2><p>暂略。</p>
+<h2 id="九-字符集和校对"><a href="#九-字符集和校对" class="headerlink" title="九. 字符集和校对"></a>九. 字符集和校对</h2><p>暂略。</p>
+<h2 id="十-全文索引"><a href="#十-全文索引" class="headerlink" title="十. 全文索引"></a>十. 全文索引</h2><h3 id="10-1-什么是全文索引？"><a href="#10-1-什么是全文索引？" class="headerlink" title="10.1 什么是全文索引？"></a>10.1 什么是全文索引？</h3><ul>
+<li><strong>场景</strong>：如果想要通过关键字的匹配来进行查询过滤，需要基于相似度的查询而不是精确的数据比较，全文索引专为此场景设计。</li>
+<li><strong>支持</strong>：各种字符串内容的搜索，包括CHAR、VARCHAR和TEXT类型，支持自然语言搜索和布尔搜索。</li>
+<li>互联网搜索引擎技术和全文索引基本原理相同。</li>
+</ul>
+<h3 id="10-2-自然语言的全文索引"><a href="#10-2-自然语言的全文索引" class="headerlink" title="10.2 自然语言的全文索引"></a>10.2 自然语言的全文索引</h3><p>该引擎会计算每一个文档对象和查询的相关度，相关度基于匹配的关键词个数，以及关键词在文档中出现的次数。出现次数越少的词语，匹配时的相关度就越高，常见的词语将不会搜索（超过50%的记录都出现），即使不在停用词列表中出现。</p>
+<p>可以根据WHERE子句中的MATCH AGAINST来区分查询是否使用全文索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">INDEX</span> <span class="keyword">FROM</span> film_text;</span><br><span class="line"><span class="comment">--index_type为FULLTEXT，假设两个字段title, description建立了全文索引</span></span><br><span class="line"><span class="keyword">select</span> film_id, title, <span class="keyword">RIGHT</span>(description, <span class="number">25</span>), <span class="keyword">MATCH</span>(title, description) AGAINST(<span class="string">'factory casualties'</span>) <span class="keyword">AS</span> relevance </span><br><span class="line"><span class="keyword">FROM</span> film_text</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">MATCH</span>(title, description) AGAINST(<span class="string">'factory casualties'</span>);</span><br><span class="line"><span class="comment">--MySQL将搜索词语分为两个独立的关键词进行搜索，函数MATCH()会返回关键词匹配的相关度</span></span><br></pre></td></tr></table></figure>
+<p>在MATCH函数中指定的列必须和全文索引指定的列相同，否则无法使用全文索引，因为全文索引不会记录关键字来自哪一列。也意味着无法使用全文索引来查询某个关键字是否在某一列中存在。</p>
+<h3 id="10-3-布尔全文索引"><a href="#10-3-布尔全文索引" class="headerlink" title="10.3 布尔全文索引"></a>10.3 布尔全文索引</h3><p>用户可以在布尔搜索的查询中自定义某个被搜索词语的相关性，通过停用词列表过滤掉“噪声”词，要求搜索关键词长度需要大于 <code>ft_min_word_len</code> 且小于 <code>ft_max_word_len</code> ，搜索结果未经排序。</p>
+<p>通过<strong>前缀修饰符</strong>来定制布尔搜索：</p>
+<ul>
+<li>dinosaur：包含dinosaur的行rank值更高</li>
+<li>~dinosaur：包含dinosaur的行rank值更低</li>
+<li>+dinosaur：行记录必须包含dinosaur</li>
+<li>-dinosaur：行记录不可以包含dinosaur</li>
+<li>dino*：包含以dino开头的单词的行rank值更高</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--查询必须同时包含factory和casualties</span></span><br><span class="line"><span class="keyword">SELECT</span> film_id, title, <span class="keyword">RIGHT</span>(description, <span class="number">25</span>)</span><br><span class="line"><span class="keyword">FROM</span> film_text</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">MATCH</span>(title, description)</span><br><span class="line">AGAINST(<span class="string">'+factory +casualties'</span> <span class="keyword">IN</span> <span class="built_in">BOOLEAN</span> <span class="keyword">MODE</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--查询中使用括号进行短语搜索</span></span><br><span class="line"><span class="keyword">SELECT</span> film_id, title, <span class="keyword">RIGHT</span>(description, <span class="number">25</span>)</span><br><span class="line"><span class="keyword">FROM</span> film_text</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">MATCH</span>(title, description)</span><br><span class="line">AGAINST(<span class="string">'"spirited casualties"'</span> <span class="keyword">IN</span> <span class="built_in">BOOLEAN</span> <span class="keyword">MODE</span>);</span><br></pre></td></tr></table></figure>
+<p>短语搜索较慢，因为单使用全文索引无法判断是否精确匹配到短语，通常还要查询原文确定记录是否包含完整的短语，因为需要回表过滤，所以效率不高。</p>
+<h3 id="10-4-使用限制"><a href="#10-4-使用限制" class="headerlink" title="10.4 使用限制"></a>10.4 使用限制</h3><ul>
+<li>全文索引只能通过词频来判断相关性，索引不会记录索引词在字符串的位置。</li>
+<li>全文索引只有全部在内存中时才有较好的性能，使用精确短语搜索时，需要数据和索引都在内存中。</li>
+<li>全文索引相比其他索引在 INSERT、UPDATE 和 DELETE 操作的代价都很大：<ul>
+<li>修改文本中的100个单词，需要100次索引操作，而不是一次。</li>
+<li>一般情况，列长度不会影响其他索引类型，但对于全文索引，个位数单词文本和10000个单词的文本，性能可能相差几个数量级。</li>
+<li>全文索引有更多碎片，可能需要做更多的 <code>OPTIMIZE TABLE</code> 操作。</li>
+</ul>
+</li>
+<li>全文索引影响优化器：<ul>
+<li>查询中使用了 <code>MATCH AGAINST</code> 子句，对应列有可用的全文索引，这种情况一定会使用全文索引，即使可能有性能更好的其他索引。</li>
+<li>全文索引只能用作全文搜索匹配，任何其他操作，如WHERE条件比较，都需要在MySQL完成全文搜索返回记录后才能进行，普通索引可以在处理WHERE条件时一次判断多个比较表达式。</li>
+<li>全文索引不存储索引列的实际值，索引不能用作索引覆盖扫描。</li>
+<li>除了相关性排序，全文索引不能用于其他排序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="十一-分布式（XA）事务"><a href="#十一-分布式（XA）事务" class="headerlink" title="十一. 分布式（XA）事务"></a>十一. 分布式（XA）事务</h2><h3 id="11-1-MySQL中的XA事务"><a href="#11-1-MySQL中的XA事务" class="headerlink" title="11.1 MySQL中的XA事务"></a>11.1 MySQL中的XA事务</h3><p>存储引擎的事务特性能保证在存储引擎级别实现ACID，分布式事务则可以扩展到数据库层面，以及多个数据库之间。通过<strong>两阶段提交</strong>来实现。</p>
+<p>MySQL 在 5.0 版本支持 XA 事务，XA事务需要有一个事务协调器来保证所有的事务参与者都完成了准备工作（第一阶段）；如果协调器收到所有参与者都准备好的消息，就会告诉事务可以提交了（第二阶段）。MySQL在 XA 事务中的角色是参与者而不是协调者。</p>
+<h3 id="11-2-内部XA事务"><a href="#11-2-内部XA事务" class="headerlink" title="11.2 内部XA事务"></a>11.2 内部XA事务</h3><h4 id="（1）二进制日志在使用XA事务"><a href="#（1）二进制日志在使用XA事务" class="headerlink" title="（1）二进制日志在使用XA事务"></a>（1）二进制日志在使用XA事务</h4><p>MySQL本身的插件式架构导致其内部需要使用XA事务。MySQL中各个存储引擎相互独立，无法感知对方的存在，所以一个跨存储引擎的事务需要一个外部的协调者，否则无法满足ACID。</p>
+<p>存储引擎提交的同时，需要将提交信息写入二进制日志，这就是一个分布式事务，可以把二进制日志操作看作一个独立的存储引擎。</p>
+<h4 id="（2）XA事务影响性能"><a href="#（2）XA事务影响性能" class="headerlink" title="（2）XA事务影响性能"></a>（2）XA事务影响性能</h4><p>XA事务导致MySQL性能大幅下降，直接破坏了MySQL内部的批量提交（一种通过单磁盘I/O操作完成多个事务提交的技术，已有多种解决方案），使得MySQL不得不进行多次额外的 <code>fsync()</code> 调用。</p>
+<p>一个事务若是开启了二进制日志，不仅需要对二进制日志进行持久化操作，InnoDB事务日志还需要两次日志持久化操作。即<strong>二进制日志安全的事务实现需要至少三次 <code>fsync()</code> 操作。</strong></p>
+<h4 id="（3）配置项"><a href="#（3）配置项" class="headerlink" title="（3）配置项"></a>（3）配置项</h4><p>可以通过将 <code>innodb_support_xa</code> 设置为0 关闭二进制日志（复制需要二进制日志和XA事务的支持，所以此设置也会使复制无法使用）。</p>
+<p>将 <code>sync_binlog</code> 设置为1，保证存储引擎和二进制日志是真正同步的。否则事务提交了二进制日志却可能未“提交”到磁盘。</p>
+<h3 id="11-3-外部XA事务"><a href="#11-3-外部XA事务" class="headerlink" title="11.3 外部XA事务"></a>11.3 外部XA事务</h3><p>MySQL能够作为参与者完成一个外部的分布式事务，但其对XA协议的支持还不完整，如当前版本还不支持一个事务中多个连接可以做关联。</p>
+<p>因为通信延迟和参与者本身可能失败，外部XA事务会比内部的消耗更大。对于网络环境不稳定或用户长时间等待而不提交，需要避免使用XA事务，它会影响所有参与者。</p>
+<p>XA事务是一种在多个服务器之间同步数据的方法，不能使用MySQL本身的复制，以及性能非瓶颈时可以尝试使用。</p>
+<h2 id="十二-查询缓存"><a href="#十二-查询缓存" class="headerlink" title="十二. 查询缓存"></a>十二. 查询缓存</h2><h3 id="12-1-什么是查询缓存？"><a href="#12-1-什么是查询缓存？" class="headerlink" title="12.1 什么是查询缓存？"></a>12.1 什么是查询缓存？</h3><p>MySQL可以缓存查询的执行计划，相同类型的SQL可以跳过SQL的解析和执行计划生成阶段；查询缓存是另一种缓存类型，缓存完整的SELECT结果。</p>
+<p>命中查询缓存后会直接返回结果，跳过了解析、优化和执行阶段。</p>
+<p>查询缓存系统会跟踪查询涉及的每张表，当表发生变化会导致相关的缓存数据失效；虽然看起来这种实现比较低效率，因为表变化时未必会导致数据查询结果有变更，但这样的实现代价很小。</p>
+<p>查询缓存对于应用程序来说是完全透明的。</p>
+<h3 id="12-2-谨慎使用查询缓存"><a href="#12-2-谨慎使用查询缓存" class="headerlink" title="12.2 谨慎使用查询缓存"></a>12.2 谨慎使用查询缓存</h3><p>查询缓存是一个影响服务器扩展性的因素，可能会变成整个服务器的资源竞争点，在多核服务器上甚至可能导致服务器僵死。默认建议关闭查询缓存，如果判断查询缓存很有作用，也应该只配置一个较小的查询缓存空间（如几十兆）。</p>
+<h3 id="12-3-MySQL如何判断缓存命中？"><a href="#12-3-MySQL如何判断缓存命中？" class="headerlink" title="12.3 MySQL如何判断缓存命中？"></a>12.3 MySQL如何判断缓存命中？</h3><p>缓存存放在一个引用表中，通过一个哈希值引用，哈希值包括查询本身、当前要查询的数据库、客户端协议的版本等一些其他可能会影响返回结果的信息。</p>
+<p>当判断缓存是否命中时，MySQL不会解析、正规化或参数化查询语句，而是直接使用SQL语句和其他收到的原始信息来判断。<strong>任何字符上的不同，如空格、注释等都会导致缓存不命中</strong>。</p>
+<p>当查询语句中有一些不确定的数据时，不会被缓存。如函数 <code>NOW()</code> 或 <code>CURRENT_DATE()</code> 的查询不会被缓存，以及 <code>CURRENT_USER</code> 或 <code>CONNECTION_ID()</code> 。总结，<strong>查询包含任何用户自定义函数、存储函数、用户变量、临时表、mysql库的系统表，或任何包含列级别权限的表，都不会被缓存</strong>。</p>
+<p>MySQL并不解析SQL，它如何知道查询中含有不确定的函数？MySQL通过一个大小写不敏感的检查确认SQL语句是否以SEL开头。查询缓存是在完整的SELECT语句基础之上，只有在刚收到SQL语句时检查，所以子查询和存储过程都无法使用查询缓存。</p>
+<h3 id="12-4-使用限制"><a href="#12-4-使用限制" class="headerlink" title="12.4 使用限制"></a>12.4 使用限制</h3><ul>
+<li>开启查询缓存会对读写操作都带来额外的消耗：<ul>
+<li>读查询在开始前要检查是否命中缓存；</li>
+<li>读查询可以被缓存，在执行完成后，MySQL检查还未被缓存，会将结果存入查询缓存；</li>
+<li>向某个表写入数据时，MySQL要将相关缓存设置失效。如果查询缓存很大或者碎片很多</li>
+</ul>
+</li>
+<li>对查询缓存操作是一个加锁排他操作。</li>
+<li>事务中修改某表会使对应查询缓存都设置失效，但InnoDB的多版本特性会暂时将这个修改对其他事务屏蔽，此事务提交前，这个表的相关查询无法被缓存，只能在事务提交后才被缓存。因此，长时间运行的事务会大大降低查询缓存的命中率。</li>
+<li>查询缓存可能会使用大量的内存，并且因为操作靠一个全局锁保护，所有需要做该操作的查询都要等待这个锁。</li>
+</ul>
+<h3 id="12-5-查询缓存如何使用内存"><a href="#12-5-查询缓存如何使用内存" class="headerlink" title="12.5 查询缓存如何使用内存"></a>12.5 查询缓存如何使用内存</h3><p>查询缓存全部存储在内存中。除了查询结果，还要存放一些维护相关的数据，类似于文件系统：（大概需要40KB的内存资源）</p>
+<ul>
+<li>确定哪些内存目前可用；</li>
+<li>哪些已经用掉；</li>
+<li>哪些用来存储数据表和查询结果之前的映射；</li>
+<li>哪些用来存储数据表和查询结果之前的映射；</li>
+<li>哪些用来存储查询字符串和查询结果。</li>
+</ul>
+<p>MySQL用于查询缓存的内存被分为一个个的数据块，数据块是变长的。每个数据块存储了自己的类型、大小和数据本身，还外加指向前一个和后一个数据块的指针。</p>
+<p>数据块类型：不同存储块在内存使用上没有不同</p>
+<ul>
+<li>存储查询结果</li>
+<li>存储查询和数据表的映射</li>
+<li>存储查询文本</li>
+</ul>
+<p>使用流程：</p>
+<ul>
+<li>服务器启动时，先初始化查询缓存需要的内存，内存池初始是一个完整的空闲块。空闲块的大小就是所配置查询缓存大小再减去用于维护元数据的数据结构所消耗的空间。</li>
+<li>当有查询结果需要缓存时，MySQL先从大的空间块中申请一个数据块用于存储结果。这个数据块需要大于配置 <code>query_cache_min_res_unit</code> ，即使查询结果远远小于此。因为需要在查询开始返回结果的时候就分配空间，此时是无法预知查询结果有多大，MySQL无法为每个查询结果精确分配空间。</li>
+</ul>
+<p>分配内存块操作很慢，需要先锁住空间块，然后找到合适大小的数据块。当需要缓存一个查询结果时，MySQL先选择一个尽可能小的内存块，然后将结果存入其中。如果数据块全部用完，但仍有数据需要存储，MySQL会申请一块新数据块（尽量小）。查询完成后有剩余会被释放。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010102.png" alt></p>
+<p>上述分配内存块并非指<strong>通过函数 <code>malloc()</code> 向操作系统申请内存</strong>，此操作只在初次创建查询缓存时执行一次。指的是在空闲块列表中找到一个合适的内存块，或者从正在使用的、待淘汰的内存块中回收再使用（MySQL自己管理内存）。</p>
+<p>假设平均查询结果很小，服务器在并发地向不同的两个连接返回结果，返回结果后MySQL回收剩余数据块空间时会发现，回收的数据块小于 <code>query_cache_min_res_unit</code> ，所以不能直接在后续的内存块中分配使用：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010103.png" alt></p>
+<h3 id="12-6-适用场景"><a href="#12-6-适用场景" class="headerlink" title="12.6 适用场景"></a>12.6 适用场景</h3><p>理论上可以通过对比打开和关闭查询缓存的系统效率来判断：关闭查询缓存时，每个查询都需要完整的执行，每次写操作执行完成后立刻返回；打开查询缓存时，每次读请求先检查缓存是否命中，如果命中则立刻返回，否则就完整地执行查询，每次写操作则需要检查查询缓存中是否有需要失效的缓存，然后再返回。</p>
+<p>对于一些需要消耗大量资源的查询通常都适合使用缓存，如汇总计算查询 <code>COUNT()</code> ；较为复杂的SELECT语句，如多表JOIN后还需要做排序和分页，此类查询每次执行消耗都很大，但返回结果集很小，非常适合查询缓存（UPDATE、DELETE 和 INSERT 操作要占比小）。</p>
+<p>一个判断查询缓存是否有效的直接数据是命中率，即使用查询缓存返回结果占总查询的比率。当MySQL接收到一个SELECT查询时，要么增加 <code>Qcache_hits</code> 的值，要么增加 <code>Com_select</code> 的值。计算查询缓存命中率： <code>Qcache_hits / ( Qcache_hits + Com_select )</code> 。命中率多大才合适很难判断，有时即使很低的命中率对于性能提升也有好处。</p>
+<p>缓存未命中的几种可能：</p>
+<ul>
+<li>查询语句无法被缓存，如包含不确定的函数、查询结果太大而无法缓存，都会导致状态值 <code>Qcache_not_cached</code> 增加。</li>
+<li>MySQL从未处理这个查询，所以结果也不曾被缓存过。</li>
+<li>虽然缓存了结果，但由于查询缓存的内存用完，需要将某些缓存移除；或是数据表被修改导致缓存失效。</li>
+<li>大量缓存未命中，但实际上绝大数查询都缓存了：<ul>
+<li>查询缓存还未完成预热；</li>
+<li>查询语句之前从未执行，若应用不会重复执行一条查询语句，即使完成预热仍会有很多缓存未命中；</li>
+<li>缓存失效操作过多。</li>
+</ul>
+</li>
+</ul>
+<p>几种检查方案：</p>
+<ul>
+<li>通过参数 <code>Com_*</code> 来查看数据修改的情况，包括 Com_update，Com_delete等。</li>
+<li>通过 <code>Qcache_lowmem_prunes</code> 来查看有多少次失效是由于内存不足导致的。</li>
+<li>通过查看 <code>Com_select</code> 和 <code>Qcache_inserts</code> 的相对值来查看是否缓存结果未被其他SELECT语句使用。如果每次查询都是缓存未命中，然后需要将查询结果放到缓存中，那么二者值应该相当，所以期望的情况应该是 <code>Qcache_inserts</code> 远远小于 <code>Com_select</code> 。</li>
+<li>更直观的方案：命中和写入的比率，即 <code>Qcache_hits</code> 和 <code>Qcache_inserts</code> 的比值，当结果大于3 : 1时一般表示缓存是有效的，最好是能达到10 : 1。</li>
+</ul>
+<h3 id="12-7-配置和维护"><a href="#12-7-配置和维护" class="headerlink" title="12.7 配置和维护"></a>12.7 配置和维护</h3><p>配置参数：</p>
+<ul>
+<li>query_cache_type：是否打开查询缓存，有 OFF、ON或DEMAND，DEMAND表示只有在查询语句中明确写明SQL_CACHE的语句才放入查询缓存。</li>
+<li>query_cache_size：查询缓存使用的总内存空间，单位为字节，必须是1024的整数倍。</li>
+<li>query_cache_min_res_unit：在查询缓存中分配内存块时的最小单位。</li>
+<li>query_cache_limit：MySQL能缓存的最大查询结果，超过此值不会被缓存，只有结果全部返回时才能知道是否超出限制。</li>
+<li>query_cache_wlock_invalidate：某个表被其他连接锁住，是否依然可以从查询缓存中返回结果。</li>
+</ul>
+<p>如何减少碎片：暂略。</p>
+<p>提供查询缓存的使用率：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210201/202102010104.png" alt></p>
+<hr>
+<p>参考：</p>
+<p>🔗 《高性能MySQL》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2021020101.html" title="《高性能MySQL》（六）高级特性">http://linyishui.top/2021020101.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020122901.html" rel="next" title="《高性能MySQL》（五）查询性能优化">
+                <i class="fa fa-chevron-left"></i> 《高性能MySQL》（五）查询性能优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">305</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（六）高级特性"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（六）高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-分区表"><span class="nav-number">1.1.</span> <span class="nav-text">一. 分区表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是分区表？"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 什么是分区表？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-使用场景"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-使用限制"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 使用限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-实现原理"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.4 实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-分区表的类型"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.5 分区表的类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-合理使用分区表"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.6 合理使用分区表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-常见问题"><span class="nav-number">1.1.7.</span> <span class="nav-text">1.7 常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-8-优化查询"><span class="nav-number">1.1.8.</span> <span class="nav-text">1.8 优化查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-9-合并表"><span class="nav-number">1.1.9.</span> <span class="nav-text">1.9 合并表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-视图"><span class="nav-number">1.2.</span> <span class="nav-text">二. 视图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-什么是视图？"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 什么是视图？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-视图的两种实现算法"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 视图的两种实现算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-可更新视图"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 可更新视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-视图对性能的影响"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 视图对性能的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-使用视图的一些限制"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 使用视图的一些限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-外键约束"><span class="nav-number">1.3.</span> <span class="nav-text">三. 外键约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-在MySQL内部存储代码"><span class="nav-number">1.4.</span> <span class="nav-text">四. 在MySQL内部存储代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-存储代码的方式"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 存储代码的方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-存储代码的优缺点"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 存储代码的优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-存储过程和函数"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 存储过程和函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-触发器"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-1-什么是触发器？"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">4.4.1 什么是触发器？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-2-使用注意"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">4.4.2 使用注意</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-事件"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-游标"><span class="nav-number">1.5.</span> <span class="nav-text">五. 游标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-绑定变量"><span class="nav-number">1.6.</span> <span class="nav-text">六. 绑定变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-什么是绑定变量？"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 什么是绑定变量？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-绑定变量为何能提高性能？"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 绑定变量为何能提高性能？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-优化"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-SQL接口的绑定变量"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 SQL接口的绑定变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-三种绑定变量的区别"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 三种绑定变量的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七-用户自定义函数"><span class="nav-number">1.7.</span> <span class="nav-text">七. 用户自定义函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八-插件"><span class="nav-number">1.8.</span> <span class="nav-text">八. 插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#九-字符集和校对"><span class="nav-number">1.9.</span> <span class="nav-text">九. 字符集和校对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十-全文索引"><span class="nav-number">1.10.</span> <span class="nav-text">十. 全文索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-什么是全文索引？"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 什么是全文索引？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-自然语言的全文索引"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 自然语言的全文索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-布尔全文索引"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 布尔全文索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-4-使用限制"><span class="nav-number">1.10.4.</span> <span class="nav-text">10.4 使用限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十一-分布式（XA）事务"><span class="nav-number">1.11.</span> <span class="nav-text">十一. 分布式（XA）事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#11-1-MySQL中的XA事务"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 MySQL中的XA事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-2-内部XA事务"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 内部XA事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）二进制日志在使用XA事务"><span class="nav-number">1.11.2.1.</span> <span class="nav-text">（1）二进制日志在使用XA事务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）XA事务影响性能"><span class="nav-number">1.11.2.2.</span> <span class="nav-text">（2）XA事务影响性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）配置项"><span class="nav-number">1.11.2.3.</span> <span class="nav-text">（3）配置项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-3-外部XA事务"><span class="nav-number">1.11.3.</span> <span class="nav-text">11.3 外部XA事务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十二-查询缓存"><span class="nav-number">1.12.</span> <span class="nav-text">十二. 查询缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-什么是查询缓存？"><span class="nav-number">1.12.1.</span> <span class="nav-text">12.1 什么是查询缓存？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-谨慎使用查询缓存"><span class="nav-number">1.12.2.</span> <span class="nav-text">12.2 谨慎使用查询缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-MySQL如何判断缓存命中？"><span class="nav-number">1.12.3.</span> <span class="nav-text">12.3 MySQL如何判断缓存命中？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-4-使用限制"><span class="nav-number">1.12.4.</span> <span class="nav-text">12.4 使用限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-5-查询缓存如何使用内存"><span class="nav-number">1.12.5.</span> <span class="nav-text">12.5 查询缓存如何使用内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-6-适用场景"><span class="nav-number">1.12.6.</span> <span class="nav-text">12.6 适用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-7-配置和维护"><span class="nav-number">1.12.7.</span> <span class="nav-text">12.7 配置和维护</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

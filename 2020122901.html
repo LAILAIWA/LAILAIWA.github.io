@@ -88,19 +88,28 @@
 
 
 
-<meta name="description" content="《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问等。">
+<meta name="description" content="《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问，查询执行的基础，查询优化器等。">
 <meta name="keywords" content="mysql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《高性能MySQL》（五）查询性能优化">
 <meta property="og:url" content="http://linyishui.top/2020122901.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问等。">
+<meta property="og:description" content="《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问，查询执行的基础，查询优化器等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012280108.png">
-<meta property="og:updated_time" content="2020-12-29T12:31:26.849Z">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030106.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101210101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101210102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101210103.png">
+<meta property="og:updated_time" content="2021-03-03T13:14:01.797Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《高性能MySQL》（五）查询性能优化">
-<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问等。">
+<meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问，查询执行的基础，查询优化器等。">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012280108.png">
 
 
@@ -429,7 +438,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,026
+                  6,544
                 </span>
               
 
@@ -445,7 +454,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  25
                 </span>
               
             </div>
@@ -453,7 +462,7 @@
 
           
               <div class="post-description">
-                  《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问等。
+                  《高性能MySQL》读书笔记，内容：为什么查询速度会慢，优化数据访问，查询执行的基础，查询优化器等。
               </div>
           
 
@@ -470,8 +479,8 @@
       
 
       
-        <h1 id="《高性能MySQL》（五）查询性能优化"><a href="#《高性能MySQL》（五）查询性能优化" class="headerlink" title="《高性能MySQL》（五）查询性能优化"></a>《高性能MySQL》（五）查询性能优化</h1><h2 id="一-为什么查询速度会慢"><a href="#一-为什么查询速度会慢" class="headerlink" title="一. 为什么查询速度会慢"></a>一. 为什么查询速度会慢</h2><p>查询优化、索引优化、库表结构优化需要齐头并进。</p>
-<p>查询是一项任务，由一系列子任务组成，每个子任务都要消耗一定时间，优化查询就是要么消除一部分子任务、要么减少子任务的执行次数、要么提供子任务的执行速度。</p>
+        <h1 id="《高性能MySQL》（五）查询性能优化"><a href="#《高性能MySQL》（五）查询性能优化" class="headerlink" title="《高性能MySQL》（五）查询性能优化"></a>《高性能MySQL》（五）查询性能优化</h1><p>查询优化、索引优化、库表结构优化需要齐头并进。</p>
+<h2 id="一-为什么查询速度会慢"><a href="#一-为什么查询速度会慢" class="headerlink" title="一. 为什么查询速度会慢"></a>一. 为什么查询速度会慢</h2><p>查询是一项任务，由一系列子任务组成，每个子任务都要消耗一定时间，优化查询就是要么消除一部分子任务、要么减少子任务的执行次数、要么提供子任务的执行速度。</p>
 <p>查询的生命周期大致包括：从客户端、到服务器、服务器进行解析、生成执行计划、执行、返回结果给客户端。其中执行是最重要的阶段，包括大量检索数据到存储引擎以及后续数据处理，如排序、分组等。</p>
 <p>查询会在如网络、CPU计算、生成统计信息和执行计划、锁等待（互斥等待）等操作上花费时间。慢查询普遍都会存在如操作被额外的重复执行了多次、某些操作执行的太慢等问题。</p>
 <h2 id="二-优化数据访问"><a href="#二-优化数据访问" class="headerlink" title="二. 优化数据访问"></a>二. 优化数据访问</h2><p>大部分性能低下的查询都可以通过减少访问的数据量来优化：</p>
@@ -530,7 +539,7 @@
 <li>能够使用 <code>IN()</code> 代替关联查询时；</li>
 <li>当查询中使用同一个数据表时。</li>
 </ul>
-<h3 id="2-4-查询执行的基础"><a href="#2-4-查询执行的基础" class="headerlink" title="2.4 查询执行的基础"></a>2.4 查询执行的基础</h3><h4 id="2-4-1-一个查询在MySQL中的执行过程"><a href="#2-4-1-一个查询在MySQL中的执行过程" class="headerlink" title="2.4.1 一个查询在MySQL中的执行过程"></a>2.4.1 一个查询在MySQL中的执行过程</h4><p>MySQL执行一个查询的过程：</p>
+<h2 id="三-查询执行的基础"><a href="#三-查询执行的基础" class="headerlink" title="三. 查询执行的基础"></a>三. 查询执行的基础</h2><h3 id="3-1-一个查询在MySQL中的执行过程"><a href="#3-1-一个查询在MySQL中的执行过程" class="headerlink" title="3.1 一个查询在MySQL中的执行过程"></a>3.1 一个查询在MySQL中的执行过程</h3><p>MySQL执行一个查询的过程：</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012280108.png" alt></p>
 <ol>
 <li>客户端发送一条查询给服务器。</li>
@@ -539,9 +548,177 @@
 <li>根据执行计划调用存储引擎的API来执行查询。</li>
 <li>将结果返回客户端。</li>
 </ol>
-<h4 id="2-4-2-MySQL-客户端-服务器通信协议"><a href="#2-4-2-MySQL-客户端-服务器通信协议" class="headerlink" title="2.4.2 MySQL 客户端 / 服务器通信协议"></a>2.4.2 MySQL 客户端 / 服务器通信协议</h4><p>MySQL 客户端 / 服务器通信协议是<strong>半双工协议</strong>，即要么服务器向客户端发送数据、要么客户端向服务器发送数据，两个动作不能同时发生。</p>
+<h3 id="3-2-MySQL-客户端-服务器通信协议"><a href="#3-2-MySQL-客户端-服务器通信协议" class="headerlink" title="3.2 MySQL 客户端 / 服务器通信协议"></a>3.2 MySQL 客户端 / 服务器通信协议</h3><p>MySQL 客户端 / 服务器通信协议是<strong>半双工协议</strong>，即要么服务器向客户端发送数据、要么客户端向服务器发送数据，两个动作不能同时发生。</p>
 <p>优点是通信简单快速，缺点是无法进行流量控制。一方一旦开始发送消息，另一方只能接收完整消息后才能进行响应。一方不能使另一方停止，MySQL一般要等所有数据都发送给客户端后才能释放查询所占用的资源，所以客户端缓存数据可以减轻服务器压力，让查询尽快结束早点释放资源。</p>
-<p>未完待续…</p>
+<p>查看MySQL连接/线程的状态：<code>SHOW FULL PROCESSLIST</code> </p>
+<ul>
+<li>Sleep：线程正在等待客户端发送新的请求。</li>
+<li>Query：线程正在执行查询或正在将结果发送给客户端。</li>
+<li>Locked：在MySQL服务器层，该线程正在等待表锁；存储引擎级别的锁（如行锁）不会体现在线程状态。</li>
+<li>Analyzing and statistics：线程正在收集存储引擎的统计信息，并生成查询的执行计划。</li>
+<li>Copying to tmp table [on disk]：线程正在执行查询，并将结果集都复制到一个临时表中，一般是在做GROUP BY操作、文件排序、UNION操作等；on disk表示正在将一个内存表放到磁盘。</li>
+<li>Sorting result：线程正在对结果集进行排序。</li>
+<li>Sending data：线程可能在多个状态间传送数据、或者生成结果集、或者在向客户端返回数据。</li>
+</ul>
+<h3 id="3-3-查询优化处理"><a href="#3-3-查询优化处理" class="headerlink" title="3.3 查询优化处理"></a>3.3 查询优化处理</h3><p>查询的生命周期中下一步是<strong>将一个SQL转换为一个执行计划</strong>，MySQL按照执行计划和存储引擎交互：</p>
+<ul>
+<li><strong>解析SQL</strong>：MySQL通过关键字将SQL语句进行解析，生成一棵解析树，通过MySQL语法规则进行验证和解析查询（如关键字是否正确、顺序是否正确、引号前后是否匹配）。</li>
+<li><strong>预处理</strong>：根据一些MySQL规则进一步检查解析树是否合法（数据表和列是否存在、名字或别名是否有歧义），验证权限。</li>
+<li><strong>优化SQL执行计划</strong></li>
+</ul>
+<p><strong>查询优化器</strong>：MySQL使用基于成本的优化器，预测一个查询使用某种执行计划时的成本并选择最小的一个。</p>
+<p>导致优化器选择错误执行计划的原因：</p>
+<ul>
+<li>统计信息不准确，评估成本依赖存储引擎提供的统计信息，有时信息的偏差会很大，如MVCC架构并不维护数据表行数的精确统计。</li>
+<li>执行计划的成本估算并不等价于实际执行的成本，如读取的页面可能在内存或磁盘，具体要多少次物理I/O无法得知。</li>
+<li>MySQL的最优并不一定是最快的执行方式，只是基于成本模型的最优计划。</li>
+<li>MySQL并不考虑其他并发执行的查询。</li>
+<li>MySQL并不考虑不受控制的操作的成本，如存储过程或自定义函数。</li>
+<li>有些特殊情况并不基于成本选择优化，如全文搜索的 <code>MATCH()</code> 子句，存在全文索引就会使用，即使有时别的索引和WHERE条件会更快。</li>
+</ul>
+<p>优化器的优化策略：</p>
+<ul>
+<li>静态优化：直接对解析树进行分析，并完成优化。</li>
+<li>动态优化：与查询的上下文或其他因素有关，如WHERE条件取值、索引中条目对应的数据行数等，需要每次查询时重新评估。</li>
+</ul>
+<p>能够优化的类型：</p>
+<ul>
+<li>重新定义关联表的顺序</li>
+<li>将外连接转化为内连接</li>
+<li>使用等价变换规则</li>
+<li>优化 <code>COUNT()</code> 、<code>MIN()</code> 和 <code>MAX()</code> ，找到某一列最小值只需查询对应B-Tree索引最左端的记录，使用此类优化在EXPLAIN中会出现 <code>Select tables optimized away</code> 表示优化器从执行计划中移除该表，用一个常数取代。</li>
+<li>预估并转化为常数表达式</li>
+<li>覆盖索引扫描</li>
+<li>子查询优化</li>
+<li>提前终止查询</li>
+<li>等值传播</li>
+<li>列表 <code>IN()</code> 的比较</li>
+</ul>
+<h3 id="3-4-MySQL如何执行关联查询"><a href="#3-4-MySQL如何执行关联查询" class="headerlink" title="3.4 MySQL如何执行关联查询"></a>3.4 MySQL如何执行关联查询</h3><h4 id="3-4-1-MySQL中的关联查询"><a href="#3-4-1-MySQL中的关联查询" class="headerlink" title="3.4.1 MySQL中的关联查询"></a>3.4.1 MySQL中的关联查询</h4><p>MySQL中每个查询都是一次关联。比如对于UNION查询，MySQL先将一系列单个查询的结果放在一个临时表中，然后再重新读出临时表数据完成UNION查询。</p>
+<p>MySQL中关联查询流程：</p>
+<ul>
+<li>MySQL对任何关联都执行嵌套循环关联操作，即MySQL先在一个表中循环取出单条数据，然后再嵌套循环到下一个表中寻找匹配的行，依次下去直到找到所有表中匹配的行为止。</li>
+<li>然后根据各个表匹配的行，返回查询中需要的各个列。</li>
+<li>MySQL会尝试在最后一个关联表中找到所有匹配的行，如果最后一个关联表无法找到更多的行，返回到上一层关联表继续查找更多匹配的记录，依次迭代执行。</li>
+</ul>
+<p>关联操作1如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> tab1.col1, tab2.col2</span><br><span class="line"><span class="keyword">FROM</span> tab1 <span class="keyword">INNER</span> <span class="keyword">JOIN</span> tab2 <span class="keyword">USING</span>(col3)</span><br><span class="line"><span class="keyword">WHERE</span> tab1.col1 <span class="keyword">IN</span>(<span class="number">5</span>, <span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+<p>伪代码如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030101.png" alt></p>
+<p>关联操作2如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> tab1.col1, tab2.col2</span><br><span class="line"><span class="keyword">FROM</span> tab1 <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> tab2 <span class="keyword">USING</span>(col3)</span><br><span class="line"><span class="keyword">WHERE</span> tab1.col1 <span class="keyword">IN</span>(<span class="number">5</span>, <span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+<p>伪代码如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030102.png" alt></p>
+<p>关联操作1的内连接使用泳道图表示：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030103.png" alt></p>
+<h4 id="3-4-2-执行计划"><a href="#3-4-2-执行计划" class="headerlink" title="3.4.2 执行计划"></a>3.4.2 执行计划</h4><p>MySQL并不像其他关系型数据库那样生成查询字节码来执行查询，而是<strong>生成查询的一棵指令树</strong>，最终的执行计划包含了重构查询的全部信息。</p>
+<p>对某个查询执行 <code>EXPLAIN EXTENDED</code> ，然后再执行 <code>SHOW WARNINGS</code> 可以看到重构出的查询。</p>
+<p>任意多表查询都可以使用一棵树表示，如下图为一个四表关联操作：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030104.png" alt></p>
+<p>上图这种平衡树并非MySQL执行查询的方式，MySQL总是从一个表开始嵌套循环、回溯完成所有表关联，所以是下图这种<strong>左侧深度优先树</strong>：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030105.png" alt></p>
+<h4 id="3-4-3-关联查询优化器"><a href="#3-4-3-关联查询优化器" class="headerlink" title="3.4.3 关联查询优化器"></a>3.4.3 关联查询优化器</h4><p>关联查询优化是优化器最重要的部分，决定多个表关联的顺序。优化器通过评估不同顺序的成本选择一个代价最小的关联顺序。</p>
+<p>有时优化器选择的并非一定是最优顺序，此时可以使用 <code>STRAIGHT_JOIN</code> 关键字重写查询，让优化器按指定顺序执行，绝大部分情况优化器的判断要比开发者精准。</p>
+<p>优化器如何计算成本：</p>
+<ul>
+<li>一般会遍历每个表逐个做嵌套循环计算每一棵执行计划树的成本。</li>
+<li>但如果有超过N个表关联，需要检查N的阶乘种关联顺序；比如N=10时就有3628800种关联顺序，过多的可能导致优化器不可能逐一评估每种顺序的成本；</li>
+<li>当搜索空间特别大时，优化器选择贪婪搜索方式，而非逐个评估。</li>
+</ul>
+<h3 id="3-5-排序优化"><a href="#3-5-排序优化" class="headerlink" title="3.5 排序优化"></a>3.5 排序优化</h3><ul>
+<li>无论怎样，排序都是一个成本很高的操作，在不能使用索引排序时，数据量小的排序会在内存中进行，数据量大时需要使用磁盘；</li>
+<li>判断条件是需要排序的数据量是否小于<strong>排序缓冲区</strong>；</li>
+<li>内存中直接使用快速排序；内存不够排序，先将数据分块，每个块进行快速排序，结果存放在磁盘，然后将排好序的各个块合并，并返回最终结果。</li>
+<li>在关联查询时如果需要排序，MySQL分两种情况来处理：<ul>
+<li>ORDER BY 子句中所有列都来自于关联的第一个表，MySQL在处理第一个表时就进行文件排序，这种情况EXPLAIN 的 Extra 字段会有 <code>Using filesort</code> ；</li>
+<li>其他情况下，MySQL都会将关联的结果放到一个临时表中，然后在所有的关联结束后再进行文件排序，这种情况EXPLAIN 的 Extra 字段会有 <code>Using temporary; Using filesort</code> ；查询中有LIMIT会在排序后应用，MySQL 5.6 版本后，当只需返回部分排序结果时不会对所有结果进行排序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="四-查询优化器"><a href="#四-查询优化器" class="headerlink" title="四. 查询优化器"></a>四. 查询优化器</h2><h3 id="4-1-查询优化器的局限性"><a href="#4-1-查询优化器的局限性" class="headerlink" title="4.1 查询优化器的局限性"></a>4.1 查询优化器的局限性</h3><h4 id="4-1-1-关联子查询"><a href="#4-1-1-关联子查询" class="headerlink" title="4.1.1 关联子查询"></a>4.1.1 关联子查询</h4><p>MySQL子查询十分糟糕，特别是WHERE条件包含 <code>IN()</code> 的子查询语句。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> film </span><br><span class="line"><span class="keyword">WHERE</span> film_id <span class="keyword">IN</span>(</span><br><span class="line">	<span class="keyword">SELECT</span> film_id <span class="keyword">FROM</span> film_actor <span class="keyword">WHERE</span> actor_id = <span class="number">1</span>);</span><br><span class="line"><span class="comment">--MySQL会先执行子查询，返回所有actor_id = 1的film_id，所以我们会认为会如下执行：</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> film </span><br><span class="line"><span class="keyword">WHERE</span> film_id <span class="keyword">IN</span>(XXX, XXX, ......, XXX);</span><br><span class="line"><span class="comment">--但实际上，MySQL会将外层表压到子查询中，因为它认为这样可以更快的找到数据行：</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> film </span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">EXISTS</span>(</span><br><span class="line">	<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> film_actor <span class="keyword">WHERE</span> actor_id = <span class="number">1</span> <span class="keyword">AND</span> film.film_id = film_actor.film_id);</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101030106.png" alt></p>
+<p>MySQL选择先对file表进行全表扫描，根据返回的film_id逐个执行子查询，当数据量大时这种执行性能会很糟糕，所以我们可以改写查询如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--使用内连接代替IN子查询：</span></span><br><span class="line"><span class="keyword">SELECT</span> film.* <span class="keyword">FROM</span> film </span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> film_actor <span class="keyword">USING</span>(film_id)</span><br><span class="line"><span class="keyword">WHERE</span> actor_id = <span class="number">1</span>;</span><br><span class="line"><span class="comment">--使用函数GROUP_CONCAT拼接一个逗号分隔的列表：</span></span><br><span class="line">（省略）</span><br></pre></td></tr></table></figure>
+<h4 id="4-1-2-UNION取LIMIT时内外层优化"><a href="#4-1-2-UNION取LIMIT时内外层优化" class="headerlink" title="4.1.2 UNION取LIMIT时内外层优化"></a>4.1.2 UNION取LIMIT时内外层优化</h4><p>有时我们希望对UNION的结果集只获取前N条记录，可以在每个子句中添加LIMIT，为了保证获取正确的顺序，需要在外层再增加一个全局的 ORDER BY 和 LIMIT 操作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">SELECT</span> a,b <span class="keyword">FROM</span> xx1 <span class="keyword">ORDER</span> <span class="keyword">BY</span> a)</span><br><span class="line"><span class="keyword">UNION</span> ALL</span><br><span class="line">(<span class="keyword">SELECT</span> a,b <span class="keyword">FROM</span> xx2 <span class="keyword">ORDER</span> <span class="keyword">BY</span> a)</span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">20</span></span><br><span class="line"><span class="comment">-- 改写为</span></span><br><span class="line">(<span class="keyword">SELECT</span> a,b <span class="keyword">FROM</span> xx1 <span class="keyword">ORDER</span> <span class="keyword">BY</span> a <span class="keyword">LIMIT</span> <span class="number">20</span>)</span><br><span class="line"><span class="keyword">UNION</span> ALL</span><br><span class="line">(<span class="keyword">SELECT</span> a,b <span class="keyword">FROM</span> xx2 <span class="keyword">ORDER</span> <span class="keyword">BY</span> a <span class="keyword">LIMIT</span> <span class="number">20</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> a</span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="4-1-3-索引合并优化"><a href="#4-1-3-索引合并优化" class="headerlink" title="4.1.3 索引合并优化"></a>4.1.3 索引合并优化</h4><p>WHERE子句包含多个复杂条件时，MySQL可以访问单个表的多个索引以合并和交叉过滤的方式来定位需要查找的行。</p>
+<h4 id="4-1-4-等值传递"><a href="#4-1-4-等值传递" class="headerlink" title="4.1.4 等值传递"></a>4.1.4 等值传递</h4><p>如一个非常大的 <code>IN()</code> 列表，优化器发现有WHERE、ON或USING的子句，将这个列表的值和另外一个表的某个列关联。优化器会将列表都复制应用到关联的各个表中，列表特别大会导致无法高效的从表中过滤记录。</p>
+<h4 id="4-1-5-并行执行"><a href="#4-1-5-并行执行" class="headerlink" title="4.1.5 并行执行"></a>4.1.5 并行执行</h4><p>MySQL无法利用多核来并行执行查询。</p>
+<h4 id="4-1-6-哈希关联"><a href="#4-1-6-哈希关联" class="headerlink" title="4.1.6 哈希关联"></a>4.1.6 哈希关联</h4><p>MySQL只支持嵌套循环关联，只能通过建立哈希索引来变相的实现哈希关联</p>
+<h4 id="4-1-7-松散索引扫描"><a href="#4-1-7-松散索引扫描" class="headerlink" title="4.1.7 松散索引扫描"></a>4.1.7 松散索引扫描</h4><p>MySQL不支持松散索引扫描，无法按照不连续的方式扫描一个索引。假设有索引 <code>(A,B)</code> 查询 <code>SELECT ... FROM TB WHERE B BETWEEN 2 AND 3</code> 因为索引前导字段是A，但查询只指定了B，所以无法使用索引，只能全表扫描。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101210101.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101210102.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210101/202101210103.png" alt></p>
+<h4 id="4-1-8-最大值和最小值优化"><a href="#4-1-8-最大值和最小值优化" class="headerlink" title="4.1.8 最大值和最小值优化"></a>4.1.8 最大值和最小值优化</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">MIN</span>(actor_id) <span class="keyword">FROM</span> actor <span class="keyword">WHERE</span> first_name = <span class="string">'XX'</span>;</span><br><span class="line"><span class="comment">--因为first_name并没有索引，所以MySQL会进行一次全表扫描，通过SHOW STATUS确认</span></span><br><span class="line"><span class="keyword">FLUSH</span> <span class="keyword">STATUS</span>;</span><br><span class="line"><span class="keyword">SELECT</span> ...;</span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">STATUS</span>;</span><br><span class="line"><span class="comment">--优化：使用LIMIT重写</span></span><br><span class="line"><span class="keyword">SELECT</span> actor_id <span class="keyword">FROM</span> actor <span class="keyword">USE</span> <span class="keyword">INDEX</span>(PRIMARY) <span class="keyword">WHERE</span> first_name = <span class="string">'XX'</span> <span class="keyword">LIMIT</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-查询优化器的提示"><a href="#4-2-查询优化器的提示" class="headerlink" title="4.2 查询优化器的提示"></a>4.2 查询优化器的提示</h3><p>暂略。</p>
+<h3 id="4-3-优化特定类型的查询"><a href="#4-3-优化特定类型的查询" class="headerlink" title="4.3 优化特定类型的查询"></a>4.3 优化特定类型的查询</h3><h4 id="4-3-1-优化COUNT"><a href="#4-3-1-优化COUNT" class="headerlink" title="4.3.1 优化COUNT()"></a>4.3.1 优化COUNT()</h4><p>COUNT(*) 统计结果集的行数，COUNT(row) 统计某个列值的数量，二者含义不同。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--一个查询统计不同颜色</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">SUM</span>(<span class="keyword">IF</span>(color = <span class="string">'blue'</span>, <span class="number">1</span>, <span class="number">0</span>)) <span class="keyword">AS</span> blue, <span class="keyword">SUM</span>(<span class="keyword">IF</span>(color = <span class="string">'red'</span>, <span class="number">1</span>, <span class="number">0</span>)) <span class="keyword">AS</span> red <span class="keyword">FROM</span> items;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">COUNT</span>(color = <span class="string">'blue'</span> <span class="keyword">OR</span> <span class="literal">NULL</span>) <span class="keyword">AS</span> blue, <span class="keyword">COUNT</span>(color = <span class="string">'red'</span> <span class="keyword">OR</span> <span class="literal">NULL</span>) <span class="keyword">AS</span> red <span class="keyword">FROM</span> items;</span><br></pre></td></tr></table></figure>
+<p>不需要精确值时可以使用近似值代替，比如EXPLAIN的估算行数。</p>
+<p>COUNT() 一般都需要扫描大量的数据行才能获得精确的结果，只能加索引覆盖扫描，如果这样还不能解决性能问题，只能考虑修改应用的架构，比如增加汇总表 / 缓存系统等。</p>
+<h4 id="4-3-2-优化关联查询"><a href="#4-3-2-优化关联查询" class="headerlink" title="4.3.2 优化关联查询"></a>4.3.2 优化关联查询</h4><ul>
+<li>确保ON或USING子句的列上有索引，创建索引时要考虑关联的顺序，当表A和B用列c关联，若优化器的关联顺序的B、A，那么B表就不需要创建索引，<strong>一般关联只需在关联顺序的第二张表对应列上创建索引</strong>。</li>
+<li>确保任何的GROUP BY和ORDER BY中的表达式只涉及到一个表中的列，这样MySQL才有可能使用索引来优化这个过程。</li>
+<li>升级MySQL时注意关联语法、运算符优先级等其他可能会发生变化的地方，普通关联可能会变成笛卡尔积，不同类型的关联可能会生成不同的结果。</li>
+</ul>
+<h4 id="4-3-3-优化子查询"><a href="#4-3-3-优化子查询" class="headerlink" title="4.3.3 优化子查询"></a>4.3.3 优化子查询</h4><p>尽可能用关联查询代替子查询。</p>
+<h4 id="4-3-4-优化GROUP-BY和DISTINCT"><a href="#4-3-4-优化GROUP-BY和DISTINCT" class="headerlink" title="4.3.4 优化GROUP BY和DISTINCT"></a>4.3.4 优化GROUP BY和DISTINCT</h4><p>MySQL优化器会在内部处理时相互转换这两类查询，使用索引来优化；若索引无法使用，GROUP BY 会使用<strong>临时表</strong>或<strong>文件排序</strong>来做分组。</p>
+<p>对关联查询做分组，并且按照查找表中的某个列进行分组，采用查找表的标识列效率会较高：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--效率差</span></span><br><span class="line"><span class="keyword">SELECT</span> actor.first_name,actor.last_name, <span class="keyword">count</span>(*)</span><br><span class="line"><span class="keyword">FROM</span> film_actor</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> actor <span class="keyword">USING</span>(actor_id)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> actor.first_name,actor.last_name</span><br><span class="line"><span class="comment">--效率高</span></span><br><span class="line"><span class="keyword">SELECT</span> actor.first_name,actor.last_name, <span class="keyword">count</span>(*)</span><br><span class="line"><span class="keyword">FROM</span> film_actor</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> actor <span class="keyword">USING</span>(actor_id)</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> actor.actor_id</span><br><span class="line"><span class="comment">--这种写法只是在姓名和actor_id直接关联的情况下可以这样用，且有一些问题</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-3-5-优化LIMIT分页"><a href="#4-3-5-优化LIMIT分页" class="headerlink" title="4.3.5 优化LIMIT分页"></a>4.3.5 优化LIMIT分页</h4><p>分页操作：使用LIMIT加偏移量实现，加上合适的ORDER BY子句。</p>
+<p>偏移量非常大时，比如 LIMIT 10000,20 只返回20条数据抛弃前面10000条记录。优化要么在页面中限制分页的数量，要么优化大偏移量的性能。</p>
+<ul>
+<li><p><strong>延迟关联</strong>：最简单就是使用索引覆盖扫描，而不是返回所有列。然后根据需要再做一次关联操作返回所有列，这种改法对于偏移量大的情况效率提升比较高。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> film_id,description <span class="keyword">FROM</span> film <span class="keyword">ORDER</span> <span class="keyword">BY</span> title <span class="keyword">LIMIT</span> <span class="number">50</span>,<span class="number">5</span>;</span><br><span class="line"><span class="comment">--优化为：</span></span><br><span class="line"><span class="keyword">SELECT</span> film.film_id, film.description </span><br><span class="line"><span class="keyword">FROM</span> film</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span>(<span class="keyword">SELECT</span> film_id <span class="keyword">FROM</span> film <span class="keyword">ORDER</span> <span class="keyword">BY</span> title <span class="keyword">LIMIT</span> <span class="number">50</span>,<span class="number">5</span>) <span class="keyword">AS</span> lim <span class="keyword">USING</span>(film_id)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>LIMIT可以转换为已知位置的查询</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--上述查询可改为：</span></span><br><span class="line"><span class="keyword">SELECT</span> film_id, description </span><br><span class="line"><span class="keyword">FROM</span> film</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">position</span> <span class="keyword">BETWEEN</span> <span class="number">50</span> <span class="keyword">TO</span> <span class="number">54</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">position</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>LIMIT查询主要问题是OFFSET会导致MySQL扫描大量不需要的行并且丢弃掉，可以记录上次取数据的位置，下次直接从该位置开始扫描：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--第一次查询，返回主键为16049到16030的租借记录</span></span><br><span class="line"><span class="keyword">SELECT</span> * </span><br><span class="line"><span class="keyword">FROM</span> rental</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> rental_id <span class="keyword">DESC</span> <span class="keyword">LIMIT</span> <span class="number">20</span>;</span><br><span class="line"><span class="comment">--下次查询直接从16030开始</span></span><br><span class="line"><span class="keyword">SELECT</span> * </span><br><span class="line"><span class="keyword">FROM</span> rental</span><br><span class="line"><span class="keyword">WHERE</span> rental_id &lt; <span class="number">16030</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> rental_id <span class="keyword">DESC</span> <span class="keyword">LIMIT</span> <span class="number">20</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="4-3-6-优化-SQL-CALC-FOUND-ROWS"><a href="#4-3-6-优化-SQL-CALC-FOUND-ROWS" class="headerlink" title="4.3.6 优化 SQL_CALC_FOUND_ROWS"></a>4.3.6 优化 SQL_CALC_FOUND_ROWS</h4><p>分页的一个常用技巧是<strong>在LIMIT语句中加上SQL_CALC_FOUND_ROWS提示</strong>，从而获得去掉LIMIT以后满足条件的行数，作为分页的总数，好像是MySQL预测到了总行数，但实际上MySQL需要扫描扫描所有满足条件的行来得到行数。</p>
+<p>所以添加此提示后，不管是否需要，MySQL都会扫描所有满足条件的行，而不是满足LIMIT的行数后就终止扫描。</p>
+<h4 id="4-3-7-优化-UNION-查询"><a href="#4-3-7-优化-UNION-查询" class="headerlink" title="4.3.7 优化 UNION 查询"></a>4.3.7 优化 UNION 查询</h4><p>MySQL总是会通过创建并填充临时表的方式来执行 UNION 查询，所以导致很多优化策略受限（经常要手工将WHERE，LIMIT，ORDER BY放到UNION子查询中以便优化器优化）。</p>
+<p>除非必须要服务器消除重复的行，否则一定要使用UNION ALL，没有ALL时MySQL会给临时表增加DISTINCT选项，这会导致整个临时表做唯一性检查，这样的代价非常高。</p>
+<h4 id="4-3-8-静态查询分析"><a href="#4-3-8-静态查询分析" class="headerlink" title="4.3.8 静态查询分析"></a>4.3.8 静态查询分析</h4><p>Percona Toolkit中的pt-query-advisor能够解析查询日志，分析查询模式，给出所有可能存在潜在问题的查询，并给出足够详细的建议。</p>
+<h4 id="4-3-9-使用用户自定义变量"><a href="#4-3-9-使用用户自定义变量" class="headerlink" title="4.3.9 使用用户自定义变量"></a>4.3.9 使用用户自定义变量</h4><p>暂略。</p>
+<h3 id="4-4-案例"><a href="#4-4-案例" class="headerlink" title="4.4 案例"></a>4.4 案例</h3><h3 id="4-4-1-构建一个队列表"><a href="#4-4-1-构建一个队列表" class="headerlink" title="4.4.1 构建一个队列表"></a>4.4.1 构建一个队列表</h3><ul>
+<li><p>一个表包含多种类型的记录：未处理的记录、已处理记录、正在处理记录。</p>
+</li>
+<li><p>一个或多个消费者线程在表中查找未处理的记录，然后标记为正在处理，处理完成后再更新为已处理状态。</p>
+</li>
+<li><p>不合理的地方：</p>
+<ul>
+<li>随着队列表越来越大和索引深度的增加，找到未处理记录的速度越来越慢；可以将队列表拆分为已处理和未处理两部分来优化。</li>
+<li>处理过程一般包括两步：找到未处理记录，然后加锁。前者增加服务器压力，加锁则让各个消费者线程增加竞争。</li>
+</ul>
+</li>
+<li><p>如何让消费者标记正在处理的记录，而不使多个消费者重复处理同一记录？</p>
+<ul>
+<li><p>任何情况都应避免使用 SELECT FOR UPDATE ，会导致大量事务阻塞并等待；</p>
+</li>
+<li><p>用一个属性列标识正在处理记录的连接ID。</p>
+</li>
+<li><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="comment">--查找未有线程处理且状态为待发送的记录ID</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span></span><br><span class="line"><span class="keyword">FROM</span> unsent_emails</span><br><span class="line"><span class="keyword">WHERE</span> owner = <span class="number">0</span> </span><br><span class="line">  <span class="keyword">AND</span> <span class="keyword">status</span> = <span class="string">'unsent'</span></span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br><span class="line"><span class="comment">--result：123，456，789</span></span><br><span class="line"><span class="comment">--更新这些记录状态，并且将连接ID写入owner</span></span><br><span class="line"><span class="keyword">UPDATE</span> unsent_emails</span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">status</span> = <span class="string">'claimed'</span>, owner = CONNECTION_ID()</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">id</span> <span class="keyword">IN</span>(<span class="number">123</span>, <span class="number">456</span>, <span class="number">789</span>);</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>上述SELECT走了索引，但FOR UPDATE锁会使其他查询阻塞，可以改进如下（无需用SELECT查询哪些记录还未被处理，可以用来改写所有的SELECT FOR UPDATE）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> AUTOCOMMIT = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">COMMIT</span>;</span><br><span class="line"><span class="comment">--</span></span><br><span class="line"><span class="keyword">UPDATE</span> unsent_emails</span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">status</span> = <span class="string">'claimed'</span>, owner = CONNECTION_ID()</span><br><span class="line"><span class="keyword">WHERE</span> owner = <span class="number">0</span> </span><br><span class="line">  <span class="keyword">AND</span> <span class="keyword">status</span> = <span class="string">'unsent'</span></span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span>;</span><br><span class="line"><span class="keyword">SET</span> AUTOCOMMIT = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span></span><br><span class="line"><span class="keyword">FROM</span> unsent_emails</span><br><span class="line"><span class="keyword">WHERE</span> owner = CONNECTION_ID()</span><br><span class="line">  <span class="keyword">AND</span> <span class="keyword">status</span> = <span class="string">'claimed'</span>;</span><br><span class="line"><span class="comment">--result：123，456，789</span></span><br><span class="line"><span class="comment">--更新这些记录状态，并且将连接ID写入owner</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>基础原则：</p>
+<ul>
+<li>除非不得已，否则不要使用轮询。</li>
+<li>尽量用UPDATE代替 SELECT FOR UPDATE，事务提交越快，持有锁的时间就越短，可以大大减少竞争和加速串行执行效率。</li>
+<li>将已经处理完成和未处理数据分开，保证数据集足够小。</li>
+<li>无法优化的查询尝试用不同策略来实现相同目的。</li>
+<li>任务队列最好能从数据库移除，使用Redis、memcached、Q4M引擎等方案。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-4-2-计算两点之间的距离"><a href="#4-4-2-计算两点之间的距离" class="headerlink" title="4.4.2 计算两点之间的距离"></a>4.4.2 计算两点之间的距离</h3><p>感觉不是常用的场景，暂略。</p>
 <hr>
 <p>参考：</p>
 <p>🔗 《高性能MySQL》</p>
@@ -613,6 +790,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021020101.html" rel="prev" title="《高性能MySQL》（六）高级特性">
+                《高性能MySQL》（六）高级特性 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -701,7 +882,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">304</span>
+                  <span class="site-state-item-count">305</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -822,7 +1003,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（五）查询性能优化"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（五）查询性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-为什么查询速度会慢"><span class="nav-number">1.1.</span> <span class="nav-text">一. 为什么查询速度会慢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-优化数据访问"><span class="nav-number">1.2.</span> <span class="nav-text">二. 优化数据访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-是否向数据库请求了不需要的数据"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 是否向数据库请求了不需要的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-是否在扫描额外的记录"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 是否在扫描额外的记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-重构查询的方式"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 重构查询的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-判断一个复杂查询还是多个简单查询"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">2.3.1 判断一个复杂查询还是多个简单查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-切分查询"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">2.3.2 切分查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-分解关联查询"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">2.3.3 分解关联查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-查询执行的基础"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 查询执行的基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-1-一个查询在MySQL中的执行过程"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">2.4.1 一个查询在MySQL中的执行过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-2-MySQL-客户端-服务器通信协议"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">2.4.2 MySQL 客户端 / 服务器通信协议</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（五）查询性能优化"><span class="nav-number">1.</span> <span class="nav-text">《高性能MySQL》（五）查询性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-为什么查询速度会慢"><span class="nav-number">1.1.</span> <span class="nav-text">一. 为什么查询速度会慢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-优化数据访问"><span class="nav-number">1.2.</span> <span class="nav-text">二. 优化数据访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-是否向数据库请求了不需要的数据"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 是否向数据库请求了不需要的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-是否在扫描额外的记录"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 是否在扫描额外的记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-重构查询的方式"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 重构查询的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-判断一个复杂查询还是多个简单查询"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">2.3.1 判断一个复杂查询还是多个简单查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-切分查询"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">2.3.2 切分查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-分解关联查询"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">2.3.3 分解关联查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-查询执行的基础"><span class="nav-number">1.3.</span> <span class="nav-text">三. 查询执行的基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-一个查询在MySQL中的执行过程"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 一个查询在MySQL中的执行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-MySQL-客户端-服务器通信协议"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 MySQL 客户端 / 服务器通信协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-查询优化处理"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 查询优化处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-MySQL如何执行关联查询"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 MySQL如何执行关联查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-MySQL中的关联查询"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">3.4.1 MySQL中的关联查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-执行计划"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">3.4.2 执行计划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-关联查询优化器"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">3.4.3 关联查询优化器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-排序优化"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 排序优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-查询优化器"><span class="nav-number">1.4.</span> <span class="nav-text">四. 查询优化器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-查询优化器的局限性"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 查询优化器的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-1-关联子查询"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">4.1.1 关联子查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-2-UNION取LIMIT时内外层优化"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">4.1.2 UNION取LIMIT时内外层优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-3-索引合并优化"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">4.1.3 索引合并优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-4-等值传递"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">4.1.4 等值传递</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-5-并行执行"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">4.1.5 并行执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-6-哈希关联"><span class="nav-number">1.4.1.6.</span> <span class="nav-text">4.1.6 哈希关联</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-7-松散索引扫描"><span class="nav-number">1.4.1.7.</span> <span class="nav-text">4.1.7 松散索引扫描</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-8-最大值和最小值优化"><span class="nav-number">1.4.1.8.</span> <span class="nav-text">4.1.8 最大值和最小值优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-查询优化器的提示"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 查询优化器的提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-优化特定类型的查询"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 优化特定类型的查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-1-优化COUNT"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">4.3.1 优化COUNT()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-2-优化关联查询"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">4.3.2 优化关联查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-3-优化子查询"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">4.3.3 优化子查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-4-优化GROUP-BY和DISTINCT"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">4.3.4 优化GROUP BY和DISTINCT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-5-优化LIMIT分页"><span class="nav-number">1.4.3.5.</span> <span class="nav-text">4.3.5 优化LIMIT分页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-6-优化-SQL-CALC-FOUND-ROWS"><span class="nav-number">1.4.3.6.</span> <span class="nav-text">4.3.6 优化 SQL_CALC_FOUND_ROWS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-7-优化-UNION-查询"><span class="nav-number">1.4.3.7.</span> <span class="nav-text">4.3.7 优化 UNION 查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-8-静态查询分析"><span class="nav-number">1.4.3.8.</span> <span class="nav-text">4.3.8 静态查询分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-9-使用用户自定义变量"><span class="nav-number">1.4.3.9.</span> <span class="nav-text">4.3.9 使用用户自定义变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-案例"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-1-构建一个队列表"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.4.1 构建一个队列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-2-计算两点之间的距离"><span class="nav-number">1.4.6.</span> <span class="nav-text">4.4.2 计算两点之间的距离</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -842,7 +1023,7 @@ show_date_time();
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
   <span class="with-love" id="heart">
     <i class="fa fa-heart"></i>
   </span>
