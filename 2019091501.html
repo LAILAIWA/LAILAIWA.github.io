@@ -96,7 +96,7 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="简单介绍正则表达式，包括：简单介绍，元字符，用法，捕获组和非捕获组，贪婪、勉强和独占模式等。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-13T07:48:14.734Z">
+<meta property="og:updated_time" content="2021-04-19T13:55:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="正则表达式 &lt;整&gt;">
 <meta name="twitter:description" content="简单介绍正则表达式，包括：简单介绍，元字符，用法，捕获组和非捕获组，贪婪、勉强和独占模式等。">
@@ -429,7 +429,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,790
+                  4,860
                 </span>
               
 
@@ -445,7 +445,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  15
+                  20
                 </span>
               
             </div>
@@ -470,19 +470,89 @@
       
 
       
-        <h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a><strong>正则表达式</strong></h1><h2 id="第一节-介绍"><a href="#第一节-介绍" class="headerlink" title="第一节 介绍"></a><strong>第一节 介绍</strong></h2><p>&emsp;&emsp;正则表达式（Regular expression）是一组由字母和符号组成的特殊文本, 用来从文本中找出满足条件格式的句子。</p>
-<p>&emsp;&emsp;一个正则表达式是一种从左到右匹配主体字符串的模式。“Regular expression”可以用缩写的术语“regex”或“regexp”代替。正则表达式可以从一个基础字符串中根据一定的匹配模式替换文本中的字符串、验证表单、提取字符串等等。</p>
-<p>&emsp;&emsp;假设有如下限制：用户名只能包含小写字母、数字、下划线和连字符，并且限制用户名长度在3~15个字符之间</p>
+        <h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><h2 id="第一节-常用格式"><a href="#第一节-常用格式" class="headerlink" title="第一节 常用格式"></a>第一节 常用格式</h2><h3 id="（1）校验数字的表达式"><a href="#（1）校验数字的表达式" class="headerlink" title="（1）校验数字的表达式"></a>（1）校验数字的表达式</h3><ul>
+<li>数字：<code>^[0-9]*$</code></li>
+<li>n位的数字：<code>^\d{n}$</code></li>
+<li>至少n位的数字：<code>^\d{n,}$</code></li>
+<li>m-n位的数字：<code>^\d{m,n}$</code></li>
+<li>零和非零开头的数字：<code>^(0|[1-9])[1-9]*$</code></li>
+<li>非零开头的最多带两位小数的数字：<code>^([1-9][0-9]*)+(.[0-9]{1,2})?$</code></li>
+<li>带1-2位小数的正数或负数：<code>^(\-)?\d+(\.\d{1,2})?$</code></li>
+<li>正数、负数、和小数：<code>^(\-|\+)?\d+(\.\d+)?$</code></li>
+<li>有两位小数的正实数：<code>^[0-9]+(.[0-9]{2})?$</code></li>
+<li>有1~3位小数的正实数：<code>^[0-9]+(.[0-9]{1,3})?$</code></li>
+<li>非零的正整数：<code>^[1-9]\d*$ 或 ^([1-9][0-9]*){1,3}$ 或 ^\+?[1-9][0-9]*$</code></li>
+<li>非零的负整数：<code>^-[1-9][0-9]*$</code></li>
+<li>非负整数：<code>^\d+$ 或 ^[1-9]\d*|0$</code></li>
+<li>非正整数：<code>^-[1-9]\d*|0$ 或 ^((-\d+)|(0+))$</code></li>
+<li>非负浮点数：<code>^\d+(\.\d+)?$ 或 ^[1-9]\d*\.\d*|0\.\d*[1-9]\d*|0?\.0+|0$</code></li>
+<li>非正浮点数：<code>^((-\d+(\.\d+)?)|(0+(\.0+)?))$ 或 ^(-([1-9]\d*\.\d*|0\.\d*[1-9]\d*))|0?\.0+|0$</code></li>
+<li>正浮点数：<code>^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$ 或 ^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$</code></li>
+<li>负浮点数：<code>^-([1-9]\d*\.\d*|0\.\d*[1-9]\d*)$ 或 ^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$</code></li>
+<li>浮点数：<code>^(-?\d+)(\.\d+)?$ 或 ^-?([1-9]\d*\.\d*|0\.\d*[1-9]\d*|0?\.0+|0)$</code></li>
+</ul>
+<h3 id="（2）校验字符的表达式"><a href="#（2）校验字符的表达式" class="headerlink" title="（2）校验字符的表达式"></a>（2）校验字符的表达式</h3><ul>
+<li>汉字：<code>^[\u4e00-\u9fa5]{0,}$</code></li>
+<li>英文和数字：<code>^[A-Za-z0-9]+$ 或 ^[A-Za-z0-9]{4,40}$</code></li>
+<li>长度为3-20的所有字符：<code>^.{3,20}$</code></li>
+<li>由26个英文字母组成的字符串：<code>^[A-Za-z]+$</code></li>
+<li>由26个大写英文字母组成的字符串：<code>^[A-Z]+$</code></li>
+<li>由26个小写英文字母组成的字符串：<code>^[a-z]+$</code></li>
+<li>由数字和26个英文字母组成的字符串：<code>^[A-Za-z0-9]+$</code></li>
+<li>由数字、26个英文字母或者下划线组成的字符串：<code>^\w+$ 或 ^\w{3,20}</code></li>
+<li>中文、英文、数字包括下划线：<code>^[\u4E00-\u9FA5A-Za-z0-9_]+$</code></li>
+<li>中文、英文、数字但不包括下划线等符号：<code>^[\u4E00-\u9FA5A-Za-z0-9]+$ 或 ^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$</code></li>
+<li>可以输入含有<code>^%&amp;&#39;,;=?$\&quot;</code>等字符：<code>[^%&amp;&#39;,;=?$\x22]+</code></li>
+<li>禁止输入含有~的字符<code>[^~\x22]+</code></li>
+</ul>
+<p>其它：</p>
+<ul>
+<li><code>.*</code>匹配除 <code>\n</code> 以外的任何字符。</li>
+<li><code>/[\u4E00-\u9FA5]/</code> 汉字</li>
+<li><code>/[\uFF00-\uFFFF]/</code> 全角符号</li>
+<li><code>/[\u0000-\u00FF]/</code> 半角符号</li>
+</ul>
+<h3 id="（3）特殊需求表达式"><a href="#（3）特殊需求表达式" class="headerlink" title="（3）特殊需求表达式"></a>（3）特殊需求表达式</h3><ul>
+<li>Email地址：<code>^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$</code></li>
+<li>域名：<code>[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?</code></li>
+<li>InternetURL：<code>[a-zA-z]+://[^\s]* 或 ^http://([\w-]+\.)+[\w-]+(/[\w-./?%&amp;=]*)?$</code></li>
+<li>帐号是否合法(字母开头，允许5-16字节，允许字母数字下划线)：<code>^[a-zA-Z][a-zA-Z0-9_]{4,15}$</code></li>
+<li>密码(以字母开头，长度在6~18之间，只能包含字母、数字和下划线)：<code>^[a-zA-Z]\w{5,17}$</code></li>
+<li>强密码(必须包含大小写字母和数字的组合，不能使用特殊字符，长度在8-10之间)：<code>^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$</code></li>
+<li>日期格式：<code>^\d{4}-\d{1,2}-\d{1,2}</code></li>
+<li>一年的12个月(01～09和1～12)：<code>^(0?[1-9]|1[0-2])$</code></li>
+<li>一个月的31天(01～09和1～31)：<code>^((0?[1-9])|((1|2)[0-9])|30|31)$</code></li>
+<li>xml文件：<code>^([a-zA-Z]+-?)+[a-zA-Z0-9]+\\.[x|X][m|M][l|L]$</code></li>
+<li>中文字符的正则表达式：<code>[\u4e00-\u9fa5]</code></li>
+<li>双字节字符：<code>[^\x00-\xff]</code> (包括汉字在内，可以用来计算字符串的长度(一个双字节字符长度计2，ASCII字符计1))</li>
+<li>空白行的正则表达式：<code>\n\s*\r</code> (可以用来删除空白行)；替换空行：^\s*$\n</li>
+<li>HTML标记的正则表达式：<code>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;|&lt;.*? /&gt;</code> (网上流传的版本太糟糕，上面这个也仅仅能部分，对于复杂的嵌套标记依旧无能为力)</li>
+<li>首尾空白字符的正则表达式：<code>^\s*|\s*$或(^\s*)|(\s*$)</code> (可以用来删除行首行尾的空白字符(包括空格、制表符、换页符等等)，非常有用的表达式)</li>
+<li>中国邮政编码：<code>[1-9]\d{5}(?!\d)</code> (中国邮政编码为6位数字)</li>
+<li>IP地址：<code>\d+\.\d+\.\d+\.\d+</code> (提取IP地址时有用)</li>
+<li>抽取注释：<code>&lt;!--(.*?)--&gt;</code></li>
+<li>查找CSS属性:<code>^\\s*[a-zA-Z\\-]+\\s*[:]{1}\\s[a-zA-Z0-9\\s.#]+[;]{1}</code></li>
+<li>提取页面超链接:<code>(&lt;a\\s*(?!.*\\brel=)[^&gt;]*)(href=&quot;https?:\\/\\/)((?!(?:(?:www\\.)?&#39;.implode(&#39;|(?:www\\.)?&#39;, $follow_list).&#39;))[^&quot; rel=&quot;external nofollow&quot; ]+)&quot;((?!.*\\brel=)[^&gt;]*)(?:[^&gt;]*)&gt;</code></li>
+<li>提取网页图片:<code>\\&lt; *[img][^\\\\&gt;]*[src] *= *[\\&quot;\\&#39;]{0,1}([^\\&quot;\\&#39;\\ &gt;]*)</code></li>
+<li>提取网页颜色代码:<code>^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$</code></li>
+<li>文件扩展名效验:<code>^([a-zA-Z]\\:|\\\\)\\\\([^\\\\]+\\\\)*[^\\/:*?&quot;&lt;&gt;|]+\\.txt(l)?$</code></li>
+<li>判断IE版本：<code>^.*MSIE [5-8](?:\\.[0-9]+)?(?!.*Trident\\/[5-9]\\.0).*$</code></li>
+</ul>
+<p>贪婪匹配：123456789 2.*8 -&gt; 2345678</p>
+<p>多行模式：123456789 ABCDEFG (?s)23(.*?)C</p>
+<h2 id="第二节-介绍"><a href="#第二节-介绍" class="headerlink" title="第二节 介绍"></a>第二节 介绍</h2><p>正则表达式（Regular expression）是一组由字母和符号组成的特殊文本, 用来从文本中找出满足条件格式的句子。</p>
+<p>一个正则表达式是一种从左到右匹配主体字符串的模式。“Regular expression”可以用缩写的术语“regex”或“regexp”代替。正则表达式可以从一个基础字符串中根据一定的匹配模式替换文本中的字符串、验证表单、提取字符串等等。</p>
+<p>假设有如下限制：用户名只能包含小写字母、数字、下划线和连字符，并且限制用户名长度在3~15个字符之间。</p>
 <blockquote>
 <p>^[a-z0-9_-]{3,15}&amp;</p>
 </blockquote>
-<p>&emsp;&emsp;^是开始标记，a-z0-9_-表示字母(a-z)、数字(0-9)、下划线和连字符，3-15表示允许3~15个字符长度，$是结束标记。</p>
+<p>^是开始标记，a-z0-9_-表示字母(a-z)、数字(0-9)、下划线和连字符，3-15表示允许3~15个字符长度，$是结束标记。</p>
 <hr>
-<h2 id="第二节-匹配模式"><a href="#第二节-匹配模式" class="headerlink" title="第二节 匹配模式"></a><strong>第二节 匹配模式</strong></h2><h3 id="1-基本匹配"><a href="#1-基本匹配" class="headerlink" title="1 基本匹配"></a><strong>1 基本匹配</strong></h3><p>&emsp;&emsp;正则表达式是<strong>大小写敏感</strong>的，简单的“the”就表示规则：t紧接h再紧接e。</p>
+<h2 id="第三节-匹配模式"><a href="#第三节-匹配模式" class="headerlink" title="第三节 匹配模式"></a>第三节 匹配模式</h2><h3 id="3-1-基本匹配"><a href="#3-1-基本匹配" class="headerlink" title="3.1 基本匹配"></a>3.1 基本匹配</h3><p>正则表达式是<strong>大小写敏感</strong>的，简单的“the”就表示规则：t紧接h再紧接e。</p>
 <blockquote>
 <p>“the” =&gt; The fat cat sat on <strong>the</strong> mat.</p>
 </blockquote>
-<h3 id="2-元字符"><a href="#2-元字符" class="headerlink" title="2 元字符"></a><strong>2 元字符</strong></h3><p>&emsp;&emsp;正则表达式主要依赖于<strong>元字符</strong>。 元字符不代表他们本身的字面意思，他们都有特殊的含义。</p>
+<h3 id="3-2-元字符"><a href="#3-2-元字符" class="headerlink" title="3.2 元字符"></a>3.2 元字符</h3><p>正则表达式主要依赖于<strong>元字符</strong>。 元字符不代表他们本身的字面意思，他们都有特殊的含义。</p>
 <table>
 <thead>
 <tr>
@@ -543,87 +613,87 @@
 </tr>
 </tbody>
 </table>
-<h4 id="2-1-点运算符"><a href="#2-1-点运算符" class="headerlink" title="2.1 点运算符 ."></a><strong>2.1 点运算符 .</strong></h4><p>&emsp;&emsp;.是元字符中最简单的例子。 .匹配任意单个字符，但不匹配换行符。 </p>
+<h4 id="3-2-1-点运算符"><a href="#3-2-1-点运算符" class="headerlink" title="3.2.1 点运算符 ."></a>3.2.1 点运算符 .</h4><p>.是元字符中最简单的例子。 .匹配任意单个字符，但不匹配换行符。 </p>
 <blockquote>
 <p>“.ar” =&gt; The <strong>car</strong> <strong>par</strong>ked in the <strong>gar</strong>age.</p>
 </blockquote>
-<h4 id="2-2-字符集"><a href="#2-2-字符集" class="headerlink" title="2.2 字符集"></a><strong>2.2 字符集</strong></h4><p>&emsp;&emsp;<strong>字符集</strong>也叫做字符类。方括号用来指定一个字符集。在方括号中使用连字符来指定字符集的范围。在方括号中的字符集不关心顺序。 例如，表达式[Tt]he 匹配 the 和 The。</p>
+<h4 id="3-2-2-字符集"><a href="#3-2-2-字符集" class="headerlink" title="3.2.2 字符集"></a>3.2.2 字符集</h4><p><strong>字符集</strong>也叫做字符类。方括号用来指定一个字符集。在方括号中使用连字符来指定字符集的范围。在方括号中的字符集不关心顺序。 例如，表达式[Tt]he 匹配 the 和 The。</p>
 <blockquote>
 <p>“[Tt]he” =&gt; <strong>The</strong> car parked in <strong>the</strong> garage.</p>
 </blockquote>
-<p>&emsp;&emsp;方括号的句号就表示句号。</p>
+<p>方括号的句号就表示句号。</p>
 <blockquote>
 <p>“ar[.]” =&gt; A garage is a good place to park a c<strong>ar.</strong></p>
 </blockquote>
-<h5 id="2-2-1-否定字符集"><a href="#2-2-1-否定字符集" class="headerlink" title="2.2.1 否定字符集"></a><strong>2.2.1 否定字符集</strong></h5><p>&emsp;&emsp;一般来说 ^ 表示一个字符串的开头，但它用在一个方括号的开头的时候，它表示这个字符集是否定的。 =</p>
+<h5 id="否定字符集"><a href="#否定字符集" class="headerlink" title="否定字符集"></a>否定字符集</h5><p>一般来说 ^ 表示一个字符串的开头，但它用在一个方括号的开头的时候，它表示这个字符集是否定的。 =</p>
 <blockquote>
 <p>“[^c]ar” =&gt; The car <strong>par</strong>ked in the <strong>gar</strong>age.</p>
 </blockquote>
-<h4 id="2-3-重复次数"><a href="#2-3-重复次数" class="headerlink" title="2.3 重复次数"></a><strong>2.3 重复次数</strong></h4><p>&emsp;&emsp;后面跟着元字符 +，* or ? 的，用来指定匹配子模式的次数。</p>
-<h5 id="2-3-1-号"><a href="#2-3-1-号" class="headerlink" title="2.3.1 * 号"></a><strong>2.3.1 * 号</strong></h5><p>&emsp;&emsp;* 号匹配在 * 之前的字符出现大于等于0次。 例如，表达式 a<em> 匹配0或更多个以a开头的字符。表达式[a-z]</em> 匹配一个行中所有以小写字母开头的字符串。</p>
+<h4 id="3-2-3-重复次数"><a href="#3-2-3-重复次数" class="headerlink" title="3.2.3 重复次数"></a>3.2.3 重复次数</h4><p>后面跟着元字符 +，* or ? 的，用来指定匹配子模式的次数。</p>
+<h5 id="（1）-号"><a href="#（1）-号" class="headerlink" title="（1） * 号"></a>（1） * 号</h5><p>* 号匹配在 * 之前的字符出现大于等于0次。 例如，表达式 a<em> 匹配0或更多个以a开头的字符。表达式[a-z]</em> 匹配一个行中所有以小写字母开头的字符串。</p>
 <blockquote>
 <p>“[a-z]*” =&gt; Th<strong>e car parked in the garage</strong> #21.</p>
 </blockquote>
-<p>&emsp;&emsp;* 字符和 . 字符搭配可以匹配所有的字符 .* 。 * 和表示匹配空格的符号 \s 连起来用，如表达式\s*cat\s* 匹配0或更多个空格开头和0或更多个空格结尾的cat字符串。</p>
+<p>* 字符和 . 字符搭配可以匹配所有的字符 .* 。 * 和表示匹配空格的符号 \s 连起来用，如表达式\s*cat\s* 匹配0或更多个空格开头和0或更多个空格结尾的cat字符串。</p>
 <blockquote>
 <p>“\s<em>cat\s</em>“ =&gt; The fat <strong>cat</strong> sat on the con<strong>cat</strong>enation.</p>
 </blockquote>
-<h5 id="2-3-2-号"><a href="#2-3-2-号" class="headerlink" title="2.3.2 + 号"></a><strong>2.3.2 + 号</strong></h5><p>&emsp;&emsp;+号匹配+号之前的字符出现 &gt;=1 次。 例如表达式c.+t 匹配以首字母c开头以t结尾，中间跟着至少一个字符的字符串。</p>
+<h5 id="（2）-号"><a href="#（2）-号" class="headerlink" title="（2） + 号"></a>（2） + 号</h5><p>+号匹配+号之前的字符出现 &gt;=1 次。 例如表达式c.+t 匹配以首字母c开头以t结尾，中间跟着至少一个字符的字符串。</p>
 <blockquote>
 <p>“c.+t” =&gt; The fat <strong>cat sat on the mat</strong>.</p>
 </blockquote>
-<h5 id="2-3-3-号"><a href="#2-3-3-号" class="headerlink" title="2.3.3 ? 号"></a><strong>2.3.3 ? 号</strong></h5><p>&emsp;&emsp;在正则表达式中元字符 ? 标记在符号前面的字符为可选，即出现 0 或 1 次。 例如，表达式 [T]?he 匹配字符串 he 和 The。</p>
+<h5 id="（3）-号"><a href="#（3）-号" class="headerlink" title="（3） ? 号"></a>（3） ? 号</h5><p>在正则表达式中元字符 ? 标记在符号前面的字符为可选，即出现 0 或 1 次。 例如，表达式 [T]?he 匹配字符串 he 和 The。</p>
 <blockquote>
 <p>“[T]he” =&gt; <strong>The</strong> car is parked in the garage.</p>
 </blockquote>
 <blockquote>
 <p>“[T]?he” =&gt; <strong>The</strong> car is parked in t<strong>he</strong> garage.</p>
 </blockquote>
-<h4 id="2-4-符号"><a href="#2-4-符号" class="headerlink" title="2.4 符号 {}"></a><strong>2.4 符号 {}</strong></h4><p>&emsp;&emsp;在正则表达式中 {} 是一个量词，常用来一个或一组字符可以重复出现的次数。 例如， 表达式 [0-9]{2,3} 匹配最少 2 位最多 3 位 0~9 的数字。</p>
+<h4 id="3-2-4-符号"><a href="#3-2-4-符号" class="headerlink" title="3.2.4 符号 {}"></a>3.2.4 符号 {}</h4><p>在正则表达式中 {} 是一个量词，常用来一个或一组字符可以重复出现的次数。 例如， 表达式 [0-9]{2,3} 匹配最少 2 位最多 3 位 0~9 的数字。</p>
 <blockquote>
 <p>“[0-9]{2,3}” =&gt; The number was 9.<strong>999</strong>7 but we rounded it off to <strong>10</strong>.0.</p>
 </blockquote>
-<p>&emsp;&emsp;我们可以省略第二个参数。 例如，[0-9]{2,} 匹配至少两位 0~9 的数字。</p>
+<p>我们可以省略第二个参数。 例如，[0-9]{2,} 匹配至少两位 0~9 的数字。</p>
 <blockquote>
 <p>“[0-9]{2,}” =&gt; The number was 9.<strong>9997</strong> but we rounded it off to <strong>10</strong>.0.</p>
 </blockquote>
-<p>&emsp;&emsp;如果逗号也省略掉则表示重复固定的次数。 例如，[0-9]{3} 匹配3位数字</p>
+<p>如果逗号也省略掉则表示重复固定的次数。 例如，[0-9]{3} 匹配3位数字</p>
 <blockquote>
 <p>“[0-9]{3}” =&gt; The number was 9.<strong>999</strong>7 but we rounded it off to 10.0.</p>
 </blockquote>
-<h4 id="2-5-…-特征标群"><a href="#2-5-…-特征标群" class="headerlink" title="2.5 (…) 特征标群"></a><strong>2.5 (…) 特征标群</strong></h4><p>&emsp;&emsp;特征标群是一组写在 (…) 中的子模式。例如之前说的 {} 是用来表示前面一个字符出现指定次数。但如果在 {} 前加入特征标群则表示整个标群内的字符重复 N 次。例如，表达式 (ab)* 匹配连续出现 0 或更多个 ab。</p>
-<p>&emsp;&emsp;我们还可以在 () 中用或字符 | 表示或。例如，(c|g|p)ar 匹配 car 或 gar 或 par.</p>
+<h4 id="3-2-5-…-特征标群"><a href="#3-2-5-…-特征标群" class="headerlink" title="3.2.5 (…) 特征标群"></a>3.2.5 (…) 特征标群</h4><p>特征标群是一组写在 (…) 中的子模式。例如之前说的 {} 是用来表示前面一个字符出现指定次数。但如果在 {} 前加入特征标群则表示整个标群内的字符重复 N 次。例如，表达式 (ab)* 匹配连续出现 0 或更多个 ab。</p>
+<p>我们还可以在 () 中用或字符 | 表示或。例如，(c|g|p)ar 匹配 car 或 gar 或 par.</p>
 <blockquote>
 <p>“(c|g|p)ar” =&gt; The <strong>car</strong> is <strong>par</strong>ked in the <strong>gar</strong>age.</p>
 </blockquote>
-<h4 id="2-6-或运算符"><a href="#2-6-或运算符" class="headerlink" title="2.6 | 或运算符"></a><strong>2.6 | 或运算符</strong></h4><p>&emsp;&emsp;或运算符就表示或，用作判断条件。例如 (T|t)he|car 匹配 (T|t)he 或 car。</p>
+<h4 id="3-2-6-或运算符"><a href="#3-2-6-或运算符" class="headerlink" title="3.2.6 | 或运算符"></a>3.2.6 | 或运算符</h4><p>或运算符就表示或，用作判断条件。例如 (T|t)he|car 匹配 (T|t)he 或 car。</p>
 <blockquote>
 <p>“(T|t)he|car” =&gt; <strong>The car</strong> is parked in <strong>the</strong> garage.</p>
 </blockquote>
-<h4 id="2-7-转码特殊字符"><a href="#2-7-转码特殊字符" class="headerlink" title="2.7 转码特殊字符"></a><strong>2.7 转码特殊字符</strong></h4><p>&emsp;&emsp;反斜线 \ 在表达式中用于转码紧跟其后的字符。用于指定 { } [ ] / \ + * . $ ^ | ? 这些特殊字符。如果想要匹配这些特殊字符则要在其前面加上反斜线 \。</p>
-<p>&emsp;&emsp;例如 . 是用来匹配除换行符外的所有字符的。如果想要匹配句子中的 . 则要写成 \. 以下这个例子 \.?是选择性匹配.</p>
+<h4 id="3-2-7-转码特殊字符"><a href="#3-2-7-转码特殊字符" class="headerlink" title="3.2.7 转码特殊字符"></a>3.2.7 转码特殊字符</h4><p>反斜线 \ 在表达式中用于转码紧跟其后的字符。用于指定 { } [ ] / \ + * . $ ^ | ? 这些特殊字符。如果想要匹配这些特殊字符则要在其前面加上反斜线 \。</p>
+<p>例如 . 是用来匹配除换行符外的所有字符的。如果想要匹配句子中的 . 则要写成 \. 以下这个例子 \.?是选择性匹配.</p>
 <blockquote>
 <p>“(f|c|m)at.?” =&gt; The <strong>fat cat</strong> sat on the <strong>mat.</strong></p>
 </blockquote>
-<h4 id="2-8-锚点"><a href="#2-8-锚点" class="headerlink" title="2.8 锚点"></a><strong>2.8 锚点</strong></h4><p>&emsp;&emsp;在正则表达式中，想要匹配指定开头或结尾的字符串就要使用到锚点。^ 指定开头，$ 指定结尾。</p>
-<h5 id="2-8-1-号"><a href="#2-8-1-号" class="headerlink" title="2.8.1 ^ 号"></a><strong>2.8.1 ^ 号</strong></h5><p>&emsp;&emsp;^ 用来检查匹配的字符串是否在所匹配字符串的开头。</p>
-<p>&emsp;&emsp;例如，在 abc 中使用表达式 ^a 会得到结果 a。但如果使用 ^b 将匹配不到任何结果。因为在字符串 abc 中并不是以 b 开头。</p>
-<p>&emsp;&emsp;例如，^(T|t)he 匹配以 The 或 the 开头的字符串。</p>
+<h4 id="3-2-8-锚点"><a href="#3-2-8-锚点" class="headerlink" title="3.2.8 锚点"></a>3.2.8 锚点</h4><p>在正则表达式中，想要匹配指定开头或结尾的字符串就要使用到锚点。^ 指定开头，$ 指定结尾。</p>
+<h5 id="1-号"><a href="#1-号" class="headerlink" title="(1) ^ 号"></a>(1) ^ 号</h5><p>^ 用来检查匹配的字符串是否在所匹配字符串的开头。</p>
+<p>例如，在 abc 中使用表达式 ^a 会得到结果 a。但如果使用 ^b 将匹配不到任何结果。因为在字符串 abc 中并不是以 b 开头。</p>
+<p>例如，^(T|t)he 匹配以 The 或 the 开头的字符串。</p>
 <blockquote>
 <p>“(T|t)he” =&gt; <strong>The</strong> car is parked in <strong>the</strong> garage.</p>
 </blockquote>
 <blockquote>
 <p>“^(T|t)he” =&gt; <strong>The</strong> car is parked in the garage.</p>
 </blockquote>
-<h5 id="2-8-2-号"><a href="#2-8-2-号" class="headerlink" title="2.8.2 $ 号"></a><strong>2.8.2 $ 号</strong></h5><p>&emsp;&emsp;同理于 ^ 号，$ 号用来匹配字符是否是最后一个。</p>
-<p>&emsp;&emsp;例如，(at.)$ 匹配以 at. 结尾的字符串。</p>
+<h5 id="2-号"><a href="#2-号" class="headerlink" title="(2) $ 号"></a>(2) $ 号</h5><p>同理于 ^ 号，$ 号用来匹配字符是否是最后一个。</p>
+<p>例如，(at.)$ 匹配以 at. 结尾的字符串。</p>
 <blockquote>
 <p>“(at.)” =&gt; The fat c<strong>at.</strong> s<strong>at.</strong> on the m<strong>at.</strong></p>
 </blockquote>
 <blockquote>
 <p>“(at.)$” =&gt; The fat cat. sat. on the m<strong>at.</strong></p>
 </blockquote>
-<h3 id="3-简写字符集"><a href="#3-简写字符集" class="headerlink" title="3 简写字符集"></a><strong>3 简写字符集</strong></h3><p>&emsp;&emsp;正则表达式提供一些常用的字符集简写。如下:</p>
+<h3 id="3-3-简写字符集"><a href="#3-3-简写字符集" class="headerlink" title="3.3 简写字符集"></a>3.3 简写字符集</h3><p>正则表达式提供一些常用的字符集简写。如下:</p>
 <table>
 <thead>
 <tr>
@@ -686,9 +756,9 @@
 </tr>
 </tbody>
 </table>
-<h3 id="4-零宽度断言（前后预查）"><a href="#4-零宽度断言（前后预查）" class="headerlink" title="4 零宽度断言（前后预查）"></a><strong>4 零宽度断言（前后预查）</strong></h3><p>&emsp;&emsp;先行断言和后发断言都属于非捕获簇（不捕获文本 ，也不针对组合计进行计数）。 先行断言用于判断所匹配的格式是否在另一个确定的格式之前，匹配结果不包含该确定格式（仅作为约束）。</p>
-<p>&emsp;&emsp;例如，我们想要获得所有跟在 $ 符号后的数字，我们可以使用正后发断言 (?&lt;=\$)[0-9.]*。 这个表达式匹配 $ 开头，之后跟着 0,1,2,3,4,5,6,7,8,9,. 这些字符可以出现大于等于 0 次。</p>
-<p>&emsp;&emsp;零宽度断言如下：</p>
+<h3 id="3-4-零宽度断言（前后预查）"><a href="#3-4-零宽度断言（前后预查）" class="headerlink" title="3.4 零宽度断言（前后预查）"></a>3.4 零宽度断言（前后预查）</h3><p>先行断言和后发断言都属于非捕获簇（不捕获文本 ，也不针对组合计进行计数）。 先行断言用于判断所匹配的格式是否在另一个确定的格式之前，匹配结果不包含该确定格式（仅作为约束）。</p>
+<p>例如，我们想要获得所有跟在 $ 符号后的数字，我们可以使用正后发断言 (?&lt;=\$)[0-9.]*。 这个表达式匹配 $ 开头，之后跟着 0,1,2,3,4,5,6,7,8,9,. 这些字符可以出现大于等于 0 次。</p>
+<p>零宽度断言如下：</p>
 <table>
 <thead>
 <tr>
@@ -715,26 +785,26 @@
 </tr>
 </tbody>
 </table>
-<h4 id="4-1-…-正先行断言"><a href="#4-1-…-正先行断言" class="headerlink" title="4.1 ?=… 正先行断言"></a><strong>4.1 ?=… 正先行断言</strong></h4><p>&emsp;&emsp;?=… 正先行断言，表示第一部分表达式之后必须跟着 ?=…定义的表达式。</p>
-<p>&emsp;&emsp;返回结果只包含满足匹配条件的第一部分表达式。 定义一个正先行断言要使用 ()。在括号内部使用一个问号和等号： (?=…)。</p>
-<p>&emsp;&emsp;正先行断言的内容写在括号中的等号后面。 例如，表达式 (T|t)he(?=\sfat) 匹配 The 和 the，在括号中我们又定义了正先行断言 (?=\sfat) ，即 The 和 the 后面紧跟着 (空格)fat。</p>
+<h4 id="3-4-1-…-正先行断言"><a href="#3-4-1-…-正先行断言" class="headerlink" title="3.4.1 ?=… 正先行断言"></a>3.4.1 ?=… 正先行断言</h4><p>?=… 正先行断言，表示第一部分表达式之后必须跟着 ?=…定义的表达式。</p>
+<p>返回结果只包含满足匹配条件的第一部分表达式。 定义一个正先行断言要使用 ()。在括号内部使用一个问号和等号： (?=…)。</p>
+<p>正先行断言的内容写在括号中的等号后面。 例如，表达式 (T|t)he(?=\sfat) 匹配 The 和 the，在括号中我们又定义了正先行断言 (?=\sfat) ，即 The 和 the 后面紧跟着 (空格)fat。</p>
 <blockquote>
 <p>“(T|t)he(?=\sfat)” =&gt; <strong>The</strong> fat cat sat on the mat.</p>
 </blockquote>
-<h4 id="4-2-…-负先行断言"><a href="#4-2-…-负先行断言" class="headerlink" title="4.2 ?!… 负先行断言"></a><strong>4.2 ?!… 负先行断言</strong></h4><p>&emsp;&emsp;负先行断言 ?! 用于筛选所有匹配结果，筛选条件为 其后不跟随着断言中定义的格式。 正先行断言 定义和 负先行断言 一样，区别就是 = 替换成 ! 也就是 (?!…)。</p>
-<p>&emsp;&emsp;表达式 (T|t)he(?!\sfat) 匹配 The 和 the，且其后不跟着 (空格)fat。</p>
+<h4 id="3-4-2-…-负先行断言"><a href="#3-4-2-…-负先行断言" class="headerlink" title="3.4.2 ?!… 负先行断言"></a>3.4.2 ?!… 负先行断言</h4><p>负先行断言 ?! 用于筛选所有匹配结果，筛选条件为 其后不跟随着断言中定义的格式。 正先行断言 定义和 负先行断言 一样，区别就是 = 替换成 ! 也就是 (?!…)。</p>
+<p>表达式 (T|t)he(?!\sfat) 匹配 The 和 the，且其后不跟着 (空格)fat。</p>
 <blockquote>
 <p>“(T|t)he(?!\sfat)” =&gt; The fat cat sat on <strong>the</strong> mat.</p>
 </blockquote>
-<h4 id="4-3-lt-…-正后发断言"><a href="#4-3-lt-…-正后发断言" class="headerlink" title="4.3 ?&lt;= … 正后发断言"></a><strong>4.3 ?&lt;= … 正后发断言</strong></h4><p>&emsp;&emsp;正后发断言 记作(?&lt;=…) 用于筛选所有匹配结果，筛选条件为 其前跟随着断言中定义的格式。 例如，表达式 (?&lt;=(T|t)he\s)(fat|mat) 匹配 fat 和 mat，且其前跟着 The 或 the。</p>
+<h4 id="3-4-3-lt-…-正后发断言"><a href="#3-4-3-lt-…-正后发断言" class="headerlink" title="3.4.3 ?&lt;= … 正后发断言"></a>3.4.3 ?&lt;= … 正后发断言</h4><p>正后发断言 记作(?&lt;=…) 用于筛选所有匹配结果，筛选条件为 其前跟随着断言中定义的格式。 例如，表达式 (?&lt;=(T|t)he\s)(fat|mat) 匹配 fat 和 mat，且其前跟着 The 或 the。</p>
 <blockquote>
 <p>“(?&lt;=(T|t)he\s)(fat|mat)” =&gt; The <strong>fat</strong> cat sat on the <strong>mat</strong>.</p>
 </blockquote>
-<h4 id="4-4-lt-…-负后发断言"><a href="#4-4-lt-…-负后发断言" class="headerlink" title="4.4 ?&lt;!… 负后发断言"></a><strong>4.4 ?&lt;!… 负后发断言</strong></h4><p>&emsp;&emsp;负后发断言 记作 (?&lt;!…) 用于筛选所有匹配结果，筛选条件为 其前不跟随着断言中定义的格式。 例如，表达式 (?&lt;!(T|t)he\s)(cat) 匹配 cat，且其前不跟着 The 或 the。</p>
+<h4 id="3-4-4-lt-…-负后发断言"><a href="#3-4-4-lt-…-负后发断言" class="headerlink" title="3.4.4 ?&lt;!… 负后发断言"></a>3.4.4 ?&lt;!… 负后发断言</h4><p>负后发断言 记作 (?&lt;!…) 用于筛选所有匹配结果，筛选条件为 其前不跟随着断言中定义的格式。 例如，表达式 (?&lt;!(T|t)he\s)(cat) 匹配 cat，且其前不跟着 The 或 the。</p>
 <blockquote>
 <p>“(?&lt;!(T|t)he\s)(cat)” =&gt; The cat sat on <strong>cat</strong>.</p>
 </blockquote>
-<h3 id="5-标志"><a href="#5-标志" class="headerlink" title="5 标志"></a><strong>5 标志</strong></h3><p>&emsp;&emsp;标志也叫模式修正符，因为它可以用来修改表达式的搜索结果。 这些标志可以任意的组合使用，它也是整个正则表达式的一部分。</p>
+<h3 id="3-5-标志"><a href="#3-5-标志" class="headerlink" title="3.5 标志"></a>3.5 标志</h3><p>标志也叫模式修正符，因为它可以用来修改表达式的搜索结果。 这些标志可以任意的组合使用，它也是整个正则表达式的一部分。</p>
 <table>
 <thead>
 <tr>
@@ -757,30 +827,30 @@
 </tr>
 </tbody>
 </table>
-<h4 id="5-1-忽略大小写（Case-Insensitive）"><a href="#5-1-忽略大小写（Case-Insensitive）" class="headerlink" title="5.1 忽略大小写（Case Insensitive）"></a><strong>5.1 忽略大小写（Case Insensitive）</strong></h4><p>&emsp;&emsp;修饰语 i 用于忽略大小写。 例如，表达式 /The/gi 表示在全局搜索 The，在后面的 i 将其条件修改为忽略大小写，则变成搜索 the 和 The，g 表示全局搜索。</p>
+<h4 id="3-5-1-忽略大小写（Case-Insensitive）"><a href="#3-5-1-忽略大小写（Case-Insensitive）" class="headerlink" title="3.5.1 忽略大小写（Case Insensitive）"></a>3.5.1 忽略大小写（Case Insensitive）</h4><p>修饰语 i 用于忽略大小写。 例如，表达式 /The/gi 表示在全局搜索 The，在后面的 i 将其条件修改为忽略大小写，则变成搜索 the 和 The，g 表示全局搜索。</p>
 <blockquote>
 <p>“The” =&gt; <strong>The</strong> fat cat sat on the mat.</p>
 </blockquote>
 <blockquote>
 <p>“/The/gi” =&gt; <strong>The</strong> fat cat sat on <strong>the</strong> mat.</p>
 </blockquote>
-<h4 id="5-2-全局搜索（Global-search）"><a href="#5-2-全局搜索（Global-search）" class="headerlink" title="5.2 全局搜索（Global search）"></a><strong>5.2 全局搜索（Global search）</strong></h4><p>&emsp;&emsp;修饰符 g 常用于执行一个全局搜索匹配，即（不仅仅返回第一个匹配的，而是返回全部）。 例如，表达式 /.(at)/g 表示搜索 任意字符（除了换行）+ at，并返回全部结果。</p>
+<h4 id="3-5-2-全局搜索（Global-search）"><a href="#3-5-2-全局搜索（Global-search）" class="headerlink" title="3.5.2 全局搜索（Global search）"></a>3.5.2 全局搜索（Global search）</h4><p>修饰符 g 常用于执行一个全局搜索匹配，即（不仅仅返回第一个匹配的，而是返回全部）。 例如，表达式 /.(at)/g 表示搜索 任意字符（除了换行）+ at，并返回全部结果。</p>
 <blockquote>
 <p>“/.(at)/“ =&gt; The <strong>fat</strong> cat sat on the mat.</p>
 </blockquote>
 <blockquote>
 <p>“/.(at)/g” =&gt; The <strong>fat cat sat</strong> on the <strong>mat</strong>.</p>
 </blockquote>
-<h4 id="5-3-多行修饰符（Multiline）"><a href="#5-3-多行修饰符（Multiline）" class="headerlink" title="5.3 多行修饰符（Multiline）"></a><strong>5.3 多行修饰符（Multiline）</strong></h4><p>&emsp;&emsp;多行修饰符 m 常用于执行一个多行匹配。</p>
-<p>&emsp;&emsp;像之前介绍的 (^,$) 用于检查格式是否是在待检测字符串的开头或结尾。但我们如果想要它在每行的开头和结尾生效，我们需要用到多行修饰符 m。</p>
-<p>&emsp;&emsp;例如，表达式 /at(.)?$/gm 表示小写字符 a 后跟小写字符 t ，末尾可选除换行符外任意字符。根据 m 修饰符，现在表达式匹配每行的结尾。</p>
+<h4 id="3-5-3-多行修饰符（Multiline）"><a href="#3-5-3-多行修饰符（Multiline）" class="headerlink" title="3.5.3 多行修饰符（Multiline）"></a>3.5.3 多行修饰符（Multiline）</h4><p>多行修饰符 m 常用于执行一个多行匹配。</p>
+<p>像之前介绍的 (^,$) 用于检查格式是否是在待检测字符串的开头或结尾。但我们如果想要它在每行的开头和结尾生效，我们需要用到多行修饰符 m。</p>
+<p>例如，表达式 /at(.)?$/gm 表示小写字符 a 后跟小写字符 t ，末尾可选除换行符外任意字符。根据 m 修饰符，现在表达式匹配每行的结尾。</p>
 <blockquote>
 <p>“/.at(.)?$/“ =&gt; The fat<br>                cat sat<br>                on the <strong>mat</strong>.</p>
 </blockquote>
 <blockquote>
 <p>“/.at(.)?$/gm” =&gt; The <strong>fat</strong><br>                  cat <strong>sat</strong><br>                  on the <strong>mat</strong>.</p>
 </blockquote>
-<h3 id="6-贪婪匹配与惰性匹配（Greedy-vs-lazy-matching）"><a href="#6-贪婪匹配与惰性匹配（Greedy-vs-lazy-matching）" class="headerlink" title="6 贪婪匹配与惰性匹配（Greedy vs lazy matching）"></a><strong>6 贪婪匹配与惰性匹配（Greedy vs lazy matching）</strong></h3><p>&emsp;&emsp;正则表达式默认采用贪婪匹配模式，在该模式下意味着会匹配尽可能长的子串。我们可以使用 ? 将贪婪匹配模式转化为惰性匹配模式。</p>
+<h3 id="3-6-贪婪匹配与惰性匹配（Greedy-vs-lazy-matching）"><a href="#3-6-贪婪匹配与惰性匹配（Greedy-vs-lazy-matching）" class="headerlink" title="3.6 贪婪匹配与惰性匹配（Greedy vs lazy matching）"></a>3.6 贪婪匹配与惰性匹配（Greedy vs lazy matching）</h3><p>正则表达式默认采用贪婪匹配模式，在该模式下意味着会匹配尽可能长的子串。我们可以使用 ? 将贪婪匹配模式转化为惰性匹配模式。</p>
 <blockquote>
 <p>“/(.*at)/“ =&gt; <strong>The fat cat sat on the mat</strong>. </p>
 </blockquote>
@@ -788,28 +858,26 @@
 <p>“/(.*?at)/“ =&gt; <strong>The fat</strong> cat sat on the mat. </p>
 </blockquote>
 <hr>
-<h2 id="第三节-捕获组和非捕获组"><a href="#第三节-捕获组和非捕获组" class="headerlink" title="第三节 捕获组和非捕获组"></a><strong>第三节 捕获组和非捕获组</strong></h2><p>&emsp;&emsp;捕获组就是把正则表达式中子表达式匹配的内容，保存到内存中以数字编号或显式命名的组里，方便后面引用。当然，这种引用既可以是在正则表达式内部，也可以是在正则表达式外部。一般一个小括号括起来就是一个捕获组。捕获组可以进行嵌套。以深度优先进行编号，在js中编号从1开始。</p>
-<p>&emsp;&emsp;参与匹配却不进行分组编号的捕获组，其形式为（?:exp）组成，还有其他的形式</p>
+<h2 id="第三节-捕获组和非捕获组"><a href="#第三节-捕获组和非捕获组" class="headerlink" title="第三节 捕获组和非捕获组"></a><strong>第三节 捕获组和非捕获组</strong></h2><p>捕获组就是把正则表达式中子表达式匹配的内容，保存到内存中以数字编号或显式命名的组里，方便后面引用。当然，这种引用既可以是在正则表达式内部，也可以是在正则表达式外部。一般一个小括号括起来就是一个捕获组。捕获组可以进行嵌套。以深度优先进行编号，在js中编号从1开始。</p>
+<p>参与匹配却不进行分组编号的捕获组，其形式为（?:exp）组成，还有其他的形式</p>
 <hr>
-<h2 id="第四节-贪婪、勉强和独占模式"><a href="#第四节-贪婪、勉强和独占模式" class="headerlink" title="第四节 贪婪、勉强和独占模式"></a><strong>第四节 贪婪、勉强和独占模式</strong></h2><h3 id="1-贪婪模式"><a href="#1-贪婪模式" class="headerlink" title="1 贪婪模式"></a><strong>1 贪婪模式</strong></h3><p>&emsp;&emsp;匹配最长。在贪婪量词模式下，正则表达式会尽可能长地去匹配符合规则的字符串，且会回溯。</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String <span class="keyword">source</span> = <span class="string">"&lt;ol&gt;&lt;li&gt;Ggicci's Blog&lt;/li&gt;&lt;li&gt;Ggicci's Facebook&lt;/li&gt;&lt;/ol&gt;"</span>;</span><br><span class="line">Pattern pattern = Pattern.<span class="keyword">compile</span>(<span class="string">"&lt;li&gt;.*&lt;/li&gt;"</span>);</span><br><span class="line">Matcher matcher = pattern.matcher(<span class="keyword">source</span>);</span><br><span class="line"><span class="keyword">while</span> (matcher.<span class="keyword">find</span>()) &#123;</span><br><span class="line">    System.out.<span class="keyword">println</span>(matcher.<span class="keyword">group</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;输出：</p>
+<h2 id="第四节-贪婪、勉强和独占模式"><a href="#第四节-贪婪、勉强和独占模式" class="headerlink" title="第四节 贪婪、勉强和独占模式"></a><strong>第四节 贪婪、勉强和独占模式</strong></h2><h3 id="4-1-贪婪模式"><a href="#4-1-贪婪模式" class="headerlink" title="4.1 贪婪模式"></a>4.1 贪婪模式</h3><p>匹配最长。在贪婪量词模式下，正则表达式会尽可能长地去匹配符合规则的字符串，且会回溯。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String source = <span class="string">"&lt;ol&gt;&lt;li&gt;Ggicci's Blog&lt;/li&gt;&lt;li&gt;Ggicci's Facebook&lt;/li&gt;&lt;/ol&gt;"</span>;</span><br><span class="line">Pattern pattern = Pattern.compile(<span class="string">"&lt;li&gt;.*&lt;/li&gt;"</span>);</span><br><span class="line">Matcher matcher = pattern.matcher(source);</span><br><span class="line"><span class="keyword">while</span> (matcher.find()) &#123;</span><br><span class="line">    System.out.println(matcher.group());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Ggicci's Blog<span class="tag">&lt;/<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">li</span>&gt;</span>Ggicci's Facebook<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;解释：首先 .<em> 匹配任何字符（在非 DOTALL 模式下不匹配 \n,\r,\a 一类字符），在 source 中第一个被匹配的 &lt; li &gt; 后面直至最后一个字符（也就是&lt; /ol &gt;的 &gt;）都符合 .</em> 的匹配规则，但是显然如果 .* 匹配到最后一个字符，那么没有剩余的字符去匹配正则表达式中还未匹配的 &lt; /li &gt; 的，那么会引起匹配失败。但是失败后会回溯（这一点与独占量词不同，下面会讲到）。回溯后这段正则表达式将匹配到 source 中第一个 &lt; li &gt; 和第二个 &lt; /li &gt; 以及之间的内容，如上面的输出所示。</p>
-<h3 id="2-勉强模式"><a href="#2-勉强模式" class="headerlink" title="2 勉强模式"></a><strong>2 勉强模式</strong></h3><p>&emsp;&emsp;匹配最短。在勉强量词模式下，正则表达式会匹配尽可能短的字符串。</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String <span class="keyword">source</span> = <span class="string">"&lt;ol&gt;&lt;li&gt;Ggicci's Blog&lt;/li&gt;&lt;li&gt;Ggicci's Facebook&lt;/li&gt;&lt;/ol&gt;"</span>;</span><br><span class="line">Pattern pattern = Pattern.<span class="keyword">compile</span>(<span class="string">"&lt;li&gt;.*?&lt;/li&gt;"</span>);</span><br><span class="line">Matcher matcher = pattern.matcher(<span class="keyword">source</span>);</span><br><span class="line"><span class="keyword">while</span> (matcher.<span class="keyword">find</span>()) &#123;</span><br><span class="line">    System.out.<span class="keyword">println</span>(matcher.<span class="keyword">group</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;输出：</p>
+<p>解释：首先 .<em> 匹配任何字符（在非 DOTALL 模式下不匹配 \n,\r,\a 一类字符），在 source 中第一个被匹配的 &lt; li &gt; 后面直至最后一个字符（也就是&lt; /ol &gt;的 &gt;）都符合 .</em> 的匹配规则，但是显然如果 .* 匹配到最后一个字符，那么没有剩余的字符去匹配正则表达式中还未匹配的 &lt; /li &gt; 的，那么会引起匹配失败。但是失败后会回溯（这一点与独占量词不同，下面会讲到）。回溯后这段正则表达式将匹配到 source 中第一个 &lt; li &gt; 和第二个 &lt; /li &gt; 以及之间的内容，如上面的输出所示。</p>
+<h3 id="4-2-勉强模式"><a href="#4-2-勉强模式" class="headerlink" title="4.2 勉强模式"></a>4.2 勉强模式</h3><p>匹配最短。在勉强量词模式下，正则表达式会匹配尽可能短的字符串。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String source = <span class="string">"&lt;ol&gt;&lt;li&gt;Ggicci's Blog&lt;/li&gt;&lt;li&gt;Ggicci's Facebook&lt;/li&gt;&lt;/ol&gt;"</span>;</span><br><span class="line">Pattern pattern = Pattern.compile(<span class="string">"&lt;li&gt;.*?&lt;/li&gt;"</span>);</span><br><span class="line">Matcher matcher = pattern.matcher(source);</span><br><span class="line"><span class="keyword">while</span> (matcher.find()) &#123;</span><br><span class="line">    System.out.println(matcher.group());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Ggicci's Blog<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>Ggicci's Facebook<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;解释：source 中第一个&lt; li &gt;匹配到之后到第一个&lt; /li &gt;之间的字符都符合 .* 的匹配规则，同时如果继续匹配 &lt; /li &gt; 也符合这个规则，但是勉强模式下，它会尽可能短地匹配字符串，故第一个找到的字符串应该是 &lt; li &gt;Ggicci’s Blog&lt; /li &gt;，如上面输出所示。然后它会继续匹配剩余的字符串，找到第二个。</p>
-<h3 id="3-独占模式"><a href="#3-独占模式" class="headerlink" title="3 独占模式"></a><strong>3 独占模式</strong></h3><p>&emsp;&emsp;同贪婪一样匹配最长。不过在独占量词模式下，正则表达式尽可能长地去匹配字符串，一旦匹配不成功就会结束匹配而不会回溯。</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String <span class="keyword">source</span> = <span class="string">"&lt;ol&gt;&lt;li&gt;Ggicci's Blog&lt;/li&gt;&lt;li&gt;Ggicci's Facebook&lt;/li&gt;&lt;/ol&gt;"</span>;</span><br><span class="line">Pattern pattern = Pattern.<span class="keyword">compile</span>(<span class="string">"&lt;li&gt;.*+&lt;/li&gt;"</span>);</span><br><span class="line">Matcher matcher = pattern.matcher(<span class="keyword">source</span>);</span><br><span class="line"><span class="keyword">while</span> (matcher.<span class="keyword">find</span>()) &#123;</span><br><span class="line">    System.out.<span class="keyword">println</span>(matcher.<span class="keyword">group</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;解释：这段正则表达式将不会在 source 找到任何匹配的内容，因为 &lt; li &gt; 匹配到后， .*+ 所能匹配的字符尽可能长地匹配下去，直到 source 的最后一个字符，这必将引起匹配失败，但是在独占模式下一旦匹配失败就不会回溯，故不存在像贪婪模式一样回溯之后找到 &lt; /ol &gt;之前的&lt; /li &gt; 的情况。</p>
+<p>解释：source 中第一个&lt; li &gt;匹配到之后到第一个&lt; /li &gt;之间的字符都符合 .* 的匹配规则，同时如果继续匹配 &lt; /li &gt; 也符合这个规则，但是勉强模式下，它会尽可能短地匹配字符串，故第一个找到的字符串应该是 &lt; li &gt;Ggicci’s Blog&lt; /li &gt;，如上面输出所示。然后它会继续匹配剩余的字符串，找到第二个。</p>
+<h3 id="4-3-独占模式"><a href="#4-3-独占模式" class="headerlink" title="4.3 独占模式"></a>4.3 独占模式</h3><p>同贪婪一样匹配最长。不过在独占量词模式下，正则表达式尽可能长地去匹配字符串，一旦匹配不成功就会结束匹配而不会回溯。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String source = <span class="string">"&lt;ol&gt;&lt;li&gt;Ggicci's Blog&lt;/li&gt;&lt;li&gt;Ggicci's Facebook&lt;/li&gt;&lt;/ol&gt;"</span>;</span><br><span class="line">Pattern pattern = Pattern.compile(<span class="string">"&lt;li&gt;.*+&lt;/li&gt;"</span>);</span><br><span class="line">Matcher matcher = pattern.matcher(source);</span><br><span class="line"><span class="keyword">while</span> (matcher.find()) &#123;</span><br><span class="line">    System.out.println(matcher.group());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解释：这段正则表达式将不会在 source 找到任何匹配的内容，因为 &lt; li &gt; 匹配到后， .*+ 所能匹配的字符尽可能长地匹配下去，直到 source 的最后一个字符，这必将引起匹配失败，但是在独占模式下一旦匹配失败就不会回溯，故不存在像贪婪模式一样回溯之后找到 &lt; /ol &gt;之前的&lt; /li &gt; 的情况。</p>
 <hr>
-<p><em>参考博客和文章书籍等：</em></p>
-<blockquote>
-<p><a href="https://github.com/ziishaned/learn-regex/blob/master/translations/README-cn.md" title="Title" target="_blank" rel="noopener">learn-regex</a></p>
-</blockquote>
-<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<p>参考：</p>
+<p>🔗 《<a href="https://github.com/ziishaned/learn-regex/blob/master/translations/README-cn.md" title="Title" target="_blank" rel="noopener">learn-regex</a>》</p>
+<p>🔗 《<a href="https://zyc88.blog.csdn.net/article/details/98479629" target="_blank" rel="noopener">常用正则表达式大全</a>》</p>
 
       
     </div>
@@ -869,9 +937,9 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019091401.html" rel="next" title="CentOS使用笔记（持续更新）">
-                <i class="fa fa-chevron-left"></i> CentOS使用笔记（持续更新）
-              </a>
+              <a href="/2019091401.html" rel="next" title="SQL规范和优化<整>（持续更新）">
+                <i class="fa fa-chevron-left"></i> SQL规范和优化<整>（持续更新）
+              </整></a>
             
           </div>
 
@@ -970,7 +1038,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">306</span>
+                  <span class="site-state-item-count">307</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1091,7 +1159,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#正则表达式"><span class="nav-text">正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-介绍"><span class="nav-text">第一节 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-匹配模式"><span class="nav-text">第二节 匹配模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-基本匹配"><span class="nav-text">1 基本匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-元字符"><span class="nav-text">2 元字符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-点运算符"><span class="nav-text">2.1 点运算符 .</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-字符集"><span class="nav-text">2.2 字符集</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-1-否定字符集"><span class="nav-text">2.2.1 否定字符集</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-重复次数"><span class="nav-text">2.3 重复次数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-1-号"><span class="nav-text">2.3.1 * 号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-2-号"><span class="nav-text">2.3.2 + 号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-3-号"><span class="nav-text">2.3.3 ? 号</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-符号"><span class="nav-text">2.4 符号 {}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-…-特征标群"><span class="nav-text">2.5 (…) 特征标群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-6-或运算符"><span class="nav-text">2.6 | 或运算符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-7-转码特殊字符"><span class="nav-text">2.7 转码特殊字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-8-锚点"><span class="nav-text">2.8 锚点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-8-1-号"><span class="nav-text">2.8.1 ^ 号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-8-2-号"><span class="nav-text">2.8.2 $ 号</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-简写字符集"><span class="nav-text">3 简写字符集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-零宽度断言（前后预查）"><span class="nav-text">4 零宽度断言（前后预查）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-…-正先行断言"><span class="nav-text">4.1 ?=… 正先行断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-…-负先行断言"><span class="nav-text">4.2 ?!… 负先行断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-lt-…-正后发断言"><span class="nav-text">4.3 ?&lt;= … 正后发断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-lt-…-负后发断言"><span class="nav-text">4.4 ?&lt;!… 负后发断言</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-标志"><span class="nav-text">5 标志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-忽略大小写（Case-Insensitive）"><span class="nav-text">5.1 忽略大小写（Case Insensitive）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-全局搜索（Global-search）"><span class="nav-text">5.2 全局搜索（Global search）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-多行修饰符（Multiline）"><span class="nav-text">5.3 多行修饰符（Multiline）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-贪婪匹配与惰性匹配（Greedy-vs-lazy-matching）"><span class="nav-text">6 贪婪匹配与惰性匹配（Greedy vs lazy matching）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-捕获组和非捕获组"><span class="nav-text">第三节 捕获组和非捕获组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-贪婪、勉强和独占模式"><span class="nav-text">第四节 贪婪、勉强和独占模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-贪婪模式"><span class="nav-text">1 贪婪模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-勉强模式"><span class="nav-text">2 勉强模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-独占模式"><span class="nav-text">3 独占模式</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#正则表达式"><span class="nav-text">正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-常用格式"><span class="nav-text">第一节 常用格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#（1）校验数字的表达式"><span class="nav-text">（1）校验数字的表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（2）校验字符的表达式"><span class="nav-text">（2）校验字符的表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（3）特殊需求表达式"><span class="nav-text">（3）特殊需求表达式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-介绍"><span class="nav-text">第二节 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-匹配模式"><span class="nav-text">第三节 匹配模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-基本匹配"><span class="nav-text">3.1 基本匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-元字符"><span class="nav-text">3.2 元字符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-点运算符"><span class="nav-text">3.2.1 点运算符 .</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-字符集"><span class="nav-text">3.2.2 字符集</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#否定字符集"><span class="nav-text">否定字符集</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-重复次数"><span class="nav-text">3.2.3 重复次数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#（1）-号"><span class="nav-text">（1） * 号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（2）-号"><span class="nav-text">（2） + 号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（3）-号"><span class="nav-text">（3） ? 号</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-符号"><span class="nav-text">3.2.4 符号 {}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-5-…-特征标群"><span class="nav-text">3.2.5 (…) 特征标群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-6-或运算符"><span class="nav-text">3.2.6 | 或运算符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-7-转码特殊字符"><span class="nav-text">3.2.7 转码特殊字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-8-锚点"><span class="nav-text">3.2.8 锚点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-号"><span class="nav-text">(1) ^ 号</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-号"><span class="nav-text">(2) $ 号</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-简写字符集"><span class="nav-text">3.3 简写字符集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-零宽度断言（前后预查）"><span class="nav-text">3.4 零宽度断言（前后预查）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-…-正先行断言"><span class="nav-text">3.4.1 ?=… 正先行断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-…-负先行断言"><span class="nav-text">3.4.2 ?!… 负先行断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-lt-…-正后发断言"><span class="nav-text">3.4.3 ?&lt;= … 正后发断言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-lt-…-负后发断言"><span class="nav-text">3.4.4 ?&lt;!… 负后发断言</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-标志"><span class="nav-text">3.5 标志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-1-忽略大小写（Case-Insensitive）"><span class="nav-text">3.5.1 忽略大小写（Case Insensitive）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-2-全局搜索（Global-search）"><span class="nav-text">3.5.2 全局搜索（Global search）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-3-多行修饰符（Multiline）"><span class="nav-text">3.5.3 多行修饰符（Multiline）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-贪婪匹配与惰性匹配（Greedy-vs-lazy-matching）"><span class="nav-text">3.6 贪婪匹配与惰性匹配（Greedy vs lazy matching）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-捕获组和非捕获组"><span class="nav-text">第三节 捕获组和非捕获组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-贪婪、勉强和独占模式"><span class="nav-text">第四节 贪婪、勉强和独占模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-贪婪模式"><span class="nav-text">4.1 贪婪模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-勉强模式"><span class="nav-text">4.2 勉强模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-独占模式"><span class="nav-text">4.3 独占模式</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>

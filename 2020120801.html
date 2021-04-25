@@ -97,7 +97,7 @@
 <meta property="og:description" content="《高性能MySQL》读书笔记，内容：MySQL逻辑架构，并发控制，事务，多版本并发控制，存储引擎，时间线等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20201201/202012010101.png">
-<meta property="og:updated_time" content="2020-12-17T12:11:57.242Z">
+<meta property="og:updated_time" content="2021-04-20T08:13:06.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《高性能MySQL》（一）架构和历史">
 <meta name="twitter:description" content="《高性能MySQL》读书笔记，内容：MySQL逻辑架构，并发控制，事务，多版本并发控制，存储引擎，时间线等。">
@@ -431,7 +431,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6,819
+                  6,919
                 </span>
               
 
@@ -447,7 +447,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  24
+                  25
                 </span>
               
             </div>
@@ -541,30 +541,13 @@
 </ul>
 <h2 id="三-事务"><a href="#三-事务" class="headerlink" title="三. 事务"></a>三. 事务</h2><h3 id="3-1-什么是事务？"><a href="#3-1-什么是事务？" class="headerlink" title="3.1 什么是事务？"></a>3.1 什么是事务？</h3><p>事务是<strong>一组原子性的SQL查询</strong>，一个独立的工作单元。全部语句能够被数据库引擎成功应用，则执行该组查询；有任一语句无法执行，事务的所有语句都不会执行。<strong>要么全部执行成功，要么全部执行失败</strong>。</p>
 <h3 id="3-2-ACID"><a href="#3-2-ACID" class="headerlink" title="3.2 ACID"></a>3.2 ACID</h3><ul>
-<li><strong>原子性（Atomicity）</strong>：事务作为一个不可分割的整体被执行，包含在其中的对数据库的操作要么全部被执行，要么都不执行。</li>
-<li><strong>一致性（Consistency）</strong>：事务应确保数据库的状态从一个一致状态转变为另一个一致状态。一致状态的含义是数据库中的数据应满足完整性约束。</li>
-<li><strong>隔离性（Isolation）</strong>：一个事务在最终提交前应该对其他事务是不可见的；多个事务并发执行时，一个事务的执行不应影响其他事务的执行。</li>
+<li><strong>原子性（Atomicity）</strong>：事务作为一个不可分割的整体被执行，包含在其中的对数据库的操作要么<strong>全部被执行</strong>，要么<strong>全部不执行</strong>。</li>
+<li><strong>一致性（Consistency）</strong>：事务应确保数据库的状态从一个一致状态转变为另一个一致状态。一致状态的含义是数据库中的数据应满足完整性约束。数据库发生故障导致事务中断，未完成的修改不能写入物理数据库。</li>
+<li><strong>隔离性（Isolation）</strong>：一个事务在最终提交前应该对其他事务是不可见的，在并发操作相同数据时，每个事务都有独立的数据空间；多个事务并发执行时，一个事务的执行不应影响其他事务的执行。</li>
 <li><strong>持久性（Durability）</strong>：已被提交的事务对数据库的修改应该永久保存在数据库中。系统发生奔溃可以用重做日志（Redo Log）进行恢复，从而实现持久性。</li>
 </ul>
 <p>事务所带来的安全性也需要额外的工作和开销，而MySQL的存储引擎架构可以支持用户根据业务是否需要事务选择合适的存储引擎。</p>
-<h3 id="3-3-并发一致性问题"><a href="#3-3-并发一致性问题" class="headerlink" title="3.3 并发一致性问题"></a>3.3 并发一致性问题</h3><p>在并发环境下，事务的隔离性很难保证，所以有几种并发一致性问题：</p>
-<ol>
-<li><strong>修改丢失</strong>：即一个事务的更新背另一个事务的更新替换。</li>
-<li><strong>读脏数据</strong>：指当前事务读到另外事务未提交的数据。</li>
-<li><strong>不可重复读</strong>：指一个事务多次读取同一数据集合，在此期间另外事务也访问了此集合并做出修改，导致前个事务两次读取数据不一致。</li>
-<li><strong>幻影读</strong>：本质也是不可重复读，指一个事务读取某个范围的数据，另一事务在此范围插入新数据，导致前个事务再次读取结果不一致。<strong>区别在要避免幻读需要锁整张表，而避免不可重复读只需锁住行即可</strong>。</li>
-</ol>
-<p>通过锁机制来解决此问题，MySql提供了对应的封锁机制来实现，<strong>通过三级封锁协议来处理并发一致性问题</strong>。</p>
-<h3 id="3-4-封锁协议"><a href="#3-4-封锁协议" class="headerlink" title="3.4 封锁协议"></a>3.4 封锁协议</h3><ul>
-<li><strong>三级封锁协议</strong>：<ul>
-<li>一级：<strong>事务 T 要修改数据 A 时必须加写锁，直到 T 结束才释放锁</strong>。可以解决修改丢失问题，因为不能同时有两个事务对同一个数据进行修改，那么事务的修改就不会被覆盖。</li>
-<li>二级：<strong>在一级的基础上，要求读取数据 A 时必须加读锁，读取完马上释放读锁</strong>。可以解决读脏数据问题，因为如果一个事务在对数据 A 进行修改，根据 1 级封锁协议，会加 X 锁，那么就不能再加 S 锁了，也就是不会读入数据。</li>
-<li>三级：<strong>在二级的基础上，要求读取数据 A 时必须加读锁，直到事务结束了才能释放读锁</strong>。可以解决不可重复读的问题，因为读 A 时，其它事务不能对 A 加 X 锁，从而避免了在读的期间数据发生改变。</li>
-</ul>
-</li>
-<li><strong>两段封锁协议</strong>：<strong>加锁和解锁分为两个阶段进行</strong>。</li>
-</ul>
-<h3 id="3-5-隔离级别"><a href="#3-5-隔离级别" class="headerlink" title="3.5 隔离级别"></a>3.5 隔离级别</h3><ol>
+<h3 id="3-3-隔离级别"><a href="#3-3-隔离级别" class="headerlink" title="3.3 隔离级别"></a>3.3 隔离级别</h3><ol>
 <li><strong>读未提交</strong>（READ UNCOMMITTED）：<ul>
 <li>事务中的修改，即使没有提交，对其它事务也是可见的。</li>
 <li>会<strong>导致脏读</strong>（读到未提交的数据），性能也并未比其它级别好很多。</li>
@@ -578,6 +561,7 @@
 </li>
 <li><strong>可重复读</strong>（REPEATABLE READ）：<ul>
 <li>保证在同一个事务中多次读取同一数据的结果是一样的。</li>
+<li>不可重复读在同一事务中多次读取可能会读到不同的数据结果，可重复读则保证同一个事务中只会读到相同结果</li>
 </ul>
 </li>
 <li><strong>可串行化</strong>（SERIALIZABLE）：强制事务串行执行，这样多个事务互不干扰，不会出现并发一致性问题。</li>
@@ -638,6 +622,23 @@
 <li><strong>读已提交，因为半一致性读的特性会增加update操作的并发性</strong>。一个事务执行完update操作，但尚未提交，另一事务获取锁时发现已占用，InnoDB开启半一致性读返回最新的已提交版本，MySql会重新发起一次读操作，此时可以读到此行的最新版本并加锁，而可重复读这时事务只能等待前一事务提交。</li>
 <li><strong>不可重复读问题可以接受</strong>，已经提交了数据，即使不一样通常也不会造成问题。</li>
 </ol>
+<h3 id="3-4-并发一致性问题"><a href="#3-4-并发一致性问题" class="headerlink" title="3.4 并发一致性问题"></a>3.4 并发一致性问题</h3><p>在并发环境下，事务的隔离性很难保证，所以有几种并发一致性问题：</p>
+<ol>
+<li><strong>修改丢失</strong>：即一个事务的更新背另一个事务的更新替换。</li>
+<li><strong>读脏数据</strong>：指当前事务读到另外事务未提交的数据。</li>
+<li><strong>不可重复读</strong>：指一个事务多次读取同一数据集合，在此期间另外事务也访问了此集合并做出修改，导致前个事务两次读取数据不一致。</li>
+<li><strong>幻影读</strong>：本质也是不可重复读，指一个事务读取某个范围的数据，另一事务在此范围插入新数据，导致前个事务再次读取结果不一致。<strong>区别在要避免幻读需要锁整张表，而避免不可重复读只需锁住行即可</strong>。</li>
+</ol>
+<p>通过锁机制来解决此问题，MySql提供了对应的封锁机制来实现，<strong>通过三级封锁协议来处理并发一致性问题</strong>。</p>
+<h3 id="3-5-封锁协议"><a href="#3-5-封锁协议" class="headerlink" title="3.5 封锁协议"></a>3.5 封锁协议</h3><ul>
+<li><strong>三级封锁协议</strong>：<ul>
+<li>一级：<strong>事务 T 要修改数据 A 时必须加写锁，直到 T 结束才释放锁</strong>。可以解决修改丢失问题，因为不能同时有两个事务对同一个数据进行修改，那么事务的修改就不会被覆盖。</li>
+<li>二级：<strong>在一级的基础上，要求读取数据 A 时必须加读锁，读取完马上释放读锁</strong>。可以解决读脏数据问题，因为如果一个事务在对数据 A 进行修改，根据 1 级封锁协议，会加 X 锁，那么就不能再加 S 锁了，也就是不会读入数据。</li>
+<li>三级：<strong>在二级的基础上，要求读取数据 A 时必须加读锁，直到事务结束了才能释放读锁</strong>。可以解决不可重复读的问题，因为读 A 时，其它事务不能对 A 加 X 锁，从而避免了在读的期间数据发生改变。</li>
+</ul>
+</li>
+<li><strong>两段封锁协议</strong>：<strong>加锁和解锁分为两个阶段进行</strong>。</li>
+</ul>
 <h3 id="3-6-死锁"><a href="#3-6-死锁" class="headerlink" title="3.6 死锁"></a>3.6 死锁</h3><ul>
 <li>死锁指两个或多个事务在同一资源上相互占用，并请求锁定对方占用的资源，从而导致恶性循环的现象。</li>
 <li>InnoDB有死锁检测和死锁超时机制，处理死锁时会将持有最少行级排他锁的事务进行回滚。</li>
@@ -1043,7 +1044,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">306</span>
+                  <span class="site-state-item-count">307</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1164,7 +1165,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（一）架构和历史"><span class="nav-text">《高性能MySQL》（一）架构和历史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-MySQL逻辑架构"><span class="nav-text">一. MySQL逻辑架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-连接与安全"><span class="nav-text">1.1 连接与安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-优化与执行"><span class="nav-text">1.2 优化与执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-并发控制"><span class="nav-text">二. 并发控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-读写锁"><span class="nav-text">2.1 读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-锁粒度"><span class="nav-text">2.2 锁粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-锁类型"><span class="nav-text">2.3 锁类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-事务"><span class="nav-text">三. 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-什么是事务？"><span class="nav-text">3.1 什么是事务？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-ACID"><span class="nav-text">3.2 ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-并发一致性问题"><span class="nav-text">3.3 并发一致性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-封锁协议"><span class="nav-text">3.4 封锁协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-隔离级别"><span class="nav-text">3.5 隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）为什么MySQL默认是可重复读？"><span class="nav-text">（1）为什么MySQL默认是可重复读？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）为什么选择读已提交？"><span class="nav-text">（2）为什么选择读已提交？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-死锁"><span class="nav-text">3.6 死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-事务日志"><span class="nav-text">3.7 事务日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-存储引擎与事务"><span class="nav-text">3.8 存储引擎与事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）自动提交（AUTO-COMMIT）"><span class="nav-text">（1）自动提交（AUTO COMMIT）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）在事务中混合使用存储引擎"><span class="nav-text">（2）在事务中混合使用存储引擎</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）隐式和显式锁定"><span class="nav-text">（3）隐式和显式锁定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-多版本并发控制-MVCC"><span class="nav-text">四. 多版本并发控制-MVCC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-什么是多版本并发控制？"><span class="nav-text">4.1 什么是多版本并发控制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-如何实现多版本并发控制？"><span class="nav-text">4.2 如何实现多版本并发控制？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-存储引擎"><span class="nav-text">五. 存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-InnoDB"><span class="nav-text">5.1 InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-MyISAM"><span class="nav-text">5.2 MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-MySQL内建其他存储引擎"><span class="nav-text">5.3 MySQL内建其他存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-第三方存储引擎"><span class="nav-text">5.4 第三方存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-如何选择合适的存储引擎"><span class="nav-text">5.5 如何选择合适的存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-转换表的存储引擎"><span class="nav-text">5.6 转换表的存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-时间线-Timeline"><span class="nav-text">六. 时间线-Timeline</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#《高性能MySQL》（一）架构和历史"><span class="nav-text">《高性能MySQL》（一）架构和历史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-MySQL逻辑架构"><span class="nav-text">一. MySQL逻辑架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-连接与安全"><span class="nav-text">1.1 连接与安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-优化与执行"><span class="nav-text">1.2 优化与执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-并发控制"><span class="nav-text">二. 并发控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-读写锁"><span class="nav-text">2.1 读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-锁粒度"><span class="nav-text">2.2 锁粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-锁类型"><span class="nav-text">2.3 锁类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-事务"><span class="nav-text">三. 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-什么是事务？"><span class="nav-text">3.1 什么是事务？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-ACID"><span class="nav-text">3.2 ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-隔离级别"><span class="nav-text">3.3 隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）为什么MySQL默认是可重复读？"><span class="nav-text">（1）为什么MySQL默认是可重复读？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）为什么选择读已提交？"><span class="nav-text">（2）为什么选择读已提交？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-并发一致性问题"><span class="nav-text">3.4 并发一致性问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-封锁协议"><span class="nav-text">3.5 封锁协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-死锁"><span class="nav-text">3.6 死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-事务日志"><span class="nav-text">3.7 事务日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-存储引擎与事务"><span class="nav-text">3.8 存储引擎与事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）自动提交（AUTO-COMMIT）"><span class="nav-text">（1）自动提交（AUTO COMMIT）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）在事务中混合使用存储引擎"><span class="nav-text">（2）在事务中混合使用存储引擎</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）隐式和显式锁定"><span class="nav-text">（3）隐式和显式锁定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-多版本并发控制-MVCC"><span class="nav-text">四. 多版本并发控制-MVCC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-什么是多版本并发控制？"><span class="nav-text">4.1 什么是多版本并发控制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-如何实现多版本并发控制？"><span class="nav-text">4.2 如何实现多版本并发控制？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-存储引擎"><span class="nav-text">五. 存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-InnoDB"><span class="nav-text">5.1 InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-MyISAM"><span class="nav-text">5.2 MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-MySQL内建其他存储引擎"><span class="nav-text">5.3 MySQL内建其他存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-第三方存储引擎"><span class="nav-text">5.4 第三方存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-如何选择合适的存储引擎"><span class="nav-text">5.5 如何选择合适的存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-转换表的存储引擎"><span class="nav-text">5.6 转换表的存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-时间线-Timeline"><span class="nav-text">六. 时间线-Timeline</span></a></li></ol></li></ol></div>
             
 
           </div>
