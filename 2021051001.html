@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="ZooKeeper一. 概述1.1 什么是ZooKeeper？ Apache ZooKeeper 由 Apache Hadoop 子项目发展而来。 ZooKeeper是一个开源的分布式协调服务，由雅虎创建，Google Chubby 的开源实现。 设计目标是将那些复杂易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。 ZooKeeper 为分布式应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper">
+<meta property="og:url" content="http://linyishui.top/2021051001.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="ZooKeeper一. 概述1.1 什么是ZooKeeper？ Apache ZooKeeper 由 Apache Hadoop 子项目发展而来。 ZooKeeper是一个开源的分布式协调服务，由雅虎创建，Google Chubby 的开源实现。 设计目标是将那些复杂易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。 ZooKeeper 为分布式应">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200111.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200112.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200113.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200115.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200116.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200117.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200119.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200120.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200121.png">
+<meta property="og:updated_time" content="2021-05-12T12:54:21.074Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ZooKeeper">
+<meta name="twitter:description" content="ZooKeeper一. 概述1.1 什么是ZooKeeper？ Apache ZooKeeper 由 Apache Hadoop 子项目发展而来。 ZooKeeper是一个开源的分布式协调服务，由雅虎创建，Google Chubby 的开源实现。 设计目标是将那些复杂易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。 ZooKeeper 为分布式应">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200111.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2021051001.html">
+
+
+
+
+
+  <title>ZooKeeper | 俺的部落格</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z0L5T0JQG7"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Z0L5T0JQG7');
+    }
+  </script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a73137787baf0001a5bc4063855efe8a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021051001.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ZooKeeper</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-10T21:27:05+08:00">
+                2021-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,544
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h1><h2 id="一-概述"><a href="#一-概述" class="headerlink" title="一. 概述"></a>一. 概述</h2><h3 id="1-1-什么是ZooKeeper？"><a href="#1-1-什么是ZooKeeper？" class="headerlink" title="1.1 什么是ZooKeeper？"></a>1.1 什么是ZooKeeper？</h3><ul>
+<li>Apache ZooKeeper 由 Apache Hadoop 子项目发展而来。</li>
+<li>ZooKeeper是一个开源的分布式协调服务，由雅虎创建，Google Chubby 的开源实现。</li>
+<li>设计目标是将那些复杂易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。</li>
+<li>ZooKeeper 为分布式应用提供了高效且可靠的分布式协调服务，提供了诸如<strong>统一命名服务</strong>、<strong>配置关联</strong>和<strong>分布式锁</strong>等分布式的基础服务。</li>
+<li>ZooKeeper并没有直接采用 Paxos 算法，而是一种被称为 ZAB（ZooKeeper Atomic Broadcast）的一致性协议。</li>
+</ul>
+<p>ZooKeeper 是一个典型的分布式数据一致性的解决方案，应用可以基于它实现诸如<strong>数据发布/订阅</strong>、<strong>负载均衡</strong>、<strong>命名服务</strong>、<strong>分布式协调/通知</strong>、<strong>集群管理</strong>、<strong>Master选举</strong>、<strong>分布式锁</strong>和<strong>分布式队列</strong>等功能。</p>
+<h3 id="1-2-特性"><a href="#1-2-特性" class="headerlink" title="1.2 特性"></a>1.2 特性</h3><ul>
+<li><strong>顺序一致性：</strong>从同一客户端发起的事务请求，将会严格的按照发送顺序被应用到ZooKeeper中。</li>
+<li><strong>原子性：</strong>所有事务请求的处理结果在整个集群中所有机器上的应用情况是一致的，要么整个集群所有机器都成功应用了某个事务，要么都没有应用。</li>
+<li><strong>单一视图：</strong>无论客户端连接哪个ZooKeeper服务器，看到的服务端数据模型都是一致的。</li>
+<li><strong>可靠性：</strong>一旦服务端成功应用了一个事务，并完成对客户端的响应，事务引起的服务端状态一直保留到下个事务进行变更。</li>
+<li><strong>实时性：</strong>ZooKeeper仅保证在一定时间段内，客户端最终一定能够从服务端读取到最新的数据状态。</li>
+</ul>
+<h3 id="1-3-设计目标"><a href="#1-3-设计目标" class="headerlink" title="1.3 设计目标"></a>1.3 设计目标</h3><ol>
+<li><strong>简单的数据模型：</strong>分布式程序通过一个共享的、树型结构的名字空间来相互协调</li>
+<li><strong>可以构建集群：</strong>一般3~5台机器可以组成一个可用的ZooKeeper集群，每台机器都会在内存中维护当前的服务器状态，机器之间互相都保持着通信。ZooKeeper客户端会与任意一台机器创建一个TCP连接，一旦连接断开，客户端会自动连接到其他机器。</li>
+<li><strong>顺序访问：</strong>ZooKeeper为客户端的每个更新请求分配一个全局唯一的递增编号，反映了事务操作的先后顺序。</li>
+<li><strong>高性能：</strong>ZooKeeper将全量数据存储在内存中，直接服务于客户端的所有非事务请求，非常适合于读操作为主的场景。</li>
+</ol>
+<h3 id="1-4-核心概念"><a href="#1-4-核心概念" class="headerlink" title="1.4 核心概念"></a>1.4 核心概念</h3><ul>
+<li><p><strong>集群角色：</strong></p>
+<ul>
+<li>最典型的集群模式是Master/Slave（主备模式），能够处理所有写操作的是Master机器，所有通过异步复制方式获取最新数据，并提供读服务的机器是Slave机器。</li>
+<li>ZooKeeper并没有采用这种模式，而是引入了新的三个角色：<ul>
+<li><strong>Leader：</strong>集群中所有机器通过选举过程选定一个Leader，其为客户端提供读和写服务。</li>
+<li><strong>Follower：</strong>提供读服务。</li>
+<li><strong>Observer：</strong>提供读服务，不参与Leader选举过程，也不参与写操作的“过半写成功”策略，因此Observer可以在不影响写性能的情况下提高集群的读性能。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>会话（Session）：</strong></p>
+<ul>
+<li>在ZooKeeper中，一个客户端连接是指客户端和服务器之间的一个TCP长连接。</li>
+<li>ZooKeeper对外的服务端口默认是2181，客户端启动时首先会与服务器建立一个TCP连接，从第一次连接建立开始，客户端会话的生命周期也开始，客户端通过这个连接进行心跳检测与服务器保持有效的会话，也能够向ZooKeeper服务器发送请求并接收响应，同时还能通过该连接接收服务器的Watch事件通知。</li>
+<li>sessionTimeout值用来设置一个客户端会话的超时时间。因服务器压力过大、网络故障或客户端主动断开连接等导致的连接断开，只要在sessionTimeout规定时间内重新连上一台服务器，之前创建的会话仍会有效。</li>
+</ul>
+</li>
+<li><p><strong>数据节点（ZNode）：</strong>分布式中节点即每台机器，在ZooKeeper中，节点分为两类：</p>
+<ul>
+<li><strong>机器节点：</strong>构成集群的机器</li>
+<li><strong>数据节点：</strong>数据模型中的数据单元，即ZNode，又可以分为<ul>
+<li><strong>持久节点：</strong>一旦此ZNode被创建，除非主动进行移除操作，否则将一直保存。</li>
+<li><strong>临时节点：</strong>生命周期和客户端会话绑定，一旦客户端会话失效，该客户端创建的所有临时节点都会被移除。</li>
+</ul>
+</li>
+</ul>
+<p>数据模型是一棵树，由斜杠（<code>/</code>）进行分割的路径，就是一个ZNode，如 <code>/foo/path1</code> 。每个ZNode上都会保存自己的数据内容，以及一系列属性信息。</p>
+<p>ZooKeeper允许用户为每个节点添加一个特殊的属性：SEQUENTIAL，当节点标记此属性，在节点创建时会自动在节点名后追加一个由父节点维护的自增整型数字。</p>
+</li>
+<li><p><strong>版本：</strong>ZooKeeper的每个ZNode都会维护一个叫做 <strong>Stat</strong> 的数据结构，Stat中记录了节点的三个数据版本：</p>
+<ul>
+<li>version：当前ZNode的版本</li>
+<li>cversion：当前ZNode子节点的版本</li>
+<li>aversion：当前ZNode的ACL版本</li>
+</ul>
+</li>
+<li><p><strong>Watcher：</strong>即事件监听器，用户可以在指定节点上注册一些Watcher，在一些特定事件触发时，ZooKeeper服务端会将事件通知到感兴趣的客户端上。</p>
+</li>
+<li><p><strong>ACL：</strong>ZooKeeper采用 Access Control Lists 策略来进行权限控制，类似于UNIX文件系统的权限控制，定义了5种权限：</p>
+<ul>
+<li><strong>CREATE：</strong>创建子节点的权限</li>
+<li><strong>READ：</strong>获取节点数据和子节点列表的权限</li>
+<li><strong>WRITE：</strong>更新节点数据的权限</li>
+<li><strong>DELETE：</strong>删除子节点的权限</li>
+<li><strong>ADMIN：</strong>设置节点ACL的权限</li>
+</ul>
+</li>
+</ul>
+<h2 id="二-ZAB-协议"><a href="#二-ZAB-协议" class="headerlink" title="二. ZAB 协议"></a>二. ZAB 协议</h2><h3 id="2-1-什么是ZAB协议？"><a href="#2-1-什么是ZAB协议？" class="headerlink" title="2.1 什么是ZAB协议？"></a>2.1 什么是ZAB协议？</h3><p>ZooKeeper并没有完全采用 Paxos 算法，而是使用了一个称为 ZooKeeper Atomic Broadcast（ZAB，ZooKeeper<strong>原子消息广播协议</strong>）的协议来作为其数据一致性的核心算法。</p>
+<p>ZAB协议是一种支持崩溃恢复的原子广播协议，最初只是为雅虎公司内部一些<strong>高吞吐量、低延迟、健壮、简单</strong>的分布式系统场景设计的，并不像Paxos算法那样通用和可扩展。</p>
+<p>基于该协议，ZooKeeper实现了一种<strong>主备模式</strong>的系统架构来保持集群中各副本之间的数据一致性。ZooKeeper使用一个单一的主进程来接收并处理客户端所有的事务请求，通过ZAB的原子广播协议将服务器的数据状态以事务Proposal的形式广播到所有的副本进程。该主备模型保证了<strong>同一时刻集群中只能有一个主进程来广播服务器的状态变更</strong>，因此能够很好的处理客户端大量的并发请求。并且<strong>支持分布式环境中对于顺序状态的需求</strong>（有些状态变更必须依赖于比它早生成的状态变更），保证了一个全局的变更序列被顺序应用。因为主进程随时可能崩溃或重启，还要做到主进程有问题时仍能正常工作。</p>
+<p>所有事务请求必须由一个全局唯一的服务器来协调处理，即Leader服务器，余下的服务器成为Follower服务器。Leader服务器负责将一个客户端事务请求转换为一个事务 Proposal（提议），并将该提议分发给集群中所有的Follower服务器。之后Leader服务器等待所有Follower服务器的反馈，一旦超过半数进行了正确的反馈，Leader服务器再次向所有的Follower服务器分发Commit消息，要求将前一个提议提交。</p>
+<h3 id="2-2-协议介绍"><a href="#2-2-协议介绍" class="headerlink" title="2.2 协议介绍"></a>2.2 协议介绍</h3><p>ZAB协议包含两种基本模式：</p>
+<ul>
+<li><strong>崩溃恢复：</strong><ul>
+<li>当整个服务框架在启动过程，或是Leader服务器出现网络中断、崩溃退出与重启等异常情况时，ZAB进入该模式选举产生新的Leader服务器。</li>
+<li>选出新的Leader，且集群中已有过半的机器与新的Leader完成状态同步（指数据同步，用来保证过半机器与Leader保持一致）之后，ZAB退出该模式。</li>
+</ul>
+</li>
+<li><strong>消息广播：</strong><ul>
+<li>集群中有过半的Follower服务器完成了与Leader服务器的状态同步，服务框架进入该模式。</li>
+<li>当一台遵守ZAB协议的服务器启动并加入集群时，若此时已存在Leader服务器，它会自觉的进入数据恢复模式：找到Leader所在服务器，并与其进行数据同步，然后一起参与到消息广播流程中。</li>
+</ul>
+</li>
+</ul>
+<h4 id="（1）消息广播"><a href="#（1）消息广播" class="headerlink" title="（1）消息广播"></a>（1）消息广播</h4><p>消息广播的过程类似于二阶段提交：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200111.png" alt></p>
+<p>ZAB没有中断逻辑，所以Follower服务器反馈Ack后就可以提交事务Proposal，这种简化模型自然存在Leader单点故障引起的数据不一致问题。ZAB协议通过崩溃恢复模式来解决这个问题。</p>
+<p>整个消息广播协议基于具有FIFO特性的TCP协议来进行网络通信，很容易保证消息接收和发送的顺序性。Leader为每个事务Proposal分配一个全局单调递增的事务ID（ZXID），每个事务按照ZXID的先后顺序进行排序和处理。</p>
+<p>Leader服务器为每个Follower服务器各自分配一个队列，将需要广播的事务Proposal依次放入队列中，根据FIFO的策略进行消息发送。每个Follower服务器收到事务Proposal后，首先以事务日志的形式写入到本地磁盘中，在成功写入后反馈给Leader一个Ack响应。收到超过半数的Ack响应后，Leader会广播一个Commit消息给所有Follower服务器以通知进行事务提交，同时Leader完成自己的事务提交。</p>
+<h4 id="（2）崩溃恢复"><a href="#（2）崩溃恢复" class="headerlink" title="（2）崩溃恢复"></a>（2）崩溃恢复</h4><p>进入崩溃恢复模式后，需要选举出一个新的Leader服务器，这需要一个高效且可靠的选举算法，不仅需要让新Leader自己知道已被选举为Leader，还要让集群中所有机器快速感知到这点。</p>
+<p><strong>ZAB协议要确保那些已经在Leader服务器上提交的事务最终被所有服务器提交。</strong></p>
+<p>假设一个事务已在Leader服务器提交，但在将Commit消息发送给所有Follower之前，Leader挂掉了：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200112.png" alt></p>
+<p><strong>ZAB协议要确保丢弃那些只在Leader服务器上被提出的事务。</strong></p>
+<p>相反，在崩溃恢复过程中出现一个需要被丢弃的提案，在崩溃恢复结束后需要跳过该事务Proposal：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200113.png" alt></p>
+<p>针对以上两点，如果Leader选举算法能够保证新选举出来的Leader服务器拥有集群中所有机器最高编号（ZXID）的事务Proposal，就可以保证新选举出的Leader一定具有所有已经提交的提案，还可以省区Leader服务器检查Proposal的提交和丢弃工作这一步。</p>
+<p>完成Leader选举后，在正式工作前，Leader服务器首先要确认事务日志中所有的Proposal是否都已经被集群中过半的机器提交了，即<strong>是否完成数据同步</strong>。</p>
+<ul>
+<li>Leader为每个Follower准备一个队列，将没有被各Follower同步的事务以Proposal消息的形式逐个发送给Follower，并每个都跟着发送一个Commit消息。</li>
+<li>等到所有Follower都将其尚未同步的事务Proposal从Leader上同步过来并成功应用到本地数据库后，Leader将该Follower加如到真正可用的Follower列表，并开始之后流程。</li>
+</ul>
+<p><strong>如何处理需要丢弃的事务Proposal？</strong></p>
+<p>ZXID时一个64位的数字，低32位可以看作简单的递增计数器，高32位则代表了Leader周期epoch的编号，每当选举产生一个新的Leader服务器，就会从Leader上取出其本地日志中最大事务Proposal的ZXID，解析出epoch值并加1，将此编号作为新的epoch，并将低32位置0。</p>
+<p>这样可以区分开不同的Leader周期变化，从而避免不同的Leader服务器错误的使用相同的ZXID提出不同的事务Proposal。</p>
+<p>当一个包含了上个周期尚未提交的事务Proposal的服务器启动时，其肯定无法成为Leader。因为当前集群一定包含一个Quorum集合，集合中的机器一定包含了更高epoch的事务Proposal，因此该机器肯定非最高编号事务。当其连接上Leader后，Leader根据自己记录的最后被提交的Proposal对比，并要求Follower进行一个回退操作—回退到一个确实已经被集群过半机器提交的最新的事务Proposal（如上图4-4 Server1连接后，会被要求去除P3）。</p>
+<h3 id="2-3-深入剖析"><a href="#2-3-深入剖析" class="headerlink" title="2.3 深入剖析"></a>2.3 深入剖析</h3><p>未完待续…</p>
+<h4 id="（1）-系统模型"><a href="#（1）-系统模型" class="headerlink" title="（1） 系统模型"></a>（1） 系统模型</h4><h4 id="（2）-问题描述"><a href="#（2）-问题描述" class="headerlink" title="（2） 问题描述"></a>（2） 问题描述</h4><h4 id="（3）-算法描述"><a href="#（3）-算法描述" class="headerlink" title="（3） 算法描述"></a>（3） 算法描述</h4><h4 id="（4）-运行分析"><a href="#（4）-运行分析" class="headerlink" title="（4） 运行分析"></a>（4） 运行分析</h4><h3 id="2-4-ZAB与Paxos算法的异同"><a href="#2-4-ZAB与Paxos算法的异同" class="headerlink" title="2.4 ZAB与Paxos算法的异同"></a>2.4 ZAB与Paxos算法的异同</h3><ul>
+<li>二者都存在一个Leader进程角色，负责协调多个Follower进程的运行。</li>
+<li><p>Leader进程都会等待超过半数的Follower进程正确反馈后，才会将提案提交。</p>
+</li>
+<li><p>ZAB协议中标识Leader周期的epoch值，Paxos算法中叫Ballot。</p>
+</li>
+</ul>
+<p>二者的本质区别在于设计目标不同，ZAB协议用于构建一个高可用的分布式数据主备系统，而Paxos算法则用于构建一个分布式的一致性状态机系统。</p>
+<h2 id="三-简单使用"><a href="#三-简单使用" class="headerlink" title="三. 简单使用"></a>三. 简单使用</h2><h3 id="3-1-部署与运行"><a href="#3-1-部署与运行" class="headerlink" title="3.1 部署与运行"></a>3.1 部署与运行</h3><p>ZooKeeper使用Java语言编写，所以需要1.6以上版本的Java环境。ZooKeeper包含集群和单机两种运行模式。</p>
+<h4 id="（1）部署"><a href="#（1）部署" class="headerlink" title="（1）部署"></a>（1）部署</h4><ol>
+<li><p>下载安装包并解压：<code>http:zookeeper.apache.org/releases.html</code></p>
+</li>
+<li><p>配置文件 <code>zoo.cfg</code> ：</p>
+<p><code>%ZK_HOME%/conf</code> 目录下 <code>zoo_sample.cfg</code> 重命名为 <code>zoo.cfg</code> </p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">tickTime=2000</span></span><br><span class="line"><span class="string">dataDir=/var/lib/zookeeper/</span></span><br><span class="line"><span class="string">clientPort=2181</span></span><br><span class="line"><span class="string">initLimit=5</span></span><br><span class="line"><span class="string">syncLimit=2</span></span><br><span class="line"><span class="comment"># server.id=host:port:port 用来感知集群由哪些机器构成，id表示机器序号，dataDir目录下需要有一个myid文件，内容为一个数字对应此id</span></span><br><span class="line"><span class="string">server.1=&lt;IP1&gt;:2888:3888</span></span><br><span class="line"><span class="string">server.2=&lt;IP2&gt;:2888:3888</span></span><br><span class="line"><span class="string">server.3=&lt;IP3&gt;:2888:3888</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>集群模式下所有cfg文件都应是一致的，最好使用代码仓库管理起来。</li>
+<li>id取值范围为 ：1~255。</li>
+</ul>
+</li>
+<li><p>创建 <code>myid</code> 文件，在dataDir指定目录下，内容为数字id</p>
+</li>
+<li><p>为所有机器配置2和3步内容</p>
+</li>
+<li><p>启动服务器：使用 <code>%ZK_HOME%/bin</code> 目录下的 <code>zkServer.sh</code> 脚本启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sh zkServer.sh start</span></span><br><span class="line">JMX enabled by default</span><br><span class="line">Using config: /opt/zookeeper-3.4.3/bin/../conf/zoo.cfg</span><br><span class="line">Starting zookeeper ... STARTED</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>验证服务器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> telnet 127.0.0.1 2181</span></span><br><span class="line">stat</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>单机模式与集群模式只是在 <code>zoo.cfg</code> 的配置上有些差异，<code>server.id</code> 只有一项 <code>server.1</code> 。</p>
+<h4 id="（2）运行和停止"><a href="#（2）运行和停止" class="headerlink" title="（2）运行和停止"></a>（2）运行和停止</h4><p>启动服务：</p>
+<ul>
+<li>Java命令行：在 <code>%ZK_HOME%</code> 目录下执行命令 <code>java -cp zookeeper -3.4.3 jar:lib/ slf4j-api-1.6. 1. jar:lib/slf4j- log4j12-1.6.1.jar:lib/log4j-1.2.15.jar:conf org. apache. zookeeper. server.quorum.QuorumPeerMain conf/zoo.cfg</code> 注意log4j和slf4j版本</li>
+<li>自带的启动脚本</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200114.png" alt></p>
+<p>停止服务：<code>sh zkServer.sh stop</code></p>
+<h4 id="（3）常见异常"><a href="#（3）常见异常" class="headerlink" title="（3）常见异常"></a>（3）常见异常</h4><ul>
+<li><strong>端口被占用：</strong><code>java.net.BindException: Address already in use</code> 异常是因为2181端口被其他进程占用，关闭对应进程并重启ZK即可。</li>
+<li><strong>磁盘没有剩余空间：</strong><code>java.io.IOException: No space left on device</code> 遇到此异常，ZK会立即执行Failover策略，从而退出进程。清理磁盘空间，为了避免后续再次遇到此问题，最好加上对ZK服务器磁盘使用的监控和ZK日志的自动清理。</li>
+<li><strong>无法找到 <code>myid</code> 文件：</strong>缺少此文件，创建即可。</li>
+<li><strong>集群中其他机器Leader选举端口未开：</strong> <code>Cannot open channel to 2 at election adress /xx.xx.xx.xx:3888</code> 这是由于启动过程中，虽然当前机器启动了，但其他机器还未启动完。ZK使用3888端口进行Leader选举过程的投票通信。</li>
+</ul>
+<h3 id="3-2-客户端脚本"><a href="#3-2-客户端脚本" class="headerlink" title="3.2 客户端脚本"></a>3.2 客户端脚本</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 进入bin目录，确认是否连接上ZK服务器</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sh zkCli.sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 连接指定ZK服务器</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sh zkCli.sh -server ip:port</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建一个ZK节点</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> s或e分别指定节点特性顺序或临时节点，不加则默认为持久节点；acl进行权限控制，默认不加控制</span></span><br><span class="line">create [-s] [-e] path data acl</span><br><span class="line"><span class="meta">#</span><span class="bash"> 在根节点下创建一个叫/zk-book的节点，内容为123</span></span><br><span class="line">create /zk-book 123</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 读取</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> ls列出ZK指定节点下所有子节点</span></span><br><span class="line">ls path [watch]</span><br><span class="line">ls /</span><br><span class="line"><span class="meta">#</span><span class="bash"> get命令获取指定节点的数据内容和属性信息</span></span><br><span class="line">get path [watch]</span><br><span class="line">get /zk-book</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 更新</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 更新指定节点的数据内容，version参数指定本次更新基于ZNode哪个数据版本进行</span></span><br><span class="line">set path data [version]</span><br><span class="line">set /zk-book 456</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 删除，要删除节点，其不能包含子节点</span></span><br><span class="line">delete path [version]</span><br></pre></td></tr></table></figure>
+<h2 id="四-Java客户端API使用"><a href="#四-Java客户端API使用" class="headerlink" title="四. Java客户端API使用"></a>四. Java客户端API使用</h2><h3 id="4-1-创建会话"><a href="#4-1-创建会话" class="headerlink" title="4.1 创建会话"></a>4.1 创建会话</h3><p>通过构建一个ZooKeeper对象来创建会话，这是一个异步过程，构造函数会在处理完客户端初始化后立即返回，此时会话处于CONNECTING状态。会话真正创建完毕后，服务端向客户端发送一个事件通知。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 构造函数API</span></span><br><span class="line">ZooKeeper(String connectString, <span class="keyword">int</span> sessionTimeout, Watcher watcher);</span><br><span class="line">ZooKeeper(String connectString, <span class="keyword">int</span> sessionTimeout, Watcher watcher, <span class="keyword">boolean</span> canBeReadOnly);</span><br><span class="line">ZooKeeper(String connectString, <span class="keyword">int</span> sessionTimeout, Watcher watcher, <span class="keyword">long</span> sessionId, <span class="keyword">byte</span>[] sessionPasswd);</span><br><span class="line">ZooKeeper(String connectString, <span class="keyword">int</span> sessionTimeout, Watcher watcher, <span class="keyword">long</span> sessionId, <span class="keyword">byte</span>[] sessionPasswd, <span class="keyword">boolean</span> canBeReadOnly);</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200115.png" alt></p>
+<p>实例代码如图：重写了process方法负责处理收到的Watcher通知，收到服务端发送的SyncConnected事件后，解除主程序在CountDownLatch上的等待阻塞。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200116.png" alt></p>
+<p>复用sessionId，维持之前会话：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200117.png" alt></p>
+<h3 id="4-2-创建节点"><a href="#4-2-创建节点" class="headerlink" title="4.2 创建节点"></a>4.2 创建节点</h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200118.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200119.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200120.png" alt></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200121.png" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2021051001.html" title="ZooKeeper">http://linyishui.top/2021051001.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021042101.html" rel="next" title="分布式事务">
+                <i class="fa fa-chevron-left"></i> 分布式事务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">311</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">100</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZooKeeper"><span class="nav-text">ZooKeeper</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-概述"><span class="nav-text">一. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-什么是ZooKeeper？"><span class="nav-text">1.1 什么是ZooKeeper？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-特性"><span class="nav-text">1.2 特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-设计目标"><span class="nav-text">1.3 设计目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-核心概念"><span class="nav-text">1.4 核心概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-ZAB-协议"><span class="nav-text">二. ZAB 协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-什么是ZAB协议？"><span class="nav-text">2.1 什么是ZAB协议？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-协议介绍"><span class="nav-text">2.2 协议介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）消息广播"><span class="nav-text">（1）消息广播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）崩溃恢复"><span class="nav-text">（2）崩溃恢复</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-深入剖析"><span class="nav-text">2.3 深入剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）-系统模型"><span class="nav-text">（1） 系统模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）-问题描述"><span class="nav-text">（2） 问题描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）-算法描述"><span class="nav-text">（3） 算法描述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）-运行分析"><span class="nav-text">（4） 运行分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-ZAB与Paxos算法的异同"><span class="nav-text">2.4 ZAB与Paxos算法的异同</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-简单使用"><span class="nav-text">三. 简单使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-部署与运行"><span class="nav-text">3.1 部署与运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）部署"><span class="nav-text">（1）部署</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）运行和停止"><span class="nav-text">（2）运行和停止</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）常见异常"><span class="nav-text">（3）常见异常</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-客户端脚本"><span class="nav-text">3.2 客户端脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-Java客户端API使用"><span class="nav-text">四. Java客户端API使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-创建会话"><span class="nav-text">4.1 创建会话</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-创建节点"><span class="nav-text">4.2 创建节点</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
