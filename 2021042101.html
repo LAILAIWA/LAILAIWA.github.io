@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="unfinished,distributed,transaction,">
 
 
 
@@ -88,12 +88,13 @@
 
 
 
-<meta name="description" content="分布式事务一. 从ACID到CAP/BASE1.1 ACID数据库事务和ACID可以参看：《高性能MySQL》（一）架构和历史 中事务章节。 1.2 什么是分布式事务分布式数据库中，数据分散在不同的机器上，分布式事务中事务的参与者、支持事务的服务器、资源服务器以及事务管理器可能分别位于不同的节点上。 思考如何实现分布式的事务处理？ 首先我们要把分布式事务看作一组分布式的操作序列，即一组子事务，所以">
+<meta name="description" content="简单整理了分布式事务相关知识，内容包括：ACID到CAP/BASE，2PC二阶段提交，3PC三阶段提交，Paxos算法等。">
+<meta name="keywords" content="unfinished,distributed,transaction">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式事务">
 <meta property="og:url" content="http://linyishui.top/2021042101.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="分布式事务一. 从ACID到CAP/BASE1.1 ACID数据库事务和ACID可以参看：《高性能MySQL》（一）架构和历史 中事务章节。 1.2 什么是分布式事务分布式数据库中，数据分散在不同的机器上，分布式事务中事务的参与者、支持事务的服务器、资源服务器以及事务管理器可能分别位于不同的节点上。 思考如何实现分布式的事务处理？ 首先我们要把分布式事务看作一组分布式的操作序列，即一组子事务，所以">
+<meta property="og:description" content="简单整理了分布式事务相关知识，内容包括：ACID到CAP/BASE，2PC二阶段提交，3PC三阶段提交，Paxos算法等。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200102.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200101.png">
@@ -104,10 +105,10 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200108.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200109.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200110.png">
-<meta property="og:updated_time" content="2021-05-12T12:53:25.621Z">
+<meta property="og:updated_time" content="2021-05-13T08:27:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式事务">
-<meta name="twitter:description" content="分布式事务一. 从ACID到CAP/BASE1.1 ACID数据库事务和ACID可以参看：《高性能MySQL》（一）架构和历史 中事务章节。 1.2 什么是分布式事务分布式数据库中，数据分散在不同的机器上，分布式事务中事务的参与者、支持事务的服务器、资源服务器以及事务管理器可能分别位于不同的节点上。 思考如何实现分布式的事务处理？ 首先我们要把分布式事务看作一组分布式的操作序列，即一组子事务，所以">
+<meta name="twitter:description" content="简单整理了分布式事务相关知识，内容包括：ACID到CAP/BASE，2PC二阶段提交，3PC三阶段提交，Paxos算法等。">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210401/202104200102.png">
 
 
@@ -395,6 +396,28 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -416,7 +439,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  7,968
+                  7,984
                 </span>
               
 
@@ -438,6 +461,10 @@
             </div>
           
 
+          
+              <div class="post-description">
+                  简单整理了分布式事务相关知识，内容包括：ACID到CAP/BASE，2PC二阶段提交，3PC三阶段提交，Paxos算法等。
+              </div>
           
 
         </div>
@@ -737,6 +764,9 @@
 <p>当然也有一些缺点，比如长度稍长，性能要比int/bigint的稍差等。</p>
 </blockquote>
 <p><a href="https://www.cnblogs.com/mayundalao/p/11798502.html" target="_blank" rel="noopener">分布式事务的四种解决方案</a></p>
+<hr>
+<p>参考：</p>
+<p>🔗 《从Paxos到Zookeeper-分布式一致性原理与实践》</p>
 
       
     </div>
@@ -780,6 +810,16 @@
     
     
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unfinished/" rel="tag"># unfinished</a>
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/transaction/" rel="tag"># transaction</a>
+          
+        </div>
       
 
       
@@ -913,7 +953,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">100</span>
+                  <span class="site-state-item-count">103</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
