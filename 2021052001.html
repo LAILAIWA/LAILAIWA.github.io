@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig Dug.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad playstation.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/gamepad playstation.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="distributed,zookeeper,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：应用场景（数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master选举、分布式锁、分布式队列），分布式系统应用（Hadoop、HBase、Kafka），阿里巴巴应用等。">
+<meta name="keywords" content="distributed,zookeeper">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper（四）应用场景与实现">
+<meta property="og:url" content="http://linyishui.top/2021052001.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：应用场景（数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master选举、分布式锁、分布式队列），分布式系统应用（Hadoop、HBase、Kafka），阿里巴巴应用等。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010106.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010107.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010108.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010109.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010110.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010111.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010112.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010113.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010115.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010116.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010117.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010119.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010120.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010121.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010122.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010123.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010124.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010125.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010126.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010127.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010128.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010129.png">
+<meta property="og:updated_time" content="2021-06-10T14:24:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ZooKeeper（四）应用场景与实现">
+<meta name="twitter:description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：应用场景（数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master选举、分布式锁、分布式队列），分布式系统应用（Hadoop、HBase、Kafka），阿里巴巴应用等。">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010101.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://linyishui.top/2021052001.html">
+
+
+
+
+
+  <title>ZooKeeper（四）应用场景与实现 | 俺的部落格</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z0L5T0JQG7"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Z0L5T0JQG7');
+    }
+  </script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a73137787baf0001a5bc4063855efe8a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">俺的部落格</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">俺寻思俺需要记点东西</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021052001.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林沂水">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ZooKeeper（四）应用场景与实现</h1>
+        
+
+        <div class="post-meta">
+          
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-05-20T15:03:45+08:00">
+                2021-05-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术文档/" itemprop="url" rel="index">
+                    <span itemprop="name">技术文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  10,433
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  37
+                </span>
+              
+            </div>
+          
+
+          
+              <div class="post-description">
+                  内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：应用场景（数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master选举、分布式锁、分布式队列），分布式系统应用（Hadoop、HBase、Kafka），阿里巴巴应用等。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ZooKeeper（四）应用场景与实现"><a href="#ZooKeeper（四）应用场景与实现" class="headerlink" title="ZooKeeper（四）应用场景与实现"></a>ZooKeeper（四）应用场景与实现</h1><h2 id="一-典型应用场景"><a href="#一-典型应用场景" class="headerlink" title="一. 典型应用场景"></a>一. 典型应用场景</h2><p>ZooKeeper是一个高可用的基于发布/订阅模式的分布式数据管理和协调框架，基于ZAB算法，ZK可以很好的保证分布式环境的数据一致性。</p>
+<h3 id="1-1-数据发布-订阅"><a href="#1-1-数据发布-订阅" class="headerlink" title="1.1 数据发布/订阅"></a>1.1 数据发布/订阅</h3><p>数据发布/订阅（配置中心）：<strong>发布者将数据发布到ZK的一个或一系列节点上，订阅者进行订阅，从而动态的获取数据，实现配置信息的集中式管理和数据的动态更新</strong>。</p>
+<p>发布/订阅系统一般都包含两种设计模式：<strong>推和拉模式</strong>。推模式下服务端主动将数据更新发送给所有订阅的客户端，拉模式下则是由客户端主动发起请求获取最新数据（轮询）。ZK将推拉结合，<strong>客户端向服务端注册自己感兴趣的节点，当节点数据变更，服务端发送Watcher事件通知，客户端收到消息后主动获取最新数据</strong>。</p>
+<p>案例：系统中需要一些通用的配置信息，如机器列表信息、运行时的开关配置、数据库配置信息等，这些全局的配置信息通常有3个特性：</p>
+<ul>
+<li>数据量较小</li>
+<li>数据内容会在运行时发生动态变化</li>
+<li>集群中各机器共享，配置一致</li>
+</ul>
+<p>单机系统通常会采用本地配置文件或内存变量（JMX来实现对系统运行时内存变量的更新）的方式，但对于分布式系统来说这两张方式比较难管理。</p>
+<ul>
+<li><p><strong>配置存储：</strong></p>
+<p>首先将初始化配置存放在ZK上，选取一个数据节点，如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010101.png" alt></p>
+<p>写入配置信息：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#DBCP</span></span><br><span class="line"><span class="string">dbcp.driverClassName=com.mysql.jdbc.Driver</span></span><br><span class="line"><span class="string">dbcp.dbJDBCUrl=jdbc:mysql://1.1.1.1:3306/taokeeper</span></span><br><span class="line"><span class="string">dbcp.characterEncoding=GBK</span></span><br><span class="line"><span class="string">dbcp.username=xiaoming</span></span><br><span class="line"><span class="string">dbcp.password=123456</span></span><br><span class="line"><span class="string">dbcp.maxActive=30</span></span><br><span class="line"><span class="string">dbcp.maxIdle=10</span></span><br><span class="line"><span class="string">dbcp.maxWait=10000</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>配置获取：</strong>每个客户端启动时从ZK节点上读取配置信息，并且在该配置节点上注册一个数据变更的Watcher监听，一旦数据发生变更，所有订阅的客户端都能收到通知。</p>
+</li>
+<li><p><strong>配置变更：</strong>运行时可能要切换数据库，此时只需对ZK节点上的配置信息进行更改。</p>
+</li>
+</ul>
+<h3 id="1-2-负载均衡"><a href="#1-2-负载均衡" class="headerlink" title="1.2 负载均衡"></a>1.2 负载均衡</h3><p>负载均衡即对多台机器、网络连接、CPU、磁盘驱动或其他资源进行分配负载，以达到优化资源使用、最大化吞吐率、最小化响应时间和避免过载的目的。</p>
+<p>分布式系统具有对等性，为了保证系统的高可用性，通常采用副本的方式来对数据和服务进行部署，对于消费者而言需要在这些对等的服务提供方选择一个来执行业务逻辑。</p>
+<p>典型的负载均衡如<strong>DNS</strong>，即<strong>域名系统</strong>（Domain Name System），可以看作是一个超大规模的分布式映射表，用于将域名和IP地址进行一一映射，方便用户使用域名来访问互联网站点。</p>
+<p>我们只能注册有限的域名，当系统规模变大，很难通过统一的DNS配置来管理。可以使用本地HOST绑定来实现域名解析的工作，解决了域名紧张的问题，可以随时修改域名和IP的映射，但机器规模扩大时，系统上线前要在每台机器上绑定域名会非常不方便，如果需要临时更新域名还需要到每台机器上变更。</p>
+<h4 id="（1）动态DNS服务"><a href="#（1）动态DNS服务" class="headerlink" title="（1）动态DNS服务"></a>（1）动态DNS服务</h4><ul>
+<li><p><strong>配置管理：</strong></p>
+<p>首先要在ZK上创建一个节点进行域名配置：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010102.png" alt></p>
+<p>每个应用都可以创建一个属于自己的数据节点作为域名配置的根节点，配置清单：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#单个IP:PORT</span></span><br><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8080</span></span><br><span class="line"><span class="comment">#多个IP:PORT</span></span><br><span class="line"><span class="number">192.168</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8080,</span> <span class="number">192.168</span><span class="number">.0</span><span class="number">.2</span><span class="string">:8080</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>域名解析：</strong></p>
+<p>传统DNS解析的工作由操作系统的域名和IP地址映射机制或域名解析服务器完成。而ZK实现的DDNS则需要每个应用自己从ZK数据节点上获取一份IP地址和端口的配置，并自行解析。每个应用都会在域名节点注册一个数据变更Watcher监听。</p>
+</li>
+<li><p><strong>域名变更：</strong></p>
+<p>运行过程中要更新IP地址或端口时，只需对指定的域名节点进行更新操作，ZK会向订阅的客户端发送通知。</p>
+</li>
+</ul>
+<h4 id="（2）自动化的DNS服务"><a href="#（2）自动化的DNS服务" class="headerlink" title="（2）自动化的DNS服务"></a>（2）自动化的DNS服务</h4><p>上述实现在域名变更的环节还是需要人为的介入取修改域名节点上的IP地址和端口，ZK实现了自动化的DNS服务为了实现服务的自动化定位，系统架构如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010103.png" alt></p>
+<p>重要的组件：</p>
+<ul>
+<li><strong>Register：</strong>集群负责域名的动态注册</li>
+<li><strong>Dispatcher：</strong>集群负责域名解析</li>
+<li><strong>Scanner：</strong>集群负责检测以及维护服务状态（探测服务的可用性、屏蔽异常服务节点等）</li>
+<li><strong>SDK：</strong>提供各种语言的系统接入协议，提供服务注册以及查询接口</li>
+<li><strong>Monitor：</strong>负责收集服务信息以及对DDNS自身状态的监控</li>
+<li><strong>Controller：</strong>后台管理的Console，负责授权管理、流量控制、静态配置服务和手动屏蔽服务等功能，运维人员可以在上面管理Register、Dispatcher、Scanner等集群。</li>
+</ul>
+<p>自动化DNS流程：</p>
+<ul>
+<li><p><strong>域名注册：</strong></p>
+<p>服务提供者在启动过程把自己的域名信息注册到 Register 集群中去</p>
+<ol>
+<li>服务提供者通过SDK提供的API接口，将域名、IP地址和端口发送给 Register 集群。</li>
+<li>Register 收到后根据域名将信息写入相应的ZK域名节点中。</li>
+</ol>
+</li>
+<li><p><strong>域名解析：</strong>与域名注册过程相反，服务消费者在使用域名时，会向 Dispatcher 发出域名解析请求。Dispatcher 收到请求后，会从ZK上指定域名节点读取相应的IP:PORT列表，通过一定的策略选取一个返回给前端应用。</p>
+</li>
+<li><p><strong>域名探测：</strong></p>
+<p>指DDNS系统对域名下所有注册的IP地址和端口进行可用性检测/健康度检测，一般有两种方式：</p>
+<ol>
+<li>服务端主动发起健康度心跳检测，需要在服务端和客户端之间建立起一个TCP长链接；</li>
+<li>客户端主动向服务端发起健康度心跳检测。</li>
+</ol>
+<p>DDNS架构中的域名检测使用的是服务提供者主动定时向Scanner进行状态汇报的模式（第二种）。Scanner负责记录每个服务提供者最近一次的状态汇报时间，一旦超过5秒没有收到状态汇报就认定此IP和端口不可用，并进行域名清理过程。</p>
+<p>域名清理，Scanner会在ZK中找到对于域名节点，并将IP和端口配置从节点内容中移除。</p>
+</li>
+</ul>
+<h3 id="1-3-命名服务"><a href="#1-3-命名服务" class="headerlink" title="1.3 命名服务"></a>1.3 命名服务</h3><p>分布式系统中被命名的实体通常是集群中的机器、提供的服务地址或远程对象等，较常见的是一些分布式服务框架RPC或RMI中的服务地址列表，通过命名服务，客户端应用能够根据指定名字来获取资源的实体、服务地址和提供者的信息等。</p>
+<ul>
+<li>Java的JNDI（Java命名与目录接口，Java Naming and Directory Interface）是一种典型的命名服务，标准的J2EE容器都提供了对JNDI规范的实现，可以用来完成数据源的配置和管理。</li>
+<li>ZK的命名服务，上层应用只需一个全局唯一的名字，类似于唯一主键。</li>
+</ul>
+<p>使用ZK来实现一套分布式全局唯一ID的分配机制：数据库的单库单表可以使用自带的 <code>auto_increment</code> 属性来自动为每条记录生成一个唯一ID，但随着数据库数据规模不断增大，分库分表后这个属性就只能针对单一表中记录自动生成ID。</p>
+<p>UUID（通用唯一识别码，Universally Unique Identifier）在分布式系统中常用于作唯一标识元素标准，一个标准的UUID是一个包含32位字符和4个短线的字符串。</p>
+<p>UUID的缺点：</p>
+<ul>
+<li>长度过长：生成的字符串过长，相比INT类型存储开销更大。</li>
+<li>含义不明：字符串本身没有含义。</li>
+</ul>
+<p>可以通过ZK节点来生成全局唯一ID：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010104.png" alt></p>
+<p>ZK中每个数据节点都能维护一份子节点的顺序队列，当客户端创建一个顺序子节点时，ZK会自动以后缀的形式在子节点上添加一个序号：</p>
+<ol>
+<li>所有客户端根据自己的任务类型，在指定类型的任务下通过调用 <code>create()</code> 接口来创建一个顺序节点（如“job-”节点）。</li>
+<li>节点创建完毕， <code>create()</code> 返回一个完整的节点名（如“job-0000000003”）。</li>
+<li>客户端拿到返回值后，拼接上type类型（如“type2-job-0000000003”）作为全局唯一ID。</li>
+</ol>
+<h3 id="1-4-分布式协调-通知"><a href="#1-4-分布式协调-通知" class="headerlink" title="1.4 分布式协调/通知"></a>1.4 分布式协调/通知</h3><p>分布式系统需要引入一个协调者（Coordinator）控制整个系统的运行流程（如分布式事务的处理或机器间的互相协调等）便于将分布式协调的职责从应用本身抽离，减少系统间的耦合性，提供可扩展性。</p>
+<p>基于ZK实现的分布式协调/通知通常做法：不同的客户端都对ZK上同一个数据节点进行Watcher注册，监听数据节点的变化，如果发生变化，所有订阅的客户端都能收到并处理。</p>
+<h4 id="（1）MySQL数据复制总线-Mysql-Replicator"><a href="#（1）MySQL数据复制总线-Mysql-Replicator" class="headerlink" title="（1）MySQL数据复制总线-Mysql_Replicator"></a>（1）MySQL数据复制总线-Mysql_Replicator</h4><p>MySQL数据复制总线是一个实时数据复制框架，<strong>用于在不同的MySQL数据库实例之间进行异步数据复制合数据变化通知</strong>。</p>
+<p>系统是由一个MySQL数据库集群、消息队列系统、任务管理监控平台以及ZK集群等组件共同构成的一个包含数据生产者、复制管道和数据消费者等部分的数据总线系统：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010105.png" alt></p>
+<p>ZK负责一系列的分布式协调工作，根据功能将数据复制组件划分为三个核心模块，每个模块作为独立的进程运行在服务端，运行时数据和配置信息保存在ZK上：</p>
+<ul>
+<li><strong>Core：</strong>实现了数据复制的核心逻辑，将数据复制封装成管道，并抽象出生产者和消费者两个概念，生产者通常是MySQL的Binlog日志。</li>
+<li><strong>Server：</strong>负责启动和停止复制任务。</li>
+<li><strong>Monitor：</strong>负责监控任务的运行状态，如果在数据复制期间发生异常或故障会告警。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010106.png" alt></p>
+<h4 id="（2）Core进行分布式协调的流程"><a href="#（2）Core进行分布式协调的流程" class="headerlink" title="（2）Core进行分布式协调的流程"></a>（2）Core进行分布式协调的流程</h4><ol>
+<li><p><strong>任务注册：</strong></p>
+<p>Core进程启动时，首先向 <code>/mysql_replicator/tasks</code> 节点（任务列表节点）注册任务。当注册过程发现子节点已存在，表示已有其他Task机器注册了该任务，以下为“复制热门商品”的任务：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010107.png" alt></p>
+</li>
+<li><p><strong>任务热备份：</strong></p>
+<ul>
+<li>复制组件采用热备份的容灾方式来应对复制任务可能会遇到的故障，即0将同一个复制任务部署在不同的主机上，主备机器通过ZK互相检测运行健康状况。</li>
+<li>实现热备方案，不管第一步是否创建了任务节点，每台任务机器都要在 <code>/mysql_replicator/tasks/copy_hot_item/instances</code> 节点上将自己的主机名注册上去。注册的是一个临时的顺序节点 <code>/mysql_replicator/tasks/copy_hot_item/instances/[Hostname]-1</code> 最后的序列号是临时顺序节点的精华。</li>
+<li>完成子节点创建后，每台机器都可以通过对比自己是否是所有子节点序号中最小的，如果是就将自己的运行状态置为 RUNNING，其余的机器则设置为 STANDBY，即<strong>小序号优先</strong>。</li>
+</ul>
+</li>
+<li><p><strong>热备切换：</strong></p>
+<ul>
+<li>任务机器在完成状态标识后就可以工作了，RUNNING进行数据复制，STANDBY则进入待命状态，一旦RUNNING的机器出现故障，取一个待命状态最小的机器替补执行。</li>
+<li>所以待命的机器都要在 <code>/mysql_replicator/tasks/copy_hot_item/instances</code> 节点注册一个Watcher监听子节点列表变更，订阅所有任务机器的变化情况，RUNNING机器宕机与ZK断开连接后节点会消失，其余机器收到通知后开启新一轮的RUNNING选举。</li>
+</ul>
+</li>
+<li><p><strong>记录执行状态：</strong>RUNNING机器需要将运行时的上下文保留给STANDBY机器，MySQL选择 <code>/mysql_replicator/tasks/copy_hot_item/lastCommit</code> 作为Binlog日志消费位点的存储节点， RUNNING定时写入当前信息。</p>
+</li>
+</ol>
+<h4 id="（3）Server管理Core组件"><a href="#（3）Server管理Core组件" class="headerlink" title="（3）Server管理Core组件"></a>（3）Server管理Core组件</h4><ol>
+<li><p><strong>控制台协调：</strong>Server的主要工作是通过ZK来对不同任务进行控制和协调，Server将每个复制任务对于生产者的元数据（库名、表名、用户名和密码等数据库信息以及消费者相关信息）以配置的形式写入任务节点 <code>/mysql_replicator/tasks/copy_hot_item</code> 使任务的所有机器都能能共享配置。</p>
+</li>
+<li><p><strong>冷备切换：</strong></p>
+<p>在一定规模的分布式项目中，往往有许多MySQL实例需要进行数据复制，每个实例都要对应一个复制任务，如果每个任务都进行双机热备份会消耗太多的机器。</p>
+<p>根据这个问题设计一种新的冷备份的方案，它对所有任务进行分组：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010108.png" alt></p>
+<p>Core进程被配置了所属Group，<strong>冷备份扫描</strong>：</p>
+<ul>
+<li>假如一个Core进程被标记了group1，启动后会获取对应节点下所有的Task列表。</li>
+<li>如果找到了任务 <code>copy_hot_item</code> 会遍历instances节点，若没有子节点则创建一个临时的顺序节点 <code>copy_hot_item/instances/[Hostname]-1</code> 。</li>
+<li>类似于热备份的小序号优先，<strong>最小的Core进程标记为RUNNING，不同的是其他Core进程会自动将创建的子节点删除，然后继续遍历下一个Task节点</strong>。</li>
+</ul>
+</li>
+<li><p><strong>冷热备份对比：</strong></p>
+<ul>
+<li>热备份：针对一个任务使用两台机器做备份，由于Watcher通知和临时顺序节点的特性，可以实时的进行协调；机器资源消耗较大。</li>
+<li>冷备份：使用了扫描机制，虽然降低了实时性，但节省了机器资源。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010109.png" alt></p>
+</li>
+</ol>
+<h4 id="（4）机器间通信方式"><a href="#（4）机器间通信方式" class="headerlink" title="（4）机器间通信方式"></a>（4）机器间通信方式</h4><p>常见分布式系统机器间通信方式：</p>
+<ul>
+<li><strong>心跳检测：</strong>不同机器之间检测彼此是否在正常运行，使用ZK的临时节点实现而不同于常规的PING或TCP长连接。所有机器在ZK的一个指定节点下创建临时子节点，机器之间可以根据临时节点判断对应机器是否存活，这样机器之间不需要直接交互。</li>
+<li><strong>工作进度汇报：</strong>任务分发到不同机器上执行后，需要实时的将自己的执行进度汇报给分发系统，每个任务客户端在指定节点下创建临时子节点：<ul>
+<li>通过判断临时节点是否存在判断对应任务机器是否存活；</li>
+<li>各个任务机器实时的将自己的任务执行进度写入临时节点，中心系统定时的获取。</li>
+</ul>
+</li>
+<li><strong>系统调度：</strong>控制台将指令发送给所有客户端，实际是改ZK节点的数据，数据变更的通知再发送给客户端。</li>
+</ul>
+<p>用ZK来实现分布式通信可以降低系统间的耦合和减少底层网络通信以及协议设计上的重复工作。</p>
+<h3 id="1-5-集群管理"><a href="#1-5-集群管理" class="headerlink" title="1.5 集群管理"></a>1.5 集群管理</h3><p>集群管理包括：</p>
+<ul>
+<li>集群监控：侧重对集群运行时状态的收集</li>
+<li>集群控制：侧重对集群进行操作与控制</li>
+</ul>
+<h4 id="（1）传统Agent的弊端"><a href="#（1）传统Agent的弊端" class="headerlink" title="（1）传统Agent的弊端"></a>（1）传统Agent的弊端</h4><p>传统基于Agent的分布式集群管理体系，每台机器部署一个Agent，负责主动向指定的监控中心汇报状态，来实现集群监控，其弊端：</p>
+<ul>
+<li><strong>大规模升级困难：</strong>大规模升级的情况下，客户端形式的Agent非常麻烦。</li>
+<li><strong>统一的Agent无法满足多样的需求：</strong>Agent可以满足如CPU使用率、负载、内存使用率、网络吞吐以及磁盘容量等基本物理状态的监控，但如果要深入到业务状态（比如监控每个消费者对消息的消费状态，或是分布式任务调度每台任务机器上的任务执行情况）就不适合由统一的Agent来提供。</li>
+<li><strong>编程语言多样性：</strong>传统的Agent需要提供各种语言版的客户端。</li>
+</ul>
+<h4 id="（2）分布式日志收集系统"><a href="#（2）分布式日志收集系统" class="headerlink" title="（2）分布式日志收集系统"></a>（2）分布式日志收集系统</h4><p>分布式日志收集系统要解决的问题：</p>
+<ul>
+<li><strong>变化的日志源机器：</strong>每个应用的机器几乎每天都是变化的，可能是因为</li>
+<li><strong>变化的收集器机器：</strong>日志收集系统自身也会有机器的变更和扩容。</li>
+</ul>
+<p>流程：</p>
+<ul>
+<li><p><strong>注册收集器机器：</strong>在ZK上创建一个节点作为收集器的根节点，每个收集器机器启动时都会在收集器节点下创建自己的节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010110.png" alt></p>
+</li>
+<li><p><strong>任务分发：</strong>待所有收集器都创建好自己的节点，根据子节点数目将所有日志源机器分为对应的若干组，然后将分组后的机器列表分别写到收集器创建的子节点上，每台收集器都可以从自己的节点上获取日志源机器列表。</p>
+</li>
+<li><p><strong>状态汇报：</strong>我们要考虑到机器有随时挂掉的可能，所以要有一个收集器的状态汇报机制，每个收集器机器在创建完自己的节点后还要再对应的子节点上创建一个状态子节点，定期向该节点写入自己的状态信息（类似于心跳检测）。</p>
+</li>
+<li><p><strong>动态分配：</strong>如果收集器挂掉或者扩容，需要动态的进行收集任务的分配。在运行过程中，日志系统始终关注着 <code>/logs/collector</code> 节点下所有子节点的变更，一旦检测到有收集器停止汇报或有新的收集器加入就会进行任务的重新分配。</p>
+<p>将之前分配的任务转移的方法：</p>
+<ul>
+<li><strong>全局动态分配：</strong>系统根据新的收集器机器列表，将所有日志源机器重新进行分组，重新分配给当前所有收集器。</li>
+<li><strong>局部动态分配：</strong>在小范围内进行任务的动态分配，每个收集器在汇报状态的同时也携带自己的负载（非CPU负载而是当前任务的综合评估），当收集器挂掉，就优先分配给负载较低的机器，新的机器加入时也会把负载较高的机器部分任务转移过去。</li>
+</ul>
+</li>
+</ul>
+<p>注意事项：</p>
+<ul>
+<li><strong>节点类型：</strong>每个代表收集器的子节点如果是临时节点，当节点失效时会被立即删除，记录的日志源机器列表也会随之消失，所以应该是持久节点。</li>
+<li><strong>日志系统节点监听：</strong>实际生产运行中，收集器更改状态节点的频率可能很高（小于1秒），且收集器数量会很大，日志系统如果要监听所有节点变化，对应的数据量太过庞大，所以日志系统并没有实时的接收每次节点状态变更，大部分都是没什么用的，而是采用<strong>主动轮询</strong>的方案，只是有一点延时。</li>
+</ul>
+<h4 id="（3）在线云主机管理"><a href="#（3）在线云主机管理" class="headerlink" title="（3）在线云主机管理"></a>（3）在线云主机管理</h4><p>集群机器的监控，对机器的状态尤其是机器在线率统计有较高要求，并能对机器变更有快速的响应：</p>
+<ol>
+<li>如何快速统计出当前生产环境一共有多少台机器？</li>
+<li>如何快速获取到机器上下线情况？</li>
+<li>如何实时监控集群中每台主机的运行时状态？</li>
+</ol>
+<ul>
+<li><p><strong>机器上下线：</strong>新增机器时，先将指定的Agent部署到机器，部署启动后向ZK指定节点进行注册，创建一个临时子节点：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010111.png" alt></p>
+<p>创建完子节点后，对 <code>/XAE/machines</code> 节点关注的监控中心会收到“子节点变更”的事件，即上线通知；同理也可以收到下线通知。</p>
+</li>
+<li><p><strong>机器监控：</strong>运行过程中，Agent会定时将主机的运行状态信息写入ZK对应主机节点，监控中心通过订阅这些节点数据变更来获取运行时信息。</p>
+</li>
+</ul>
+<h3 id="1-6-Master选举"><a href="#1-6-Master选举" class="headerlink" title="1.6 Master选举"></a>1.6 Master选举</h3><p>分布式系统中，常常需要Master节点来协调其他单元，如一些读写分离的应用场景，客户端的写请求往往是由Master来处理的。</p>
+<p>分布式环境常见场景：集群中所有系统单元需要对前端业务提供数据，如一个经过一系列海量数据处理计算得到的商品ID，让一台机器计算后共享给其他机器来减少重复劳动，系统可以分为客户端集群、分布式缓存系统、海量数据处理总线和ZooKeeper四个部分：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010112.png" alt></p>
+<p>Client集群每台定时通过ZK完成Master选举，选出的Master进行一系列海量数据处理得到一个结果，将其放置在一个内存/数据库中，并通知其他客户端来获取。</p>
+<p>我们对Master选举的需求是从所有机器中选择一台机器，通常情况下可以使用数据库主键来实现：所有机器插入一条相同主键的记录，成功的一台为Master。但这种方案没法应对Master挂掉的问题，因为关系型数据库无法通知这一事件。</p>
+<p>利用ZooKeeper的强一致性，我们在分布式高并发场景下可以创建一个全局唯一的节点，所以我们可以实现：<strong>每天所有客户端定时创建一个临时节点 <code>/master_election/2013-09-20/binding</code> ，只有一个会成功创建，其就成为了Master，没有创建成功的再次节点上注册一个节点变更的Watcher，监控当前的Master机器是否存活，一旦挂掉就重新进行选举</strong>。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010113.png" alt></p>
+<h3 id="1-7-分布式锁"><a href="#1-7-分布式锁" class="headerlink" title="1.7 分布式锁"></a>1.7 分布式锁</h3><p>不同主机共享一组资源，需要互斥手段防止彼此的干扰来保证一致性，此时使用分布式锁。关系型数据库本身具有排他性，来实现不同进程的互斥，但容易导致性能瓶颈。</p>
+<h4 id="（1）排他锁"><a href="#（1）排他锁" class="headerlink" title="（1）排他锁"></a>（1）排他锁</h4><p>排他锁（Exclusive Locks，即X锁）又叫写锁或独占锁，当事务A对数据对象O加排他锁，在持有锁期间只允许事务A对O进行读取和更新操作。</p>
+<ul>
+<li><p><strong>定义锁：</strong>Java常用 synchronized 或 ReentrantLock 来定义锁，ZK没有类似的API来使用，而是直接用一个数据节点来表示一个锁（如 <code>/exclusive_lock/lock</code> ）</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010114.png" alt></p>
+</li>
+<li><p><strong>获取锁：</strong>客户端通过调用 <code>create()</code> 接口在 <code>/exclusive_lock</code> 节点下创建临时子节点，最终只有一个可以创建成功，即获取到了锁，没有获取到的客户端在 <code>/exclusive_lock</code> 节点注册一个子节点变更的Watcher监听。</p>
+</li>
+<li><p><strong>释放锁：</strong>因为锁是一个临时节点，有两种情况会释放锁：</p>
+<ul>
+<li>当前获取锁的客户端集群宕机，ZK上此临时节点会被移除。</li>
+<li>正常执行完业务逻辑，客户端主动删除自己创建的临时节点。</li>
+</ul>
+<p>节点删除后，其他客户端收到通知再次发起分布式锁的获取，整个流程如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010115.png" alt></p>
+</li>
+</ul>
+<h4 id="（2）共享锁"><a href="#（2）共享锁" class="headerlink" title="（2）共享锁"></a>（2）共享锁</h4><p>共享锁（Shared Locks，简称S锁）又叫读锁，事务A对数据对象O加上共享锁，其他事务只能对O进行读操作和加共享锁，直到所有共享锁释放。</p>
+<ul>
+<li><p><strong>定义锁：</strong>直接用一个数据节点来表示一个锁（如 <code>/shared_lock/192.168.0.1-R-000000001</code> ）</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010116.png" alt></p>
+</li>
+<li><p><strong>获取锁：</strong>客户端到 <code>/shared_lock</code> 节点下创建一个临时顺序节点，若当前是读请求，就创建R类节点；如果是写请求，就创建W类节点。</p>
+</li>
+<li><p><strong>判断读写顺序：</strong></p>
+<ol>
+<li>创建完节点后，获取 <code>/shared_lock</code> 节点下所有子节点，并注册Watcher变更监听。</li>
+<li>确定自己的节点序号在所有子节点中的顺序。</li>
+<li>读写两种情况：<ul>
+<li>读请求：如果没有比自己序号小的子节点，或是小的节点都是读请求，表示自己已经获取到共享锁，同时开始执行读取逻辑。</li>
+<li>写请求：如果自己不是序号最小的子节点，就要进入等待。</li>
+</ul>
+</li>
+<li>接收到Watcher通知后，重复步骤1。</li>
+</ol>
+</li>
+<li><p><strong>释放锁：</strong>流程同排他锁。</p>
+<p>整个流程如下：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010117.png" alt></p>
+</li>
+</ul>
+<h5 id="羊群效应"><a href="#羊群效应" class="headerlink" title="羊群效应"></a>羊群效应</h5><p>上述共享锁实现可以满足机器规模较小的场景（10台以内），当机器规模较大时，针对判断读写顺序步骤结合下图实例，猜想实际运行的情况。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010118.png" alt></p>
+<p>实际运行：</p>
+<ol>
+<li>192.168.0.1机器首先进行读操作，完成后将首个子节点删除。</li>
+<li>余下4台机器均受到节点移除的通知，重新从 <code>/shared_lock</code> 节点上获取一份新的子节点列表。</li>
+<li>每个机器判断自己的读写顺序，其中192.168.0.2这台机器检测到自己已经是最小机器了，于是开始读操作，而其他机器发现未轮到自己就继续等待。</li>
+<li>继续….</li>
+</ol>
+<p>其中步骤3，该通知发给了所有机器，但实际上只对192.168.0.2这台机器有用，整个流程大量的Watcher通知和子节点列表获取操作重复运行，大部分机器判断的结果都是需要继续等待。<strong>在集群规模较大的场景下，不仅会对ZooKeeper服务器造成巨大的性能影响和网络冲击</strong>，更为严重的是，<strong>若同一时间有多个节点对应的客户端完成事务或是事务中断引起节点消失，ZK服务器就会在短时间内向其余客户端发送大量的事件通知—即羊群效应</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">经济学里经常用“羊群效应”来描述经济个体的从众跟风心理。“羊群效应”就是比喻人都有一种从众心理，从众心理很容易导致盲从，而盲从往往会陷入骗局或遭到失败。</span><br></pre></td></tr></table></figure>
+<p>产生问题的原因在于没有找准客户端真正的关注点，每个客户端只需关注比自己小的那一个节点的变更情况即可：</p>
+<ol>
+<li>客户端调用 <code>create()</code> 方法创建一个类似于 <code>/shared_lock/[hostname]-请求类型-序号</code> 的临时顺序节点。</li>
+<li>客户端调用 <code>getChildren()</code> 接口来获取所有已经创建的子节点列表，这里不再注册任何Watcher。</li>
+<li>如果无法获取共享锁，就调用 <code>exist()</code> 来对比自己小的那个节点注册Watcher，读写请求情况不一样：<ul>
+<li>读请求：向比自己序号小的最后一个写请求节点注册</li>
+<li>写请求：向比自己序号小的最后一个节点注册</li>
+</ul>
+</li>
+<li>等待Watcher通知，继续进入步骤2。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010119.png" alt></p>
+<h3 id="1-8-分布式队列"><a href="#1-8-分布式队列" class="headerlink" title="1.8 分布式队列"></a>1.8 分布式队列</h3><p>分布式队列如常见的消息队列：ActiveMQ、Metamorphosis、Kafka和HornetQ等。分为两大类：常规的先入先出队列、等到队列元素集聚后才统一安排的Barrier模型。</p>
+<h4 id="（1）FIFO-先入先出"><a href="#（1）FIFO-先入先出" class="headerlink" title="（1）FIFO-先入先出"></a>（1）FIFO-先入先出</h4><p>使用ZooKeeper实现FIFO队列类似于全写的共享锁模型，所有客户端到 <code>/queue_fifo</code> 节点下创建一个临时顺序节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010120.png" alt></p>
+<p>创建完节点后，确定执行顺序的步骤：</p>
+<ol>
+<li>通过调用 <code>getChildren()</code> 接口来获取 <code>/queue_fifo</code> 节点下所有的子节点，也就是获取队列中所有的元素。</li>
+<li>确定自己的节点序号在所有子节点中的顺序。</li>
+<li>如果自己不是序号最小的子节点，进入等待，同时向比自己序号小的最后一个节点注册Watcher监听。</li>
+<li>接收到Watcher通知，重复步骤1。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010121.png" alt></p>
+<h4 id="（2）Barrier：分布式屏障"><a href="#（2）Barrier：分布式屏障" class="headerlink" title="（2）Barrier：分布式屏障"></a>（2）Barrier：分布式屏障</h4><p>Barrier原意障碍物，在分布式系统中指系统间的一个协调条件，规定一个队列的元素必须都集聚后才能统一进行安排，否则一直等待。</p>
+<p>开始时，<code>/queue_barrier</code> 节点是一个已存在的默认节点，并将其节点的数据内容赋值为一个数字n来代表Barrier值，当子节点数达到n后才能打开Barrier，所有客户端都要到此节点下创建一个临时节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010122.png" alt></p>
+<p>创建完节点后，确定执行顺序的步骤：</p>
+<ol>
+<li>通过调用 <code>getData()</code> 接口获取 <code>/queue_barrier</code> 节点的数据内容：10。</li>
+<li>通过调用 <code>getChildren()</code> 接口获取 <code>/queue_barrier</code> 节点下所有子节点，即获取队列中所有元素，同时注册对子节点列表变更的Watcher监听。</li>
+<li>统计子节点的个数。</li>
+<li>如果子节点个数不足10个，需要进入等待。</li>
+<li>接收到Watcher通知后，重复步骤2。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010123.png" alt></p>
+<h2 id="二-大型分布式系统的应用"><a href="#二-大型分布式系统的应用" class="headerlink" title="二. 大型分布式系统的应用"></a>二. 大型分布式系统的应用</h2><p>ZK因为便捷的使用方式、卓越的运行性能和良好的稳定性，已经被广泛的应用在越来越多的大型分布式系统中，用来解决如配置管理、分布式通知/协调、集群管理和Master选举等一系列分布式问题。</p>
+<h3 id="2-1-Hadoop"><a href="#2-1-Hadoop" class="headerlink" title="2.1 Hadoop"></a>2.1 Hadoop</h3><p>Hadoop是Apache开源的一个大型分布式计算框架，定义了一种能够开发和运行处理海量数据的软件规范，用来实现一个在大规模集群中对海量数据进行分布式计算的软件平台。<strong>核心是HDFS和MapReduce，分别提供了对海量数据的存储和计算能力</strong>。0.23.0版本后又引入全新一代MapReduce框架YARN。</p>
+<p>在Hadoop中，ZooKeeper注意用于实现HA（High Availability，高可用）集中于Hadoop Common中的HA模块，HDFS的NameNode与YARN的ResourceManager都是基于此HA模块实现自己的HA功能，YARN还用ZooKeeper来存储应用的运行状态。</p>
+<h4 id="（1）YARN"><a href="#（1）YARN" class="headerlink" title="（1）YARN"></a>（1）YARN</h4><p>YARN是Hadoop为了提高计算节点Master的扩展性，同时为了支持多计算模型和提供资源的细粒度调度而引入的全新一代分布式调度框架。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010124.png" alt></p>
+<p>YARN由四部分组成：</p>
+<ul>
+<li><strong>ResourceManager（RM）：</strong>核心模块，全局资源管理器，负责整个系统的资源管理和分配，同时接收各个节点（NodeManager）的资源汇报信息，并将信息按照一定的策略分配给各个应用程序（ApplicationMaster）。其内部维护了各个应用程序的ApplicationMaster信息、NodeManager信息以及资源使用信息等。</li>
+<li><strong>NodeManager（NM）</strong></li>
+<li><strong>ApplicationMaster（AM）</strong></li>
+<li><strong>Container</strong></li>
+</ul>
+<h4 id="（2）ResourceManager单点问题"><a href="#（2）ResourceManager单点问题" class="headerlink" title="（2）ResourceManager单点问题"></a>（2）ResourceManager单点问题</h4><p>上述架构可以明显看出存在一个问题：ResourceManager单点问题。YARN设计了一套 <strong>Active/Standby 模式的 ResourceManager HA 架构</strong>：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010125.png" alt></p>
+<p>运行期间有多个RM并存，只有一个处于Active状态，另外则处于Standby状态，当Active节点无法正常工作时，其余节点通过竞争选举出新的Active节点。</p>
+<p>YARN使用基于ZooKeeper实现的ActiveStandbyElector组件来确定RM的状态，从而实现多个RM的主备切换：</p>
+<ol>
+<li><strong>创建锁节点：</strong>ZK上会有一个类似于 <code>/yarn-leader-election/pseudo-yarn-rm-cluster</code> 的锁节点，所有RM在启动时，都会去竞争写一个Lock子节点 <code>../ActiveStandbyElectorLock</code> ，该子节点类型是临时节点，创建成功的RM切换为Active状态，没有的切换为Standby状态。</li>
+<li><strong>注册Watcher监听：</strong>Standby状态的RM向 <code>../ActiveStandbyElectorLock</code> 节点注册一个Watcher监听节点变更。</li>
+<li><strong>主备切换：</strong>当Active状态的节点出现异常情况，其创建的Lock节点会随之删除，所有Standby状态的RM收到通知后重复步骤1操作。</li>
+</ol>
+<p>HDFS中的NameNode和ResourceManager都使用该组件来实现各自的HA。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010126.png" alt></p>
+<h4 id="（3）Fencing隔离"><a href="#（3）Fencing隔离" class="headerlink" title="（3）Fencing隔离"></a>（3）Fencing隔离</h4><p>分布式环境中，机器会由于网络闪断或自身负载过高（GC占用时间过长或CPU负载过高）导致无法正常的对外进行及时响应，即“<strong>假死</strong>”的情况。当Active状态的RM1机器发生假死情况，主备切换后RM2成为Active状态，而RM1恢复正常后依然会认为自己处于Active状态，即<strong>分布式脑裂现象</strong>（Brain-Split）。</p>
+<p>Fencing机制利用ZK数据节点的ACL权限控制机制来实现不同RM之间的隔离，多个RM之间通过竞争创建锁节点来实现主备状态的确定，改进为创建的根节点必须携带ZK的ACL信息，目的是为了独占该根节点，防止其他RM对节点进行更新。</p>
+<p>当RM1出现假死后，ZK会将其创建的锁节点移除，RM2创建相应的锁节点并切换为Active状态。RM1恢复之后会试图更新ZK的相关数据，但发现没有权限，说明当前节点不是自己创建的，于是自动切换回Standby状态。</p>
+<h4 id="（4）ResourceManager状态存储"><a href="#（4）ResourceManager状态存储" class="headerlink" title="（4）ResourceManager状态存储"></a>（4）ResourceManager状态存储</h4><p>在ResourceManager中，RMStateStore能够存储一些RM的内部状态信息，包括Application和它们的Attempts信息、Delegation Token及Version Information等，大部分状态信息因为很容易从上下文信息中重构出来所以不需要持久化存储，所以存储的设计方案有：</p>
+<ul>
+<li>基于内存实现，一般用于日常开发测试。</li>
+<li>基于文件系统实现，如HDFS。</li>
+<li>基于ZooKeeper实现。</li>
+</ul>
+<p>Hadoop官方建议使用ZooKeeper来实现，存放在 <code>/rmstore</code> 节点下，RMAppRoot节点下存放的是与各个Application相关的信息，RMDTSecretManagerRoot存放的是安全相关的Token等信息：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010127.png" alt></p>
+<p>每个Active状态的RM在初始化阶段会从ZK上读取这些状态信息。</p>
+<h3 id="2-2-HBase"><a href="#2-2-HBase" class="headerlink" title="2.2 HBase"></a>2.2 HBase</h3><p>HBase，即 Hadoop Database，是 Google Bigtable 的开源实现，基于Hadoop文件系统设计的面向海量数据的高可靠性、高性能、面向列、可伸缩的分布式存储系统。</p>
+<p>与大部分分布式NoSQL数据库不同的是，HBase针对数据写入具有强一致性的特性，甚至包括索引列也实现了强一致性。</p>
+<p>HBase在实现上遵守了 Google BigTable 论文的设计思想，BigTable使用Chubby来负责分布式状态的协调，Chubby是Google实现的一种基于Paxos算法的分布式锁服务，HBase则采用了开源的ZooKeeper服务来完成对整个系统的分布式协调工作。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010128.png" alt></p>
+<h4 id="（1）系统冗错"><a href="#（1）系统冗错" class="headerlink" title="（1）系统冗错"></a>（1）系统冗错</h4><p>启动时，每个RegionServer服务器都会到ZK的 <code>/hbase/rs</code> 节点下创建一个信息节点（rs状态节点），同时HMaster对这个节点注册监听。某个RS挂掉，ZK因为一段时间无法收到心跳信息，而删除掉其对应的rs状态节点。</p>
+<p>同时HMaster收到ZK的NodeDelete通知，从而感知到某个节点断开，并立即开始冗错工作，将该RS处理的数据分片Region重新路由到其他节点上，并记录到Meta信息中供客户端查询。</p>
+<p>HMaster不直接通过心跳机制管理RS的状态，因为会随着系统容量的不断增加其管理负担会越来越重。</p>
+<h4 id="（2）RootRegion管理"><a href="#（2）RootRegion管理" class="headerlink" title="（2）RootRegion管理"></a>（2）RootRegion管理</h4><p>数据存储的位置信息记录在元数据分片RootRegion，每次客户端发起请求要知道数据的位置，先要查询RootRegion（存储在ZK上的 <code>/hbase/root-region-server</code> 节点），RootRegion发生变化，如Region的手工移动、Balance或RootRegion所在服务器发生故障，能够通过ZK来感知变化并执行容灾措施，从而保证客户端总能拿到正确的RootRegion信息。</p>
+<h4 id="（3）Region状态管理"><a href="#（3）Region状态管理" class="headerlink" title="（3）Region状态管理"></a>（3）Region状态管理</h4><p>Region是HBase中数据的物理切片，每个Region记录全局数据的一小部分，不同Region间数据不重复。但对于分布式系统来说，Region是会经常因为系统故障、负载均衡、配置修改、Region分裂和合并等发生变更。一旦Region移动就会尽力Offline和重新Online的过程。</p>
+<p>Offline期间数据不能被访问，并且Region的状态变化需要让全局知晓，否则可能导致某些事务性异常。对于HBase集群，Region的数量可能达到10万级别，所以需要依赖ZK来做到。</p>
+<h4 id="（4）分布式SplitLog任务管理"><a href="#（4）分布式SplitLog任务管理" class="headerlink" title="（4）分布式SplitLog任务管理"></a>（4）分布式SplitLog任务管理</h4><p>某台RegionServer服务器挂掉时，总有一部分新写入的数据还没有持久化到HFile中，因此迁移该RegionServer服务时要从HLog中恢复这部分还在内存中的数据，最关键的一步是SplitLog，即HMaster需要遍历该RegionServer服务器的HLog，并按Region切分成小块移动到新的地址下，再进行数据的Replay。</p>
+<p>单个RegionServer的日志量相对庞大（数千个Region，上GB的日志），但又需要系统快速的完成日志的恢复工作，一个可行的方案是将处理HLog的任务分配给多台RegionServer服务器来共同处理，需要一个持久化组件辅助HMaster完成任务的分配。</p>
+<p>HMaster会在ZK上创建一个 <code>/hbase/splitlog</code> 的节点，将哪个RegionServer处理哪个Region这样的信息以列表的形式存放在该节点，各个RegionServer服务器自行到该节点上领取任务并在任务执行成功或失败后更新该节点的信息，以通知HMaster继续进行后续步骤。ZK负责分布式集群中相互通知和信息持久化的角色。</p>
+<h4 id="（5）Replication管理"><a href="#（5）Replication管理" class="headerlink" title="（5）Replication管理"></a>（5）Replication管理</h4><p>HBase通过Replication实现实时的主备同步，从而拥有了容灾和分流等关系型数据库拥有的功能。与传统Replication不同的是，HBase中Replication是多对多的，且每个节点随时都有可能挂掉。</p>
+<p>在ZK上记录一个 <code>/hbase/replication</code> 节点，然后把不同的RegionServer服务器对应的HLog文件名称记录到相应的节点上，HMaster集群会将新增的数据推送给Slave集群，并同时将推送信息记录到ZK上（断点记录），重复以上过程。服务器挂掉时，因为ZK上已经保存了断点信息，只要用这些信息协调推送HLog数据的主节点服务器就可以继续复制。</p>
+<h4 id="（6）ZooKeeper部署"><a href="#（6）ZooKeeper部署" class="headerlink" title="（6）ZooKeeper部署"></a>（6）ZooKeeper部署</h4><p>HBase的启动脚本（hbase-env.sh）中可以选择由HBase启动其自带的默认ZK还是使用一个已有的外部ZK集群。一般建议后者，可以方便多个HBase复用一套ZK集群，但要为每个HBase集群明确指定对应的ZK根节点配置（配置项zookeeper.znode.parent）确保HBase集群间互不干扰。</p>
+<p>对应HBase客户端只要指定ZK的集群地址和对应HBase根节点配置即可。HBase集群启动时会在ZK上逐个添加对应的初始化节点，并在HMaster以及RegionServer进程中进行相应节点的Watcher注册。</p>
+<h3 id="2-3-Kafka"><a href="#2-3-Kafka" class="headerlink" title="2.3 Kafka"></a>2.3 Kafka</h3><p>Kafka是由社交公司LinkedIn于2010年12月份开源的分布式消息系统，由Scala语言开发，广泛运用在Twitter、Netflix和Tumblr等大型互联网站点上。</p>
+<ul>
+<li>主要用于<strong>实现低延迟的发送和收集大量的事件和日志数据</strong>（活跃数据，如网站的PV数和用户访问记录），这些数据以日志的形式记录下来，然后由一个专门的系统进行日志的收集与统计。</li>
+<li>吞吐量极高，整体设计是典型的发布与订阅模式系统。集群中所有服务器都是对等的，可以在不做任何配置更改的情况下实现服务器的添加与删除，消息的生产者和消费者也能做到随意重启和机器上下线。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210501/202105010129.png" alt></p>
+<h4 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h4><ul>
+<li><strong>消息生产者：</strong>即Producer，生成消息并发送到Kafka服务器上。</li>
+<li><strong>消息消费者：</strong>即Consumer，负责消费Kafka服务器上的消息。</li>
+<li><strong>主题：</strong>即Topic，由用户定义并配置在Kafka服务端，用于建立生产者和消费者之间的订阅关系：生产者发送消息到指定topic下，消费者从该topic消费消息。</li>
+<li><strong>消息分区：</strong>即Partition，一个topic下分多个分区，如topic1分10个分区，由两台服务器提供，每台5个分区，服务器ID为0和1，分区为0-0到0-4和1-0到1-4。消息分区机制和分区数量与消费者的负载均衡机制有很大关系。</li>
+<li><strong>Broker：</strong>即Kafka的服务器，用于存储消息。</li>
+<li><strong>消费者分组：</strong>即Group，用于归组同类消费者，多个消费者可以共同消费一个topic下的消息，这些消费者组成一个分组/集群。</li>
+<li><strong>Offset：</strong>消息存储在Kafka的Broker上，消费者拉取消息数据的过程需要在文件中的偏移量。</li>
+</ul>
+<h4 id="Broker注册"><a href="#Broker注册" class="headerlink" title="Broker注册"></a>Broker注册</h4><h4 id="Topic注册"><a href="#Topic注册" class="headerlink" title="Topic注册"></a>Topic注册</h4><h4 id="生产者负载均衡"><a href="#生产者负载均衡" class="headerlink" title="生产者负载均衡"></a>生产者负载均衡</h4><h4 id="消费者负载均衡"><a href="#消费者负载均衡" class="headerlink" title="消费者负载均衡"></a>消费者负载均衡</h4><h2 id="三-阿里巴巴的应用实践"><a href="#三-阿里巴巴的应用实践" class="headerlink" title="三. 阿里巴巴的应用实践"></a>三. 阿里巴巴的应用实践</h2><h3 id="3-1-消息中间件-Metamorphosis"><a href="#3-1-消息中间件-Metamorphosis" class="headerlink" title="3.1 消息中间件-Metamorphosis"></a>3.1 消息中间件-Metamorphosis</h3><h3 id="3-2-RPC服务框架-Dubbo"><a href="#3-2-RPC服务框架-Dubbo" class="headerlink" title="3.2 RPC服务框架-Dubbo"></a>3.2 RPC服务框架-Dubbo</h3><h3 id="3-3-基于MySQL-Binlog的增量订阅和消费组件-Canal"><a href="#3-3-基于MySQL-Binlog的增量订阅和消费组件-Canal" class="headerlink" title="3.3 基于MySQL Binlog的增量订阅和消费组件-Canal"></a>3.3 基于MySQL Binlog的增量订阅和消费组件-Canal</h3><h3 id="3-4-分布式数据库同步系统-Otter"><a href="#3-4-分布式数据库同步系统-Otter" class="headerlink" title="3.4 分布式数据库同步系统-Otter"></a>3.4 分布式数据库同步系统-Otter</h3><h3 id="3-5-轻量级分布式通用搜索平台-终搜"><a href="#3-5-轻量级分布式通用搜索平台-终搜" class="headerlink" title="3.5 轻量级分布式通用搜索平台-终搜"></a>3.5 轻量级分布式通用搜索平台-终搜</h3><h3 id="3-6-实时计算引擎-JStorm"><a href="#3-6-实时计算引擎-JStorm" class="headerlink" title="3.6 实时计算引擎-JStorm"></a>3.6 实时计算引擎-JStorm</h3><hr>
+<p>参考：</p>
+<p>🔗 《从Paxos到Zookeeper-分布式一致性原理与实践》</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    林沂水
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://linyishui.top/2021052001.html" title="ZooKeeper（四）应用场景与实现">http://linyishui.top/2021052001.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    
+      <div>
+         ﻿<div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+      </div>
+    
+    
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/distributed/" rel="tag"># distributed</a>
+          
+            <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021051601.html" rel="next" title="ZooKeeper（三）开源客户端ZkClient和Curator">
+                <i class="fa fa-chevron-left"></i> ZooKeeper（三）开源客户端ZkClient和Curator
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+     <div class="comments" id="comments">
+       
+
+<script src="https://utteranc.es/client.js" repo="LAILAIWA/LAILAIWA.github.io" issue-term="pathname" label="💬Comments" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+     </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/riho_yoshioka1.jpg" alt="林沂水">
+            
+              <p class="site-author-name" itemprop="name">林沂水</p>
+              <p class="site-description motion-element" itemprop="description">记录编程点滴，写点生活中的酸甜</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">314</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">103</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/LAILAIWA" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:linyishui168@outlook.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/linyishui618" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/linyishui618" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5340162234" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo.com"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          <div id="days"></div>
+<script>
+function show_date_time(){
+    window.setTimeout("show_date_time()", 1000);
+    BirthDay=new Date("07/26/2018 00:00:00");
+    today=new Date();
+    timeold=(today.getTime()-BirthDay.getTime());
+    sectimeold=timeold/1000
+    secondsold=Math.floor(sectimeold);
+    msPerDay=24*60*60*1000
+    e_daysold=timeold/msPerDay
+    daysold=Math.floor(e_daysold);
+    e_hrsold=(e_daysold-daysold)*24;
+    hrsold=setzero(Math.floor(e_hrsold));
+    e_minsold=(e_hrsold-hrsold)*60;
+    minsold=setzero(Math.floor((e_hrsold-hrsold)*60));
+    seconds=setzero(Math.floor((e_minsold-minsold)*60));
+    document.getElementById('days').innerHTML="已运行 "+daysold+" 天 "+hrsold+" 小时 "+minsold+" 分 "+seconds+" 秒";
+}
+function setzero(i) {
+    if (i<10) {
+        i="0" + i
+    };
+    return i;
+}
+show_date_time();
+</script>  
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZooKeeper（四）应用场景与实现"><span class="nav-text">ZooKeeper（四）应用场景与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-典型应用场景"><span class="nav-text">一. 典型应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-数据发布-订阅"><span class="nav-text">1.1 数据发布/订阅</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-负载均衡"><span class="nav-text">1.2 负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）动态DNS服务"><span class="nav-text">（1）动态DNS服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）自动化的DNS服务"><span class="nav-text">（2）自动化的DNS服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-命名服务"><span class="nav-text">1.3 命名服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-分布式协调-通知"><span class="nav-text">1.4 分布式协调/通知</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）MySQL数据复制总线-Mysql-Replicator"><span class="nav-text">（1）MySQL数据复制总线-Mysql_Replicator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）Core进行分布式协调的流程"><span class="nav-text">（2）Core进行分布式协调的流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）Server管理Core组件"><span class="nav-text">（3）Server管理Core组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）机器间通信方式"><span class="nav-text">（4）机器间通信方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-集群管理"><span class="nav-text">1.5 集群管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）传统Agent的弊端"><span class="nav-text">（1）传统Agent的弊端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）分布式日志收集系统"><span class="nav-text">（2）分布式日志收集系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）在线云主机管理"><span class="nav-text">（3）在线云主机管理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-Master选举"><span class="nav-text">1.6 Master选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-分布式锁"><span class="nav-text">1.7 分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）排他锁"><span class="nav-text">（1）排他锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）共享锁"><span class="nav-text">（2）共享锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#羊群效应"><span class="nav-text">羊群效应</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-8-分布式队列"><span class="nav-text">1.8 分布式队列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）FIFO-先入先出"><span class="nav-text">（1）FIFO-先入先出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）Barrier：分布式屏障"><span class="nav-text">（2）Barrier：分布式屏障</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-大型分布式系统的应用"><span class="nav-text">二. 大型分布式系统的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Hadoop"><span class="nav-text">2.1 Hadoop</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）YARN"><span class="nav-text">（1）YARN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）ResourceManager单点问题"><span class="nav-text">（2）ResourceManager单点问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）Fencing隔离"><span class="nav-text">（3）Fencing隔离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）ResourceManager状态存储"><span class="nav-text">（4）ResourceManager状态存储</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-HBase"><span class="nav-text">2.2 HBase</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）系统冗错"><span class="nav-text">（1）系统冗错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）RootRegion管理"><span class="nav-text">（2）RootRegion管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）Region状态管理"><span class="nav-text">（3）Region状态管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）分布式SplitLog任务管理"><span class="nav-text">（4）分布式SplitLog任务管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（5）Replication管理"><span class="nav-text">（5）Replication管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（6）ZooKeeper部署"><span class="nav-text">（6）ZooKeeper部署</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Kafka"><span class="nav-text">2.3 Kafka</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#术语"><span class="nav-text">术语</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Broker注册"><span class="nav-text">Broker注册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Topic注册"><span class="nav-text">Topic注册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生产者负载均衡"><span class="nav-text">生产者负载均衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#消费者负载均衡"><span class="nav-text">消费者负载均衡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-阿里巴巴的应用实践"><span class="nav-text">三. 阿里巴巴的应用实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-消息中间件-Metamorphosis"><span class="nav-text">3.1 消息中间件-Metamorphosis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-RPC服务框架-Dubbo"><span class="nav-text">3.2 RPC服务框架-Dubbo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-基于MySQL-Binlog的增量订阅和消费组件-Canal"><span class="nav-text">3.3 基于MySQL Binlog的增量订阅和消费组件-Canal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-分布式数据库同步系统-Otter"><span class="nav-text">3.4 分布式数据库同步系统-Otter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-轻量级分布式通用搜索平台-终搜"><span class="nav-text">3.5 轻量级分布式通用搜索平台-终搜</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-实时计算引擎-JStorm"><span class="nav-text">3.6 实时计算引擎-JStorm</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        ﻿<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="heart">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林沂水</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+   
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
