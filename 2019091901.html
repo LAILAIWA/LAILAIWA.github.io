@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="java,">
+  <meta name="keywords" content="java8,">
 
 
 
@@ -89,14 +89,14 @@
 
 
 <meta name="description" content="介绍一些Java8的新特性，本篇博客作为系列的目录和引文，内容包括：引文，三个新的编程概念（流处理、用行为参数化把代码传递给方法、并行与共享的可变数据），行为参数化，默认方法，Lambda表达式，流，重构、测试和调试，Optional，CompletableFuture组合式异步编程，新的日期和时间API，函数式的思考，函数式编程的技巧等内容。">
-<meta name="keywords" content="java">
+<meta name="keywords" content="java8">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java8的新特性">
 <meta property="og:url" content="http://linyishui.top/2019091901.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="介绍一些Java8的新特性，本篇博客作为系列的目录和引文，内容包括：引文，三个新的编程概念（流处理、用行为参数化把代码传递给方法、并行与共享的可变数据），行为参数化，默认方法，Lambda表达式，流，重构、测试和调试，Optional，CompletableFuture组合式异步编程，新的日期和时间API，函数式的思考，函数式编程的技巧等内容。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-01-16T14:41:14.000Z">
+<meta property="og:updated_time" content="2021-06-20T14:19:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java8的新特性">
 <meta name="twitter:description" content="介绍一些Java8的新特性，本篇博客作为系列的目录和引文，内容包括：引文，三个新的编程概念（流处理、用行为参数化把代码传递给方法、并行与共享的可变数据），行为参数化，默认方法，Lambda表达式，流，重构、测试和调试，Optional，CompletableFuture组合式异步编程，新的日期和时间API，函数式的思考，函数式编程的技巧等内容。">
@@ -429,7 +429,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,493
+                  1,428
                 </span>
               
 
@@ -470,18 +470,17 @@
       
 
       
-        <h1 id="Java8的新特性"><a href="#Java8的新特性" class="headerlink" title="Java8的新特性"></a><strong>Java8的新特性</strong></h1><h2 id="第一节-引文"><a href="#第一节-引文" class="headerlink" title="第一节 引文"></a><strong>第一节 引文</strong></h2><p>&emsp;&emsp;Java 8是改动较大的一个版本，新增了Lambda表达式、函数式编程、流等，当然也有一些其他扩充功能的更新。这些变化主要反映了Java从注重改变现有值得经典面向对象思想转变为向函数式编程领域转变。这些改动会很大程度上对开发人员起到帮助，让编程更容易更轻松。</p>
-<p>&emsp;&emsp;对于并发编程来说，Java 1.0时有线程和锁，甚至提供了内存模型，但没有相关专业知识的团队很难可靠的使用这些工具。Java 5时添加了工业级的构建模块，如线程池和并发集合。Java 7时添加了分支/合并（fork/join）框架，使得并行变得更加实用，但依旧会有些困难。Java 8则对并行提供了一个更简单的新思路。</p>
-<hr>
-<h2 id="第二节-三个新的编程概念"><a href="#第二节-三个新的编程概念" class="headerlink" title="第二节 三个新的编程概念"></a><strong>第二节 三个新的编程概念</strong></h2><h3 id="流处理"><a href="#流处理" class="headerlink" title="流处理"></a><strong>流处理</strong></h3><p>&emsp;&emsp;流是一系列数据项，一次只生成一项。程序可以从输入流中一个一个读取数据项，以相同方式将数据项写入输出流。</p>
-<p>&emsp;&emsp;比如在Unix或Linux中，很多程序从标准输入中读取数据（Unix和C中的stdin，Java中的System.in），然后把结果写入标准输出（Unix和C中的stdout，Java中的System.out）。如下命令，cat会把两个文件连接起来创建一个流，tr会转换流中的字符，sort会对流中的行进行排序，trail -3则会给出流的最后三行。Unix允许这些程序通过<strong>管道</strong>（|）连接起来。</p>
-<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat file1 file2 | <span class="type">tr</span> <span class="string">"[A-Z]"</span> <span class="string">"[a-z]"</span> | <span class="type">sort</span> | <span class="type">trail</span> <span class="number">-3</span></span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;上述语句会先把字母转为小写，然后打印出排序后的最后三个单词。sort会把一个行流作为输入，产生了另一个行流，进行排序并输出。在Unix中，这些命令是同时执行的，就像工厂式的流水线，虽然整个命令序列像是是一步一步完成的，但各个命令的运行是并行的。</p>
-<p>&emsp;&emsp;基于此思想，Java 8在java.util.stream中添加了一个Stream API；可以把Stream<t>看作是一个迭代器，它可以链接起来形成一个流水线。它带来的好处就是我们可以像SQL那样写查询语句的思路，把这样的流转为那样的流，而不是一次只能处理一个项目，而且Java可以很透明的把输入中不相关的部分分开放到几个CPU内核上分别执行，这样自动的并行就省去我们去开辟线程的功夫了。</t></p>
-<h3 id="用行为参数化把代码传递给方法"><a href="#用行为参数化把代码传递给方法" class="headerlink" title="用行为参数化把代码传递给方法"></a><strong>用行为参数化把代码传递给方法</strong></h3><p>&emsp;&emsp;比如我们有一组学生数据，包括其年龄，学期成绩，班级，学号等信息，我们可能有各种排序需求，真正想要的就是通过给sort一个参数让其定义顺序。我们可以写一个函数compareUsingAge来比较学生的年龄，但Java 8之前我们没法把这个方法传递给另一个方法，所以只能创建一个Comparator对象，然后把对象传递给sort方法。而有了行为参数化后，这样的需求就可以简单的实现了，我们可以把compareUsingAge方法作为参数传递给sort。</p>
-<p>&emsp;&emsp;<strong>把代码传递给方法</strong>这种方式简洁的表达了<strong>行为参数化</strong>，也许你会想可以通过<strong>匿名类</strong>实现行为参数化，但Lambda和方法引用可以更清晰和简单的来实现这一需求。</p>
-<h3 id="并行与共享的可变数据"><a href="#并行与共享的可变数据" class="headerlink" title="并行与共享的可变数据"></a><strong>并行与共享的可变数据</strong></h3><p>&emsp;&emsp;如果我们的代码可以拆分为多个副本并独立工作时，并行是可以确保的，但如果要写入一个共享变量或对象，如果两个线程都要同时修改这个变量，就是不能允许的了。当然你可以通过synchronized来打破<strong>不能有共享的可变数据</strong>这一原则，但打破的同时也就意味着放弃了所有相关的优化，同步就意味着要按照顺序执行，这与并行的宗旨相悖。</p>
-<p>&emsp;&emsp;<strong>没有共享的可变数据</strong>，<strong>将代码传递给方法的能力</strong>这两个概念是<strong>函数式编程范式</strong>的基石。而相反的<strong>命令式编程范式</strong>中，程序是一系列改变状态的指令。</p>
+        <h1 id="Java8的新特性"><a href="#Java8的新特性" class="headerlink" title="Java8的新特性"></a>Java8的新特性</h1><h2 id="一-引文"><a href="#一-引文" class="headerlink" title="一. 引文"></a>一. 引文</h2><p>Java 8是改动较大的一个版本，新增了Lambda表达式、函数式编程、流等，当然也有一些其他扩充功能的更新。这些变化主要反映了Java从注重改变现有值得经典面向对象思想转变为向函数式编程领域转变。这些改动会很大程度上对开发人员起到帮助，让编程更容易更轻松。</p>
+<p>对于并发编程来说，Java 1.0时有线程和锁，甚至提供了内存模型，但没有相关专业知识的团队很难可靠的使用这些工具。Java 5时添加了工业级的构建模块，如线程池和并发集合。Java 7时添加了分支/合并（fork/join）框架，使得并行变得更加实用，但依旧会有些困难。Java 8则对并行提供了一个更简单的新思路。</p>
+<h2 id="二-三个新的编程概念"><a href="#二-三个新的编程概念" class="headerlink" title="二. 三个新的编程概念"></a>二. 三个新的编程概念</h2><h3 id="2-1-流处理"><a href="#2-1-流处理" class="headerlink" title="2.1 流处理"></a>2.1 流处理</h3><p>流是一系列数据项，一次只生成一项。程序可以从输入流中一个一个读取数据项，以相同方式将数据项写入输出流。</p>
+<p>比如在Unix或Linux中，很多程序从标准输入中读取数据（Unix和C中的stdin，Java中的System.in），然后把结果写入标准输出（Unix和C中的stdout，Java中的System.out）。如下命令，cat会把两个文件连接起来创建一个流，tr会转换流中的字符，sort会对流中的行进行排序，trail -3则会给出流的最后三行。Unix允许这些程序通过<strong>管道</strong>（|）连接起来。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat file1 file2 | tr "[A-Z]" "[a-z]" | sort | trail -3</span><br></pre></td></tr></table></figure>
+<p>上述语句会先把字母转为小写，然后打印出排序后的最后三个单词。sort会把一个行流作为输入，产生了另一个行流，进行排序并输出。在Unix中，这些命令是同时执行的，就像工厂式的流水线，虽然整个命令序列像是是一步一步完成的，但各个命令的运行是并行的。</p>
+<p>基于此思想，Java 8在java.util.stream中添加了一个Stream API；可以把Stream<t>看作是一个迭代器，它可以链接起来形成一个流水线。它带来的好处就是我们可以像SQL那样写查询语句的思路，把这样的流转为那样的流，而不是一次只能处理一个项目，而且Java可以很透明的把输入中不相关的部分分开放到几个CPU内核上分别执行，这样自动的并行就省去我们去开辟线程的功夫了。</t></p>
+<h3 id="2-2-用行为参数化把代码传递给方法"><a href="#2-2-用行为参数化把代码传递给方法" class="headerlink" title="2.2 用行为参数化把代码传递给方法"></a>2.2 用行为参数化把代码传递给方法</h3><p>比如我们有一组学生数据，包括其年龄，学期成绩，班级，学号等信息，我们可能有各种排序需求，真正想要的就是通过给sort一个参数让其定义顺序。我们可以写一个函数compareUsingAge来比较学生的年龄，但Java 8之前我们没法把这个方法传递给另一个方法，所以只能创建一个Comparator对象，然后把对象传递给sort方法。而有了行为参数化后，这样的需求就可以简单的实现了，我们可以把compareUsingAge方法作为参数传递给sort。</p>
+<p><strong>把代码传递给方法</strong>这种方式简洁的表达了<strong>行为参数化</strong>，也许你会想可以通过<strong>匿名类</strong>实现行为参数化，但Lambda和方法引用可以更清晰和简单的来实现这一需求。</p>
+<h3 id="2-3-并行与共享的可变数据"><a href="#2-3-并行与共享的可变数据" class="headerlink" title="2.3 并行与共享的可变数据"></a>2.3 并行与共享的可变数据</h3><p>如果我们的代码可以拆分为多个副本并独立工作时，并行是可以确保的，但如果要写入一个共享变量或对象，如果两个线程都要同时修改这个变量，就是不能允许的了。当然你可以通过synchronized来打破<strong>不能有共享的可变数据</strong>这一原则，但打破的同时也就意味着放弃了所有相关的优化，同步就意味着要按照顺序执行，这与并行的宗旨相悖。</p>
+<p><strong>没有共享的可变数据</strong>，<strong>将代码传递给方法的能力</strong>这两个概念是<strong>函数式编程范式</strong>的基石。而相反的<strong>命令式编程范式</strong>中，程序是一系列改变状态的指令。</p>
 <blockquote>
 <p>Java 8为并行做的优化：</p>
 <ul>
@@ -492,36 +491,23 @@
 <blockquote>
 <p><strong>把代码传递给方法（方法引用、Lambda）和接口中的默认方法这两种特性的补充可以看作是为Stream而设计的</strong>。</p>
 </blockquote>
+<h2 id="三-行为参数化"><a href="#三-行为参数化" class="headerlink" title="三. 行为参数化"></a>三. 行为参数化</h2><p><a href="../2019092001.html" title="Title">行为参数化</a></p>
+<h2 id="四-默认方法"><a href="#四-默认方法" class="headerlink" title="四. 默认方法"></a>四. 默认方法</h2><p><a href="../2019092101.html" title="Title">默认方法</a></p>
+<h2 id="五-Lambda表达式"><a href="#五-Lambda表达式" class="headerlink" title="五. Lambda表达式"></a>五. Lambda表达式</h2><p><a href="../2019031802.html" title="Title">Lambda表达式</a></p>
+<p><a href="../2019123001.html" title="Title">Lambda异常处理方案</a></p>
+<h2 id="六-流"><a href="#六-流" class="headerlink" title="六. 流"></a>六. 流</h2><p><a href="../2019092201.html" title="Title">流（一）入门介绍</a></p>
+<p><a href="../2019092301.html" title="Title">流（二）使用和构建</a></p>
+<p><a href="../2019092401.html" title="Title">流（三）收集器</a></p>
+<p><a href="../2019092501.html" title="Title">流（四）并行化处理</a></p>
+<h2 id="七-重构、测试和调试"><a href="#七-重构、测试和调试" class="headerlink" title="七. 重构、测试和调试"></a>七. 重构、测试和调试</h2><p><a href="../2019092601.html" title="Title">重构、测试和调试</a></p>
+<h2 id="八-Optional"><a href="#八-Optional" class="headerlink" title="八. Optional"></a>八. Optional</h2><p><a href="../2019092701.html" title="Title">Optional</a></p>
+<h2 id="九-CompletableFuture组合式异步编程"><a href="#九-CompletableFuture组合式异步编程" class="headerlink" title="九. CompletableFuture组合式异步编程"></a>九. CompletableFuture组合式异步编程</h2><p><a href="../2019092801.html" title="Title">CompletableFuture组合式异步编程</a></p>
+<h2 id="十-新的日期和时间API"><a href="#十-新的日期和时间API" class="headerlink" title="十. 新的日期和时间API"></a>十. 新的日期和时间API</h2><p><a href="../2019100101.html" title="Title">新的日期和时间API</a></p>
+<h2 id="十一-函数式的思考"><a href="#十一-函数式的思考" class="headerlink" title="十一. 函数式的思考"></a>十一. 函数式的思考</h2><p><a href="../2019100301.html" title="Title">函数式的思考</a></p>
+<h2 id="十二-函数式编程的技巧"><a href="#十二-函数式编程的技巧" class="headerlink" title="十二. 函数式编程的技巧"></a>十二. 函数式编程的技巧</h2><p><a href="../2019100401.html" title="Title">函数式编程的技巧</a></p>
 <hr>
-<h2 id="第三节-行为参数化"><a href="#第三节-行为参数化" class="headerlink" title="第三节 行为参数化"></a><strong>第三节 行为参数化</strong></h2><p>&emsp;&emsp;<a href="../2019092001.html" title="Title">行为参数化</a></p>
-<hr>
-<h2 id="第四节-默认方法"><a href="#第四节-默认方法" class="headerlink" title="第四节 默认方法"></a><strong>第四节 默认方法</strong></h2><p>&emsp;&emsp;<a href="../2019092101.html" title="Title">默认方法</a></p>
-<hr>
-<h2 id="第五节-Lambda表达式"><a href="#第五节-Lambda表达式" class="headerlink" title="第五节 Lambda表达式"></a><strong>第五节 Lambda表达式</strong></h2><p>&emsp;&emsp;<a href="../2019031802.html" title="Title">Lambda表达式</a></p>
-<p>&emsp;&emsp;<a href="../2019123001.html" title="Title">Lambda异常处理方案</a></p>
-<hr>
-<h2 id="第六节-流"><a href="#第六节-流" class="headerlink" title="第六节 流"></a><strong>第六节 流</strong></h2><p>&emsp;&emsp;<a href="../2019092201.html" title="Title">流（一）入门介绍</a></p>
-<p>&emsp;&emsp;<a href="../2019092301.html" title="Title">流（二）使用和构建</a></p>
-<p>&emsp;&emsp;<a href="../2019092401.html" title="Title">流（三）收集器</a></p>
-<p>&emsp;&emsp;<a href="../2019092501.html" title="Title">流（四）并行化处理</a></p>
-<hr>
-<h2 id="第七节-重构、测试和调试"><a href="#第七节-重构、测试和调试" class="headerlink" title="第七节 重构、测试和调试"></a><strong>第七节 重构、测试和调试</strong></h2><p>&emsp;&emsp;<a href="../2019092601.html" title="Title">重构、测试和调试</a></p>
-<hr>
-<h2 id="第八节-Optional"><a href="#第八节-Optional" class="headerlink" title="第八节 Optional"></a><strong>第八节 Optional</strong></h2><p>&emsp;&emsp;<a href="../2019092701.html" title="Title">Optional</a></p>
-<hr>
-<h2 id="第九节-CompletableFuture组合式异步编程"><a href="#第九节-CompletableFuture组合式异步编程" class="headerlink" title="第九节 CompletableFuture组合式异步编程"></a><strong>第九节 CompletableFuture组合式异步编程</strong></h2><p>&emsp;&emsp;<a href="../2019092801.html" title="Title">CompletableFuture组合式异步编程</a></p>
-<hr>
-<h2 id="第十节-新的日期和时间API"><a href="#第十节-新的日期和时间API" class="headerlink" title="第十节 新的日期和时间API"></a><strong>第十节 新的日期和时间API</strong></h2><p>&emsp;&emsp;<a href="../2019100101.html" title="Title">新的日期和时间API</a></p>
-<hr>
-<h2 id="第十一节-函数式的思考"><a href="#第十一节-函数式的思考" class="headerlink" title="第十一节 函数式的思考"></a><strong>第十一节 函数式的思考</strong></h2><p>&emsp;&emsp;<a href="../2019100301.html" title="Title">函数式的思考</a></p>
-<hr>
-<h2 id="第十二节-函数式编程的技巧"><a href="#第十二节-函数式编程的技巧" class="headerlink" title="第十二节 函数式编程的技巧"></a><strong>第十二节 函数式编程的技巧</strong></h2><p>&emsp;&emsp;<a href="../2019100401.html" title="Title">函数式编程的技巧</a></p>
-<hr>
-<p><em>参考博客和文章书籍等：</em></p>
-<blockquote>
-<p>《Java8实战》</p>
-</blockquote>
-<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<p>参考：</p>
+<p>🔗 《Java8实战》</p>
 
       
     </div>
@@ -568,7 +554,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/java/" rel="tag"># java</a>
+            <a href="/tags/java8/" rel="tag"># java8</a>
           
         </div>
       
@@ -682,7 +668,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">314</span>
+                  <span class="site-state-item-count">317</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -693,7 +679,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -704,7 +690,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">103</span>
+                  <span class="site-state-item-count">105</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -803,7 +789,7 @@ show_date_time();
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java8的新特性"><span class="nav-text">Java8的新特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一节-引文"><span class="nav-text">第一节 引文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二节-三个新的编程概念"><span class="nav-text">第二节 三个新的编程概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#流处理"><span class="nav-text">流处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用行为参数化把代码传递给方法"><span class="nav-text">用行为参数化把代码传递给方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并行与共享的可变数据"><span class="nav-text">并行与共享的可变数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三节-行为参数化"><span class="nav-text">第三节 行为参数化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四节-默认方法"><span class="nav-text">第四节 默认方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五节-Lambda表达式"><span class="nav-text">第五节 Lambda表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第六节-流"><span class="nav-text">第六节 流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第七节-重构、测试和调试"><span class="nav-text">第七节 重构、测试和调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第八节-Optional"><span class="nav-text">第八节 Optional</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第九节-CompletableFuture组合式异步编程"><span class="nav-text">第九节 CompletableFuture组合式异步编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十节-新的日期和时间API"><span class="nav-text">第十节 新的日期和时间API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十一节-函数式的思考"><span class="nav-text">第十一节 函数式的思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第十二节-函数式编程的技巧"><span class="nav-text">第十二节 函数式编程的技巧</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java8的新特性"><span class="nav-text">Java8的新特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-引文"><span class="nav-text">一. 引文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-三个新的编程概念"><span class="nav-text">二. 三个新的编程概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-流处理"><span class="nav-text">2.1 流处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-用行为参数化把代码传递给方法"><span class="nav-text">2.2 用行为参数化把代码传递给方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-并行与共享的可变数据"><span class="nav-text">2.3 并行与共享的可变数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-行为参数化"><span class="nav-text">三. 行为参数化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-默认方法"><span class="nav-text">四. 默认方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-Lambda表达式"><span class="nav-text">五. Lambda表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-流"><span class="nav-text">六. 流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七-重构、测试和调试"><span class="nav-text">七. 重构、测试和调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八-Optional"><span class="nav-text">八. Optional</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#九-CompletableFuture组合式异步编程"><span class="nav-text">九. CompletableFuture组合式异步编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十-新的日期和时间API"><span class="nav-text">十. 新的日期和时间API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十一-函数式的思考"><span class="nav-text">十一. 函数式的思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十二-函数式编程的技巧"><span class="nav-text">十二. 函数式编程的技巧</span></a></li></ol></li></ol></div>
             
 
           </div>
