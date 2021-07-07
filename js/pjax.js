@@ -30,3 +30,12 @@ document.addEventListener('pjax:success', () => {
   document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
   NexT.utils.updateSidebarPosition();
 });
+
+$(document).on('pjax:start', function () {
+  if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+          window.aplayers[i].destroy();
+      }
+      window.aplayers = [];
+  }
+});
