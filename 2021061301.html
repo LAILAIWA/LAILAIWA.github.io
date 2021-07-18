@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）">
+<meta property="og:url" content="http://linyishui.top/2021061301.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010134.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010135.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010136.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010137.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010138.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010139.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010140.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010141.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010142.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010143.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010144.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010145.png">
+<meta property="article:published_time" content="2021-06-13T15:29:15.000Z">
+<meta property="article:modified_time" content="2021-07-18T15:29:14.254Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="unfinished">
+<meta property="article:tag" content="distributed">
+<meta property="article:tag" content="zookeeper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010134.png">
+
+
+<link rel="canonical" href="http://linyishui.top/2021061301.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021061301.html","path":"2021061301.html","title":"ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成） | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZooKeeper%EF%BC%88%E4%BA%94%EF%BC%89%E6%8A%80%E6%9C%AF%E5%86%85%E5%B9%95"><span class="nav-text">ZooKeeper（五）技术内幕</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">五. 服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%8D%95%E6%9C%BA%E7%89%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">5.1 单机版服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%A2%84%E5%90%AF%E5%8A%A8"><span class="nav-text">（1）预启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">（2）初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E9%9B%86%E7%BE%A4%E7%89%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">5.2 集群版服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%A2%84%E5%90%AF%E5%8A%A8-1"><span class="nav-text">（1）预启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96-1"><span class="nav-text">（2）初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（3）Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89Leader%E5%92%8CFollow%E5%90%AF%E5%8A%A8%E6%9C%9F%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-text">（4）Leader和Follow启动期交互过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-Leader%E9%80%89%E4%B8%BE"><span class="nav-text">六. Leader选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E6%A6%82%E8%BF%B0"><span class="nav-text">6.1 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%9F%E7%9A%84Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（1）服务器启动时期的Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E8%A1%8C%E6%9C%9F%E9%97%B4%E7%9A%84Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（2）服务器运行期间的Leader选举</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-text">6.2 算法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%AF%E8%AF%AD"><span class="nav-text">（1）术语</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E4%BD%95%E6%97%B6%E8%BF%9B%E5%85%A5Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（2）何时进入Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%BC%80%E5%A7%8B%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8A%95%E7%A5%A8"><span class="nav-text">（3）开始第一次投票</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E5%8F%98%E6%9B%B4%E6%8A%95%E7%A5%A8"><span class="nav-text">（4）变更投票</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E7%A1%AE%E5%AE%9ALeader"><span class="nav-text">（5）确定Leader</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-text">6.3 实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8A%B6%E6%80%81"><span class="nav-text">（1）服务器状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%8A%95%E7%A5%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">（2）投票的数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89QuorumCnxManager-%E7%BD%91%E7%BB%9CI-O%E7%AE%A1%E7%90%86%E8%80%85"><span class="nav-text">（3）QuorumCnxManager-网络I&#x2F;O管理者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89FastLeaderElection%E6%A0%B8%E5%BF%83"><span class="nav-text">（4）FastLeaderElection核心</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E5%90%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2%E4%BB%8B%E7%BB%8D"><span class="nav-text">七. 各服务器角色介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-Leader"><span class="nav-text">7.1 Leader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-Follower"><span class="nav-text">7.2 Follower</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-Observer"><span class="nav-text">7.3 Observer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E9%9B%86%E7%BE%A4%E9%97%B4%E6%B6%88%E6%81%AF%E9%80%9A%E4%BF%A1"><span class="nav-text">7.4 集群间消息通信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86"><span class="nav-text">八. 请求处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%BC%9A%E8%AF%9D%E5%88%9B%E5%BB%BA%E8%AF%B7%E6%B1%82"><span class="nav-text">8.1 会话创建请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-SetData%E8%AF%B7%E6%B1%82"><span class="nav-text">8.2 SetData请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E4%BA%8B%E5%8A%A1%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91"><span class="nav-text">8.3 事务请求转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-GetData%E8%AF%B7%E6%B1%82"><span class="nav-text">8.4 GetData请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E6%95%B0%E6%8D%AE%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="nav-text">九. 数据与存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="nav-text">9.1 内存数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97"><span class="nav-text">9.2 事务日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-snapshot%E2%80%94%E6%95%B0%E6%8D%AE%E5%BF%AB%E7%85%A7"><span class="nav-text">9.3 snapshot—数据快照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">9.4 初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="nav-text">9.5 数据同步</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">104</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021061301.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-13 23:29:15" itemprop="dateCreated datePublished" datetime="2021-06-13T23:29:15+08:00">2021-06-13</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-07-18 23:29:14" itemprop="dateModified" datetime="2021-07-18T23:29:14+08:00">2021-07-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节等。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="ZooKeeper（五）技术内幕"><a href="#ZooKeeper（五）技术内幕" class="headerlink" title="ZooKeeper（五）技术内幕"></a>ZooKeeper（五）技术内幕</h1><h2 id="五-服务器启动"><a href="#五-服务器启动" class="headerlink" title="五. 服务器启动"></a>五. 服务器启动</h2><p>ZooKeeper服务端架构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010134.png"></p>
+<h3 id="5-1-单机版服务器启动"><a href="#5-1-单机版服务器启动" class="headerlink" title="5.1 单机版服务器启动"></a>5.1 单机版服务器启动</h3><p>ZK服务器启动步骤：</p>
+<ol>
+<li>配置文件解析。</li>
+<li>初始化数据管理器。</li>
+<li>初始化网络I/O管理器。</li>
+<li>数据恢复和对外服务。</li>
+</ol>
+<p>单机模式下ZK服务器的启动流程图：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010135.png"></p>
+<h4 id="（1）预启动"><a href="#（1）预启动" class="headerlink" title="（1）预启动"></a>（1）预启动</h4><ol>
+<li><p>统一由QuorumPeerMain作为启动类。</p>
+<p>单机/集群模式，在 <code>zkServer.cmd</code> 和 <code>zkServer.sh</code> 两个脚本中都配置了 <code>org.apache.zookeeper.server.quorum.QuorumPeerMain</code> 作为启动入口类。</p>
+</li>
+<li><p>解析配置文件 <code>zoo.cfg</code> 。</p>
+<p>该文件配置了ZK运行时的基本参数，包括tickTime、dataDir和clientPort等参数。</p>
+</li>
+<li><p>创建并启动历史文件清理器 DatadirCleanupManager 。</p>
+<p>ZK从3.4.0版本后增加了自动清理历史数据文件的机制，包括对事务日志和快照数据文件进行定时清理。</p>
+</li>
+<li><p>判断当前是集群模式还是单机模式的启动。</p>
+<p>ZooKeeper根据步骤2解析出的集群服务器地址列表判断当前是单机还是集群模式。单机模式委托给ZooKeeperServerMain进行启动处理。</p>
+</li>
+<li><p>再次进行配置文件 <code>zoo.cfg</code> 的解析。</p>
+</li>
+<li><p>创建服务器实例 ZooKeeperServer 。</p>
+<p><code>org.apache.zookeeper.server.ZooKeeperServer</code> 是单机版服务端最核心的实体类。ZK服务器会首先进行服务器实例的创建，然后对实例进行初始化，包括连接器、内存数据库和请求处理器等组件的初始化。</p>
+</li>
+</ol>
+<h4 id="（2）初始化"><a href="#（2）初始化" class="headerlink" title="（2）初始化"></a>（2）初始化</h4><ol>
+<li><p>创建服务器统计器 ServerStats 。</p>
+<p>ServerStats 是ZK服务器运行时的统计器：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010136.png"></p>
+</li>
+<li><p>创建ZooKeeper数据管理器 FileTxnSnapLog 。</p>
+<p>FileTxnSnapLog 是ZK上层服务器和底层数据存储之间的对接层，提供了一系列操作数据文件的接口，包括事务日志文件和快照数据文件。ZK根据 zoo.cfg 文件中解析出的快照数据目录 dataDir 和事务日志目录 dataLogDir 来创建 FileTxnSnapLog 。</p>
+</li>
+<li><p>设置服务器tickTime和会话超时时间限制。</p>
+</li>
+<li><p>创建ServerCnxnFactory。</p>
+<p>3.4.0版本引入Netty代替自实现的NIO框架，通过配置系统属性 <code>zookeeper.serverCnxnFactory</code> 来选择所使用的服务端网络连接工厂。</p>
+</li>
+<li><p>初始化ServerCnxnFactory。</p>
+<p>首先初始化一个Thread来作为ServerCnxnFactory的主线程，然后再初始化NIO服务器。</p>
+</li>
+<li><p>启动ServerCnxnFactory主线程。</p>
+<p>启动步骤5已经初始化的主线程ServerCnxnFactory的run方法，虽然此时NIO服务器已对外开放端口，客户端能够访问2181，但服务器实际无法处理客户端请求。</p>
+</li>
+<li><p>恢复本地数据。</p>
+<p>每次在ZK启动的时候，都需要从本地快照数据文件和事务日志文件中进行数据恢复。</p>
+</li>
+<li><p>创建并启动会话管理器。</p>
+<p>会话管理器 SessionTracker 负责服务端的会话管理，创建SessionTracker的时候，会初始化 expirationInterval、nextExpirationTime 和 sessionWithTimeout（用于保存每个会话的超时时间），同时还会计算出一个初始化的 sessionID 。</p>
+<p>SessionTracker初始化完毕，ZK就会立即开始会话管理器的会话超时检查。</p>
+</li>
+<li><p>初始化ZooKeeper的请求处理链。</p>
+<p>ZK的请求处理方式是典型的责任链模式的实现，在服务器上会有多个请求处理器一次来处理一个客户端请求。服务器启动时将这些请求处理器串联起来形成一个请求处理链。单机版包括 PrepRequestProcessor、SyncRequestProcessor 和 FinalRequestProcessor 三个请求处理器</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010137.png"></p>
+</li>
+<li><p>注册JMX服务。</p>
+<p>ZK将服务器运行时的一些信息以JMX的方式暴露给外部。</p>
+</li>
+<li><p>注册ZooKeeper服务器实例。</p>
+<p>此前端口开放但不能处理客户端请求，因为网络层尚未能访问ZK实例。经过后续步骤后，ZK服务器已初始化完毕，只需注册给ServerCnxnFactory就可以对外提供正常的服务。</p>
+</li>
+</ol>
+<h3 id="5-2-集群版服务器启动"><a href="#5-2-集群版服务器启动" class="headerlink" title="5.2 集群版服务器启动"></a>5.2 集群版服务器启动</h3><p>集群模式下ZK服务器的启动流程图：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010138.png"></p>
+<h4 id="（1）预启动-1"><a href="#（1）预启动-1" class="headerlink" title="（1）预启动"></a>（1）预启动</h4><ol>
+<li><p>统一由QuorumPeerMain作为启动类。</p>
+</li>
+<li><p>解析配置文件 <code>zoo.cfg</code> 。</p>
+</li>
+<li><p>创建并启动历史文件清理器 DatadirCleanupManager 。</p>
+</li>
+<li><p>判断当前是集群模式还是单机模式的启动。</p>
+<p>ZooKeeper根据步骤2解析出的集群服务器地址列表判断当前是单机还是集群模式。</p>
+</li>
+</ol>
+<h4 id="（2）初始化-1"><a href="#（2）初始化-1" class="headerlink" title="（2）初始化"></a>（2）初始化</h4><ol>
+<li><p>创建ServerCnxnFactory。</p>
+</li>
+<li><p>初始化ServerCnxnFactory。</p>
+</li>
+<li><p>创建ZooKeeper数据管理器 FileTxnSnapLog 。</p>
+</li>
+<li><p>创建QuorumPeer实例。</p>
+<p>QuorumPeer是集群模式特有的对象，是ZK服务器实例的托管者，从集群层面看，QuorumPeer代表了ZK集群中一台机器。运行期间，QuorumPeer 会不断检测当前服务器实例的运行状态，同时根据情况发起Leader选举。</p>
+</li>
+<li><p>创建内存数据库ZKDatabase。</p>
+<p>负责管理ZooKeeper的所有会话记录以及DataTree和事务日志的存储。</p>
+</li>
+<li><p>初始化QuorumPeer。</p>
+<p>一些核心组件注册到QuorumPeer中去，包括FileTxnSnapLog、ServerCnxnFactory 和 ZKDatabase 。同时ZK还会对QuorumPeer配置一些参数，包括服务器地址列表、Leader 选举算法和会话超时时间限制。</p>
+</li>
+<li><p>恢复本地数据。</p>
+</li>
+<li><p>启动ServerCnxnFactory主线程。</p>
+</li>
+</ol>
+<h4 id="（3）Leader选举"><a href="#（3）Leader选举" class="headerlink" title="（3）Leader选举"></a>（3）Leader选举</h4><p>步骤：</p>
+<ol>
+<li><p><strong>初始化Leader选举。</strong></p>
+<p>ZK根据自身的SID（服务器ID）、lastLoggedZxid（最新ZXID）和当前服务器epoch（currentEpoch）来生成一个初始化的投票，每个服务器都投自己。</p>
+<p>然后ZK根据 <code>zoo.cfg</code> 的配置，创建对应的Leader选举算法实现。默认可选三种实现，使用 <code>electionAlg</code> 属性0~3指定：</p>
+<ul>
+<li><strong>LeaderElection：</strong>3.4.0版本废弃。</li>
+<li><strong>AuthFastLeaderElection：</strong>3.4.0版本废弃。</li>
+<li><strong>FastLeaderElection：</strong>当前唯一选择。</li>
+</ul>
+<p>初始化阶段，ZK首先创建Leader选举所需的网络I/O层QuorumCnxManager，同时启动对Leader选举端口的监听，等待集群中其他服务器创建连接。</p>
+</li>
+<li><p><strong>注册JMX服务。</strong></p>
+</li>
+<li><p><strong>检测当前服务器状态。</strong></p>
+<p>QuorumPeer是ZK服务器实例的托管者，其核心不断的检查当前服务器的状态并做出处理。正常情况下，ZK服务器状态在 LOOKING、LEADING和FOLLOWING/OBSERVING 之间切换。<strong>启动阶段，QuorumPeer的初始状态为LOOKING，此时进行Leader选举。</strong></p>
+</li>
+<li><p><strong>Leader选举。</strong></p>
+<p>一个集群中所有的机器相互之间进行一系列投票，选举最合适的机器成为Leader，其余则是Follower或Observer。<strong>集群中哪个机器处理的数据最新（根据服务器处理过的最大ZXID来比较新旧）就越有可能成为Leader</strong>。当所有服务器处理的ZXID一致，SID最大的会成为Leader。</p>
+</li>
+</ol>
+<h4 id="（4）Leader和Follow启动期交互过程"><a href="#（4）Leader和Follow启动期交互过程" class="headerlink" title="（4）Leader和Follow启动期交互过程"></a>（4）Leader和Follow启动期交互过程</h4><p>Leader和Follower启动期交互过程步骤：</p>
+<ol>
+<li><p><strong>创建Leader服务器和Follower服务器。</strong></p>
+<p>完成Leader选举后，每个服务器都会根据自己的角色创建对应的服务器实例，开始自己的主流程。</p>
+</li>
+<li><p><strong>Leader服务器启动Follower接收器LearnerCnxAcceptor。</strong></p>
+<p>ZK集群运行期间，Leader服务器需要和其余服务器（Learner服务器）保持连接来确定其存活情况。LearnerCnxAcceptor负责接收所有非Leader服务器的连接请求。</p>
+</li>
+<li><p><strong>Learner服务器开始和Leader建立连接。</strong></p>
+<p>所有Learner服务器启动完毕后，从投票结果得到Leader服务器信息，并与其建立连接。</p>
+</li>
+<li><p><strong>Leader服务器创建LearnerHandler。</strong></p>
+<p>Leader接收到连接创建请求后，创建一个对应的LearnerHandler实例表示二者间的连接，并负责所有的消息通信和数据同步。</p>
+</li>
+<li><p><strong>向Leader注册。</strong></p>
+<p>建立好连接后，Learner向Leader注册，发送自己的LearnerInfo，包括服务器SID和处理的最新ZXID。</p>
+</li>
+<li><p><strong>Leader解析Learner信息，计算新的epoch。</strong></p>
+<p>Leader根据解析出的SID和ZXID，获取对应的 <code>epoch_of_learner</code> ，与当前服务器的 <code>epoch_of_leader</code> 进行比较，如果Learner更大的话就更新Leader的epoch：<code>epoch_of_leader = epoch_of_learner + 1</code> 。</p>
+<p>然后LearnerHandler会进行等待，等到过半的Learner已经向Leader进行了注册，同时更新了 <code>epoch_of_leader</code> 之后，Leader就可以确定当前集群的epoch了。</p>
+</li>
+<li><p><strong>发送Leader状态。</strong></p>
+<p>计算出新的epoch后，Leader会将其以一个LEADERINFO消息的形式发送给Learner，同时等待其响应。</p>
+</li>
+<li><p><strong>Learner发送ACK信息。</strong></p>
+<p>Follower收到LEADERINFO消息后，解析出epoch和ZXID，并向Leader反馈一个ACKEPOCH响应。</p>
+</li>
+<li><p><strong>数据同步。</strong></p>
+<p>Leader服务器接收到ACK后，开始与其进行数据同步。</p>
+</li>
+<li><p><strong>启动Leader和Learner服务器。</strong></p>
+<p>当过半的Learner已经完成了数据同步，Leader和Learner服务器的实例可以开始启动了。</p>
+</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010139.png"></p>
+<p>Leader和Follower启动的步骤：</p>
+<ol>
+<li>创建并启动会话管理器。</li>
+<li>初始化ZK的请求处理链。</li>
+<li>注册JMX服务。</li>
+</ol>
+<h2 id="六-Leader选举"><a href="#六-Leader选举" class="headerlink" title="六. Leader选举"></a>六. Leader选举</h2><h3 id="6-1-概述"><a href="#6-1-概述" class="headerlink" title="6.1 概述"></a>6.1 概述</h3><p>Leader选举是保证分布式数据一致性的关键所在。</p>
+<h4 id="（1）服务器启动时期的Leader选举"><a href="#（1）服务器启动时期的Leader选举" class="headerlink" title="（1）服务器启动时期的Leader选举"></a>（1）服务器启动时期的Leader选举</h4><p>假设集群有三台机器，集群初始化阶段只有一台机器启动时还不能进行Leader选举，只有当第二台机器启动并能互相通信时，才能进入选举流程：</p>
+<ol>
+<li><p><strong>每个Server会发出一个投票。</strong></p>
+<p>每台机器都投自己，每次投票包含最基本元素：所推举的服务器的myid和ZXID。</p>
+<p>所以结果是两个投票(1, 0)和(2, 0)分别发送给集群的其他机器。</p>
+</li>
+<li><p><strong>接收来自各个服务器的投票。</strong></p>
+<p>每个服务器收到投票后，先判断投票的有效性，包括检查是否为本轮投票、是否来自LOOKING状态的服务器。</p>
+</li>
+<li><p><strong>处理投票。</strong></p>
+<p>每一个投票，服务器都要将其与自己的投票进行PK，规则：</p>
+<ul>
+<li>优先检查ZXID，较大的服务器优先作为Leader。</li>
+<li>ZXID相同时比较myid，较大的服务器优先作为Leader。</li>
+</ul>
+<p>所以步骤1的两个投票中后者myid较大，服务器1将自己的投票更新为(2, 0)，服务器2则重复再发一次投票信息。</p>
+</li>
+<li><p><strong>统计投票。</strong></p>
+<p>每次投票后，服务器都会统计所有投票，判断是否已有过半的机器收到相同的投票信息。</p>
+</li>
+<li><p><strong>改变服务器状态。</strong></p>
+<p>一旦确定了Leader，每个服务器都会更新自己的状态，Follower更新为FOLLOWING，Leader更新为LEADING。</p>
+</li>
+</ol>
+<h4 id="（2）服务器运行期间的Leader选举"><a href="#（2）服务器运行期间的Leader选举" class="headerlink" title="（2）服务器运行期间的Leader选举"></a>（2）服务器运行期间的Leader选举</h4><p>当Leader所在服务器挂掉，会进入新一轮的Leader选举：</p>
+<ol>
+<li><p><strong>变更状态。</strong></p>
+<p>Leader挂了，所有非Observer服务器将自己状态更新为LOOKING。</p>
+</li>
+<li><p><strong>每个Server会发出一个投票。</strong></p>
+<p>生成投票信息(myid, ZXID)，此时服务器1和3产生投票(1, 123)和(3, 122)，发送给各个机器。</p>
+</li>
+<li><p><strong>接收来自各个服务器的投票。</strong></p>
+</li>
+<li><p><strong>处理投票。</strong></p>
+<p>和启动阶段规则一致，服务器1会被选为Leader。</p>
+</li>
+<li><p><strong>统计投票。</strong></p>
+</li>
+<li><p><strong>改变服务器状态。</strong></p>
+</li>
+</ol>
+<h3 id="6-2-算法分析"><a href="#6-2-算法分析" class="headerlink" title="6.2 算法分析"></a>6.2 算法分析</h3><p>ZK提供了三种选举算法，在 <code>zoo.cfg</code> 的配置中使用 <code>electionAlg</code> 属性指定：</p>
+<ul>
+<li><strong>LeaderElection：</strong>数字0，纯UDP实现。</li>
+<li><strong>AuthFastLeaderElection：</strong>数字2，UDP版本，授权模式。</li>
+<li><strong>FastLeaderElection：</strong>数字1表示UDP版本，非授权模式；数字3表示，TCP版本，当前唯一选择。</li>
+</ul>
+<h4 id="（1）术语"><a href="#（1）术语" class="headerlink" title="（1）术语"></a>（1）术语</h4><ul>
+<li><strong>SID（服务器ID）：</strong>唯一标识一台机器，与myid的值一致。</li>
+<li><strong>ZXID（事务ID）：</strong>唯一标识一次服务器状态的变更，集群中每台机器的不一定一致。</li>
+<li><strong>Vote（投票）：</strong>当机器发现自己无法检测到Leader时，就会尝试开始Leader选举。</li>
+<li><strong>Quorum（过半机器数）：</strong>集群中机器数为n，则 <code>quorum = (n / 2 + 1)</code> 。</li>
+</ul>
+<h4 id="（2）何时进入Leader选举"><a href="#（2）何时进入Leader选举" class="headerlink" title="（2）何时进入Leader选举"></a>（2）何时进入Leader选举</h4><p>当某台机器出现任一情况：</p>
+<ul>
+<li>服务器初始化启动。</li>
+<li>服务器运行期间无法和Leader保持连接。</li>
+</ul>
+<p>当一台机器进入选举流程时，集群可能处于两种状态之一：</p>
+<ul>
+<li><p>集群本身存在一个Leader。</p>
+<p>可能因为某台机器启动较晚，此时选举流程已结束，所以当其尝试选举Leader时会被告知当前Leader服务器的信息。机器仅需和Leader建立连接并同步状态即可。</p>
+</li>
+<li><p>集群确实已不存在Leader。</p>
+</li>
+</ul>
+<h4 id="（3）开始第一次投票"><a href="#（3）开始第一次投票" class="headerlink" title="（3）开始第一次投票"></a>（3）开始第一次投票</h4><p>导致集群中不存在Leader：</p>
+<ul>
+<li>服务器刚初始化启动，尚未产生一台Leader服务器。</li>
+<li>运行期间Leader服务器挂掉。</li>
+</ul>
+<p>此时集群所有机器都处于LOOKING状态，尝试寻找Leader。当一台机器处于此状态，会向集群其它机器发送投票消息(SID, ZXID)。</p>
+<p>首次投票所有机器都会选举自己。</p>
+<h4 id="（4）变更投票"><a href="#（4）变更投票" class="headerlink" title="（4）变更投票"></a>（4）变更投票</h4><p>每台机器发送完自己的投票，也会接收到其它机器的投票。根据投票规则判断是否需要变更自己的投票。</p>
+<p>术语：</p>
+<ul>
+<li><strong>vote_sid：</strong>接收到的投票中的服务器SID。</li>
+<li><strong>vote_zxid：</strong>接收到的投票中的服务器ZXID。</li>
+<li><strong>self_sid：</strong>服务器自己的SID。</li>
+<li><strong>self_zxid：</strong>服务器自己的ZXID。</li>
+</ul>
+<p>规则：</p>
+<ol>
+<li>如果vote_zxid大于self_zxid，认可当前收到的投票，再次将其发送出去代表自己新一轮的投票。</li>
+<li>如果vote_zxid小于self_zxid，坚持自己的投票，不做任何变更。</li>
+<li>如果vote_zxid等于self_zxid，对比二者的SID，如果vote_sid大于self_sid，认可当前收到的投票，再次将其发送出去代表自己新一轮的投票。</li>
+<li>如果vote_zxid等于self_zxid，且vote_sid小于self_sid，坚持自己的投票，不做任何变更。</li>
+</ol>
+<p>假设集群有5台机器，SID为(1,2,3,4,5)，ZXID为(9,9,9,8,8)，此时SID为2的机器为Leader，且1和2同时挂掉，由此开始Leader选举：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010140.png"></p>
+<h4 id="（5）确定Leader"><a href="#（5）确定Leader" class="headerlink" title="（5）确定Leader"></a>（5）确定Leader</h4><p>经过第二次投票后，集群中每台机器都会再次收到其他机器的投票，并进行统计，当一台机器收到了超过半数相同的投票，其就称为新的Leader。</p>
+<p>上述案例中quorum为3，只要收到3个即可。</p>
+<h3 id="6-3-实现细节"><a href="#6-3-实现细节" class="headerlink" title="6.3 实现细节"></a>6.3 实现细节</h3><p>上述FastLeaderElection选举算法并不复杂，但实际实现有很多问题需要解决。</p>
+<h4 id="（1）服务器状态"><a href="#（1）服务器状态" class="headerlink" title="（1）服务器状态"></a>（1）服务器状态</h4><p><code>org.apache.zookeeper.server.quorum.QuorumPeer.ServerState</code> 类中列举了4种服务器状态：</p>
+<ul>
+<li><strong>LOOKING：</strong>寻找Leader状态，服务器在此状态时会认为集群没有Leader，需要进入Leader选举流程。</li>
+<li><strong>FOLLOWING：</strong>跟随者状态，表示当前机器为Follower。</li>
+<li><strong>LEADING：</strong>领导者状态，表示当前机器为Leader。</li>
+<li><strong>OBSERVING：</strong>观察者状态，表示当前机器为Observer。</li>
+</ul>
+<h4 id="（2）投票的数据结构"><a href="#（2）投票的数据结构" class="headerlink" title="（2）投票的数据结构"></a>（2）投票的数据结构</h4><p><code>org.apache.zookeeper.server.quorum.Vote</code> 类的数据结构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010141.png"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010142.png"></p>
+<h4 id="（3）QuorumCnxManager-网络I-O管理者"><a href="#（3）QuorumCnxManager-网络I-O管理者" class="headerlink" title="（3）QuorumCnxManager-网络I/O管理者"></a>（3）QuorumCnxManager-网络I/O管理者</h4><p>ClientCnxn是ZK客户端中用于处理网络I/O的管理器，Leader选举中类似角色就是QuorumCnxManager，负责各台服务器之间的底层Leader选举过程中的网络通信。</p>
+<p>其内部维护了一系列的队列，用来保存接收到的、待发送的消息，以及消息的发送器。每个队列都按SID分组形成队列集合，保证每台服务器之间互不干扰。</p>
+<ul>
+<li><strong>recvQueue：</strong>消息接收队列，存放从其他服务器接收到的消息。</li>
+<li><strong>queueSendMap：</strong>消息发送队列，存放待发送的消息。该Map按SID进行分组，为集群中每台机器分配一个单独的队列，保证机器之间的消息互不影响。</li>
+<li><strong>senderWorkerMap：</strong>发送器集合，每个SendWorker消息发送器，都对应一台远程ZooKeeper服务器，负责消息的发送。也按SID进行了分组。</li>
+<li><strong>lastMessageSent：</strong>最近发送过的消息，为每个SID保留最近发送过的一个消息。</li>
+</ul>
+<p>ZK中所有机器都要两两创建网络连接，所以QuorumCnxManager启动时会创建一个<strong>ServerSocket</strong>监听Leader选举的通信端口（默认3888），服务器会不断接收到其它服务器的创建连接请求。这类TCP连接请求会<strong>交由receiveConnection方法进行处理</strong>。</p>
+<p>为了避免两条机器重复创建TCP连接，ZK设计了规则：<strong>只允许SID大的服务器主动和其他服务器建立连接，否则断开连接</strong>。所以receiveConnection方法中会比对自己和远程服务器的SID值，当自己更大时断开连接并主动发送连接请求，否则接受连接请求。</p>
+<p>一旦连接建立，就会根据远程服务器的SID创建对应的消息发送器SendWorker和接收器RecvWorker并启动。</p>
+<ul>
+<li><strong>消息接收：</strong>RecvWorker从对应TCP连接收到消息，将其放到recvQueue中。</li>
+<li><strong>消息发送：</strong>SendWorker不断从queueSendMap对应消息队列取出一个消息发送，同时将其放入lastMessageSent记录。（注意：<strong>当消息发送队列为空时，会从lastMessageSent取出一个最近发送的消息再次发送，主要为了解决分布式问题：接收方在消息接收前或接收到消息后挂掉，导致消息还未被正确处理。当然ZK也保证了接收方对重复消息进行了正确的处理</strong>）</li>
+</ul>
+<h4 id="（4）FastLeaderElection核心"><a href="#（4）FastLeaderElection核心" class="headerlink" title="（4）FastLeaderElection核心"></a>（4）FastLeaderElection核心</h4><p>术语：</p>
+<ul>
+<li><strong>外部投票：</strong>其他服务器发来的投票。</li>
+<li><strong>内部投票：</strong>服务器自身当前的投票。</li>
+<li><strong>选举轮次：</strong>Leader选举的轮次，即logicalClock。</li>
+<li><strong>PK：</strong>指对内部和外部投票进行对比，来确认是否需要变更内部投票。</li>
+</ul>
+<p>选票管理：</p>
+<ul>
+<li><strong>sendqueue：</strong>选票发送队列，保存待发送的选票。</li>
+<li><strong>recvqueue：</strong>选票接收队列，保存接收到的外部投票。</li>
+<li><strong>WorkerReceiver：</strong>选票接收器，不断从QuorumCnxManager中获取其他服务器发来的选举消息，并将其转换为一个选票，并保存到recvqueue。<ul>
+<li>在选票接收过程中，如果发现其选举轮次小于当前服务器就直接忽略，并立即发送内部投票。</li>
+<li>当前服务器不是LOOKING状态，表示已选出Leader，同样直接忽略，并立即发送内部投票。</li>
+<li>接收到的消息来自于Observer，同样直接忽略，并立即发送内部投票。</li>
+</ul>
+</li>
+<li><strong>WorkerSender：</strong>选票发送器，不断从sendqueue获取选票并将其传递给底层QuorumCnxManager。</li>
+</ul>
+<p>选票管理与QuorumCnxManager在Leader选举中的关系：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010143.png"></p>
+<p>Leader选举算法整体流程：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010144.png"></p>
+<p>上述其实是 lookForLeader方法的内部逻辑：</p>
+<ol>
+<li><p><strong>自增选举轮次。</strong></p>
+<p>FastLeaderElection的实现中有一个属性logicalclock，用于标识当前Leader的选举轮次，开始新一轮投票时会先将其自增。</p>
+</li>
+<li><p><strong>初始化选票。</strong></p>
+<p>开始新一轮投票前，每台服务器要先初始化自己的选票，也就是初始化Vote的各个属性。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010145.png"></p>
+</li>
+<li><p><strong>发送初始化选票。</strong></p>
+<p>完成选票的初始化后，就会发起第一次投票。选票被放入sendqueue中，由WorkerSender负责发送出去。</p>
+</li>
+<li><p><strong>接收外部投票。</strong></p>
+<p>每台服务器会不断从recvqueue中获取外部投票，当服务器发现自己无法获取任何外部投票，会立刻确认自己是否和集群其它服务器保持连接。若没有就立即建立连接，如已有则再次发送自己的内部投票。</p>
+</li>
+<li><p><strong>判断选举轮次。</strong></p>
+<p>发送完初始化选票，就要处理外部投票。需要根据选举轮次的不同进行不同的处理：</p>
+<ul>
+<li><strong>外部投票的轮次大于内部投票：</strong>立即更新自己的选举轮次，并清空所有已经收到的投票，然后使用初始化投票进行PK来确定是否变更内部投票，最终再将投票发送出去。</li>
+<li><strong>外部投票的轮次小于内部投票：</strong>直接忽略该投票，返回步骤4。</li>
+<li><strong>外部投票的轮次等于内部投票：</strong>进行选票PK。</li>
+</ul>
+</li>
+<li><p><strong>选票PK。</strong></p>
+<p>即 <code>FastLeaderElection.totalOrderPredicate</code> 方法的核心逻辑。主要从选举轮次、ZXID和SID三个因素考虑：</p>
+<ul>
+<li>如果外部投票中被推举的Leader服务器的选举轮次大于内部投票，需要进行投票变更。</li>
+<li>选举轮次一致，则对比ZXID，如果外部投票较大就需要进行投票变更。</li>
+<li>ZXID一致，则对比SID，如果外部投票较大就需要进行投票变更。</li>
+</ul>
+</li>
+<li><p><strong>变更投票。</strong></p>
+<p>选票PK后确定如果需要进行投票变更，要将外部投票的选票信息覆盖内部投票。变更完成后再将其发送出去。</p>
+</li>
+<li><p><strong>选票归档。</strong></p>
+<p>无论是否进行了投票变更，都要将收到的外部投票放入recvset中进行归档。其用于记录当前服务器在本轮次收到的所有外部投票，并会按SID进行区分，如 <code>&#123;(1, vote1),(2, vote2),...&#125;</code> 。</p>
+</li>
+<li><p><strong>统计投票。</strong></p>
+<p>完成选票归档后，可以开始投票的统计。一旦统计出有过半服务器认可了当前内部投票，就终止投票，否则返回步骤4。</p>
+</li>
+<li><p><strong>更新服务器状态。</strong></p>
+<p>当统计投票确定可以终止投票，开始更新服务器状态。如果判断过半服务器认可，就会更新为LEADING。否则根据具体情况更新为FOLLOWING或OBSERVING。步骤9到步骤10可能会有一段时间延迟来确认是否有新的更优的投票（默认200毫秒）。</p>
+</li>
+</ol>
+<h2 id="七-各服务器角色介绍"><a href="#七-各服务器角色介绍" class="headerlink" title="七. 各服务器角色介绍"></a>七. 各服务器角色介绍</h2><h3 id="7-1-Leader"><a href="#7-1-Leader" class="headerlink" title="7.1 Leader"></a>7.1 Leader</h3><h3 id="7-2-Follower"><a href="#7-2-Follower" class="headerlink" title="7.2 Follower"></a>7.2 Follower</h3><h3 id="7-3-Observer"><a href="#7-3-Observer" class="headerlink" title="7.3 Observer"></a>7.3 Observer</h3><h3 id="7-4-集群间消息通信"><a href="#7-4-集群间消息通信" class="headerlink" title="7.4 集群间消息通信"></a>7.4 集群间消息通信</h3><h2 id="八-请求处理"><a href="#八-请求处理" class="headerlink" title="八. 请求处理"></a>八. 请求处理</h2><h3 id="8-1-会话创建请求"><a href="#8-1-会话创建请求" class="headerlink" title="8.1 会话创建请求"></a>8.1 会话创建请求</h3><h3 id="8-2-SetData请求"><a href="#8-2-SetData请求" class="headerlink" title="8.2 SetData请求"></a>8.2 SetData请求</h3><h3 id="8-3-事务请求转发"><a href="#8-3-事务请求转发" class="headerlink" title="8.3 事务请求转发"></a>8.3 事务请求转发</h3><h3 id="8-4-GetData请求"><a href="#8-4-GetData请求" class="headerlink" title="8.4 GetData请求"></a>8.4 GetData请求</h3><h2 id="九-数据与存储"><a href="#九-数据与存储" class="headerlink" title="九. 数据与存储"></a>九. 数据与存储</h2><h3 id="9-1-内存数据"><a href="#9-1-内存数据" class="headerlink" title="9.1 内存数据"></a>9.1 内存数据</h3><h3 id="9-2-事务日志"><a href="#9-2-事务日志" class="headerlink" title="9.2 事务日志"></a>9.2 事务日志</h3><h3 id="9-3-snapshot—数据快照"><a href="#9-3-snapshot—数据快照" class="headerlink" title="9.3 snapshot—数据快照"></a>9.3 snapshot—数据快照</h3><h3 id="9-4-初始化"><a href="#9-4-初始化" class="headerlink" title="9.4 初始化"></a>9.4 初始化</h3><h3 id="9-5-数据同步"><a href="#9-5-数据同步" class="headerlink" title="9.5 数据同步"></a>9.5 数据同步</h3><hr>
+<p>参考：</p>
+<p>🔗 《从Paxos到Zookeeper-分布式一致性原理与实践》</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021061301.html" title="ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）">http://linyishui.top/2021061301.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
+              <a href="/tags/distributed/" rel="tag"><i class="fa fa-tag"></i> distributed</a>
+              <a href="/tags/zookeeper/" rel="tag"><i class="fa fa-tag"></i> zookeeper</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021061201.html" rel="prev" title="ZooKeeper（五）技术内幕-会话">
+                  <i class="fa fa-chevron-left"></i> ZooKeeper（五）技术内幕-会话
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021061401.html" rel="next" title="《社会心理学》读书笔记">
+                  《社会心理学》读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">46:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>
