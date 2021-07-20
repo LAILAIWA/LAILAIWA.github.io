@@ -23,12 +23,12 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节等。">
+<meta name="description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节，Leader、Follower、Observer等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）">
+<meta property="og:title" content="ZooKeeper（五）技术内幕-服务器启动流程和Leader选举">
 <meta property="og:url" content="http://linyishui.top/2021061301.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节等。">
+<meta property="og:description" content="内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节，Leader、Follower、Observer等。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010134.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010135.png">
@@ -50,9 +50,8 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010151.png">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010152.png">
 <meta property="article:published_time" content="2021-06-13T15:29:15.000Z">
-<meta property="article:modified_time" content="2021-07-19T15:42:24.291Z">
+<meta property="article:modified_time" content="2021-07-20T14:30:23.871Z">
 <meta property="article:author" content="Lys">
-<meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="distributed">
 <meta property="article:tag" content="zookeeper">
 <meta name="twitter:card" content="summary">
@@ -63,10 +62,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021061301.html","path":"2021061301.html","title":"ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021061301.html","path":"2021061301.html","title":"ZooKeeper（五）技术内幕-服务器启动流程和Leader选举"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成） | 俺的部落格</title>
+<title>ZooKeeper（五）技术内幕-服务器启动流程和Leader选举 | 俺的部落格</title>
   
 
 
@@ -180,7 +179,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZooKeeper%EF%BC%88%E4%BA%94%EF%BC%89%E6%8A%80%E6%9C%AF%E5%86%85%E5%B9%95"><span class="nav-text">ZooKeeper（五）技术内幕</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">五. 服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%8D%95%E6%9C%BA%E7%89%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">5.1 单机版服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%A2%84%E5%90%AF%E5%8A%A8"><span class="nav-text">（1）预启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">（2）初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E9%9B%86%E7%BE%A4%E7%89%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">5.2 集群版服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%A2%84%E5%90%AF%E5%8A%A8-1"><span class="nav-text">（1）预启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96-1"><span class="nav-text">（2）初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（3）Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89Leader%E5%92%8CFollow%E5%90%AF%E5%8A%A8%E6%9C%9F%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-text">（4）Leader和Follow启动期交互过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-Leader%E9%80%89%E4%B8%BE"><span class="nav-text">六. Leader选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E6%A6%82%E8%BF%B0"><span class="nav-text">6.1 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%9F%E7%9A%84Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（1）服务器启动时期的Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E8%A1%8C%E6%9C%9F%E9%97%B4%E7%9A%84Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（2）服务器运行期间的Leader选举</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-text">6.2 算法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%AF%E8%AF%AD"><span class="nav-text">（1）术语</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E4%BD%95%E6%97%B6%E8%BF%9B%E5%85%A5Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（2）何时进入Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%BC%80%E5%A7%8B%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8A%95%E7%A5%A8"><span class="nav-text">（3）开始第一次投票</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E5%8F%98%E6%9B%B4%E6%8A%95%E7%A5%A8"><span class="nav-text">（4）变更投票</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E7%A1%AE%E5%AE%9ALeader"><span class="nav-text">（5）确定Leader</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-text">6.3 实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8A%B6%E6%80%81"><span class="nav-text">（1）服务器状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%8A%95%E7%A5%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">（2）投票的数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89QuorumCnxManager-%E7%BD%91%E7%BB%9CI-O%E7%AE%A1%E7%90%86%E8%80%85"><span class="nav-text">（3）QuorumCnxManager-网络I&#x2F;O管理者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89FastLeaderElection%E6%A0%B8%E5%BF%83"><span class="nav-text">（4）FastLeaderElection核心</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E5%90%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2%E4%BB%8B%E7%BB%8D"><span class="nav-text">七. 各服务器角色介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-Leader"><span class="nav-text">7.1 Leader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-Follower"><span class="nav-text">7.2 Follower</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-Observer"><span class="nav-text">7.3 Observer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E9%9B%86%E7%BE%A4%E9%97%B4%E6%B6%88%E6%81%AF%E9%80%9A%E4%BF%A1"><span class="nav-text">7.4 集群间消息通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%9E%8B"><span class="nav-text">（1）数据同步型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E5%9E%8B"><span class="nav-text">（2）服务器初始化型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%9E%8B"><span class="nav-text">（3）请求处理型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86%E5%9E%8B"><span class="nav-text">（4）会话管理型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86"><span class="nav-text">八. 请求处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E4%BC%9A%E8%AF%9D%E5%88%9B%E5%BB%BA%E8%AF%B7%E6%B1%82"><span class="nav-text">8.1 会话创建请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-SetData%E8%AF%B7%E6%B1%82"><span class="nav-text">8.2 SetData请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-%E4%BA%8B%E5%8A%A1%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91"><span class="nav-text">8.3 事务请求转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-4-GetData%E8%AF%B7%E6%B1%82"><span class="nav-text">8.4 GetData请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E6%95%B0%E6%8D%AE%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="nav-text">九. 数据与存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-%E5%86%85%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="nav-text">9.1 内存数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97"><span class="nav-text">9.2 事务日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-snapshot%E2%80%94%E6%95%B0%E6%8D%AE%E5%BF%AB%E7%85%A7"><span class="nav-text">9.3 snapshot—数据快照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">9.4 初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="nav-text">9.5 数据同步</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZooKeeper%EF%BC%88%E4%BA%94%EF%BC%89%E6%8A%80%E6%9C%AF%E5%86%85%E5%B9%95"><span class="nav-text">ZooKeeper（五）技术内幕</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">五. 服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%8D%95%E6%9C%BA%E7%89%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">5.1 单机版服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%A2%84%E5%90%AF%E5%8A%A8"><span class="nav-text">（1）预启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">（2）初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E9%9B%86%E7%BE%A4%E7%89%88%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">5.2 集群版服务器启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%A2%84%E5%90%AF%E5%8A%A8-1"><span class="nav-text">（1）预启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%9D%E5%A7%8B%E5%8C%96-1"><span class="nav-text">（2）初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（3）Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89Leader%E5%92%8CFollow%E5%90%AF%E5%8A%A8%E6%9C%9F%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-text">（4）Leader和Follow启动期交互过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-Leader%E9%80%89%E4%B8%BE"><span class="nav-text">六. Leader选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E6%A6%82%E8%BF%B0"><span class="nav-text">6.1 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8%E6%97%B6%E6%9C%9F%E7%9A%84Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（1）服务器启动时期的Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%90%E8%A1%8C%E6%9C%9F%E9%97%B4%E7%9A%84Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（2）服务器运行期间的Leader选举</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-text">6.2 算法分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%AF%E8%AF%AD"><span class="nav-text">（1）术语</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E4%BD%95%E6%97%B6%E8%BF%9B%E5%85%A5Leader%E9%80%89%E4%B8%BE"><span class="nav-text">（2）何时进入Leader选举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%BC%80%E5%A7%8B%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8A%95%E7%A5%A8"><span class="nav-text">（3）开始第一次投票</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E5%8F%98%E6%9B%B4%E6%8A%95%E7%A5%A8"><span class="nav-text">（4）变更投票</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E7%A1%AE%E5%AE%9ALeader"><span class="nav-text">（5）确定Leader</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-text">6.3 实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8A%B6%E6%80%81"><span class="nav-text">（1）服务器状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%8A%95%E7%A5%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">（2）投票的数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89QuorumCnxManager-%E7%BD%91%E7%BB%9CI-O%E7%AE%A1%E7%90%86%E8%80%85"><span class="nav-text">（3）QuorumCnxManager-网络I&#x2F;O管理者</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89FastLeaderElection%E6%A0%B8%E5%BF%83"><span class="nav-text">（4）FastLeaderElection核心</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E5%90%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2%E4%BB%8B%E7%BB%8D"><span class="nav-text">七. 各服务器角色介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-Leader"><span class="nav-text">7.1 Leader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-Follower"><span class="nav-text">7.2 Follower</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-Observer"><span class="nav-text">7.3 Observer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-4-%E9%9B%86%E7%BE%A4%E9%97%B4%E6%B6%88%E6%81%AF%E9%80%9A%E4%BF%A1"><span class="nav-text">7.4 集群间消息通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%9E%8B"><span class="nav-text">（1）数据同步型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E5%9E%8B"><span class="nav-text">（2）服务器初始化型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%9E%8B"><span class="nav-text">（3）请求处理型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86%E5%9E%8B"><span class="nav-text">（4）会话管理型</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -197,7 +196,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">315</span>
+          <span class="site-state-item-count">316</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -298,7 +297,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）
+          ZooKeeper（五）技术内幕-服务器启动流程和Leader选举
         </h1>
 
         <div class="post-meta-container">
@@ -316,7 +315,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-07-19 23:42:24" itemprop="dateModified" datetime="2021-07-19T23:42:24+08:00">2021-07-19</time>
+        <time title="修改时间：2021-07-20 22:30:23" itemprop="dateModified" datetime="2021-07-20T22:30:23+08:00">2021-07-20</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -347,7 +346,7 @@
     </span>
 </div>
 
-            <div class="post-description">内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节等。</div>
+            <div class="post-description">内容来自《从Paxos到Zookeeper-分布式一致性原理与实践》，内容包括：单机版和集群版服务器的启动流程，Leader选举算法分析和具体实现细节，Leader、Follower、Observer等。</div>
         </div>
       </header>
 
@@ -778,7 +777,7 @@
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010151.png"></p>
 <h4 id="（4）会话管理型"><a href="#（4）会话管理型" class="headerlink" title="（4）会话管理型"></a>（4）会话管理型</h4><p>会话管理型消息是ZK进行会话管理过程中，与Learner服务器之间进行通信使用的消息。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210601/202106010152.png"></p>
-<h2 id="八-请求处理"><a href="#八-请求处理" class="headerlink" title="八. 请求处理"></a>八. 请求处理</h2><h3 id="8-1-会话创建请求"><a href="#8-1-会话创建请求" class="headerlink" title="8.1 会话创建请求"></a>8.1 会话创建请求</h3><h3 id="8-2-SetData请求"><a href="#8-2-SetData请求" class="headerlink" title="8.2 SetData请求"></a>8.2 SetData请求</h3><h3 id="8-3-事务请求转发"><a href="#8-3-事务请求转发" class="headerlink" title="8.3 事务请求转发"></a>8.3 事务请求转发</h3><h3 id="8-4-GetData请求"><a href="#8-4-GetData请求" class="headerlink" title="8.4 GetData请求"></a>8.4 GetData请求</h3><h2 id="九-数据与存储"><a href="#九-数据与存储" class="headerlink" title="九. 数据与存储"></a>九. 数据与存储</h2><h3 id="9-1-内存数据"><a href="#9-1-内存数据" class="headerlink" title="9.1 内存数据"></a>9.1 内存数据</h3><h3 id="9-2-事务日志"><a href="#9-2-事务日志" class="headerlink" title="9.2 事务日志"></a>9.2 事务日志</h3><h3 id="9-3-snapshot—数据快照"><a href="#9-3-snapshot—数据快照" class="headerlink" title="9.3 snapshot—数据快照"></a>9.3 snapshot—数据快照</h3><h3 id="9-4-初始化"><a href="#9-4-初始化" class="headerlink" title="9.4 初始化"></a>9.4 初始化</h3><h3 id="9-5-数据同步"><a href="#9-5-数据同步" class="headerlink" title="9.5 数据同步"></a>9.5 数据同步</h3><hr>
+<hr>
 <p>参考：</p>
 <p>🔗 《从Paxos到Zookeeper-分布式一致性原理与实践》</p>
 
@@ -791,19 +790,19 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021042101.html" rel="bookmark">分布式事务</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021042001.html" rel="bookmark">分布式锁</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2021041901.html" rel="bookmark">分布式一致性</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020091201.html" rel="bookmark">《大型网站系统与Java中间件实践》读书笔记（未完成）</a></div>
+      <div class="popular-posts-title"><a href="\2021062001.html" rel="bookmark">ZooKeeper（五）技术内幕-请求处理和数据存储（未完成）</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2021061201.html" rel="bookmark">ZooKeeper（五）技术内幕-会话</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021061101.html" rel="bookmark">ZooKeeper（五）技术内幕-客户端</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021061001.html" rel="bookmark">ZooKeeper（五）技术内幕-系统模型和序列化协议</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021052001.html" rel="bookmark">ZooKeeper（四）应用场景与实现</a></div>
     </li>
   </ul>
 
@@ -818,7 +817,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://linyishui.top/2021061301.html" title="ZooKeeper（五）技术内幕-服务器启动流程和Leader选举（未完成）">http://linyishui.top/2021061301.html</a>
+      <a href="http://linyishui.top/2021061301.html" title="ZooKeeper（五）技术内幕-服务器启动流程和Leader选举">http://linyishui.top/2021061301.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -827,7 +826,6 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
               <a href="/tags/distributed/" rel="tag"><i class="fa fa-tag"></i> distributed</a>
               <a href="/tags/zookeeper/" rel="tag"><i class="fa fa-tag"></i> zookeeper</a>
           </div>
