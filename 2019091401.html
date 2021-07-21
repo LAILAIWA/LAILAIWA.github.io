@@ -23,15 +23,15 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="简单整理SQL规范和优化相关内容。">
+<meta name="description" content="简单整理SQL规范和优化相关内容，包括：SQL规范，SQL常见优化项，优化案例，Oracle的STA优化。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SQL规范和优化&lt;整&gt;（持续更新）">
 <meta property="og:url" content="http://linyishui.top/2019091401.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="简单整理SQL规范和优化相关内容。">
+<meta property="og:description" content="简单整理SQL规范和优化相关内容，包括：SQL规范，SQL常见优化项，优化案例，Oracle的STA优化。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-09-14T06:40:30.000Z">
-<meta property="article:modified_time" content="2021-07-09T09:32:28.534Z">
+<meta property="article:modified_time" content="2021-07-21T14:43:24.437Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="sql">
 <meta property="article:tag" content="updating">
@@ -161,7 +161,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL%E8%A7%84%E8%8C%83%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-text">SQL规范和优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-SQL%E8%A7%84%E8%8C%83"><span class="nav-text">第一节 SQL规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-text">1.1 命名规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83"><span class="nav-text">1.2 格式规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-text">1.3 设计规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%AF%AD%E6%B3%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.4 语法规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89select-%E6%A3%80%E6%9F%A5"><span class="nav-text">（1）select 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89from-%E6%A3%80%E6%9F%A5"><span class="nav-text">（2）from 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89where-%E6%A3%80%E6%9F%A5"><span class="nav-text">（3）where 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89group-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（4）group by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89order-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（5）order by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89limit-%E6%A3%80%E6%9F%A5"><span class="nav-text">（6）limit 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%887%EF%BC%89Union-%E6%A3%80%E6%9F%A5"><span class="nav-text">（7）Union 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%888%EF%BC%89%E5%85%BC%E5%AE%B9%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="nav-text">（8）兼容性检查</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%B4%A2%E5%BC%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.5 索引规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E7%B4%A2%E5%BC%95%E5%B1%9E%E6%80%A7"><span class="nav-text">1.5.1 索引属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.1 前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-3-%E5%A4%8D%E5%90%88%E7%B4%A2%E5%BC%95%E9%A1%BA%E5%BA%8F"><span class="nav-text">1.5.3 复合索引顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-4-%E6%97%B6%E9%97%B4%E5%88%97%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.4 时间列索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-SQL%E4%BC%98%E5%8C%96"><span class="nav-text">第二节 SQL优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-X-%E4%BC%98%E5%8C%96%E6%A1%88%E4%BE%8B"><span class="nav-text">2.X 优化案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%85%A2%E6%9F%A5%E8%AF%A2SQL"><span class="nav-text">（1）慢查询SQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89SQL%E5%88%86%E6%9E%90"><span class="nav-text">（2）SQL分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89SQL%E6%94%B9%E5%86%99"><span class="nav-text">（3）SQL改写</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%961"><span class="nav-text">改写优化1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%962"><span class="nav-text">改写优化2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%963"><span class="nav-text">改写优化3</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL%E8%A7%84%E8%8C%83%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-text">SQL规范和优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-SQL%E8%A7%84%E8%8C%83"><span class="nav-text">第一节 SQL规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-text">1.1 命名规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83"><span class="nav-text">1.2 格式规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-text">1.3 设计规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%AF%AD%E6%B3%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.4 语法规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89select-%E6%A3%80%E6%9F%A5"><span class="nav-text">（1）select 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89from-%E6%A3%80%E6%9F%A5"><span class="nav-text">（2）from 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89where-%E6%A3%80%E6%9F%A5"><span class="nav-text">（3）where 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89group-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（4）group by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89order-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（5）order by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89limit-%E6%A3%80%E6%9F%A5"><span class="nav-text">（6）limit 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%887%EF%BC%89Union-%E6%A3%80%E6%9F%A5"><span class="nav-text">（7）Union 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%888%EF%BC%89%E5%85%BC%E5%AE%B9%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="nav-text">（8）兼容性检查</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%B4%A2%E5%BC%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.5 索引规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E7%B4%A2%E5%BC%95%E5%B1%9E%E6%80%A7"><span class="nav-text">1.5.1 索引属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.1 前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-3-%E5%A4%8D%E5%90%88%E7%B4%A2%E5%BC%95%E9%A1%BA%E5%BA%8F"><span class="nav-text">1.5.3 复合索引顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-4-%E6%97%B6%E9%97%B4%E5%88%97%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.4 时间列索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-SQL%E4%BC%98%E5%8C%96"><span class="nav-text">第二节 SQL优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E9%A1%B9"><span class="nav-text">2.1 常见优化项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%BC%98%E5%8C%96%E6%A1%88%E4%BE%8B"><span class="nav-text">2.2 优化案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%85%A2%E6%9F%A5%E8%AF%A2SQL"><span class="nav-text">（1）慢查询SQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89SQL%E5%88%86%E6%9E%90"><span class="nav-text">（2）SQL分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89SQL%E6%94%B9%E5%86%99"><span class="nav-text">（3）SQL改写</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%961"><span class="nav-text">改写优化1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%962"><span class="nav-text">改写优化2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%963"><span class="nav-text">改写优化3</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Oracle-STA%E4%BC%98%E5%8C%96SQL"><span class="nav-text">2.3 Oracle STA优化SQL</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -178,7 +178,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">316</span>
+          <span class="site-state-item-count">315</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -297,7 +297,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-07-09 17:32:28" itemprop="dateModified" datetime="2021-07-09T17:32:28+08:00">2021-07-09</time>
+        <time title="修改时间：2021-07-21 22:43:24" itemprop="dateModified" datetime="2021-07-21T22:43:24+08:00">2021-07-21</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -317,18 +317,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
+      <span>23k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>21 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">简单整理SQL规范和优化相关内容。</div>
+            <div class="post-description">简单整理SQL规范和优化相关内容，包括：SQL规范，SQL常见优化项，优化案例，Oracle的STA优化。</div>
         </div>
       </header>
 
@@ -507,7 +507,164 @@
 
 
 <h4 id="1-5-4-时间列索引"><a href="#1-5-4-时间列索引" class="headerlink" title="1.5.4 时间列索引"></a>1.5.4 时间列索引</h4><p>对于默认字段 <code>created_at(create_time)</code>、<code>updated_at(update_time)</code> 这种默认就应该创建索引，这一般来说是默认的规则。</p>
-<h2 id="第二节-SQL优化"><a href="#第二节-SQL优化" class="headerlink" title="第二节 SQL优化"></a>第二节 SQL优化</h2><h3 id="2-X-优化案例"><a href="#2-X-优化案例" class="headerlink" title="2.X 优化案例"></a>2.X 优化案例</h3><p>通过对慢查询的监控告警，经常会发现一些SQL语句where过滤字段都有索引，但是由于SQL写法的问题导致索引失效，下面二个案例解释如何通过SQL改写来查询。可以通过以下SQL来捞取最近5分钟的慢查询进行告警。</p>
+<h2 id="第二节-SQL优化"><a href="#第二节-SQL优化" class="headerlink" title="第二节 SQL优化"></a>第二节 SQL优化</h2><h3 id="2-1-常见优化项"><a href="#2-1-常见优化项" class="headerlink" title="2.1 常见优化项"></a>2.1 常见优化项</h3><ol>
+<li><strong>对常用于where和order等地方的属性列创建<a href="../2019042401.html" title="Title">索引</a>，避免全表扫描，提高查询效率。</strong></li>
+</ol>
+<p>&emsp;&emsp;以下写法可能会导致查询不走索引，而进行全表扫描，下列总结不一定准确涵盖，有时因为如索引字段重复数据太多等原因也会导致SQL不走索引，具体情况需要具体分析，且不要提前做优化，开发首先的优先级应该保证进度按时完成，尽量不要先把重心提前放到这些地方。</p>
+<table>
+<thead>
+<tr>
+<th align="center">用法</th>
+<th align="left">说明</th>
+<th align="left">代替用法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">select *</td>
+<td align="left">无法使用索引</td>
+<td align="left">标明具体返回属性</td>
+</tr>
+<tr>
+<td align="center">where xx != 或 &lt;&gt;  …</td>
+<td align="left">无法使用索引</td>
+<td align="left">用 union all 来代替</td>
+</tr>
+<tr>
+<td align="center">where xx is (not) null</td>
+<td align="left">无法使用索引</td>
+<td align="left">where xx = 0(不一定都支持)</td>
+</tr>
+<tr>
+<td align="center">where xx or …</td>
+<td align="left">无法使用索引</td>
+<td align="left">用 union all 来代替</td>
+</tr>
+<tr>
+<td align="center">where xx in/not in …</td>
+<td align="left">无法使用索引</td>
+<td align="left">between，exists或join替换in，用not exists替代not in</td>
+</tr>
+<tr>
+<td align="center">where xx like …</td>
+<td align="left">模糊查询无法使用索引</td>
+<td align="left">考虑使用全文检索</td>
+</tr>
+<tr>
+<td align="center">where 使用局部变量</td>
+<td align="left">无法使用索引</td>
+<td align="left">如：select id from t where num=@num 改为强制索引：select id from t with(index(索引名)) where num=@num</td>
+</tr>
+<tr>
+<td align="center">where 表达式运算</td>
+<td align="left">无法使用索引</td>
+<td align="left">如：select id from t where num/2=100 应改为: select id from t where num=100*2</td>
+</tr>
+<tr>
+<td align="center">where 函数操作</td>
+<td align="left">无法使用索引</td>
+<td align="left">如：select id from t where substring(name,1,3)=’abc’ 和 select id from t where datediff(day,createdate,’2005-11-30’)=0–’2005-11-30’生成的id  应改为: select id from t where name like ‘abc%’  和 select id from t where createdate&gt;=’2005-11-30’ and createdate&lt;’2005-12-1’</td>
+</tr>
+<tr>
+<td align="center">若索引字段是联合索引</td>
+<td align="left">只能使用索引中的第一个字段作为条件，否则不会使用索引，尽量让字段顺序和索引顺序保持一致</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<ol start="2">
+<li><strong>使用exists代替in。</strong></li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> num <span class="keyword">from</span> a <span class="keyword">where</span> num <span class="keyword">in</span>(<span class="keyword">select</span> num <span class="keyword">from</span> b) </span><br><span class="line">替换为： </span><br><span class="line"><span class="keyword">select</span> num <span class="keyword">from</span> a <span class="keyword">where</span> <span class="keyword">exists</span>(<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span> b <span class="keyword">where</span> num<span class="operator">=</span>a.num) </span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;使用EXISTS时，如果连接列(id)上建立了索引，那么查询Class_B时不用查询实际的表，只需查索引就可以了。只要查到一行数据满足条件就会终止查询，不用像使用IN时一样扫描全表。在这一点上NOT EXISTS也一样。</p>
+<ol start="3">
+<li><strong>存储数字值时尽量使用数字类型的字段</strong></li>
+</ol>
+<p>&emsp;&emsp;若用字符类型来存储数字值，相比数字类型会降低查询和连接的性能，字符比较相比数字比较要慢，并一定程度上增加存储开销。</p>
+<ol start="4">
+<li><strong>尽可能的使用 varchar/nvarchar 代替 char/nchar</strong></li>
+</ol>
+<p>&emsp;&emsp;变长字段存储空间小，可以节省存储空间，其次对于查询来说，在一个相对较小的字段内搜索效率显然要高些。</p>
+<ol start="5">
+<li><strong>尽量使用表变量来代替临时表。</strong></li>
+</ol>
+<p>&emsp;&emsp;如果表变量包含大量数据，请注意索引非常有限（只有主键索引）。</p>
+<ol start="6">
+<li><strong>避免频繁创建和删除临时表，以减少系统表资源的消耗。</strong></li>
+</ol>
+<p>&emsp;&emsp;适当地使用临时表，例如，当需要重复引用大型表或常用表中的某个数据集时。但是，对于一次性事件，最好使用导出表。</p>
+<p>&emsp;&emsp;使用临时表时，如果一次性插入数据量很大，那么可以使用 select into 代替 create table，避免造成大量 log ，以提高速度；如果数据量不大，为了缓和系统表的资源，应先create table，然后insert。 </p>
+<p>&emsp;&emsp;如果使用到了临时表，在存储过程的最后务必将所有的临时表显式删除，先 truncate table ，然后 drop table ，这样可以避免系统表的较长时间锁定。 </p>
+<ol start="7">
+<li><strong>尽量避免使用游标，因为游标的效率较差。</strong></li>
+</ol>
+<p>&emsp;&emsp;使用基于游标的方法或临时表方法之前，应先寻找基于集的解决方案来解决问题，基于集的方法通常更有效。 </p>
+<p>&emsp;&emsp;与临时表一样，游标并不是不可使用。对小型数据集使用 FAST_FORWARD 游标通常要优于其他逐行处理方法，尤其是在必须引用几个表才能获得所需的数据时。在结果集中包括“合计”的例程通常要比使用游标执行的速度快。如果开发时间允许，基于游标的方法和基于集的方法都可以尝试一下，看哪一种方法的效果更好。 </p>
+<ol start="8">
+<li><strong>尽量避免使用游标，因为游标的效率较差。</strong></li>
+</ol>
+<p>&emsp;&emsp;使用基于游标的方法或临时表方法之前，应先寻找基于集的解决方案来解决问题，基于集的方法通常更有效。 </p>
+<ol start="9">
+<li><strong>减少访问数据库的次数</strong></li>
+</ol>
+<p>&emsp;&emsp;数据库在每次执行前可能会做一些默认工作，如果不影响开发进度，尽量对数据的一次访问就取出所要数据。 </p>
+<ol start="10">
+<li><strong>字段Column前加表名</strong></li>
+</ol>
+<p>&emsp;&emsp;减少因为防止歧义而进行解析所消耗的时间。</p>
+<ol start="11">
+<li><strong>用EXISTS替换DISTINCT</strong></li>
+</ol>
+<p>&emsp;&emsp;减少因为防止歧义而进行解析所消耗的时间。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(低效): <span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> DEPT_NO,DEPT_NAME <span class="keyword">FROM</span> DEPT D , EMP E <span class="keyword">WHERE</span> D.DEPT_NO <span class="operator">=</span> E.DEPT_NO </span><br><span class="line">(高效): <span class="keyword">SELECT</span> DEPT_NO,DEPT_NAME <span class="keyword">FROM</span> DEPT D <span class="keyword">WHERE</span> <span class="keyword">EXISTS</span> ( <span class="keyword">SELECT</span> ‘X<span class="string">&#x27; FROM EMP E WHERE E.DEPT_NO = D.DEPT_NO);</span></span><br></pre></td></tr></table></figure>
+
+<ol start="12">
+<li><strong>Oracle中尽量用全大写</strong></li>
+</ol>
+<p>&emsp;&emsp;Oracle总是先解析SQL语句，把小写的字母转换成大写的再执行。 </p>
+<ol start="13">
+<li><strong>用&gt;=替代&gt;</strong></li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">高效：<span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> EMP <span class="keyword">WHERE</span> DEPTNO <span class="operator">&gt;=</span><span class="number">4</span> </span><br><span class="line">低效: <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> EMP <span class="keyword">WHERE</span> DEPTNO <span class="operator">&gt;</span><span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;两者的区别在于，前者DBMS将直接跳到第一个DEPT等于4的记录而后者将首先定位到DEPTNO=3的记录并且向前扫描到第一个DEPT大于3的记录。</p>
+<ol start="14">
+<li><strong>优化GROUP BY</strong></li>
+</ol>
+<p>&emsp;&emsp;提高GROUP BY 语句的效率，可以通过将不需要的记录在GROUP BY 之前过滤掉。下面两个查询返回相同结果但第二个明显就快了许多。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">低效: <span class="keyword">SELECT</span> JOB , <span class="built_in">AVG</span>(SAL) <span class="keyword">FROM</span> EMP <span class="keyword">GROUP</span> JOB <span class="keyword">HAVING</span> JOB <span class="operator">=</span> ‘PRESIDENT<span class="string">&#x27; OR JOB = ‘MANAGER&#x27;</span> </span><br><span class="line">高效: <span class="keyword">SELECT</span> JOB , <span class="built_in">AVG</span>(SAL) <span class="keyword">FROM</span> EMP <span class="keyword">WHERE</span> JOB <span class="operator">=</span> ‘PRESIDENT<span class="string">&#x27; OR JOB = ‘MANAGER&#x27;</span> <span class="keyword">GROUP</span> JOB</span><br></pre></td></tr></table></figure>
+
+<ol start="15">
+<li><strong>避免使用耗费资源的操作</strong></li>
+</ol>
+<p>&emsp;&emsp;带有DISTINCT,UNION,MINUS,INTERSECT,ORDER BY的SQL语句会启动SQL引擎执行耗费资源的排序(SORT)功能。DISTINCT需要一次排序操作，而其他的至少需要执行两次排序。通常，带有 UNION, MINUS , INTERSECT的SQL语句都可以用其他方式重写。如果你的数据库的SORT_AREA_SIZE调配得好。使用UNION , MINUS, INTERSECT也是可以考虑的, 毕竟它们的可读性很强。</p>
+<ol start="16">
+<li><strong>子查询优化</strong></li>
+</ol>
+<p>&emsp;&emsp;子查询可以分为关联子查询（Correlated Subquery）和非关联子查询（Non-correlated Subquery）。</p>
+<ul>
+<li><strong>非关联子查询</strong>： 非关联即先执行内层查询，再执行外层查询，如下所示。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c_count, <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">AS</span> custdist</span><br><span class="line"><span class="keyword">FROM</span> (</span><br><span class="line">     <span class="keyword">SELECT</span> c_custkey, <span class="built_in">count</span>(o_orderkey) <span class="keyword">AS</span> c_count</span><br><span class="line">     <span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">     <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span> ORDERS <span class="keyword">ON</span> c_custkey <span class="operator">=</span> o_custkey</span><br><span class="line">     <span class="keyword">AND</span> o_comment <span class="keyword">NOT</span> <span class="keyword">LIKE</span> <span class="string">&#x27;%pending%deposits%&#x27;</span></span><br><span class="line">     <span class="keyword">GROUP</span> <span class="keyword">BY</span> c_custkey</span><br><span class="line">     ) c_orders</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> c_count</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> custdist <span class="keyword">DESC</span>, c_count <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>标量子查询</strong>：输出只有一个结果值的子查询，可以作为条件或属性出现在WHERE子句或SELECT子句</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c_custkey</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMER</span><br><span class="line"><span class="keyword">WHERE</span> <span class="number">1000000</span> <span class="operator">&lt;</span> (</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">SUM</span>(o_totalprice)</span><br><span class="line">    <span class="keyword">FROM</span> ORDERS</span><br><span class="line">    <span class="keyword">WHERE</span> o_custkey <span class="operator">=</span> c_custkey  <span class="comment">-- Correlated!</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> o_orderkey, (</span><br><span class="line">    <span class="keyword">SELECT</span> c_name</span><br><span class="line">    <span class="keyword">FROM</span> CUSTOMER</span><br><span class="line">    <span class="keyword">WHERE</span> c_custkey <span class="operator">=</span> o_custkey  <span class="comment">-- Correlated!</span></span><br><span class="line">) <span class="keyword">AS</span> c_name <span class="keyword">FROM</span> ORDERS</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>存在性检测子查询</strong>：特指 EXISTS 的子查询，返回一个布尔值。如果出现在 WHERE 中，这就是我们熟悉的 Semi-Join。当然，它可能出现在任何可以放布尔值的地方。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--Semi-Join</span></span><br><span class="line"><span class="keyword">SELECT</span> c_custkey</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMER</span><br><span class="line"><span class="keyword">WHERE</span> c_nationkey <span class="operator">=</span> <span class="number">86</span> <span class="keyword">AND</span> <span class="keyword">EXISTS</span>(</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> ORDERS</span><br><span class="line">    <span class="keyword">WHERE</span> o_custkey <span class="operator">=</span> c_custkey  <span class="comment">-- Correlated!</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>集合比较子查询</strong>：特指 IN、SOME、ANY 的查询，返回一个布尔值，常用的形式有：x = SOME(Q) （等价于 x IN Q）或 X &lt;&gt; ALL(Q)（等价于 x NOT IN Q）。同上，它可能出现在任何可以放布尔值的地方。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c_name</span><br><span class="line"><span class="keyword">FROM</span> CUSTOMER</span><br><span class="line"><span class="keyword">WHERE</span> c_nationkey <span class="operator">&lt;&gt;</span> <span class="keyword">ALL</span> (<span class="keyword">SELECT</span> s_nationkey <span class="keyword">FROM</span> SUPPLIER)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/60380557" title="Title">去关联化</a>，测试执行标量子查询示例1，可以发现子查询是挂在filter下的，实际执行时就会变成查询执行器调用表达式执行器，表达式执行器因为子查询再调用查询执行器，当数据比较多时很明显会对效率造成很大的影响。</p>
+</blockquote>
+<h3 id="2-2-优化案例"><a href="#2-2-优化案例" class="headerlink" title="2.2 优化案例"></a>2.2 优化案例</h3><p>通过对慢查询的监控告警，经常会发现一些SQL语句where过滤字段都有索引，但是由于SQL写法的问题导致索引失效，下面二个案例解释如何通过SQL改写来查询。可以通过以下SQL来捞取最近5分钟的慢查询进行告警。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> CONCAT( <span class="string">&#x27;# Time: &#x27;</span>, DATE_FORMAT(start_time, <span class="string">&#x27;%y%m%d %H%i%s&#x27;</span>), <span class="string">&#x27;\n&#x27;</span>, <span class="string">&#x27;# User@Host: &#x27;</span>, user_host, <span class="string">&#x27;\n&#x27;</span>, <span class="string">&#x27;# Query_time: &#x27;</span>, TIME_TO_SEC(query_time),  <span class="string">&#x27;  Lock_time: &#x27;</span>, TIME_TO_SEC(lock_time), <span class="string">&#x27;  Rows_sent: &#x27;</span>, rows_sent, <span class="string">&#x27;  Rows_examined: &#x27;</span>, rows_examined, <span class="string">&#x27;\n&#x27;</span>, sql_text, <span class="string">&#x27;;&#x27;</span> ) <span class="keyword">FROM</span> mysql.slow_log <span class="keyword">where</span> start_time <span class="keyword">between</span> <span class="built_in">current_timestamp</span> <span class="keyword">and</span> date_add(<span class="built_in">CURRENT_TIMESTAMP</span>,<span class="type">INTERVAL</span> <span class="number">-5</span> <span class="keyword">MINUTE</span>);</span><br></pre></td></tr></table></figure>
 
 
@@ -563,10 +720,30 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> id,team_id,reason,status,type,created_at,invite_id,falg_admin,file_id <span class="keyword">from</span> t_user_msg <span class="keyword">where</span> <span class="number">1</span> <span class="keyword">and</span> (team_id <span class="keyword">in</span> (<span class="number">3212</span>) <span class="keyword">and</span> <span class="operator">*</span><span class="operator">*</span>app_id <span class="operator">&gt;</span> <span class="number">0</span>)<span class="operator">*</span><span class="operator">*</span>) <span class="keyword">or</span> (invite_id<span class="operator">=</span><span class="number">12395</span> <span class="keyword">or</span> app_id<span class="operator">=</span><span class="number">12395</span>) <span class="keyword">order</span> <span class="keyword">by</span> created_time <span class="keyword">desc</span> limit <span class="number">0</span>,<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
 
 <p>从执行计划看，两种改写优化方式都走三个单列索引，执行时间从2s降低至10ms，线上采用的是<strong>优化1</strong>的方式，如果一开始能遵循MySQL开发规范就就会避免问题的发生。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面介绍了SQL规范性检查，表结构检查，索引检查以及通过SQL改写来优化查询，在编写代码的过程，如果能提前做这些规范性检查，评估出自己认为理想的执行计划，然后通过explain解析出MySQL CBO的执行计划，两者做对比分析差异，弄清楚自己的选择和CBO的不同，不但能够编写高质量的SQL，同时也能清楚CBO的工作原理。</p>
+<p>上面介绍了SQL规范性检查，表结构检查，索引检查以及通过SQL改写来优化查询，在编写代码的过程，如果能提前做这些规范性检查，评估出自己认为理想的执行计划，然后通过explain解析出MySQL CBO的执行计划，两者做对比分析差异，弄清楚自己的选择和CBO的不同，不但能够编写高质量的SQL，同时也能清楚CBO的工作原理。</p>
+<h3 id="2-3-Oracle-STA优化SQL"><a href="#2-3-Oracle-STA优化SQL" class="headerlink" title="2.3 Oracle STA优化SQL"></a>2.3 Oracle STA优化SQL</h3><p>SQL Tuning Advisor，可以从四个角度给出SQL的优化建议：</p>
+<ul>
+<li>为统计信息丢失或失效的对象收集统计信息；</li>
+<li>考虑优化器的任何数据偏差、复杂谓词或失效的统计信息；</li>
+<li>重新构建 SQL 以优化性能；</li>
+<li>提出新索引建议。</li>
+</ul>
+<p>简单使用：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 声明优化任务，单引号中的单引号要转义，&#x27;&#x27;a&#x27;&#x27;双单引号代替</span></span><br><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">my_task_name VARCHAR2(<span class="number">30</span>);</span><br><span class="line">my_sqltext  <span class="type">CLOB</span>;</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">my_sqltext :<span class="operator">=</span> <span class="string">&#x27;select xxx from xxx&#x27;</span>;</span><br><span class="line">my_task_name :<span class="operator">=</span> DBMS_SQLTUNE.CREATE_TUNING_TASK(</span><br><span class="line">sql_text    <span class="operator">=</span><span class="operator">&gt;</span> my_sqltext,</span><br><span class="line">user_name   <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;xxx&#x27;</span>,  <span class="comment">--表示语句由哪个数据库用户执行</span></span><br><span class="line"><span class="keyword">scope</span>       <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;COMPREHENSIVE&#x27;</span>,</span><br><span class="line">time_limit  <span class="operator">=</span><span class="operator">&gt;</span> <span class="number">30</span>,</span><br><span class="line">task_name   <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;tuning_sql_test&#x27;</span>,</span><br><span class="line">description <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;tuning&#x27;</span>);</span><br><span class="line">DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;tuning_sql_test&#x27;</span>);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 上面是传入文本的方式，还可以根据sql_id来创建</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 获取sql_id</span></span><br><span class="line"><span class="keyword">select</span> sql_id,sql_text <span class="keyword">from</span> v$sqlarea <span class="keyword">where</span> sql_text <span class="keyword">like</span> <span class="string">&#x27;%bigtab%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 声明优化任务</span></span><br><span class="line"><span class="keyword">DECLARE</span></span><br><span class="line">my_task_name VARCHAR2(<span class="number">30</span>);</span><br><span class="line">sql_id VARCHAR2(<span class="number">30</span>);</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">sql_id :<span class="operator">=</span> <span class="string">&#x27;&amp;sqlid&#x27;</span>;</span><br><span class="line">my_task_name :<span class="operator">=</span> DBMS_SQLTUNE.CREATE_TUNING_TASK(</span><br><span class="line">sql_id  <span class="operator">=</span><span class="operator">&gt;</span> sql_id,</span><br><span class="line"><span class="keyword">scope</span> <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;comprehensive&#x27;</span>,</span><br><span class="line">time_limit<span class="operator">=</span><span class="operator">&gt;</span><span class="number">60</span>,</span><br><span class="line">task_name<span class="operator">=</span><span class="operator">&gt;</span><span class="string">&#x27;tuning_sql_test&#x27;</span>,</span><br><span class="line">description <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;Tuning Task&#x27;</span>);</span><br><span class="line">DBMS_SQLTUNE.EXECUTE_TUNING_TASK(<span class="string">&#x27;tuning_sql_test&#x27;</span>);</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"><span class="operator">/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 执行创建的优化任务</span></span><br><span class="line"><span class="keyword">exec</span> dbms_sqltune.execute_tuning_task(<span class="string">&#x27;tuning_sql_test&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看任务状态</span></span><br><span class="line"><span class="keyword">SELECT</span> task_name,status <span class="keyword">FROM</span> USER_ADVISOR_TASKS <span class="keyword">WHERE</span> task_name <span class="operator">=</span><span class="string">&#x27;tuning_sql_test&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看优化建议</span></span><br><span class="line"><span class="keyword">select</span> DBMS_SQLTUNE.REPORT_TUNING_TASK( <span class="string">&#x27;tuning_sql_test&#x27;</span>) <span class="keyword">from</span> dual;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除优化任务</span></span><br><span class="line"><span class="keyword">exec</span> dbms_sqltune.drop_tuning_task(task_name <span class="operator">=</span><span class="operator">&gt;</span> <span class="string">&#x27;tuning_sql_test&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>分析结果：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">GENERAL INFORMATION SECTION</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">Tuning Task Name   : tuning_sql_test</span><br><span class="line">Tuning Task Owner  : XXX</span><br><span class="line">Workload Type      : Single SQL Statement</span><br><span class="line">Execution Count    : 2</span><br><span class="line">Current Execution  : EXEC_38176</span><br><span class="line">Execution Type     : TUNE SQL</span><br><span class="line">Scope              : COMPREHENSIVE</span><br><span class="line">Time Limit(seconds): 30</span><br><span class="line">Completion Status  : COMPLETED</span><br><span class="line">Started at         : XXX</span><br><span class="line">Completed at       : XXX</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">Schema Name: XXX</span><br><span class="line">SQL ID     : 8jzqw0sc2w7dx</span><br><span class="line">SQL Text   : select XXX from XXX</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">FINDINGS SECTION (2 findings)</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">1- Index Finding (see explain plans section below)</span><br><span class="line">--------------------------------------------------</span><br><span class="line">  通过创建一个或多个索引可以改进此语句的执行计划。</span><br><span class="line"></span><br><span class="line">  Recommendation (estimated benefit: 99.71%)</span><br><span class="line">  ------------------------------------------</span><br><span class="line">  - 考虑运行可以改进物理方案设计的访问指导或者创建推荐的索引。</span><br><span class="line">    create index XXX.IDX$$_8F240001 on</span><br><span class="line">    XXX.XXX(<span class="string">&quot;column_a&quot;</span>,<span class="string">&quot;column_b&quot;</span>,<span class="string">&quot;column_c&quot;</span>);</span><br><span class="line"></span><br><span class="line">  Rationale</span><br><span class="line">  ---------</span><br><span class="line">    创建推荐的索引可以显著地改进此语句的执行计划。但是, 使用典型的 SQL 工作量运行 <span class="string">&quot;访问指导&quot;</span></span><br><span class="line">    可能比单个语句更可取。通过这种方法可以获得全面的索引建议案, 包括计算索引维护的开销和附加的空间消耗。</span><br><span class="line"></span><br><span class="line">2- Restructure SQL finding (see plan 1 in explain plans section)</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">  在执行计划的行 ID 2 处发现开销很大的笛卡尔积操作。</span><br><span class="line"></span><br><span class="line">  Recommendation</span><br><span class="line">  --------------</span><br><span class="line">  - 考虑从此语句中移去断开连接的表或视图, 或者添加引用它的联接条件。</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">EXPLAIN PLANS SECTION</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">1- Original</span><br><span class="line">-----------</span><br><span class="line">Plan hash value: 87783638</span><br><span class="line"></span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line">|<span class="string">Id</span>|<span class="string"> Operation                         </span>|<span class="string"> Name    </span>|<span class="string"> Rows </span>|<span class="string">Bytes</span>|<span class="string">Cost (%CPU)</span>|<span class="string">   Time   </span>|</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line">|<span class="string"> 0</span>|<span class="string">SELECT STATEMENT                   </span>|<span class="string">         </span>|<span class="string">   1  </span>|<span class="string"> 127 </span>|<span class="string"> 1769 (1)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string"> 1</span>|<span class="string">SORT ORDER BY                      </span>|<span class="string">         </span>|<span class="string">   1  </span>|<span class="string"> 127 </span>|<span class="string"> 1769 (1)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string"> 2</span>|<span class="string">MERGE JOIN OUTER                   </span>|<span class="string">         </span>|<span class="string">   1  </span>|<span class="string"> 127 </span>|<span class="string"> 1768 (1)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string">*3</span>|<span class="string">TABLE ACCESS BY INDEX ROWID BATCHED</span>|<span class="string"> XXX     </span>|<span class="string">   1  </span>|<span class="string"> 113 </span>|<span class="string"> 1767 (1)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string">*4</span>|<span class="string">INDEX RANGE SCAN                   </span>|<span class="string"> IDX_XXX </span>|<span class="string"> 20627</span>|<span class="string">     </span>|<span class="string"> 106  (0)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string"> 5</span>|<span class="string">BUFFER SORT                        </span>|<span class="string">         </span>|<span class="string">   1  </span>|<span class="string"> 14  </span>|<span class="string"> 2   (50)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string"> 6</span>|<span class="string">TABLE ACCESS BY INDEX ROWID        </span>|<span class="string"> XXX     </span>|<span class="string">   1  </span>|<span class="string"> 14  </span>|<span class="string"> 1    (0)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">|<span class="string">*7</span>|<span class="string">INDEX UNIQUE SCAN                  </span>|<span class="string"> IDX_XXX </span>|<span class="string">   1  </span>|<span class="string">     </span>|<span class="string"> 0    (0)  </span>|<span class="string"> 00:00:01 </span>|</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line"> </span><br><span class="line">Predicate Information (identified by operation id):</span><br><span class="line">---------------------------------------------------</span><br><span class="line"> </span><br><span class="line">   3 - filter(<span class="string">&quot;A&quot;</span>.<span class="string">&quot;column_c&quot;</span>&gt;=20210720.1054 AND <span class="string">&quot;A&quot;</span>.<span class="string">&quot;column_b&quot;</span>=1 AND </span><br><span class="line">              <span class="string">&quot;A&quot;</span>.<span class="string">&quot;column_d&quot;</span><span class="variable">&lt;=20210720.155735)</span></span><br><span class="line"><span class="variable">   4 - access(&quot;A&quot;.&quot;column_a&quot;=&#x27; &#x27; AND &quot;A&quot;.&quot;column_e&quot;&gt;</span>=0)</span><br><span class="line">   7 - access(<span class="string">&quot;B&quot;</span>.<span class="string">&quot;column_a&quot;</span>(+)=&#x27; &#x27;)</span><br><span class="line"></span><br><span class="line">2- Using New Indices</span><br><span class="line">--------------------</span><br><span class="line">Plan hash value: 1238368121</span><br><span class="line"></span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line">|<span class="string">Id</span>|<span class="string"> Operation                         </span>|<span class="string"> Name         </span>|<span class="string"> Rows </span>|<span class="string">Bytes</span>|<span class="string">Cost (%CPU)</span>|<span class="string"> Time   </span>|</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line">|<span class="string"> 0</span>|<span class="string"> SELECT STATEMENT                  </span>|<span class="string">              </span>|<span class="string">    1 </span>|<span class="string"> 127 </span>|<span class="string">   5 (20)  </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string"> 1</span>|<span class="string"> SORT ORDER BY                     </span>|<span class="string">              </span>|<span class="string">    1 </span>|<span class="string"> 127 </span>|<span class="string">   5 (20)  </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string"> 2</span>|<span class="string"> MERGE JOIN OUTER                  </span>|<span class="string">              </span>|<span class="string">    1 </span>|<span class="string"> 127 </span>|<span class="string">   4 (0)   </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string">*3</span>|<span class="string">TABLE ACCESS BY INDEX ROWID BATCHED</span>|<span class="string"> XXX          </span>|<span class="string">    1 </span>|<span class="string"> 113 </span>|<span class="string">   3 (0)   </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string">*4</span>|<span class="string"> INDEX RANGE SCAN                  </span>|<span class="string">IDX$$_8F240001</span>|<span class="string">    1 </span>|<span class="string">     </span>|<span class="string">   2 (0)   </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string"> 5</span>|<span class="string"> BUFFER SORT                       </span>|<span class="string">              </span>|<span class="string">    1 </span>|<span class="string"> 14  </span>|<span class="string">   2 (50)  </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string"> 6</span>|<span class="string"> TABLE ACCESS BY INDEX ROWID       </span>|<span class="string"> XXX          </span>|<span class="string">    1 </span>|<span class="string"> 14  </span>|<span class="string">   1 (0)   </span>|<span class="string">00:00:01</span>|</span><br><span class="line">|<span class="string">*7</span>|<span class="string"> INDEX UNIQUE SCAN                 </span>|<span class="string"> IDX_XXX      </span>|<span class="string">    1 </span>|<span class="string">     </span>|<span class="string">   0 (0)   </span>|<span class="string">00:00:01</span>|</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line"> </span><br><span class="line">Predicate Information (identified by operation id):</span><br><span class="line">---------------------------------------------------</span><br><span class="line"> </span><br><span class="line">   3 - filter(<span class="string">&quot;A&quot;</span>.<span class="string">&quot;column_e&quot;</span>&gt;=0 AND <span class="string">&quot;A&quot;</span>.<span class="string">&quot;column_d&quot;</span><span class="variable">&lt;=20210720.155735)</span></span><br><span class="line"><span class="variable">   4 - access(&quot;A&quot;.&quot;column_a&quot;=&#x27; &#x27; AND &quot;A&quot;.&quot;column_b&quot;=1 AND &quot;A&quot;.&quot;column_c&quot;&gt;</span>=20210720.1054)</span><br><span class="line">   7 - access(<span class="string">&quot;B&quot;</span>.<span class="string">&quot;column_a&quot;</span>(+)=&#x27; &#x27;)</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+
+
 <hr>
 <p>参考：</p>
 <p>🔗 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nEmN4S9JOTVGj5IHyfNtCw" title="Title">敖丙工作以来总结的大厂SQL调优姿势</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54607717" title="Title">where子句的优化</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/60380557" title="Title">SQL子查询的优化</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/exe19/p/5786806.html" title="Title">要提高SQL查询效率where语句条件的先后次序应如何写</a></p>
 
     </div>
 
@@ -651,7 +828,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">46:46</span>
+    <span title="站点阅读时长">46:50</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
