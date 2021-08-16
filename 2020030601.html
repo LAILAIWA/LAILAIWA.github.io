@@ -42,7 +42,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060109.jpg">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060110.jpg">
 <meta property="article:published_time" content="2020-03-06T08:10:23.000Z">
-<meta property="article:modified_time" content="2020-10-02T09:09:48.000Z">
+<meta property="article:modified_time" content="2021-08-08T10:56:34.000Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
@@ -306,7 +306,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-02 17:09:48" itemprop="dateModified" datetime="2020-10-02T17:09:48+08:00">2020-10-02</time>
+        <time title="修改时间：2021-08-08 18:56:34" itemprop="dateModified" datetime="2021-08-08T18:56:34+08:00">2021-08-08</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -345,19 +345,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="第四章-客户端"><a href="#第四章-客户端" class="headerlink" title="第四章 客户端"></a><strong>第四章 客户端</strong></h1><p>Redis用单线程来处理多个客户端的访问。</p>
-<h2 id="4-1-客户端通信协议"><a href="#4-1-客户端通信协议" class="headerlink" title="4.1 客户端通信协议"></a><strong>4.1 客户端通信协议</strong></h2><p>Redis被几乎所有主流的编程语言支持，除了流行以外，原因还有：</p>
+        <h1 id="第四章-客户端"><a href="#第四章-客户端" class="headerlink" title="第四章 客户端"></a>第四章 客户端</h1><p>Redis用单线程来处理多个客户端的访问。</p>
+<h2 id="4-1-客户端通信协议"><a href="#4-1-客户端通信协议" class="headerlink" title="4.1 客户端通信协议"></a>4.1 客户端通信协议</h2><p>Redis被几乎所有主流的编程语言支持，除了流行以外，原因还有：</p>
 <ol>
 <li><p>客户端与服务端之间的通信协议是在TCP协议之上构建的。</p>
 </li>
 <li><p>Redis定制了 <strong>RESP</strong>（REdis Serialization Protocol，<strong>Redis序列号协议</strong>）<strong>来实现客户端与服务端的正常交互</strong>，这种协议简单高效，既能被机器解析，又容易被人类识别。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 客户端发送一条set hello world命令给服务端（每行用\r\n分隔）</span></span><br><span class="line">*3</span><br><span class="line"><span class="variable">$3</span></span><br><span class="line">SET</span><br><span class="line"><span class="variable">$5</span></span><br><span class="line">hello</span><br><span class="line"><span class="variable">$5</span></span><br><span class="line">world</span><br><span class="line"><span class="comment"># 收到回复</span></span><br><span class="line">+OK</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h3 id="4-1-1-发送命令格式"><a href="#4-1-1-发送命令格式" class="headerlink" title="4.1.1 发送命令格式"></a><strong>4.1.1 发送命令格式</strong></h3><p>RESP命令格式如下，CRLF代表 <code>\r\n</code> 。</p>
+<h3 id="4-1-1-发送命令格式"><a href="#4-1-1-发送命令格式" class="headerlink" title="4.1.1 发送命令格式"></a>4.1.1 发送命令格式</h3><p>RESP命令格式如下，CRLF代表 <code>\r\n</code> 。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">*&lt;参数数量&gt; CRLF</span><br><span class="line">$&lt;参数1的字节数量&gt; CRLF</span><br><span class="line">&lt;参数1&gt; CRLF</span><br><span class="line">...</span><br><span class="line">$&lt;参数N的字节数量&gt; CRLF</span><br><span class="line">&lt;参数N&gt; CRLF</span><br></pre></td></tr></table></figure>
 
+
+
 <p>实际传输时会用 <code>\r\n</code> 代替换行，所以是条连续的字符串。</p>
-<h3 id="4-1-2-返回结果格式"><a href="#4-1-2-返回结果格式" class="headerlink" title="4.1.2 返回结果格式"></a><strong>4.1.2 返回结果格式</strong></h3><p>Redis返回结果分为五种类型：</p>
+<h3 id="4-1-2-返回结果格式"><a href="#4-1-2-返回结果格式" class="headerlink" title="4.1.2 返回结果格式"></a>4.1.2 返回结果格式</h3><p>Redis返回结果分为五种类型：</p>
 <ul>
 <li><strong>状态回复</strong>：在 RESP 中第一个字节为 <code>+</code> 。</li>
 <li><strong>错误回复</strong>：在 RESP 中第一个字节为 <code>-</code> 。</li>
@@ -369,22 +371,28 @@
 <p><code>redis-cli</code> 是按照 RESP 进行结果解析的，所以只能看到最终的执行结果，而看不到中间结果。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># set返回结果为OK，看不到加号</span></span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> hello world</span><br><span class="line">OK</span><br><span class="line"><span class="comment"># 可以通过nc命令、telnet命令、甚至用socket程序进行模拟</span></span><br><span class="line"><span class="comment"># 首先用nc连接redis</span></span><br><span class="line">nc 127.0.0.1 6379</span><br><span class="line"><span class="built_in">set</span> hello world</span><br><span class="line">+OK</span><br><span class="line"><span class="comment"># 错误回复，任意输入一条乱码指令</span></span><br><span class="line">sethx</span><br><span class="line">-ERR unknown <span class="built_in">command</span> <span class="string">&#x27;sethx&#x27;</span></span><br><span class="line"><span class="comment"># 整数回复</span></span><br><span class="line">incr counter</span><br><span class="line">:1</span><br><span class="line"><span class="comment"># 字符串回复&quot;$5\r\nworld\r\n&quot;</span></span><br><span class="line">get hello</span><br><span class="line"><span class="variable">$5</span></span><br><span class="line">world</span><br><span class="line"><span class="comment"># 多条字符串回复</span></span><br><span class="line">mset java jedis python redis-py</span><br><span class="line">+OK</span><br><span class="line">mget java python</span><br><span class="line">*2</span><br><span class="line"><span class="variable">$5</span></span><br><span class="line">jedis</span><br><span class="line"><span class="variable">$8</span></span><br><span class="line">redis-py</span><br></pre></td></tr></table></figure>
 
+
+
 <p>不管是字符串回复还是多条字符串回复，当有 <code>nil</code> 值时，会返回 <code>$-1</code> 。</p>
 <hr>
-<h2 id="4-2-Java客户端Jedis"><a href="#4-2-Java客户端Jedis" class="headerlink" title="4.2 Java客户端Jedis"></a><strong>4.2 Java客户端Jedis</strong></h2><h3 id="4-2-1-获取Jedis"><a href="#4-2-1-获取Jedis" class="headerlink" title="4.2.1 获取Jedis"></a><strong>4.2.1 获取Jedis</strong></h3><p>在Java中获取第三方开发包通常有两种方式：</p>
+<h2 id="4-2-Java客户端Jedis"><a href="#4-2-Java客户端Jedis" class="headerlink" title="4.2 Java客户端Jedis"></a>4.2 Java客户端Jedis</h2><h3 id="4-2-1-获取Jedis"><a href="#4-2-1-获取Jedis" class="headerlink" title="4.2.1 获取Jedis"></a>4.2.1 获取Jedis</h3><p>在Java中获取第三方开发包通常有两种方式：</p>
 <ul>
 <li>下载JAR包并加入到项目中。</li>
 <li>使用集成构建工具，如Maven、Gradle等。</li>
 </ul>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.8.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>选择开发包的版本通常有两种方案：</p>
 <ul>
 <li>选择稳定的版本。</li>
 <li>选择更新活跃的版本。</li>
 </ul>
-<h3 id="4-2-2-Jedis的基本使用方法"><a href="#4-2-2-Jedis的基本使用方法" class="headerlink" title="4.2.2 Jedis的基本使用方法"></a><strong>4.2.2 Jedis的基本使用方法</strong></h3><p>一个简单的使用示例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 生成一个Jedis对象，负责和指定的Redis实例进行通信</span></span><br><span class="line">Jedis jedis = <span class="keyword">new</span> Jedos(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6379</span>);</span><br><span class="line"><span class="comment">// 2. jedis执行set操作</span></span><br><span class="line">jedis.set(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>);</span><br><span class="line"><span class="comment">// 3. jedis执行get操作</span></span><br><span class="line">String value = jedis.get(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-2-Jedis的基本使用方法"><a href="#4-2-2-Jedis的基本使用方法" class="headerlink" title="4.2.2 Jedis的基本使用方法"></a>4.2.2 Jedis的基本使用方法</h3><p>一个简单的使用示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 生成一个Jedis对象，负责和指定的Redis实例进行通信</span></span><br><span class="line">Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6379</span>);</span><br><span class="line"><span class="comment">// 2. jedis执行set操作</span></span><br><span class="line">jedis.set(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>);</span><br><span class="line"><span class="comment">// 3. jedis执行get操作</span></span><br><span class="line">String value = jedis.get(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
 
 <p>初始化Jedis时的几个参数：</p>
 <ul>
@@ -396,8 +404,10 @@
 <p>一个示例说明Jedis对五种Redis数据结构的操作：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.string</span></span><br><span class="line">jedis.set(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>);</span><br><span class="line">jedis.get(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">jedis.incr(<span class="string">&quot;counter&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//2.hash</span></span><br><span class="line">jedis.hset(<span class="string">&quot;myhash&quot;</span>, <span class="string">&quot;f1&quot;</span>, <span class="string">&quot;v1&quot;</span>);</span><br><span class="line">jedis.hset(<span class="string">&quot;myhash&quot;</span>, <span class="string">&quot;f2&quot;</span>, <span class="string">&quot;v2&quot;</span>);</span><br><span class="line">jedis.hgetAll(<span class="string">&quot;myhash&quot;</span>); <span class="comment">//[f1=v1, f2=v2]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//3.list</span></span><br><span class="line">jedis.rpush(<span class="string">&quot;mylist&quot;</span>, <span class="string">&quot;1&quot;</span>);</span><br><span class="line">jedis.rpush(<span class="string">&quot;mylist&quot;</span>, <span class="string">&quot;2&quot;</span>);</span><br><span class="line">jedis.rpush(<span class="string">&quot;mylist&quot;</span>, <span class="string">&quot;3&quot;</span>);</span><br><span class="line">jedis.lrange(<span class="string">&quot;mylist&quot;</span>, <span class="number">0</span>, -<span class="number">1</span>); <span class="comment">//[1, 2, 3]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//4.set</span></span><br><span class="line">jedis.sadd(<span class="string">&quot;myset&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">jedis.sadd(<span class="string">&quot;myset&quot;</span>, <span class="string">&quot;b&quot;</span>);</span><br><span class="line">jedis.sadd(<span class="string">&quot;myset&quot;</span>, <span class="string">&quot;a&quot;</span>);</span><br><span class="line">jedis.smembers(<span class="string">&quot;myset&quot;</span>); <span class="comment">//[b, a]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//5.zset</span></span><br><span class="line">jedis.zadd(<span class="string">&quot;myzset&quot;</span>, <span class="number">99</span>, <span class="string">&quot;tom&quot;</span>);</span><br><span class="line">jedis.zadd(<span class="string">&quot;myzset&quot;</span>, <span class="number">66</span>, <span class="string">&quot;peter&quot;</span>);</span><br><span class="line">jedis.zadd(<span class="string">&quot;myzset&quot;</span>, <span class="number">33</span>, <span class="string">&quot;james&quot;</span>);</span><br><span class="line">jedis.zrangeWithScores(<span class="string">&quot;myzset&quot;</span>, <span class="number">0</span>, -<span class="number">1</span>);</span><br><span class="line"><span class="comment">// [[[&quot;james&quot;], 33.0], [&quot;peter&quot;], 66.0, [&quot;tom&quot;], 99.0]</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>Jedis并没有提供序列号工具，所以需要开发者自己引入如XML、Json、谷歌的Protobuf、Facebook的Thrift等。此处Protobuf使用案例略去。</p>
-<h3 id="4-2-3-Jedis连接池的使用方法"><a href="#4-2-3-Jedis连接池的使用方法" class="headerlink" title="4.2.3 Jedis连接池的使用方法"></a><strong>4.2.3 Jedis连接池的使用方法</strong></h3><p>前面介绍的是Jedis的<strong>直连</strong>方式（指Jedis每次都会新建TCP连接，使用后再断开），这对于频繁访问Redis的应用场景并不合适。</p>
+<h3 id="4-2-3-Jedis连接池的使用方法"><a href="#4-2-3-Jedis连接池的使用方法" class="headerlink" title="4.2.3 Jedis连接池的使用方法"></a>4.2.3 Jedis连接池的使用方法</h3><p>前面介绍的是Jedis的<strong>直连</strong>方式（指Jedis每次都会新建TCP连接，使用后再断开），这对于频繁访问Redis的应用场景并不合适。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060102.jpg"></p>
 <p>因此，<strong>生产环境中一般使用连接池的方式来对Jedis连接进行管理</strong>。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060103.jpg"></p>
@@ -407,37 +417,59 @@
 <p><strong>（1）Jedis连接池</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// common-pool连接池默认配置</span></span><br><span class="line">GenericObjectPoolConfig poolConfig = <span class="keyword">new</span> GenericObjectPoolConfig();</span><br><span class="line"><span class="comment">// 初始化Jedis连接池</span></span><br><span class="line">JedisPool jedisPool = <span class="keyword">new</span> JedisPool(poolConfig, <span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6379</span>);</span><br></pre></td></tr></table></figure>
 
+
+
 <p><strong>（2）获取Jedis对象</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 1.从连接池获取jedis对象</span></span><br><span class="line">    jedis = jedisPool.getResource();</span><br><span class="line">    <span class="comment">// 2.执行操作</span></span><br><span class="line">    jedis.get(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">    logger.error(ex.getMessage(), ex);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(jedis != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 如果使用JedisPool，close操作不是关闭连接，而是归还连接池</span></span><br><span class="line">        jedis.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 
 <p><code>jedis.close()</code> 实现方式如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(dataSource != <span class="keyword">null</span>)&#123; <span class="comment">// 使用Jedis连接池</span></span><br><span class="line">        <span class="keyword">if</span>(client.isBroken())&#123; <span class="comment">//只会归还连接给连接池</span></span><br><span class="line">            <span class="keyword">this</span>.dataSource.returnBrokenResouce(<span class="keyword">this</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.dataSource.returnResouce(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">//直连</span></span><br><span class="line">        client.close();<span class="comment">//关闭连接</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p><code>GenericObjectPoolConfig</code> 可配置参数：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GenericObjectPoolConfig poolConfig = <span class="keyword">new</span> GenericObjectPoolConfig();</span><br><span class="line"><span class="comment">// 设置最大连接数为默认的5倍</span></span><br><span class="line">poolConfig.setMaxTotal(GenericObjectPoolConfig.DEFAULT_MAX_TOTAL * <span class="number">5</span>);</span><br><span class="line"><span class="comment">// 设置最大空闲连接数为默认的3倍</span></span><br><span class="line">poolConfig.setMaxIdle(GenericObjectPoolConfig.DEFAULT_MAX_IDLE * <span class="number">3</span>);</span><br><span class="line"><span class="comment">// 设置最小空闲连接数为默认的2倍</span></span><br><span class="line">poolConfig.setMinIdle(GenericObjectPoolConfig.DEFAULT_MIN_IDLE * <span class="number">2</span>);</span><br><span class="line"><span class="comment">// 设置开启jmx功能</span></span><br><span class="line">poolConfig.setJmxEnabled(<span class="keyword">true</span>);</span><br><span class="line"><span class="comment">// 设置连接池没有连接后客户端的最大等待时间</span></span><br><span class="line">poolConfig.setMaxWaitMillis(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
 
+
+
 <p>除了以上常用属性外，还有如下图：</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060105.jpg"></p>
-<h3 id="4-2-4-Redis中的Pipeline的使用方法"><a href="#4-2-4-Redis中的Pipeline的使用方法" class="headerlink" title="4.2.4 Redis中的Pipeline的使用方法"></a><strong>4.2.4 Redis中的Pipeline的使用方法</strong></h3><p><a href="../2020030501.html" title="Title">《Redis开发与运维》读书笔记（三）功能</a>中介绍了<strong>Pipeline</strong>的基本原理，我们知道Redis提供了 <code>mget</code> 、<code>mset</code> 方法，但没提供 <code>mdel</code> 方法，可以借助Pipeline模拟批量删除。</p>
+<h3 id="4-2-4-Redis中的Pipeline的使用方法"><a href="#4-2-4-Redis中的Pipeline的使用方法" class="headerlink" title="4.2.4 Redis中的Pipeline的使用方法"></a>4.2.4 Redis中的Pipeline的使用方法</h3><p><a href="../2020030501.html" title="Title">《Redis开发与运维》读书笔记（三）功能</a>中介绍了<strong>Pipeline</strong>的基本原理，我们知道Redis提供了 <code>mget</code> 、<code>mset</code> 方法，但没提供 <code>mdel</code> 方法，可以借助Pipeline模拟批量删除。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">mdel</span><span class="params">(List&lt;String&gt; keys)</span> </span>&#123;</span><br><span class="line">       Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line">       <span class="comment">// 1.生成Pipeline对象</span></span><br><span class="line">       Pipeline pipeline = jedis.pipelined();</span><br><span class="line">       <span class="comment">// 2.Pipeline封装命令，此时并未真正执行</span></span><br><span class="line">       <span class="keyword">for</span>(String key : keys)&#123;</span><br><span class="line">           pipeline.del(key);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">// 3.执行命令</span></span><br><span class="line">       pipeline.sync();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
 
 <p>除了 <code>pipeline.sync()</code> 还可以使用 <code>pipeline.syncAndReturnAll()</code> 将pipeline命令进行返回。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line">Pipeline pipeline = jedis.pipelined();</span><br><span class="line">pipeline.set(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>);</span><br><span class="line">pipeline.incr(<span class="string">&quot;counter&quot;</span>);</span><br><span class="line">List&lt;Object&gt; resultList = pipeline.syncAndReturnAll();</span><br><span class="line"><span class="keyword">for</span>(Object object : resultList)&#123;</span><br><span class="line">          System.out.println(object);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
 
+
+
 <p>输入以下结果：</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">OK</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="4-2-4-Jedis的Lua脚本"><a href="#4-2-4-Jedis的Lua脚本" class="headerlink" title="4.2.4 Jedis的Lua脚本"></a><strong>4.2.4 Jedis的Lua脚本</strong></h3><p>Jedis提供了三个重要的函数实现Lua脚本的执行：</p>
+
+
+<h3 id="4-2-4-Jedis的Lua脚本"><a href="#4-2-4-Jedis的Lua脚本" class="headerlink" title="4.2.4 Jedis的Lua脚本"></a>4.2.4 Jedis的Lua脚本</h3><p>Jedis提供了三个重要的函数实现Lua脚本的执行：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 执行脚本</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@script</span> Lua脚本内容</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@keyCount</span> 键的个数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@params</span> 相关参数KEYS和ARGV </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Object <span class="title">eval</span><span class="params">(String script, <span class="keyword">int</span> keyCount, String...params)</span></span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 执行脚本的SHA1校验和</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@sha</span>1 脚本的SHA1</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@keyCount</span> 键的个数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@params</span> 相关参数KEYS和ARGV </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Object <span class="title">evalsha</span><span class="params">(String sha1, <span class="keyword">int</span> keyCount, String...params)</span></span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 加载脚本到Redis</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@script</span> 脚本内容</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">String <span class="title">scriptLoad</span><span class="params">(String script)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
 
 <p>使用示例如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Lua脚本：return redis.call(&#x27;get&#x27;, KEYS[1])</span></span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">eval</span> <span class="string">&quot;return redis.call(&#x27;get&#x27;, KEYS[1])&quot;</span> 1 hello</span><br><span class="line">world</span><br></pre></td></tr></table></figure>
 
+
+
 <p>在Jedis中执行：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String key = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">String script = <span class="string">&quot;return redis.call(&#x27;get&#x27;, KEYS[1])&quot;</span>;</span><br><span class="line">Object result = jedis.eval(script, <span class="number">1</span>, key);</span><br><span class="line">      System.out.println(object);<span class="comment">// world</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p><code>scriptLoad()</code> 要结合 <code>evalsha()</code> 一起使用。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String scriptSha = jedis.scriptLoad(script);</span><br><span class="line">String key = <span class="string">&quot;hello&quot;</span>;	</span><br><span class="line">Object result = jedis.evalsha(script, <span class="number">1</span>, key);	</span><br><span class="line">      System.out.println(object);<span class="comment">// world</span></span><br></pre></td></tr></table></figure>
+
+
 
 <p>Jedis使用时只要注意以下几点即可：</p>
 <ol>
@@ -448,21 +480,23 @@
 <li>如果key和value涉及到字节数组，需要自己选择适合的序列化方法。</li>
 </ol>
 <hr>
-<h2 id="4-3-Python客户端redis-py"><a href="#4-3-Python客户端redis-py" class="headerlink" title="4.3 Python客户端redis-py"></a><strong>4.3 Python客户端redis-py</strong></h2><p>此部分内容暂略。</p>
-<h3 id="4-3-1-获取redis-py"><a href="#4-3-1-获取redis-py" class="headerlink" title="4.3.1 获取redis-py"></a><strong>4.3.1 获取redis-py</strong></h3><h3 id="4-3-2-redis-py的基本使用方法"><a href="#4-3-2-redis-py的基本使用方法" class="headerlink" title="4.3.2 redis-py的基本使用方法"></a><strong>4.3.2 redis-py的基本使用方法</strong></h3><h3 id="4-3-3-redis-py中的Pipeline的使用方法"><a href="#4-3-3-redis-py中的Pipeline的使用方法" class="headerlink" title="4.3.3 redis-py中的Pipeline的使用方法"></a><strong>4.3.3 redis-py中的Pipeline的使用方法</strong></h3><h3 id="4-3-4-redis-py中的Lua脚本的使用方法"><a href="#4-3-4-redis-py中的Lua脚本的使用方法" class="headerlink" title="4.3.4 redis-py中的Lua脚本的使用方法"></a><strong>4.3.4 redis-py中的Lua脚本的使用方法</strong></h3><hr>
-<h2 id="4-4-客户端管理"><a href="#4-4-客户端管理" class="headerlink" title="4.4 客户端管理"></a><strong>4.4 客户端管理</strong></h2><p>Redis提供了客户端相关的API来<strong>对其状态进行监控和管理</strong>。</p>
-<h3 id="4-4-1-客户端API"><a href="#4-4-1-客户端API" class="headerlink" title="4.4.1 客户端API"></a><strong>4.4.1 客户端API</strong></h3><h4 id="1-client-list"><a href="#1-client-list" class="headerlink" title="1. client list"></a><strong>1. client list</strong></h4><p>此命令能列出与Redis服务端相连的所有客户端连接信息。</p>
+<h2 id="4-3-Python客户端redis-py"><a href="#4-3-Python客户端redis-py" class="headerlink" title="4.3 Python客户端redis-py"></a>4.3 Python客户端redis-py</h2><p>此部分内容暂略。</p>
+<h3 id="4-3-1-获取redis-py"><a href="#4-3-1-获取redis-py" class="headerlink" title="4.3.1 获取redis-py"></a>4.3.1 获取redis-py</h3><h3 id="4-3-2-redis-py的基本使用方法"><a href="#4-3-2-redis-py的基本使用方法" class="headerlink" title="4.3.2 redis-py的基本使用方法"></a>4.3.2 redis-py的基本使用方法</h3><h3 id="4-3-3-redis-py中的Pipeline的使用方法"><a href="#4-3-3-redis-py中的Pipeline的使用方法" class="headerlink" title="4.3.3 redis-py中的Pipeline的使用方法"></a>4.3.3 redis-py中的Pipeline的使用方法</h3><h3 id="4-3-4-redis-py中的Lua脚本的使用方法"><a href="#4-3-4-redis-py中的Lua脚本的使用方法" class="headerlink" title="4.3.4 redis-py中的Lua脚本的使用方法"></a>4.3.4 redis-py中的Lua脚本的使用方法</h3><hr>
+<h2 id="4-4-客户端管理"><a href="#4-4-客户端管理" class="headerlink" title="4.4 客户端管理"></a>4.4 客户端管理</h2><p>Redis提供了客户端相关的API来<strong>对其状态进行监控和管理</strong>。</p>
+<h3 id="4-4-1-客户端API"><a href="#4-4-1-客户端API" class="headerlink" title="4.4.1 客户端API"></a>4.4.1 客户端API</h3><h4 id="1-client-list"><a href="#1-client-list" class="headerlink" title="1. client list"></a>1. client list</h4><p>此命令能列出与Redis服务端相连的所有客户端连接信息。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1&gt; client list</span><br><span class="line">id=xxxx......</span><br><span class="line">id=xxxx......</span><br></pre></td></tr></table></figure>
+
+
 
 <p>每行输出代表一个客户端信息，其中包含十几个属性，理解这些属性对于开发和运维人员十分重要。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060117.jpg"></p>
-<h5 id="（1）标识"><a href="#（1）标识" class="headerlink" title="（1）标识"></a><strong>（1）标识</strong></h5><ul>
+<h5 id="（1）标识"><a href="#（1）标识" class="headerlink" title="（1）标识"></a>（1）标识</h5><ul>
 <li><strong>id</strong>：客户端连接的唯一标识，此id随着Redis的连接自增，重启Redis后会重置为0。</li>
 <li><strong>addr</strong>：客户端连接的ip和端口。</li>
 <li><strong>fd</strong>：socket的文件描述符，与 <code>lsof</code> 命令结果中的fd是同一个，如果 <code>fd=-1</code> 代表当前客户端不是外部客户端，而是Redis内部的伪装客户端。</li>
 <li><strong>name</strong>：客户端的名字，后面的 <code>client name</code> 和 <code>client getName</code> 会对其进行说明。</li>
 </ul>
-<h5 id="（2）输入缓冲区"><a href="#（2）输入缓冲区" class="headerlink" title="（2）输入缓冲区"></a><strong>（2）输入缓冲区</strong></h5><p>Redis为每个客户端分配了输入缓冲区，它的作用是将客户端发送的命令临时保存，同时Redis会从输入缓冲区拉取命令并执行，<strong>输入缓冲区为客户端发送命令到Redis执行命令提供了缓冲功能</strong>。</p>
+<h5 id="（2）输入缓冲区"><a href="#（2）输入缓冲区" class="headerlink" title="（2）输入缓冲区"></a>（2）输入缓冲区</h5><p>Redis为每个客户端分配了输入缓冲区，它的作用是将客户端发送的命令临时保存，同时Redis会从输入缓冲区拉取命令并执行，<strong>输入缓冲区为客户端发送命令到Redis执行命令提供了缓冲功能</strong>。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060106.jpg"></p>
 <ul>
 <li><strong>qbuf</strong>：缓冲区的总容量。</li>
@@ -470,6 +504,8 @@
 </ul>
 <p>Redis不能通过配置来指定缓冲区容量，只要求每个客户端缓冲区不能超过1G，会根据输入内容自动动态调整，若超过则会被关闭。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Protocol and I/O related defines */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> REDIS_MAX_QUERYBUF_LEN (1024*1024*1024) <span class="comment">/* 1GB max query buffer */</span></span></span><br></pre></td></tr></table></figure>
+
+
 
 <p>输入缓冲区使用不当会产生两个问题：</p>
 <ul>
@@ -489,7 +525,7 @@
 </ul>
 <p>两种方法的优劣势：</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060108.jpg"></p>
-<h5 id="（3）输出缓冲区"><a href="#（3）输出缓冲区" class="headerlink" title="（3）输出缓冲区"></a><strong>（3）输出缓冲区</strong></h5><p>输出缓冲区用来保存命令执行的结果返回给客户端，<strong>为Redis和客户端交互返回结果提供缓冲</strong>。</p>
+<h5 id="（3）输出缓冲区"><a href="#（3）输出缓冲区" class="headerlink" title="（3）输出缓冲区"></a>（3）输出缓冲区</h5><p>输出缓冲区用来保存命令执行的结果返回给客户端，<strong>为Redis和客户端交互返回结果提供缓冲</strong>。</p>
 <p>和输入缓冲区不同的是，输出缓冲区可以通过 <code>client-output-buffer-limit</code> 来进行设置，并且输出缓冲区按客户端不同分为了三类：</p>
 <ul>
 <li>普通客户端</li>
@@ -513,6 +549,8 @@
 <p>Redis的默认配置：</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">client</span>-output-buffer-limit normal <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br><span class="line"><span class="attribute">client</span>-output-buffer-limit slave <span class="number">256</span>mb <span class="number">64</span>mb <span class="number">60</span></span><br><span class="line"><span class="attribute">client</span>-output-buffer-limit pubsub <span class="number">32</span>mb <span class="number">8</span>mb <span class="number">60</span></span><br></pre></td></tr></table></figure>
 
+
+
 <p>输出缓冲区和输入缓冲区一样不受 <code>maxmemory</code> 限制，超过时会产生<strong>数据丢失</strong>、<strong>键值淘汰</strong>、<strong>OOM</strong>等情况。</p>
 <p>输出缓冲区由两部分组成：</p>
 <ul>
@@ -521,6 +559,8 @@
 </ul>
 <p>通过Redis源码中 <code>redis.h</code> 的 redisClient 结构体可以看到两个缓冲区的实现细节：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisClient</span> &#123;</span></span><br><span class="line">    <span class="comment">// 动态缓冲区列表</span></span><br><span class="line">    <span class="built_in">list</span> *reply;</span><br><span class="line">    <span class="comment">// 动态缓冲区列表的长度（对象个数）</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> reply_bytes;</span><br><span class="line">    <span class="comment">// 固定缓冲区已经使用的字节数</span></span><br><span class="line">    <span class="keyword">int</span> bufpos;</span><br><span class="line">    <span class="comment">// 字节数组作为固定缓冲区</span></span><br><span class="line">    <span class="keyword">char</span> buf[REDIS_REPLY_CHUNK_BYTES];</span><br><span class="line">&#125; redisClient;</span><br></pre></td></tr></table></figure>
+
+
 
 <p><strong>固定缓冲区使用的是字节数组，动态缓冲区使用的是列表</strong>。当固定缓冲区存满后将Redis新的返回结果存放在动态缓冲区的队列中，队列中的每个对象就是每个返回结果。</p>
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060110.jpg"></p>
@@ -535,7 +575,7 @@
 <li>定期执行 <code>client list</code> 命令，收集 <code>obl</code> 、 <code>oll</code> 、<code>omem</code> 找到异常的连接记录并分析，最终找到可能出问题的客户端。</li>
 <li>通过 <code>info</code> 命令的 <code>info clients</code> 模块，找到输出缓冲区列表最大对象数。</li>
 </ul>
-<p> 相比输入缓冲区，输出缓冲区出现异常的概率相对比较大：</p>
+<p>相比输入缓冲区，输出缓冲区出现异常的概率相对比较大：</p>
 <ul>
 <li><p>进行上述监控，设置阈值、超过阈值及时处理、</p>
 </li>
@@ -548,15 +588,15 @@
 <li><p>及时监控内存，一旦发现内存抖动频繁，可能就是输出缓冲区过大。</p>
 </li>
 </ul>
-<h5 id="（4）客户端的存活状态"><a href="#（4）客户端的存活状态" class="headerlink" title="（4）客户端的存活状态"></a><strong>（4）客户端的存活状态</strong></h5><ul>
+<h5 id="（4）客户端的存活状态"><a href="#（4）客户端的存活状态" class="headerlink" title="（4）客户端的存活状态"></a>（4）客户端的存活状态</h5><ul>
 <li>age：客户端已连接的时间。</li>
 <li>idle：最近一次的空闲时间。</li>
 </ul>
-<h5 id="（5）客户端的限制"><a href="#（5）客户端的限制" class="headerlink" title="（5）客户端的限制"></a><strong>（5）客户端的限制</strong></h5><ul>
+<h5 id="（5）客户端的限制"><a href="#（5）客户端的限制" class="headerlink" title="（5）客户端的限制"></a>（5）客户端的限制</h5><ul>
 <li>maxclients：限制最大客户端连接数，超过时新的连接会被拒绝，默认为10000。可以通过 <code>config set maxclients</code> 对最大客户端连接数进行动态设置。一般最大连接数为10000在大部分场景够用，但一些业务方使用不当（如未主动关闭连接）导致存在大量idle连接，会造成很大的隐患。</li>
 <li>timeout：限制连接的最大空闲时间，超过时新的连接将会被关闭，默认为0。很多开发人员使用JedisPool时不会对连接池对象做<strong>空闲检测和验证</strong>，如果 <code>timeout&gt;0</code> 可能会导致出现 <code>JedisConnection</code> 异常，对应用业务造成一定影响，但是如果Redis的客户端使用不当或者客户端本身的一些问题，造成没有及时释放客户端连接，可能会造成大量的idle连接占据着很多连接资源，一旦超过maxclients后果也是不堪设想。所以实际开发与运维中，需要将timeout设置为大于0，如300秒等。同时在客户端使用上添加空闲检测和验证等措施，如JedisPool使用 <code>common-pool</code> 提供的三个属性：<code>minEvictableIdleTimeMillis</code> 、<code>testWhileIdle</code> 、<code>timeBetweenEvictionRunsMillis</code> 。</li>
 </ul>
-<h5 id="（6）客户端类型"><a href="#（6）客户端类型" class="headerlink" title="（6）客户端类型"></a><strong>（6）客户端类型</strong></h5><p><code>client list</code> 中的 <code>flag</code> 是用于标识当前客户端的类型。</p>
+<h5 id="（6）客户端类型"><a href="#（6）客户端类型" class="headerlink" title="（6）客户端类型"></a>（6）客户端类型</h5><p><code>client list</code> 中的 <code>flag</code> 是用于标识当前客户端的类型。</p>
 <table>
 <thead>
 <tr>
@@ -621,10 +661,10 @@
 <td>尽可能快地关闭连接</td>
 </tr>
 </tbody></table>
-<h5 id="（7）其他"><a href="#（7）其他" class="headerlink" title="（7）其他"></a><strong>（7）其他</strong></h5><p>暂缓笔记更新，此方式学习进度太慢，以后有时间和精力再恢复。</p>
-<h4 id="2-client-setName-和-client-getName"><a href="#2-client-setName-和-client-getName" class="headerlink" title="2. client setName 和 client getName"></a><strong>2. client setName 和 client getName</strong></h4><h4 id="3-client-kill"><a href="#3-client-kill" class="headerlink" title="3. client kill"></a><strong>3. client kill</strong></h4><h4 id="4-client-pause"><a href="#4-client-pause" class="headerlink" title="4. client pause"></a><strong>4. client pause</strong></h4><h4 id="5-montior"><a href="#5-montior" class="headerlink" title="5. montior"></a><strong>5. montior</strong></h4><h3 id="4-4-2-客户端相关配置"><a href="#4-4-2-客户端相关配置" class="headerlink" title="4.4.2 客户端相关配置"></a><strong>4.4.2 客户端相关配置</strong></h3><h3 id="4-4-3-客户端统计片段"><a href="#4-4-3-客户端统计片段" class="headerlink" title="4.4.3 客户端统计片段"></a><strong>4.4.3 客户端统计片段</strong></h3><hr>
-<h2 id="4-5-客户端常见异常"><a href="#4-5-客户端常见异常" class="headerlink" title="4.5 客户端常见异常"></a><strong>4.5 客户端常见异常</strong></h2><hr>
-<h2 id="4-6-客户端案例分析"><a href="#4-6-客户端案例分析" class="headerlink" title="4.6 客户端案例分析"></a><strong>4.6 客户端案例分析</strong></h2><h3 id="4-6-1-Redis内存陡增"><a href="#4-6-1-Redis内存陡增" class="headerlink" title="4.6.1 Redis内存陡增"></a><strong>4.6.1 Redis内存陡增</strong></h3><h3 id="4-6-2-客户端周期性的超时"><a href="#4-6-2-客户端周期性的超时" class="headerlink" title="4.6.2 客户端周期性的超时"></a><strong>4.6.2 客户端周期性的超时</strong></h3><hr>
+<h5 id="（7）其他"><a href="#（7）其他" class="headerlink" title="（7）其他"></a>（7）其他</h5><p>暂缓笔记更新，此方式学习进度太慢，以后有时间和精力再恢复。</p>
+<h4 id="2-client-setName-和-client-getName"><a href="#2-client-setName-和-client-getName" class="headerlink" title="2. client setName 和 client getName"></a>2. client setName 和 client getName</h4><h4 id="3-client-kill"><a href="#3-client-kill" class="headerlink" title="3. client kill"></a>3. client kill</h4><h4 id="4-client-pause"><a href="#4-client-pause" class="headerlink" title="4. client pause"></a>4. client pause</h4><h4 id="5-montior"><a href="#5-montior" class="headerlink" title="5. montior"></a>5. montior</h4><h3 id="4-4-2-客户端相关配置"><a href="#4-4-2-客户端相关配置" class="headerlink" title="4.4.2 客户端相关配置"></a>4.4.2 客户端相关配置</h3><h3 id="4-4-3-客户端统计片段"><a href="#4-4-3-客户端统计片段" class="headerlink" title="4.4.3 客户端统计片段"></a>4.4.3 客户端统计片段</h3><hr>
+<h2 id="4-5-客户端常见异常"><a href="#4-5-客户端常见异常" class="headerlink" title="4.5 客户端常见异常"></a>4.5 客户端常见异常</h2><hr>
+<h2 id="4-6-客户端案例分析"><a href="#4-6-客户端案例分析" class="headerlink" title="4.6 客户端案例分析"></a>4.6 客户端案例分析</h2><h3 id="4-6-1-Redis内存陡增"><a href="#4-6-1-Redis内存陡增" class="headerlink" title="4.6.1 Redis内存陡增"></a>4.6.1 Redis内存陡增</h3><h3 id="4-6-2-客户端周期性的超时"><a href="#4-6-2-客户端周期性的超时" class="headerlink" title="4.6.2 客户端周期性的超时"></a>4.6.2 客户端周期性的超时</h3><hr>
 <p>参考：</p>
 <p>🔗 《Redis开发与运维》</p>
 
@@ -633,6 +673,26 @@
     
     
     
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020070101.html" rel="bookmark">Redis底层数据结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020032801.html" rel="bookmark">《Redis开发与运维》读书笔记（十四）Redis配置统计字典（未完成）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020032501.html" rel="bookmark">《Redis开发与运维》读书笔记（十三）Redis监控运维云平台-CacheCloud（未完成）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020032401.html" rel="bookmark">《Redis开发与运维》读书笔记（十二）开发运维的“陷阱”（未完成）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020032101.html" rel="bookmark">《Redis开发与运维》读书笔记（十一）缓存设计（未完成）</a></div>
+    </li>
+  </ul>
+
 
     <footer class="post-footer">
           
@@ -708,7 +768,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">47:01</span>
+    <span title="站点阅读时长">47:10</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
