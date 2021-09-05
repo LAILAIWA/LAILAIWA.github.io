@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="内容包括：临时表简介，查看数据库临时表信息，临时表空间大小，创建临时表的场景，临时表优化，扩展等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql临时表">
+<meta property="og:url" content="http://linyishui.top/2021082701.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="内容包括：临时表简介，查看数据库临时表信息，临时表空间大小，创建临时表的场景，临时表优化，扩展等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-27T03:19:24.000Z">
+<meta property="article:modified_time" content="2021-08-31T01:14:34.000Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://linyishui.top/2021082701.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021082701.html","path":"2021082701.html","title":"MySql临时表"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySql临时表 | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E8%A1%A8"><span class="nav-text">临时表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E7%AE%80%E4%BB%8B"><span class="nav-text">一. 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E4%B8%B4%E6%97%B6%E8%A1%A8%E4%BF%A1%E6%81%AF"><span class="nav-text">二. 查看当前临时表信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E4%B8%B4%E6%97%B6%E8%A1%A8%E7%A9%BA%E9%97%B4%E5%A4%A7%E5%B0%8F"><span class="nav-text">三. 临时表空间大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-MySQL%E5%88%9B%E5%BB%BA%E4%B8%B4%E6%97%B6%E8%A1%A8%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-text">四. MySQL创建临时表的场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%86%85%E5%AD%98%E4%B8%B4%E6%97%B6%E8%A1%A8"><span class="nav-text">4.1 内存临时表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%A3%81%E7%9B%98%E4%B8%B4%E6%97%B6%E8%A1%A8"><span class="nav-text">4.2 磁盘临时表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E4%B8%B4%E6%97%B6%E8%A1%A8%E4%BC%98%E5%8C%96"><span class="nav-text">五. 临时表优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E6%89%A9%E5%B1%95"><span class="nav-text">六. 扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-INFORMATION-SCHEMA-FILES-%E4%BB%8B%E7%BB%8D"><span class="nav-text">6.1 INFORMATION_SCHEMA.FILES 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-text"></span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">317</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">107</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021082701.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySql临时表
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-27 11:19:24" itemprop="dateCreated datePublished" datetime="2021-08-27T11:19:24+08:00">2021-08-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-08-31 09:14:34" itemprop="dateModified" datetime="2021-08-31T09:14:34+08:00">2021-08-31</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">内容包括：临时表简介，查看数据库临时表信息，临时表空间大小，创建临时表的场景，临时表优化，扩展等。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="临时表"><a href="#临时表" class="headerlink" title="临时表"></a>临时表</h1><h2 id="一-简介"><a href="#一-简介" class="headerlink" title="一. 简介"></a>一. 简介</h2><p>非压缩的，用户创建的临时表和磁盘内部临时表共享一个存储空间，通过 <code>innodb_temp_data_file_path</code> 变量定义临时表空间数据文件的相对路径、名称、大小和属性。默认为 <code>innodb_data_home_dir</code> 目录下创建一个名为ibtmp1的自动扩展的数据文件，该文件略大于12MB。</p>
+<p><strong>临时表空间会在正常关机或初始化中止时被移除，并在每次服务器启动时被重新创建。如果服务器意外停止，临时表空间不会被删除。在这种情况下，数据库管理员可以手动删除临时表空间，或者重新启动服务器，服务器会自动删除并重新创建临时表空间。</strong></p>
+<p><em>（5.6版本，非压缩的临时表是在临时文件目录中的每个文件的表空间中创建的，在MySQL 5.7中引入的共享临时表空间消除了与为每个临时表创建和删除逐个文件表空间有关的性能成本）</em></p>
+<p>在 MySQL 5.7 之前， SQL 运行中产生的临时表是 MYISAM，而且只能是 MYISAM。MySQL 从 5.7 开始提供了参数 <code>Internal_tmp_mem_storage_engine</code> 来定义内部的临时表引擎，可选值为 MYISAM 和 INNODB 。内部的临时表默认保存在临时表空间 ibtmp1 (可以用参数 <code>innodb_temp_data_file_path</code> 设置大小等)。需要注意控制 ibtmp1 的大小，防止把磁盘撑爆。</p>
+<p>但是MySQL 5.7 之前都没有解决如下问题：</p>
+<ul>
+<li>VARCHAR的变长存储。如果临时表的字段定义是 <code>VARCHAR(200)</code> ，映射到内存里处理的字段变为<code>CHAR(200)</code> ，假设 <code>VARCHAR(200)</code> 只存一个字符会造成浪费。</li>
+<li>大对象的默认磁盘存储，比如 TEXT，BLOB， JSON等，不管里面存放了什么，直接转化为磁盘存储。</li>
+</ul>
+<p>MySQL 8.0 开始，专门实现了一个临时表的引擎 TempTable , 解决了 VARCHAR 字段的边长存储以及大对象的内存存储。由变量 <code>interal_tmp_mem_storage_engine</code> 来控制，可选值为 <code>TempTable</code>（默认）和 <code>Memory</code> ；新引擎的大小由参数 <code>temp_table_max_ram</code> 来控制，默认为1G。超过了则存储在磁盘上（ibtmp1）。并且计数器由性能字典的表 <code>memory_summary_global_by_event_name</code> 来存储。</p>
+<h2 id="二-查看当前临时表信息"><a href="#二-查看当前临时表信息" class="headerlink" title="二. 查看当前临时表信息"></a>二. 查看当前临时表信息</h2><p><code>INFORMATION_SCHEMA.FILES</code> 提供关于InnoDB临时表空间的元数据，这些临时表目前在InnoDB实例中是活跃的。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> INFORMATION_SCHEMA.FILES <span class="keyword">WHERE</span> TABLESPACE_NAME<span class="operator">=</span><span class="string">&#x27;innodb_temporary&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>那么这两种临时表的计数器通常用 <code>show global status like &#39;%tmp_%tables%&#39;</code>  来查看。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">global</span> status <span class="keyword">like</span> <span class="string">&#x27;%tmp_%tables%&#x27;</span>;</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;%tmp_%tables%&#x27;</span>;</span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Variable_name <span class="operator">|</span> <span class="keyword">Value</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------------+-------+</span></span><br><span class="line"><span class="operator">|</span> Created_tmp_disk_tables <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> Created_tmp_tables      <span class="operator">|</span> <span class="number">0</span>     <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">-------------------------+-------+</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>以上结果分别代表，只创建磁盘上的临时表计数以及临时表的总计数。这两个计数器由参数 <code>tmp_table_size</code> 和 <code>max_heap_table_size</code> 两个取最小值来控制。</p>
+<p><code>memory/ temptable/physical_disk</code> 代表放入磁盘上的临时表计数情况，<code>memory/temptable/physical_ram</code>  代表放入内存的临时表计数情况。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> performance_schema. memory_summary_global_by_event_name <span class="keyword">WHERE</span> event_name <span class="keyword">like</span> <span class="string">&#x27;%temptable%&#x27;</span>G</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">1.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span>                  EVENT_NAME: <span class="operator">*</span><span class="operator">*</span>memory<span class="operator">/</span>temptable<span class="operator">/</span>physical_disk<span class="operator">*</span><span class="operator">*</span>                 </span><br><span class="line">COUNT_ALLOC: <span class="number">0</span>                  </span><br><span class="line">COUNT_FREE: <span class="number">0</span>   </span><br><span class="line">SUM_NUMBER_OF_BYTES_ALLOC: <span class="number">0</span>    </span><br><span class="line">SUM_NUMBER_OF_BYTES_FREE: <span class="number">0</span>              </span><br><span class="line">LOW_COUNT_USED: <span class="number">0</span>          </span><br><span class="line">CURRENT_COUNT_USED: <span class="number">0</span>             </span><br><span class="line">HIGH_COUNT_USED: <span class="number">0</span>    </span><br><span class="line">LOW_NUMBER_OF_BYTES_USED: <span class="number">0</span></span><br><span class="line">CURRENT_NUMBER_OF_BYTES_USED: <span class="number">0</span>   </span><br><span class="line">HIGH_NUMBER_OF_BYTES_USED: <span class="number">0</span></span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">2.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span>                  EVENT_NAME: <span class="operator">*</span><span class="operator">*</span>memory<span class="operator">/</span>temptable<span class="operator">/</span>physical_ram<span class="operator">*</span><span class="operator">*</span>                 </span><br><span class="line">COUNT_ALLOC: <span class="number">1</span>                  </span><br><span class="line">COUNT_FREE: <span class="number">0</span>   </span><br><span class="line">SUM_NUMBER_OF_BYTES_ALLOC: <span class="number">1048576</span>    </span><br><span class="line">SUM_NUMBER_OF_BYTES_FREE: <span class="number">0</span>              </span><br><span class="line">LOW_COUNT_USED: <span class="number">0</span>          </span><br><span class="line">CURRENT_COUNT_USED: <span class="number">1</span>             </span><br><span class="line">HIGH_COUNT_USED: <span class="number">1</span>    </span><br><span class="line">LOW_NUMBER_OF_BYTES_USED: <span class="number">0</span></span><br><span class="line">CURRENT_NUMBER_OF_BYTES_USED: <span class="number">1048576</span>   </span><br><span class="line">HIGH_NUMBER_OF_BYTES_USED: <span class="number">1048576</span></span><br><span class="line"><span class="number">2</span> <span class="keyword">rows</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.03</span> sec)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="三-临时表空间大小"><a href="#三-临时表空间大小" class="headerlink" title="三. 临时表空间大小"></a>三. 临时表空间大小</h2><p>默认情况下，临时表空间数据文件是自动扩展的，并根据需要增加大小以适应磁盘上的临时表。例如，如果一个操作创建了一个大小为20MB的临时表，临时表空间数据文件在创建时默认为12MB大小，它的大小会扩展以适应它。当临时表被丢弃时，释放的空间可以重新用于新的临时表，但是<strong>数据文件仍然是扩展的大小</strong>。</p>
+<p>在使用大型临时表或广泛使用临时表的环境中，<strong>自动扩展的临时表空间数据文件可能变得很大</strong>。一个大的数据文件也可能来自使用临时表的长期运行的查询。</p>
+<p>通过检查 <code>innodb_temp_data_file_path</code> 设置确认一个临时表空间数据文件是否是自动扩展的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SELECT</span> @<span class="variable">@innodb</span>_temp_data_file_path;</span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------+</span></span><br><span class="line"><span class="operator">|</span> @<span class="variable">@innodb</span>_temp_data_file_path <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------+</span></span><br><span class="line"><span class="operator">|</span> ibtmp1:<span class="number">12</span>M:autoextend        <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">------------------------------+</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>检查临时表空间数据文件的大小：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> FILE_NAME, TABLESPACE_NAME, ENGINE, INITIAL_SIZE, TOTAL_EXTENTS<span class="operator">*</span>EXTENT_SIZE</span><br><span class="line">       <span class="keyword">AS</span> TotalSizeBytes, DATA_FREE, MAXIMUM_SIZE <span class="keyword">FROM</span> INFORMATION_SCHEMA.FILES</span><br><span class="line">       <span class="keyword">WHERE</span> TABLESPACE_NAME <span class="operator">=</span> <span class="string">&#x27;innodb_temporary&#x27;</span>\G</span><br><span class="line"><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span> <span class="number">1.</span> <span class="type">row</span> <span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span><span class="operator">*</span></span><br><span class="line">      FILE_NAME: .<span class="operator">/</span>ibtmp1</span><br><span class="line">TABLESPACE_NAME: innodb_temporary</span><br><span class="line">         ENGINE: InnoDB</span><br><span class="line">   INITIAL_SIZE: <span class="number">12582912</span></span><br><span class="line"> TotalSizeBytes: <span class="number">12582912</span></span><br><span class="line">      DATA_FREE: <span class="number">6291456</span></span><br><span class="line">   MAXIMUM_SIZE: <span class="keyword">NULL</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>TotalSizeBytes</code> 表示临时表空间数据文件的当前大小。</p>
+<p>临时表相关配置：</p>
+<ul>
+<li><code>tmp_table_size</code> ：指定系统创建的内存临时表最大大小； </li>
+<li><code>max_heap_table_size</code> : 指定用户创建的内存表的最大大小；</li>
+</ul>
+<p>注意：最终的系统创建的内存临时表大小是取上述两个配置值的最小值。</p>
+<h2 id="四-MySQL创建临时表的场景"><a href="#四-MySQL创建临时表的场景" class="headerlink" title="四. MySQL创建临时表的场景"></a>四. MySQL创建临时表的场景</h2><p>MySQL临时表分为<strong>内存临时表</strong>和<strong>磁盘临时表</strong>，其中内存临时表使用MySQL的MEMORY存储引擎，磁盘临时表使用MySQL的MyISAM存储引擎；</p>
+<p>一般情况下，MySQL会先创建内存临时表，但内存临时表超过配置指定的值后，MySQL会将内存临时表导出到磁盘临时表；Linux平台上缺省是/tmp目录，/tmp目录小的系统需要注意。</p>
+<h3 id="4-1-内存临时表"><a href="#4-1-内存临时表" class="headerlink" title="4.1 内存临时表"></a>4.1 内存临时表</h3><p><strong>MySQL在以下几种情况会创建临时表：</strong></p>
+<ol>
+<li>UNION查询；</li>
+<li>用到TEMPTABLE算法或者是UNION查询中的视图；</li>
+<li>ORDER BY和GROUP BY的子句不一样时， 例如：<code>ORDERY BY price GROUP BY name</code> ；</li>
+<li>表连接中，ORDER BY的列不是驱动表中的。在JOIN查询中，ORDER BY或者GROUP BY使用了不是第一个表的列，例如：<code>SELECT * from TableA, TableB ORDER BY TableA.price GROUP by TableB.name</code> ；</li>
+<li>ORDER BY中使用了DISTINCT关键字 <code>ORDERY BY DISTINCT(price)</code> ；</li>
+<li>SQL中用到SQL_SMALL_RESULT选项时，SELECT语句中指定了SQL_SMALL_RESULT关键字，意思就是告诉MySQL结果会很小，请直接使用内存临时表，不需要使用索引排序 SQL_SMALL_RESULT必须和GROUP BY、DISTINCT或DISTINCTROW一起使用 一般情况下，我们没有必要使用这个选项，让MySQL服务器选择即可。</li>
+<li>FROM中的子查询；</li>
+<li>子查询或者semi-join时创建的表；</li>
+</ol>
+<p>EXPLAIN 查看执行计划结果的 Extra 列中，如果包含 <a target="_blank" rel="noopener" href="http://imysql.com/2015/06/14/mysql-faq-what-important-information-in-explain.shtml">Using Temporary</a> 就表示会用到临时表。</p>
+<p>当然了，如果临时表中需要存储的数据量超过了上限（ <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_tmp_table_size">tmp-table-size</a> 或 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_max_heap_table_size">max-heap-table-size</a> 中取其大者），这时候就需要生成基于磁盘的临时表了。</p>
+<h3 id="4-2-磁盘临时表"><a href="#4-2-磁盘临时表" class="headerlink" title="4.2 磁盘临时表"></a>4.2 磁盘临时表</h3><p><strong>在以下几种情况下，会创建磁盘临时表：</strong></p>
+<ol>
+<li>数据表中包含BLOB/TEXT列；</li>
+<li>在 <code>GROUP BY</code> 或者 <code>DISTINCT</code> 的列中有超过512字符的字符类型列（或者超过 512字节的二进制类型列，在5.6.15之前只管是否超过512字节）；</li>
+<li>在 <code>SELECT</code> 、<code>UNION</code> 、<code>UNION ALL</code> 查询中，SELECT子句存在最大长度超过512的列（对于字符串类型是512个字符，对于二进制类型则是512字节）；</li>
+<li>执行 <code>SHOW COLUMNS</code> / <code>FIELDS</code> 、<code>DESCRIBE</code> 等SQL命令，因为它们的执行结果用到了BLOB列类型。</li>
+</ol>
+<p>从5.7.5开始，新增一个系统选项 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_internal_tmp_disk_storage_engine">internal_tmp_disk_storage_engine</a> 可定义磁盘临时表的引擎类型为 InnoDB，而在这以前，只能使用MyISAM。而在5.6.3以后新增的系统选项 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_default_tmp_storage_engine">default_tmp_storage_engine</a> 是控制 <code>CREATE TEMPORARY TABLE</code> 创建的临时表的引擎类型，在以前默认是MEMORY，不要把这二者混淆了。</p>
+<p>见下例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> default_tmp_storage_engine <span class="operator">=</span> &quot;InnoDB&quot;;</span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">----   1 mysql mysql  8558 Jul  7 15:22 #sql4b0e_10_0.frm -- InnoDB引擎的临时表</span></span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">----   1 mysql mysql 98304 Jul  7 15:22 #sql4b0e_10_0.ibd</span></span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">----   1 mysql mysql  8558 Jul  7 15:25 #sql4b0e_10_2.frm</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> default_tmp_storage_engine <span class="operator">=</span> &quot;MyISAM&quot;;</span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">----   1 mysql mysql     0 Jul  7 15:25 #sql4b0e_10_2.MYD -- MyISAM引擎的临时表</span></span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">----   1 mysql mysql  1024 Jul  7 15:25 #sql4b0e_10_2.MYI</span></span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> default_tmp_storage_engine <span class="operator">=</span> &quot;MEMORY&quot;;</span><br><span class="line"><span class="operator">-</span>rw<span class="operator">-</span>rw<span class="comment">----   1 mysql mysql  8558 Jul  7 15:26 #sql4b0e_10_3.frm -- MEMORY引擎的临时表</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>用户自定义的临时表，比如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> temporary <span class="keyword">table</span> (id <span class="type">int</span>, str1 <span class="type">varchar</span>(<span class="number">100</span>));</span><br></pre></td></tr></table></figure>
+
+
+
+<p>SQL执行过程中产生的内部临时表，比如：<code>UNION</code>  , 聚合类 <code>ORDER BY</code> ，派生表，大对象字段的查询，子查询或者半连接的固化等场景。</p>
+<h2 id="五-临时表优化"><a href="#五-临时表优化" class="headerlink" title="五. 临时表优化"></a>五. 临时表优化</h2><p><strong>表的设计原则：</strong>使用临时表一般都意味着性能比较低，特别是使用磁盘临时表，性能更慢，因此我们在实际应用中应该尽量避免临时表的使用。 常见的避免临时表的方法有：</p>
+<ol>
+<li>创建索引：在ORDER BY或者GROUP BY的列上创建索引；</li>
+<li>分拆很长的列：一般情况下，TEXT、BLOB，大于512字节的字符串，基本上都是为了显示信息，而不会用于查询条件， 因此表设计的时候，应该将这些列独立到另外一张表。</li>
+</ol>
+<p><strong>SQL优化：</strong>如果表的设计已经确定，修改比较困难，那么也可以通过优化SQL语句来减少临时表的大小，以提升SQL执行效率。</p>
+<p><strong>常见的优化SQL语句方法如下：</strong></p>
+<ol>
+<li>拆分SQL语句：临时表主要是用于排序和分组，很多业务都是要求排序后再取出详细的分页数据，这种情况下可以将排序和取出详细数据拆分成不同的SQL，以降低排序或分组时临时表的大小，提升排序和分组的效率，我们的案例就是采用这种方法。</li>
+<li>优化业务，去掉排序分组等操作：有时候业务其实并不需要排序或分组，仅仅是为了好看或者阅读方便而进行了排序，例如数据导出、数据查询等操作，这种情况下去掉排序和分组对业务也没有多大影响。</li>
+</ol>
+<p>如何判断使用了临时表？使用 <code>explain</code> 查看执行计划，Extra列看到 <code>Using temporary</code> 就意味着使用了临时表。</p>
+<p>案例：</p>
+<ol>
+<li><p>【问题描述】：定位到一个慢查询，查询时服务器IO飙升，IO占用率达到100%， 执行时间长达7s左右。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> g.<span class="operator">*</span>, cp.name <span class="keyword">AS</span> cp_name, c.name <span class="keyword">AS</span> category_name, t.name <span class="keyword">AS</span> type_name </span><br><span class="line"><span class="keyword">FROM</span> gm_game g </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_cp cp </span><br><span class="line"><span class="keyword">ON</span> cp.id <span class="operator">=</span> g.cp_id <span class="keyword">AND</span> cp.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_category c </span><br><span class="line"><span class="keyword">ON</span> c.id <span class="operator">=</span> g.category_id <span class="keyword">AND</span> c.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_type t </span><br><span class="line"><span class="keyword">ON</span> t.id <span class="operator">=</span> g.type_id <span class="keyword">AND</span> t.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">WHERE</span> g.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> g.modify_time <span class="keyword">DESC</span> LIMIT <span class="number">20</span>;</span><br></pre></td></tr></table></figure></li>
+<li><p>【问题分析】：使用explain查看执行计划，结果：<code>Using temporary</code> 和 <code>Using filesort</code> 。这条sql语句的问题其实还是比较明显的：查询了大量数据(包括数据条数、以及g.* )，然后使用临时表order by，但最终又只返回了20条数据。观察到的IO高，是因为sql语句生成了一个巨大的临时表，内存放不下，于是全部拷贝到磁盘，导致IO飙升。</p>
+</li>
+<li><p>【优化方案】：优化的总体思路是拆分sql，将排序操作和查询所有信息的操作分开。</p>
+<ol>
+<li><p>第一条语句：查询符合条件的数据，只需要查询g.id即可：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> g.id </span><br><span class="line"><span class="keyword">FROM</span> gm_game g </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_cp cp <span class="keyword">ON</span> cp.id <span class="operator">=</span> g.cp_id <span class="keyword">AND</span> cp.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_category c <span class="keyword">ON</span> c.id <span class="operator">=</span> g.category_id <span class="keyword">AND</span> c.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_type t <span class="keyword">ON</span> t.id <span class="operator">=</span> g.type_id <span class="keyword">AND</span> t.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">WHERE</span> g.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> g.modify_time <span class="keyword">DESC</span> LIMIT <span class="number">20</span> ;</span><br></pre></td></tr></table></figure></li>
+<li><p>第二条语句：查询符合条件的详细数据，将第一条sql的结果使用in操作拼接到第二条的sql：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> g.<span class="operator">*</span>, cp.name <span class="keyword">AS</span> cp_name,c.name <span class="keyword">AS</span> category_name,t.name <span class="keyword">AS</span> type_name </span><br><span class="line"><span class="keyword">FROM</span> gm_game g </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_cp cp <span class="keyword">ON</span> cp.id <span class="operator">=</span> g.cp_id <span class="keyword">AND</span> cp.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_category c <span class="keyword">ON</span> c.id <span class="operator">=</span> g.category_id <span class="keyword">AND</span> c.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> gm_type t <span class="keyword">ON</span> t.id <span class="operator">=</span> g.type_id <span class="keyword">AND</span> t.deleted <span class="operator">=</span> <span class="number">0</span> </span><br><span class="line"><span class="keyword">WHERE</span> g.deleted <span class="operator">=</span> <span class="number">0</span> <span class="keyword">and</span> g.id <span class="keyword">in</span>(…………………) </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> g.modify_time <span class="keyword">DESC</span> ;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>【实测效果】：在SATA机器上测试，优化前大约需要50s，优化后第一条0.3s，第二条0.1s，优化后执行速度是原来的100倍以上，IO从100%降到不到1%；在SSD机器上测试，优化前大约需要7s，优化后第一条0.3s，第二条0.1s，优化后执行速度是原来的10倍以上，IO从100%降到不到1%。可以看出，优化前磁盘io是性能瓶颈，SSD的速度要比SATA明显要快，优化后磁盘不再是瓶颈，SSD和SATA性能没有差别。</p>
+</li>
+<li><p>【理论分析】：MySQL在执行SQL查询时可能会用到临时表，一般情况下，用到临时表就意味着性能较低。</p>
+</li>
+</ol>
+<h2 id="六-扩展"><a href="#六-扩展" class="headerlink" title="六. 扩展"></a>六. 扩展</h2><h3 id="6-1-INFORMATION-SCHEMA-FILES-介绍"><a href="#6-1-INFORMATION-SCHEMA-FILES-介绍" class="headerlink" title="6.1 INFORMATION_SCHEMA.FILES 介绍"></a>6.1 INFORMATION_SCHEMA.FILES 介绍</h3><p>表结构:</p>
+<ul>
+<li><p><code>FILE_ID</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：表空间ID，也被称为 <code>space_id</code> 或 <code>fil_space_t::id</code> 。</li>
+<li>For <code>NDB</code> ：一个文件标识符。<code>FILE_ID</code> 列的值是自动生成的。</li>
+</ul>
+</li>
+<li><p><code>FILE_NAME</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：数据文件的名称。<ul>
+<li>表空间包含单个InnoDB表的数据和索引（File-per-table）和一般表空间的文件名扩展名为 <code>.ibd</code> 。</li>
+<li>Undo 表空间的前缀是 <code>undo</code> 。 </li>
+<li>系统表空间的前缀是 <code>ibdata</code> 。 </li>
+<li>临时表空间的前缀是 <code>ibtmp</code> 。 </li>
+<li>文件名包括文件路径，可以是相对于MySQL数据目录 （the value of the <code>datadir</code> system variable）。</li>
+</ul>
+</li>
+<li>For <code>NDB</code> ：由 <code>CREATE LOGFILE GROUP</code> 或 <code>ALTER LOGFILE GROUP</code> 创建的 <code>UNDO</code> 日志文件名； 或由 <code>CREATE TABLESPACE</code> 或 <code>ALTER TABLESPACE</code> 创建的数据文件名。</li>
+</ul>
+</li>
+<li><p><code>FILE_TYPE</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：表空间文件的类型。<code>InnoDB</code> 文件有三种可能的文件类型：</p>
+<ul>
+<li><p><code>TABLESPACE</code> 是任何系统的、一般的、或 <code>file-per-table</code> 文件的表空间文件的文件类型，它持有表、索引、或其他形式的用户数据。</p>
+</li>
+<li><p><code>TEMPORARY</code> 是临时表空间的文件类型。</p>
+</li>
+<li><p><code>UNDO LOG</code> 是UNDO表空间的文件类型，用于保存撤销记录。</p>
+</li>
+</ul>
+</li>
+<li><p>For <code>NDB</code> ： <code>UNDO LOG</code> 、<code>DATAFILE</code> 或 <code>TABLESPACE</code> 中的一个。</p>
+</li>
+</ul>
+</li>
+<li><p><code>TABLESPACE_NAME</code> ：与该文件相关的表空间的名称。</p>
+</li>
+<li><p><code>TABLE_CATALOG</code> ：这个值总是空的。</p>
+</li>
+<li><p><code>TABLE_SCHEMA</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>TABLE_NAME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>LOGFILE_GROUP_NAME</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：这个值总是 <code>NULL</code> 。</li>
+<li>For <code>NDB</code> ：日志文件或数据文件所属的日志文件组的名称。</li>
+</ul>
+</li>
+<li><p><code>LOGFILE_GROUP_NUMBER</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p>For <code>NDB</code> ：对于磁盘数据UNDO日志文件，自动生成的日志文件组的ID号码，该日志文件属于该组。这与 <code>ndbinfo.dict_obj_info</code>表中的 <code>id</code> 列以及 <code>ndbinfo.logspaces</code> 和 <code>ndbinfo.logspaces</code> 表中的 <code>log_id</code> 列所显示的该UNDO日志文件的值相同。</p>
+</li>
+</ul>
+</li>
+<li><p><code>ENGINE</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：这个值总是 <code>InnoDB</code> 。</li>
+<li>For <code>NDB</code> ：这个值总是 <code>ndbcluster</code> 。</li>
+</ul>
+</li>
+<li><p><code>FULLTEXT_KEYS</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>DELETED_ROWS</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>UPDATE_COUNT</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>FREE_EXTENTS</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：当前数据文件中完全空闲的扩展数。</li>
+<li>For <code>NDB</code> ：文件尚未使用的extents的数量。</li>
+</ul>
+</li>
+<li><p><code>TOTAL_EXTENTS</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：在当前数据文件中使用的完整扩展的数量。文件末尾的任何部分范围都不计算在内。</li>
+<li>For <code>NDB</code> ：分配给文件的总扩展数。</li>
+</ul>
+</li>
+<li><p><code>EXTENT_SIZE</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：</p>
+<ul>
+<li>对于页面大小为4KB、8KB或16KB的文件，其Extent大小为1048576（1MB）。</li>
+<li>对于页面大小为32KB的文件，Extent大小为2097152字节（2MB）。</li>
+<li>对于页面大小为64KB的文件，Extent大小为4194304字节（4MB）。</li>
+</ul>
+<p><code>FILES</code> 不包括 <code>InnoDB</code> 的页面大小。页面大小是由 <code>innodb_page_size</code> 系统变量统计。也可以从 <code>INNODB_SYS_TABLESPACES</code> 表中检索Extent的大小信息，其中 <code>FILES.FILE_ID = INNODB_SYS_TABLESPACES.SPACE</code> 。</p>
+</li>
+<li><p>For <code>NDB</code> ：文件的范围大小，以字节为单位。</p>
+</li>
+</ul>
+</li>
+<li><p><code>INITIAL_SIZE</code> ：</p>
+<ul>
+<li>For <code>InnoDB</code> ：文件的初始大小，以字节为单位。</li>
+<li>For <code>NDB</code> ：文件的大小，单位是字节。用于创建文件的 <code>CREATE LOGFILE GROUP</code> 、<code>ALTER LOGFILE GROUP</code> 、<code>CREATE TABLESPACE</code> 或 <code>ALTER TABLESPACE</code> 语句的 <code>INITIAL_SIZE</code> 子句中使用的值相同。</li>
+</ul>
+</li>
+<li><p><code>MAXIMUM_SIZE</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：文件中允许的最大字节数。除了预定义的系统表空间数据文件，所有数据文件的值都是<code>NULL</code> 。</p>
+<ul>
+<li>最大的系统表空间文件大小是由 <code>innodb_data_file_path</code> 定义的。</li>
+<li>最大的临时表空间文件大小是由 <code>innodb_temp_data_file_path</code> 定义的。</li>
+<li>一个预定义的系统表空间数据文件的 <code>NULL</code> 值表示没有明确定义文件的大小限制。</li>
+</ul>
+</li>
+<li><p>For <code>NDB</code> ：这个值总是与 <code>INITIAL_SIZE</code> 值相同。</p>
+</li>
+</ul>
+</li>
+<li><p><code>AUTOEXTEND_SIZE</code> ：表空间的自动扩展大小。对于<code>NDB</code>，<code>AUTOEXTEND_SIZE</code> 总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>CREATION_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>LAST_UPDATE_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>LAST_ACCESS_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>RECOVER_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>TRANSACTION_COUNTER</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>VERSION</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p>For <code>NDB</code> ：文件的版本号。</p>
+</li>
+</ul>
+</li>
+<li><p><code>ROW_FORMAT</code></p>
+<ul>
+<li><p>For <code>InnoDB</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p>For <code>NDB</code> ：<code>FIXED</code> 或 <code>DYNAMIC</code> 其中一个。</p>
+</li>
+</ul>
+</li>
+<li><p><code>TABLE_ROWS</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>AVG_ROW_LENGTH</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>DATA_LENGTH</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>MAX_DATA_LENGTH</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>INDEX_LENGTH</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>DATA_FREE</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：整个表空间的空闲空间总量（以字节为单位）。预定义的系统表空间，包括系统表空间和临时表空间，可以有一个或多个数据文件。</p>
+</li>
+<li><p>For <code>NDB</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+</ul>
+</li>
+<li><p><code>CREATE_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>UPDATE_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>CHECK_TIME</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>CHECKSUM</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p><code>STATUS</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：这个值默认为 <code>NORMAL</code> 。<code>InnoDB</code> 的 <code>file-per-table</code> 表空间可能为 <code>IMPORTING</code> ，这表明表空间尚未可用。</p>
+</li>
+<li><p>For <code>NDB</code> ：这个值总是 <code>NORMAL</code> 。</p>
+</li>
+</ul>
+</li>
+<li><p><code>EXTRA</code> ：</p>
+<ul>
+<li><p>For <code>InnoDB</code> ：这个值总是 <code>NULL</code> 。</p>
+</li>
+<li><p>For <code>NDB</code>：这一列显示了数据文件或 undo 日志文件属于哪个数据节点（每个数据节点都有每个文件的副本）； 对于 undo 日志文件，它还显示了撤销日志缓冲区的大小。假设你在一个有四个数据节点的NDB集群上使用这个语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> LOGFILE <span class="keyword">GROUP</span> mygroup</span><br><span class="line">    <span class="keyword">ADD</span> UNDOFILE <span class="string">&#x27;new_undo.dat&#x27;</span></span><br><span class="line">    INITIAL_SIZE <span class="number">2</span>G</span><br><span class="line">    ENGINE NDB;</span><br></pre></td></tr></table></figure>
+
+<p>在成功运行 <code>CREATE LOGFILE GROUP</code> 语句后，你应该看到一个类似于，这里显示为针对 <code>FILES</code> 表的查询结果：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">SELECT</span> LOGFILE_GROUP_NAME, FILE_TYPE, EXTRA</span><br><span class="line">         <span class="keyword">FROM</span> INFORMATION_SCHEMA.FILES</span><br><span class="line">         <span class="keyword">WHERE</span> FILE_NAME <span class="operator">=</span> <span class="string">&#x27;new_undo.dat&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+-----------+-----------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> LOGFILE_GROUP_NAME <span class="operator">|</span> FILE_TYPE <span class="operator">|</span> EXTRA                                   <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+-----------+-----------------------------------------+</span></span><br><span class="line"><span class="operator">|</span> mygroup            <span class="operator">|</span> UNDO LOG  <span class="operator">|</span> CLUSTER_NODE<span class="operator">=</span><span class="number">5</span>;UNDO_BUFFER_SIZE<span class="operator">=</span><span class="number">8388608</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> mygroup            <span class="operator">|</span> UNDO LOG  <span class="operator">|</span> CLUSTER_NODE<span class="operator">=</span><span class="number">6</span>;UNDO_BUFFER_SIZE<span class="operator">=</span><span class="number">8388608</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> mygroup            <span class="operator">|</span> UNDO LOG  <span class="operator">|</span> CLUSTER_NODE<span class="operator">=</span><span class="number">7</span>;UNDO_BUFFER_SIZE<span class="operator">=</span><span class="number">8388608</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span> mygroup            <span class="operator">|</span> UNDO LOG  <span class="operator">|</span> CLUSTER_NODE<span class="operator">=</span><span class="number">8</span>;UNDO_BUFFER_SIZE<span class="operator">=</span><span class="number">8388608</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------+-----------+-----------------------------------------+</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p><code>FILES</code> 是一个非标准的 <code>INFORMATION_SCHEMA</code> 表。</p>
+<h4 id=""><a href="#" class="headerlink" title=""></a></h4><p>适用于 <code>InnoDB</code> 数据文件的注意事项：</p>
+<ul>
+<li><p><code>FILES</code> 报告的数据来自于 <code>InnoDB</code> 的内存缓存中的开放文件。相比之下， <code>INNODB_SYS_DATAFILES</code> 报告的数据来自 <code>InnoDB</code> <code>SYS_DATAFILES</code> 内部数据字典表。</p>
+</li>
+<li><p><code>FILES</code>报告的数据包括临时表空间数据。这些数据在 <code>InnoDB</code> 的 <code>SYS_DATAFILES</code> 内部数据字典表中是不可用的，因此  <code>INNODB_SYS_DATAFILES</code> 不会报告。</p>
+</li>
+<li><p>Undo 的表空间数据由 <code>FILES</code> 报告。</p>
+</li>
+<li><p>下面的查询返回所有与 <code>InnoDB</code> 表空间有关的数据：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">  FILE_ID, FILE_NAME, FILE_TYPE, TABLESPACE_NAME, FREE_EXTENTS,</span><br><span class="line">  TOTAL_EXTENTS, EXTENT_SIZE, INITIAL_SIZE, MAXIMUM_SIZE,</span><br><span class="line">  AUTOEXTEND_SIZE, DATA_FREE, STATUS</span><br><span class="line"><span class="keyword">FROM</span> INFORMATION_SCHEMA.FILES <span class="keyword">WHERE</span> ENGINE<span class="operator">=</span><span class="string">&#x27;InnoDB&#x27;</span>\G</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p>参考：</p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/innodb-temporary-tablespace.html">MySQL :: MySQL 5.7 Reference Manual :: 14.6.3.5 The Temporary Tablespace</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/information-schema-files-table.html">MySQL :: MySQL 5.7 Reference Manual :: 24.3.9 The INFORMATION_SCHEMA FILES Table</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://programmer.help/blogs/from-mysql-s-ibtmp1-file-is-too-big.html">From MYSQL’s ibtmp1 file is too big (programmer.help)</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://blog.csdn.net/yunhua_lee/article/details/12064477">优化临时表使用</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021020101.html" rel="bookmark">《高性能MySQL》（六）高级特性</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020122901.html" rel="bookmark">《高性能MySQL》（五）查询性能优化</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020122501.html" rel="bookmark">《高性能MySQL》（四）创建高性能索引</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020122001.html" rel="bookmark">《高性能MySQL》（三）Schema与数据类型优化</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020121701.html" rel="bookmark">《高性能MySQL》（二）基准测试和服务器性能剖析</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021082701.html" title="MySql临时表">http://linyishui.top/2021082701.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"><i class="fa fa-tag"></i> mysql</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021072201.html" rel="prev" title="Bean验证——Hibernate Validator">
+                  <i class="fa fa-chevron-left"></i> Bean验证——Hibernate Validator
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">47:25</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>

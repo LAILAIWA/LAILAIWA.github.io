@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/ConcurrentHashMap-addCount.svg">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200701/ConcurrentHashMap-transfer.svg">
 <meta property="article:published_time" content="2019-10-21T08:06:06.000Z">
-<meta property="article:modified_time" content="2020-08-29T14:44:28.000Z">
+<meta property="article:modified_time" content="2021-08-30T11:50:58.000Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="Q&amp;A">
 <meta property="article:tag" content="updating">
@@ -183,7 +183,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">316</span>
+          <span class="site-state-item-count">317</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -302,7 +302,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-08-29 22:44:28" itemprop="dateModified" datetime="2020-08-29T22:44:28+08:00">2020-08-29</time>
+        <time title="修改时间：2021-08-30 19:50:58" itemprop="dateModified" datetime="2021-08-30T19:50:58+08:00">2021-08-30</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -448,7 +448,7 @@
 <h4 id="问：HashMap-1-8版本前后的区别？JDK8-做了什么优化？最小树化容量？比如为什么是红黑树，别的树不可以吗；为什么-8-的时候树化，4-不可以吗？"><a href="#问：HashMap-1-8版本前后的区别？JDK8-做了什么优化？最小树化容量？比如为什么是红黑树，别的树不可以吗；为什么-8-的时候树化，4-不可以吗？" class="headerlink" title="问：HashMap 1.8版本前后的区别？JDK8 做了什么优化？最小树化容量？比如为什么是红黑树，别的树不可以吗；为什么 8 的时候树化，4 不可以吗？"></a><strong>问：HashMap 1.8版本前后的区别？JDK8 做了什么优化？最小树化容量？比如为什么是红黑树，别的树不可以吗；为什么 8 的时候树化，4 不可以吗？</strong></h4><p>HashMap优化：</p>
 <ul>
 <li>优化了散列函数，通过移位异或，融合了高位特征；</li>
-<li>引入了红黑树来处理链表太长的极端情况；</li>
+<li>底层由数组+链表改为数组+链表+红黑树，引入了红黑树来处理链表太长的极端情况，提高插入和查询整体效率；</li>
 <li>头插法变为尾插法，链表顺序不会改变，从而优化了多线程的死循环问题。</li>
 </ul>
 <p>最小树化容量：MIN_TREEIFY_CAPACITY = 64，区别于树化阈值8，其约束哈希表容量超过此值时才能将链表转换为红黑树，通过此参数可以决定是扩容还是树形化。</p>
@@ -461,7 +461,7 @@
 <h4 id="问：jdk1-8中，对HashMap和ConcurrentHashMap做了哪些优化？"><a href="#问：jdk1-8中，对HashMap和ConcurrentHashMap做了哪些优化？" class="headerlink" title="问：jdk1.8中，对HashMap和ConcurrentHashMap做了哪些优化？"></a><strong>问：jdk1.8中，对HashMap和ConcurrentHashMap做了哪些优化？</strong></h4><p>HashMap优化：</p>
 <ul>
 <li>优化了散列函数，通过移位异或，融合了高位特征；</li>
-<li>引入了红黑树来处理链表太长的极端情况；</li>
+<li>底层由数组+链表改为数组+链表+红黑树，引入了红黑树来处理链表太长的极端情况，提高插入和查询整体效率；</li>
 <li>头插法变为尾插法，链表顺序不会改变，从而优化了多线程的死循环问题。</li>
 </ul>
 <p>ConcurrentHashMap优化：</p>
@@ -587,17 +587,32 @@
 <h3 id="4-5-TreeMap"><a href="#4-5-TreeMap" class="headerlink" title="4.5 TreeMap"></a><strong>4.5 TreeMap</strong></h3><h4 id="问：讲讲TreeMap？"><a href="#问：讲讲TreeMap？" class="headerlink" title="问：讲讲TreeMap？"></a><strong>问：讲讲TreeMap？</strong></h4><p>TreeMap是Map中的一种很特殊的map，我们知道Map基本是无序的，但是TreeMap是会自动进行排序的，也就是一个有序Map(使用了红黑树来实现），如果设置了Comparator比较器，则会根据比较器来对比两者的大小，如果没有则key需要是Comparable的子类（代码中没有事先check，会直接抛出转化异常，有点坑啊）。<br>树映射TreeMap，由红黑树实现的有序映射。<strong>TreeMap为增、删、改、查这些操作提供了 O(log n) 的时间开销</strong>，相比HashMap的 O(1) 存储效率要差些，但查询统计的 O(log n) 比HashMap O(n) 要高效。 </p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pony1223/p/7892401.html">Java提高十六：TreeMap深入分析</a></p>
 <h4 id="问：TreeMap查询写入的时间复杂度多少？"><a href="#问：TreeMap查询写入的时间复杂度多少？" class="headerlink" title="问：TreeMap查询写入的时间复杂度多少？"></a><strong>问：TreeMap查询写入的时间复杂度多少？</strong></h4><p><strong>TreeMap为增、删、改、查这些操作提供了log(N)的时间开销</strong>。</p>
-<hr>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/138951555">后端面试的所有知识点</a></p>
-</blockquote>
-<p><em>参考内容均来自网络中网友分享，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
 
     </div>
 
     
     
     
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050501.html" rel="bookmark">面试整理——Redis</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050401.html" rel="bookmark">面试整理——Dubbo</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050301.html" rel="bookmark">面试整理——Mybatis</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050201.html" rel="bookmark">面试整理——MQ</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050101.html" rel="bookmark">面试整理——Spring Cloud</a></div>
+    </li>
+  </ul>
+
 
     <footer class="post-footer">
           
@@ -674,7 +689,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">47:10</span>
+    <span title="站点阅读时长">47:25</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动

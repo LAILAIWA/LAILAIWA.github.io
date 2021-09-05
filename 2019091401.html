@@ -31,10 +31,10 @@
 <meta property="og:description" content="简单整理SQL规范和优化相关内容，包括：SQL规范，SQL常见优化项，优化案例，Oracle的STA优化。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-09-14T06:40:30.000Z">
-<meta property="article:modified_time" content="2021-07-21T14:43:24.437Z">
+<meta property="article:modified_time" content="2021-09-01T08:35:46.000Z">
 <meta property="article:author" content="Lys">
-<meta property="article:tag" content="sql">
 <meta property="article:tag" content="updating">
+<meta property="article:tag" content="sql">
 <meta property="article:tag" content="mysql">
 <meta property="article:tag" content="oracle">
 <meta name="twitter:card" content="summary">
@@ -161,7 +161,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL%E8%A7%84%E8%8C%83%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-text">SQL规范和优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-SQL%E8%A7%84%E8%8C%83"><span class="nav-text">第一节 SQL规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-text">1.1 命名规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83"><span class="nav-text">1.2 格式规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-text">1.3 设计规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%AF%AD%E6%B3%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.4 语法规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89select-%E6%A3%80%E6%9F%A5"><span class="nav-text">（1）select 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89from-%E6%A3%80%E6%9F%A5"><span class="nav-text">（2）from 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89where-%E6%A3%80%E6%9F%A5"><span class="nav-text">（3）where 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89group-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（4）group by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89order-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（5）order by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89limit-%E6%A3%80%E6%9F%A5"><span class="nav-text">（6）limit 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%887%EF%BC%89Union-%E6%A3%80%E6%9F%A5"><span class="nav-text">（7）Union 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%888%EF%BC%89%E5%85%BC%E5%AE%B9%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="nav-text">（8）兼容性检查</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%B4%A2%E5%BC%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.5 索引规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E7%B4%A2%E5%BC%95%E5%B1%9E%E6%80%A7"><span class="nav-text">1.5.1 索引属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.1 前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-3-%E5%A4%8D%E5%90%88%E7%B4%A2%E5%BC%95%E9%A1%BA%E5%BA%8F"><span class="nav-text">1.5.3 复合索引顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-4-%E6%97%B6%E9%97%B4%E5%88%97%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.4 时间列索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-SQL%E4%BC%98%E5%8C%96"><span class="nav-text">第二节 SQL优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E9%A1%B9"><span class="nav-text">2.1 常见优化项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%BC%98%E5%8C%96%E6%A1%88%E4%BE%8B"><span class="nav-text">2.2 优化案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%85%A2%E6%9F%A5%E8%AF%A2SQL"><span class="nav-text">（1）慢查询SQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89SQL%E5%88%86%E6%9E%90"><span class="nav-text">（2）SQL分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89SQL%E6%94%B9%E5%86%99"><span class="nav-text">（3）SQL改写</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%961"><span class="nav-text">改写优化1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%962"><span class="nav-text">改写优化2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%963"><span class="nav-text">改写优化3</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Oracle-STA%E4%BC%98%E5%8C%96SQL"><span class="nav-text">2.3 Oracle STA优化SQL</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL%E8%A7%84%E8%8C%83%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-text">SQL规范和优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-SQL%E8%A7%84%E8%8C%83"><span class="nav-text">第一节 SQL规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-text">1.1 命名规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%A0%BC%E5%BC%8F%E8%A7%84%E8%8C%83"><span class="nav-text">1.2 格式规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83"><span class="nav-text">1.3 设计规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%AF%AD%E6%B3%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.4 语法规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89select-%E6%A3%80%E6%9F%A5"><span class="nav-text">（1）select 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89from-%E6%A3%80%E6%9F%A5"><span class="nav-text">（2）from 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89where-%E6%A3%80%E6%9F%A5"><span class="nav-text">（3）where 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89group-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（4）group by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89order-by-%E6%A3%80%E6%9F%A5"><span class="nav-text">（5）order by 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89limit-%E6%A3%80%E6%9F%A5"><span class="nav-text">（6）limit 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%887%EF%BC%89Union-%E6%A3%80%E6%9F%A5"><span class="nav-text">（7）Union 检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%888%EF%BC%89%E5%85%BC%E5%AE%B9%E6%80%A7%E6%A3%80%E6%9F%A5"><span class="nav-text">（8）兼容性检查</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%B4%A2%E5%BC%95%E8%A7%84%E8%8C%83"><span class="nav-text">1.5 索引规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E7%B4%A2%E5%BC%95%E5%B1%9E%E6%80%A7"><span class="nav-text">1.5.1 索引属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.1 前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-3-%E5%A4%8D%E5%90%88%E7%B4%A2%E5%BC%95%E9%A1%BA%E5%BA%8F"><span class="nav-text">1.5.3 复合索引顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-4-%E6%97%B6%E9%97%B4%E5%88%97%E7%B4%A2%E5%BC%95"><span class="nav-text">1.5.4 时间列索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-SQL%E4%BC%98%E5%8C%96"><span class="nav-text">第二节 SQL优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%B8%B8%E8%A7%81%E4%BC%98%E5%8C%96%E9%A1%B9"><span class="nav-text">2.1 常见优化项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%BC%98%E5%8C%96%E6%A1%88%E4%BE%8B"><span class="nav-text">2.2 优化案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%85%A2%E6%9F%A5%E8%AF%A2SQL"><span class="nav-text">（1）慢查询SQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89SQL%E5%88%86%E6%9E%90"><span class="nav-text">（2）SQL分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89SQL%E6%94%B9%E5%86%99"><span class="nav-text">（3）SQL改写</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%961"><span class="nav-text">改写优化1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%962"><span class="nav-text">改写优化2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%B9%E5%86%99%E4%BC%98%E5%8C%963"><span class="nav-text">改写优化3</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Oracle-STA%E4%BC%98%E5%8C%96SQL"><span class="nav-text">2.3 Oracle STA优化SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%B8%B4%E6%97%B6%E8%A1%A8%E4%BC%98%E5%8C%96"><span class="nav-text">2.4 临时表优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Explain"><span class="nav-text">2.5 Explain</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Extra%E5%8F%AF%E4%BC%98%E5%8C%96%E9%A1%B9"><span class="nav-text">Extra可优化项</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -178,7 +178,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">316</span>
+          <span class="site-state-item-count">317</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -297,7 +297,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-07-21 22:43:24" itemprop="dateModified" datetime="2021-07-21T22:43:24+08:00">2021-07-21</time>
+        <time title="修改时间：2021-09-01 16:35:46" itemprop="dateModified" datetime="2021-09-01T16:35:46+08:00">2021-09-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -738,18 +738,49 @@
 
 
 
+<h3 id="2-4-临时表优化"><a href="#2-4-临时表优化" class="headerlink" title="2.4 临时表优化"></a>2.4 临时表优化</h3><p>参考：<a href="../2021082701.html" title="Title">MySql临时表</a></p>
+<h3 id="2-5-Explain"><a href="#2-5-Explain" class="headerlink" title="2.5 Explain"></a>2.5 Explain</h3><h4 id="Extra可优化项"><a href="#Extra可优化项" class="headerlink" title="Extra可优化项"></a>Extra可优化项</h4><ul>
+<li>using index condition：表的读取是通过访问索引图元并首先测试它们来确定是否要读取全表的行。通过这种方式，索引信息被用来推迟(“push down”) 读取全表的行，除非有必要。<ul>
+<li>详细参考： <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/index-condition-pushdown-optimization.html">Section 8.2.1.6, “Index Condition Pushdown Optimization” </a>。</li>
+<li>存储引擎根据索引尽可能的过滤数据，然后在返回给服务器层根据where其他条件进行过滤。</li>
+<li>假设有联合索引 <code>XXX_index(a, b, c) </code> ，查询的时候 <code>where a=&#39;xxx&#39; and c=1</code> ，没有按顺序与索引字段一直，就导致后面条件c无法命中索引。</li>
+<li>type值为range、 ref、 eq_ref或者ref_or_null的时候 , 会使用到索引条件下推技术。</li>
+</ul>
+</li>
+</ul>
 <hr>
 <p>参考：</p>
-<p>🔗 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nEmN4S9JOTVGj5IHyfNtCw" title="Title">敖丙工作以来总结的大厂SQL调优姿势</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nEmN4S9JOTVGj5IHyfNtCw" title="Title">工作以来总结的大厂SQL调优姿势</a></p>
 <p>🔗 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54607717" title="Title">where子句的优化</a></p>
 <p>🔗 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/60380557" title="Title">SQL子查询的优化</a></p>
 <p>🔗 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/exe19/p/5786806.html" title="Title">要提高SQL查询效率where语句条件的先后次序应如何写</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 8.8.2 EXPLAIN Output Format</a></p>
 
     </div>
 
     
     
     
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020021801.html" rel="bookmark">Oralce和MySql笔记（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020092401.html" rel="bookmark">SqlLoader</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020092701.html" rel="bookmark">数据迁移</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020082201.html" rel="bookmark">大数据量表的优化思路</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019102001.html" rel="bookmark">面经整理——导航页</a></div>
+    </li>
+  </ul>
+
 
     <footer class="post-footer">
           
@@ -770,8 +801,8 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/sql/" rel="tag"><i class="fa fa-tag"></i> sql</a>
               <a href="/tags/updating/" rel="tag"><i class="fa fa-tag"></i> updating</a>
+              <a href="/tags/sql/" rel="tag"><i class="fa fa-tag"></i> sql</a>
               <a href="/tags/mysql/" rel="tag"><i class="fa fa-tag"></i> mysql</a>
               <a href="/tags/oracle/" rel="tag"><i class="fa fa-tag"></i> oracle</a>
           </div>
@@ -828,7 +859,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">47:10</span>
+    <span title="站点阅读时长">47:25</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
