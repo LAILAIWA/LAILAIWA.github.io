@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="内容包括：简介，教程（入门、进阶、案例）等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java诊断工具-Arthas">
+<meta property="og:url" content="http://linyishui.top/2021091601.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="内容包括：简介，教程（入门、进阶、案例）等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://katacoda.com/arthas/scenarios/common-resources/assets/web-console.png">
+<meta property="article:published_time" content="2021-09-16T12:51:44.000Z">
+<meta property="article:modified_time" content="2021-09-22T11:21:54.000Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="jvm">
+<meta property="article:tag" content="Arthas">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://katacoda.com/arthas/scenarios/common-resources/assets/web-console.png">
+
+
+<link rel="canonical" href="http://linyishui.top/2021091601.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021091601.html","path":"2021091601.html","title":"Java诊断工具-Arthas"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java诊断工具-Arthas | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java%E8%AF%8A%E6%96%AD%E5%B7%A5%E5%85%B7-Arthas"><span class="nav-text">Java诊断工具-Arthas</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E7%AE%80%E4%BB%8B"><span class="nav-text">一. 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%95%99%E7%A8%8B"><span class="nav-text">二. 教程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%85%A5%E9%97%A8"><span class="nav-text">2.1 入门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%BF%9B%E9%98%B6"><span class="nav-text">2.2 进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E6%9F%A5%E7%9C%8BJVM%E4%BF%A1%E6%81%AF"><span class="nav-text">2.2.1 查看JVM信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-Tips"><span class="nav-text">2.2.2 Tips</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3-sc-sm-%E6%9F%A5%E7%9C%8B%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%9A%84%E7%B1%BB"><span class="nav-text">2.2.3 sc&#x2F;sm 查看已加载的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4-Jad%E5%8F%8D%E7%BC%96%E8%AF%91%E4%BB%A3%E7%A0%81"><span class="nav-text">2.2.4 Jad反编译代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-5-Ognl%E5%8A%A8%E6%80%81%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="nav-text">2.2.5 Ognl动态执行代码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B0%83%E7%94%A8static%E5%87%BD%E6%95%B0"><span class="nav-text">调用static函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E6%89%BEUserController%E7%9A%84ClassLoader"><span class="nav-text">查找UserController的ClassLoader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%9D%99%E6%80%81%E7%B1%BB%E7%9A%84%E9%9D%99%E6%80%81%E5%AD%97%E6%AE%B5"><span class="nav-text">获取静态类的静态字段</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%A4%9A%E8%A1%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%8C%E8%B5%8B%E5%80%BC%E7%BB%99%E4%B8%B4%E6%97%B6%E5%8F%98%E9%87%8F%EF%BC%8C%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AAList"><span class="nav-text">执行多行表达式，赋值给临时变量，返回一个List</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A"><span class="nav-text">更多</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%A1%88%E4%BE%8B"><span class="nav-text">2.3 案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-%E6%A1%88%E4%BE%8B-%E6%8E%92%E6%9F%A5%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%BC%82%E5%B8%B8"><span class="nav-text">2.3.1 案例: 排查函数调用异常</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8E%B0%E8%B1%A1"><span class="nav-text">现象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8BUserController%E7%9A%84-%E5%8F%82%E6%95%B0-%E5%BC%82%E5%B8%B8"><span class="nav-text">查看UserController的 参数&#x2F;异常</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-text">返回值表达式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-text">条件表达式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BD%93%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8D%95%E8%8E%B7"><span class="nav-text">当异常时捕获</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%89%E7%85%A7%E8%80%97%E6%97%B6%E8%BF%9B%E8%A1%8C%E8%BF%87%E6%BB%A4"><span class="nav-text">按照耗时进行过滤</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-%E6%A1%88%E4%BE%8B-%E7%83%AD%E6%9B%B4%E6%96%B0%E4%BB%A3%E7%A0%81"><span class="nav-text">2.3.2 案例: 热更新代码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#jad%E5%8F%8D%E7%BC%96%E8%AF%91UserController"><span class="nav-text">jad反编译UserController</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sc%E6%9F%A5%E6%89%BE%E5%8A%A0%E8%BD%BDUserController%E7%9A%84ClassLoader"><span class="nav-text">sc查找加载UserController的ClassLoader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mc"><span class="nav-text">mc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#redefine"><span class="nav-text">redefine</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%83%AD%E4%BF%AE%E6%94%B9%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%9C"><span class="nav-text">热修改代码结果</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-%E6%A1%88%E4%BE%8B-%E5%8A%A8%E6%80%81%E6%9B%B4%E6%96%B0%E5%BA%94%E7%94%A8Logger-Level"><span class="nav-text">2.3.3 案例: 动态更新应用Logger Level</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E6%89%BEUserController%E7%9A%84ClassLoader-1"><span class="nav-text">查找UserController的ClassLoader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8ognl%E8%8E%B7%E5%8F%96logger"><span class="nav-text">用ognl获取logger</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%95%E7%8B%AC%E8%AE%BE%E7%BD%AEUserController%E7%9A%84logger-level"><span class="nav-text">单独设置UserController的logger level</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9logback%E7%9A%84%E5%85%A8%E5%B1%80logger-level"><span class="nav-text">修改logback的全局logger level</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-4-%E6%A1%88%E4%BE%8B-%E6%8E%92%E6%9F%A5logger%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98"><span class="nav-text">2.3.4 案例: 排查logger冲突问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A1%AE%E8%AE%A4%E5%BA%94%E7%94%A8%E4%BD%BF%E7%94%A8%E7%9A%84logger%E7%B3%BB%E7%BB%9F"><span class="nav-text">确认应用使用的logger系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96logback%E5%AE%9E%E9%99%85%E5%8A%A0%E8%BD%BD%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">获取logback实际加载的配置文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8classloader%E5%91%BD%E4%BB%A4%E6%9F%A5%E6%89%BE%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E7%9A%84logger%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">使用classloader命令查找可能存在的logger配置文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-5-%E6%A1%88%E4%BE%8B-%E8%8E%B7%E5%8F%96Spring-Context"><span class="nav-text">2.3.5 案例: 获取Spring Context</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8tt%E5%91%BD%E4%BB%A4%E8%8E%B7%E5%8F%96%E5%88%B0spring-context"><span class="nav-text">使用tt命令获取到spring context</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8tt%E5%91%BD%E4%BB%A4%E4%BB%8E%E8%B0%83%E7%94%A8%E8%AE%B0%E5%BD%95%E9%87%8C%E8%8E%B7%E5%8F%96%E5%88%B0spring-context"><span class="nav-text">使用tt命令从调用记录里获取到spring context</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96spring-bean%EF%BC%8C%E5%B9%B6%E8%B0%83%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-text">获取spring bean，并调用函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-6-%E6%A1%88%E4%BE%8B-%E6%8E%92%E6%9F%A5HTTP%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E401"><span class="nav-text">2.3.6 案例: 排查HTTP请求返回401</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B7%9F%E8%B8%AA%E6%89%80%E6%9C%89%E7%9A%84Filter%E5%87%BD%E6%95%B0"><span class="nav-text">跟踪所有的Filter函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9A%E8%BF%87stack%E8%8E%B7%E5%8F%96%E8%B0%83%E7%94%A8%E6%A0%88"><span class="nav-text">通过stack获取调用栈</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-7-%E6%A1%88%E4%BE%8B-%E6%8E%92%E6%9F%A5HTTP%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E404"><span class="nav-text">2.3.7 案例: 排查HTTP请求返回404</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B7%9F%E8%B8%AA%E6%89%80%E6%9C%89%E7%9A%84Servlet%E5%87%BD%E6%95%B0"><span class="nav-text">跟踪所有的Servlet函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-8-%E6%A1%88%E4%BE%8B-%E7%90%86%E8%A7%A3Spring-Boot%E5%BA%94%E7%94%A8%E7%9A%84ClassLoader%E7%BB%93%E6%9E%84"><span class="nav-text">2.3.8 案例: 理解Spring Boot应用的ClassLoader结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%89%80%E6%9C%89ClassLoader"><span class="nav-text">列出所有ClassLoader</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E5%87%BAClassLoader%E9%87%8C%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%89%80%E6%9C%89%E7%B1%BB"><span class="nav-text">列出ClassLoader里加载的所有类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%8D%E7%BC%96%E8%AF%91jsp%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-text">反编译jsp的代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8BClassLoader%E6%A0%91"><span class="nav-text">查看ClassLoader树</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%97%E5%87%BAClassLoader%E7%9A%84urls"><span class="nav-text">列出ClassLoader的urls</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E6%8C%87%E5%AE%9AClassLoader%E9%87%8C%E7%9A%84%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-text">加载指定ClassLoader里的资源文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E5%8A%A0%E8%BD%BD%E6%8C%87%E5%AE%9A%E7%9A%84%E7%B1%BB"><span class="nav-text">尝试加载指定的类</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-9-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%9F%A5%E6%89%BETop-N%E7%BA%BF%E7%A8%8B"><span class="nav-text">2.3.9 案例：查找Top N线程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E7%BA%BF%E7%A8%8B%E4%BF%A1%E6%81%AF"><span class="nav-text">查看所有线程信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%85%B7%E4%BD%93%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A0%88"><span class="nav-text">查看具体线程的栈</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8BCPU%E4%BD%BF%E7%94%A8%E7%8E%87top-n%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A0%88"><span class="nav-text">查看CPU使用率top n线程的栈</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B5%E7%A7%92%E5%86%85%E7%9A%84CPU%E4%BD%BF%E7%94%A8%E7%8E%87top-n%E7%BA%BF%E7%A8%8B%E6%A0%88"><span class="nav-text">查看5秒内的CPU使用率top n线程栈</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E7%BA%BF%E7%A8%8B%E6%98%AF%E5%90%A6%E6%9C%89%E9%98%BB%E5%A1%9E"><span class="nav-text">查找线程是否有阻塞</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Web-Console"><span class="nav-text">2.4 Web Console</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%99%E7%A8%8B%E9%87%8C%E7%9A%84Web-Console"><span class="nav-text">教程里的Web Console</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E4%BD%93%E9%AA%8C"><span class="nav-text">本地体验</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Exit-Stop"><span class="nav-text">2.5 Exit&#x2F;Stop</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-arthas-boot%E6%94%AF%E6%8C%81%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-text">2.6 arthas-boot支持的参数</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">320</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021091601.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java诊断工具-Arthas
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-16 20:51:44" itemprop="dateCreated datePublished" datetime="2021-09-16T20:51:44+08:00">2021-09-16</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-22 19:21:54" itemprop="dateModified" datetime="2021-09-22T19:21:54+08:00">2021-09-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>21k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">内容包括：简介，教程（入门、进阶、案例）等。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Java诊断工具-Arthas"><a href="#Java诊断工具-Arthas" class="headerlink" title="Java诊断工具-Arthas"></a>Java诊断工具-Arthas</h1><h2 id="一-简介"><a href="#一-简介" class="headerlink" title="一. 简介"></a>一. 简介</h2><ul>
+<li>官网：<a target="_blank" rel="noopener" href="https://arthas.aliyun.com/zh-cn/">Arthas 应用诊断利器</a></li>
+<li>Alibaba开源的Java诊断工具；在线排查问题，无需重启；动态跟踪Java代码；实时监控JVM状态。</li>
+<li>支持JDK6+；支持Linux/Mac/Windows;命令行式交互模式。</li>
+</ul>
+<p>解决如下问题：</p>
+<ol>
+<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
+<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
+<li>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</li>
+<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
+<li>是否有一个全局视角来查看系统的运行状况？</li>
+<li>有什么办法可以监控到JVM的实时运行状态？</li>
+<li>怎么快速定位应用的热点，生成火焰图？</li>
+<li>怎样直接从JVM内查找某个类的实例？</li>
+</ol>
+<h2 id="二-教程"><a href="#二-教程" class="headerlink" title="二. 教程"></a>二. 教程</h2><p>内容全部来源自官网。</p>
+<h3 id="2-1-入门"><a href="#2-1-入门" class="headerlink" title="2.1 入门"></a>2.1 入门</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 下载一个Jar包，并启动</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> wget https://arthas.aliyun.com/math-game.jar</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> java -jar math-game.jar</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 新窗口下载Arthas的启动Jar包，并启动</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> wget https://arthas.aliyun.com/arthas-boot.jar</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> java -jar arthas-boot.jar</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动后列出所有Java进程，输入对应</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> dashboard 命令可以查看当前系统的实时数据面板</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> dashboard</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 输入 Q 或者 Ctrl+C 可以退出dashboard命令。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> thread 1 命令会打印线程ID 1的栈。</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> thread 1</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Arthas支持管道，可以用 thread 1 | grep <span class="string">&#x27;main(&#x27;</span> 查找到main class。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以看到main class是demo.MathGame：</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> thread 1 | grep <span class="string">&#x27;main(&#x27;</span></span></span><br><span class="line">    at demo.MathGame.main(MathGame.java:17)</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以通过 sc 命令来查找JVM里已加载的类：</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sc -d *MathGame</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以通过 jad 命令来反编译代码：</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> jad demo.MathGame</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 通过watch命令可以查看函数的参数/返回值/异常信息。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> watch demo.MathGame primeFactors returnObj</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 输入 Q 或者 Ctrl+C 退出watch命令。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 通过vmtool命令，可以搜索内存对象。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vmtool --action getInstances --className java.lang.String --<span class="built_in">limit</span> 10</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 用 <span class="built_in">exit</span> 或者 quit 命令可以退出Arthas。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 退出Arthas之后，还可以再次用 java -jar arthas-boot.jar 来连接。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">exit</span>/quit命令只是退出当前session，arthas server还在目标进程中运行。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 想完全退出Arthas，可以执行 stop 命令。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>安装：<a target="_blank" rel="noopener" href="https://arthas.aliyun.com/doc/install-detail.html">Arthas Install — Arthas 3.5.4 文档 (aliyun.com)</a></p>
+<h3 id="2-2-进阶"><a href="#2-2-进阶" class="headerlink" title="2.2 进阶"></a>2.2 进阶</h3><h4 id="2-2-1-查看JVM信息"><a href="#2-2-1-查看JVM信息" class="headerlink" title="2.2.1 查看JVM信息"></a>2.2.1 查看JVM信息</h4><ul>
+<li><p>sysprop：</p>
+<p>可以打印所有的System Properties信息。</p>
+<p>也可以指定单个key： <code>sysprop java.version</code></p>
+<p>也可以通过<code>grep</code>来过滤： <code>sysprop | grep user</code></p>
+<p>可以设置新的value： <code>sysprop testKey testValue</code></p>
+</li>
+<li><p>sysenv：<code>sysenv</code> 命令可以获取到环境变量。和<code>sysprop</code>命令类似。</p>
+</li>
+<li><p>jvm：<code>jvm</code> 命令会打印出<code>JVM</code>的各种详细信息。</p>
+</li>
+<li><p>dashboard：<code>dashboard</code> 命令可以查看当前系统的实时数据面板。输入 <code>Q</code> 或者 <code>Ctrl+C</code> 可以退出dashboard命令。</p>
+</li>
+</ul>
+<h4 id="2-2-2-Tips"><a href="#2-2-2-Tips" class="headerlink" title="2.2.2 Tips"></a>2.2.2 Tips</h4><ul>
+<li><p>help：Arthas里每一个命令都有详细的帮助信息。可以用<code>-h</code>来查看。帮助信息里有<code>EXAMPLES</code>和<code>WIKI</code>链接。比如：<code>sysprop -h</code></p>
+</li>
+<li><p>自动补全：Arthas支持丰富的自动补全功能，在使用有疑惑时，可以输入<code>Tab</code>来获取更多信息。</p>
+<p>比如输入 <code>sysprop java.</code> 之后，再输入<code>Tab</code>，会补全出对应的key：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sysprop java.</span></span><br><span class="line">java.runtime.name             java.protocol.handler.pkgs    java.vm.version</span><br><span class="line">java.vm.vendor                java.vendor.url               java.vm.name</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li><p>readline的快捷键支持：</p>
+<p>Arthas支持常见的命令行快捷键，比如<code>Ctrl + A</code>跳转行首，<code>Ctrl + E</code>跳转行尾。</p>
+<p>更多的快捷键可以用 <code>keymap</code> 命令查看。</p>
+</li>
+<li><p>历史命令的补全：</p>
+<p>如果想再执行之前的命令，可以在输入一半时，按<code>Up/↑</code> 或者 <code>Ddown/↓</code>，来匹配到之前的命令。</p>
+<p>比如之前执行过<code>sysprop java.version</code>，那么在输入<code>sysprop ja</code>之后，可以输入<code>Up/↑</code>，就会自动补全为<code>sysprop java.version</code>。</p>
+<p>如果想查看所有的历史命令，也可以通过 <code>history</code> 命令查看到。</p>
+</li>
+<li><p>pipeline：</p>
+<p>Arthas支持在pipeline之后，执行一些简单的命令，比如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sysprop | grep java</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sysprop | wc -l</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-2-3-sc-sm-查看已加载的类"><a href="#2-2-3-sc-sm-查看已加载的类" class="headerlink" title="2.2.3 sc/sm 查看已加载的类"></a>2.2.3 sc/sm 查看已加载的类</h4><ul>
+<li><p>sc：</p>
+<p><code>sc</code> 命令可以查找到所有JVM已经加载到的类。</p>
+<p>如果搜索的是接口，还会搜索所有的实现类。比如查看所有的<code>Filter</code>实现类：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sc javax.servlet.Filter</span></span><br></pre></td></tr></table></figure>
+
+<p>通过<code>-d</code>参数，可以打印出类加载的具体信息，很方便查找类加载问题。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sc -d javax.servlet.Filter</span></span><br></pre></td></tr></table></figure>
+
+<p><code>sc</code>支持通配，比如搜索所有的<code>StringUtils</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sc *StringUtils</span></span><br></pre></td></tr></table></figure></li>
+<li><p>sm：</p>
+<p><code>sm</code>命令则是查找类的具体函数。比如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sm java.math.RoundingMode</span></span><br></pre></td></tr></table></figure>
+
+<p>通过<code>-d</code>参数可以打印函数的具体属性：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sm -d java.math.RoundingMode</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以查找特定的函数，比如查找构造函数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sm java.math.RoundingMode &lt;init&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-2-4-Jad反编译代码"><a href="#2-2-4-Jad反编译代码" class="headerlink" title="2.2.4 Jad反编译代码"></a>2.2.4 Jad反编译代码</h4><p>可以通过 <code>jad</code> 命令来反编译代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> jad com.example.demo.arthas.user.UserController</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>通过<code>--source-only</code>参数可以只打印出在反编译的源代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> jad --source-only com.example.demo.arthas.user.UserController</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-2-5-Ognl动态执行代码"><a href="#2-2-5-Ognl动态执行代码" class="headerlink" title="2.2.5 Ognl动态执行代码"></a>2.2.5 Ognl动态执行代码</h4><p>在Arthas里，有一个单独的<code>ognl</code>命令，可以动态执行代码。</p>
+<h5 id="调用static函数"><a href="#调用static函数" class="headerlink" title="调用static函数"></a>调用static函数</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl <span class="string">&#x27;@java.lang.System@out.println(&quot;hello ognl&quot;)&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以检查<code>Terminal 1</code>（不是arthas的Terminal 2）里的进程输出，可以发现打印出了<code>hello ognl</code>。</p>
+<h5 id="查找UserController的ClassLoader"><a href="#查找UserController的ClassLoader" class="headerlink" title="查找UserController的ClassLoader"></a>查找UserController的ClassLoader</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash</span></span><br><span class="line"> classLoaderHash   1be6f5c3</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意hashcode是变化的，需要先查看当前的ClassLoader信息，提取对应ClassLoader的hashcode。</p>
+<p>如果你使用<code>-c</code>，你需要手动输入hashcode：<code>-c &lt;hashcode&gt;</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ognl -c 1be6f5c3 @com.example.demo.arthas.user.UserController@logger</span><br></pre></td></tr></table></figure>
+
+
+
+<p>对于只有唯一实例的ClassLoader可以通过<code>--classLoaderClass</code>指定class name，使用起来更加方便：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader  @org.springframework.boot.SpringApplication@logger</span><br><span class="line">@Slf4jLocationAwareLog[</span><br><span class="line">    FQCN=@String[org.apache.commons.logging.LogAdapter<span class="variable">$Slf4jLocationAwareLog</span>],</span><br><span class="line">    name=@String[org.springframework.boot.SpringApplication],</span><br><span class="line">    logger=@Logger[Logger[org.springframework.boot.SpringApplication]],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>--classLoaderClass</code> 的值是ClassLoader的类名，只有匹配到唯一的ClassLoader实例时才能工作，目的是方便输入通用命令，而<code>-c &lt;hashcode&gt;</code>是动态变化的。</p>
+<h5 id="获取静态类的静态字段"><a href="#获取静态类的静态字段" class="headerlink" title="获取静态类的静态字段"></a>获取静态类的静态字段</h5><p>获取<code>UserController</code>类里的<code>logger</code>字段：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader @com.example.demo.arthas.user.UserController@logger</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>还可以通过<code>-x</code>参数控制返回值的展开层数。比如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -x 2 @com.example.demo.arthas.user.UserController@logger</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="执行多行表达式，赋值给临时变量，返回一个List"><a href="#执行多行表达式，赋值给临时变量，返回一个List" class="headerlink" title="执行多行表达式，赋值给临时变量，返回一个List"></a>执行多行表达式，赋值给临时变量，返回一个List</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl <span class="string">&#x27;#value1=@System@getProperty(&quot;java.home&quot;), #value2=@System@getProperty(&quot;java.runtime.name&quot;), &#123;#value1, #value2&#125;&#x27;</span></span></span><br><span class="line">@ArrayList[</span><br><span class="line">    @String[/Library/Java/JavaVirtualMachines/jdk1.8.0_162.jdk/Contents/Home/jre],</span><br><span class="line">    @String[Java(TM) SE Runtime Environment],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h5><p>在Arthas里<code>ognl</code>表达式是很重要的功能，在很多命令里都可以使用<code>ognl</code>表达式。</p>
+<p>一些更复杂的用法，可以参考：</p>
+<ul>
+<li>OGNL特殊用法请参考：<a target="_blank" rel="noopener" href="https://github.com/alibaba/arthas/issues/71">https://github.com/alibaba/arthas/issues/71</a></li>
+<li>OGNL表达式官方指南：<a target="_blank" rel="noopener" href="https://commons.apache.org/proper/commons-ognl/language-guide.html">https://commons.apache.org/proper/commons-ognl/language-guide.html</a></li>
+</ul>
+<h3 id="2-3-案例"><a href="#2-3-案例" class="headerlink" title="2.3 案例"></a>2.3 案例</h3><h4 id="2-3-1-案例-排查函数调用异常"><a href="#2-3-1-案例-排查函数调用异常" class="headerlink" title="2.3.1 案例: 排查函数调用异常"></a>2.3.1 案例: 排查函数调用异常</h4><h5 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h5><p>目前，访问 <a target="_blank" rel="noopener" href="http://localhost/user/0">http://localhost/user/0</a> ，会返回500异常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl http://localhost/user/0</span></span><br><span class="line">&#123;&quot;timestamp&quot;:1550223186170,&quot;status&quot;:500,&quot;error&quot;:&quot;Internal Server Error&quot;,&quot;exception&quot;:&quot;java.lang.IllegalArgumentException&quot;,&quot;message&quot;:&quot;id &lt; 1&quot;,&quot;path&quot;:&quot;/user/0&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>但请求的具体参数，异常栈是什么呢？</p>
+<h5 id="查看UserController的-参数-异常"><a href="#查看UserController的-参数-异常" class="headerlink" title="查看UserController的 参数/异常"></a>查看UserController的 参数/异常</h5><p>在Arthas里执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> watch com.example.demo.arthas.user.UserController * <span class="string">&#x27;&#123;params, throwExp&#125;&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>第一个参数是类名，支持通配</li>
+<li>第二个参数是函数名，支持通配</li>
+</ol>
+<p>访问 <code>curl http://localhost/user/0</code> ,<code>watch</code>命令会打印调用的参数和异常</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ watch com.example.demo.arthas.user.UserController * <span class="string">&#x27;&#123;params, throwExp&#125;&#x27;</span></span><br><span class="line">Press Q or Ctrl+C to abort.</span><br><span class="line">Affect(class-cnt:1 , method-cnt:2) cost <span class="keyword">in</span> 53 ms.</span><br><span class="line">ts=2019-02-15 01:35:25; [cost=0.996655ms] result=@ArrayList[</span><br><span class="line">    @Object[][isEmpty=<span class="literal">false</span>;size=1],</span><br><span class="line">    @IllegalArgumentException[java.lang.IllegalArgumentException: id &lt; 1],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到实际抛出的异常是<code>IllegalArgumentException</code>。</p>
+<p>可以输入 <code>Q</code> 或者 <code>Ctrl+C</code> 退出watch命令。</p>
+<p>如果想把获取到的结果展开，可以用<code>-x</code>参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> watch com.example.demo.arthas.user.UserController * <span class="string">&#x27;&#123;params, throwExp&#125;&#x27;</span> -x 2</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="返回值表达式"><a href="#返回值表达式" class="headerlink" title="返回值表达式"></a>返回值表达式</h5><p>在上面的例子里，第三个参数是<code>返回值表达式</code>，它实际上是一个<code>ognl</code>表达式，它支持一些内置对象：</p>
+<ul>
+<li>loader</li>
+<li>clazz</li>
+<li>method</li>
+<li>target</li>
+<li>params</li>
+<li>returnObj</li>
+<li>throwExp</li>
+<li>isBefore</li>
+<li>isThrow</li>
+<li>isReturn</li>
+</ul>
+<p>你可以利用这些内置对象来组成不同的表达式。比如返回一个数组：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> watch com.example.demo.arthas.user.UserController * <span class="string">&#x27;&#123;params[0], target, returnObj&#125;&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>更多参考： <a target="_blank" rel="noopener" href="https://arthas.aliyun.com/doc/advice-class.html">https://arthas.aliyun.com/doc/advice-class.html</a></p>
+<h5 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h5><p><code>watch</code>命令支持在第4个参数里写条件表达式，比如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> watch com.example.demo.arthas.user.UserController * returnObj <span class="string">&#x27;params[0] &gt; 100&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>当访问 <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/user/1">https://2886795326-80-host12nc.environments.katacoda.com/user/1</a> 时，<code>watch</code>命令没有输出</p>
+<p>当访问 <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/user/101">https://2886795326-80-host12nc.environments.katacoda.com/user/101</a> 时，<code>watch</code>会打印出结果。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ watch com.example.demo.arthas.user.UserController * returnObj <span class="string">&#x27;params[0] &gt; 100&#x27;</span></span><br><span class="line">Press Q or Ctrl+C to abort.</span><br><span class="line">Affect(class-cnt:1 , method-cnt:2) cost <span class="keyword">in</span> 47 ms.</span><br><span class="line">ts=2019-02-13 19:42:12; [cost=0.821443ms] result=@User[</span><br><span class="line">    id=@Integer[101],</span><br><span class="line">    name=@String[name101],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="当异常时捕获"><a href="#当异常时捕获" class="headerlink" title="当异常时捕获"></a>当异常时捕获</h5><p><code>watch</code>命令支持<code>-e</code>选项，表示只捕获抛出异常时的请求：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> watch com.example.demo.arthas.user.UserController * <span class="string">&quot;&#123;params[0],throwExp&#125;&quot;</span> -e</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="按照耗时进行过滤"><a href="#按照耗时进行过滤" class="headerlink" title="按照耗时进行过滤"></a>按照耗时进行过滤</h5><p>watch命令支持按请求耗时进行过滤，比如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> watch com.example.demo.arthas.user.UserController * <span class="string">&#x27;&#123;params, returnObj&#125;&#x27;</span> <span class="string">&#x27;#cost&gt;200&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-2-案例-热更新代码"><a href="#2-3-2-案例-热更新代码" class="headerlink" title="2.3.2 案例: 热更新代码"></a>2.3.2 案例: 热更新代码</h4><p>下面介绍通过<code>jad</code>/<code>mc</code>/<code>redefine</code> 命令实现动态更新代码的功能。</p>
+<p>目前，访问 <a target="_blank" rel="noopener" href="http://localhost/user/0">http://localhost/user/0</a> ，会返回500异常：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl http://localhost/user/0</span></span><br><span class="line">&#123;&quot;timestamp&quot;:1550223186170,&quot;status&quot;:500,&quot;error&quot;:&quot;Internal Server Error&quot;,&quot;exception&quot;:&quot;java.lang.IllegalArgumentException&quot;,&quot;message&quot;:&quot;id &lt; 1&quot;,&quot;path&quot;:&quot;/user/0&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面通过热更新代码，修改这个逻辑。</p>
+<h5 id="jad反编译UserController"><a href="#jad反编译UserController" class="headerlink" title="jad反编译UserController"></a>jad反编译UserController</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> jad --source-only com.example.demo.arthas.user.UserController &gt; /tmp/UserController.java</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>jad反编译的结果保存在 <code>/tmp/UserController.java</code>文件里了。</p>
+<p>再打开一个<code>Terminal 3</code>，然后用vim来编辑<code>/tmp/UserController.java</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /tmp/UserController.java</span><br></pre></td></tr></table></figure>
+
+
+
+<p>比如当 user id 小于1时，也正常返回，不抛出异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(value=&#123;&quot;/user/&#123;id&#125;&quot;&#125;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">findUserById</span><span class="params">(<span class="meta">@PathVariable</span> Integer id)</span> </span>&#123;</span><br><span class="line">    logger.info(<span class="string">&quot;id: &#123;&#125;&quot;</span>, (Object)id);</span><br><span class="line">    <span class="keyword">if</span> (id != <span class="keyword">null</span> &amp;&amp; id &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(id, <span class="string">&quot;name&quot;</span> + id);</span><br><span class="line">        <span class="comment">// throw new IllegalArgumentException(&quot;id &lt; 1&quot;);</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> User(id.intValue(), <span class="string">&quot;name&quot;</span> + id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="sc查找加载UserController的ClassLoader"><a href="#sc查找加载UserController的ClassLoader" class="headerlink" title="sc查找加载UserController的ClassLoader"></a>sc查找加载UserController的ClassLoader</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sc -d *UserController | grep classLoaderHash</span></span><br><span class="line"> classLoaderHash   1be6f5c3</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以发现是 spring boot <code>LaunchedURLClassLoader@1be6f5c3</code> 加载的。</p>
+<p>请记下你的classLoaderHash，后面需要使用它。在这里，它是 <code>1be6f5c3</code>。</p>
+<h5 id="mc"><a href="#mc" class="headerlink" title="mc"></a>mc</h5><p>保存好<code>/tmp/UserController.java</code>之后，使用<code>mc</code>(Memory Compiler)命令来编译，并且通过<code>-c</code>或者<code>--classLoaderClass</code>参数指定ClassLoader：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mc --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader /tmp/UserController.java -d /tmp</span></span><br><span class="line">Memory compiler output:</span><br><span class="line">/tmp/com/example/demo/arthas/user/UserController.class</span><br><span class="line">Affect(row-cnt:1) cost in 346 ms</span><br></pre></td></tr></table></figure>
+
+
+
+<p>也可以通过<code>mc -c &lt;classLoaderHash&gt; /tmp/UserController.java -d /tmp</code>，使用<code>-c</code>参数指定ClassLoaderHash:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mc -c 1be6f5c3 /tmp/UserController.java -d /tmp</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="redefine"><a href="#redefine" class="headerlink" title="redefine"></a>redefine</h5><p>再使用<code>redefine</code>命令重新加载新编译好的<code>UserController.class</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redefine /tmp/com/example/demo/arthas/user/UserController.class</span></span><br><span class="line">redefine success, size: 1</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="热修改代码结果"><a href="#热修改代码结果" class="headerlink" title="热修改代码结果"></a>热修改代码结果</h5><p><code>redefine</code>成功之后，再次访问 <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/user/0">https://2886795326-80-host12nc.environments.katacoda.com/user/0</a> ，结果是：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;id&quot;</span>: <span class="number">0</span>,</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;name0&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-3-案例-动态更新应用Logger-Level"><a href="#2-3-3-案例-动态更新应用Logger-Level" class="headerlink" title="2.3.3 案例: 动态更新应用Logger Level"></a>2.3.3 案例: 动态更新应用Logger Level</h4><p>在这个案例里，动态修改应用的Logger Level。</p>
+<h5 id="查找UserController的ClassLoader-1"><a href="#查找UserController的ClassLoader-1" class="headerlink" title="查找UserController的ClassLoader"></a>查找UserController的ClassLoader</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sc -d com.example.demo.arthas.user.UserController | grep classLoaderHash</span></span><br><span class="line"> classLoaderHash   1be6f5c3</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="用ognl获取logger"><a href="#用ognl获取logger" class="headerlink" title="用ognl获取logger"></a>用ognl获取logger</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader <span class="string">&#x27;@com.example.demo.arthas.user.UserController@logger&#x27;</span></span></span><br><span class="line">@Logger[</span><br><span class="line">    serialVersionUID=@Long[5454405123156820674],</span><br><span class="line">    FQCN=@String[ch.qos.logback.classic.Logger],</span><br><span class="line">    name=@String[com.example.demo.arthas.user.UserController],</span><br><span class="line">    level=null,</span><br><span class="line">    effectiveLevelInt=@Integer[20000],</span><br><span class="line">    parent=@Logger[Logger[com.example.demo.arthas.user]],</span><br><span class="line">    childrenList=null,</span><br><span class="line">    aai=null,</span><br><span class="line">    additive=@Boolean[true],</span><br><span class="line">    loggerContext=@LoggerContext[ch.qos.logback.classic.LoggerContext[default]],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以知道<code>UserController@logger</code>实际使用的是logback。可以看到<code>level=null</code>，则说明实际最终的level是从<code>root</code> logger里来的。</p>
+<h5 id="单独设置UserController的logger-level"><a href="#单独设置UserController的logger-level" class="headerlink" title="单独设置UserController的logger level"></a>单独设置UserController的logger level</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader <span class="string">&#x27;@com.example.demo.arthas.user.UserController@logger.setLevel(@ch.qos.logback.classic.Level@DEBUG)&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>再次获取<code>UserController@logger</code>，可以发现已经是<code>DEBUG</code>了：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader <span class="string">&#x27;@com.example.demo.arthas.user.UserController@logger&#x27;</span></span></span><br><span class="line">@Logger[</span><br><span class="line">    serialVersionUID=@Long[5454405123156820674],</span><br><span class="line">    FQCN=@String[ch.qos.logback.classic.Logger],</span><br><span class="line">    name=@String[com.example.demo.arthas.user.UserController],</span><br><span class="line">    level=@Level[DEBUG],</span><br><span class="line">    effectiveLevelInt=@Integer[10000],</span><br><span class="line">    parent=@Logger[Logger[com.example.demo.arthas.user]],</span><br><span class="line">    childrenList=null,</span><br><span class="line">    aai=null,</span><br><span class="line">    additive=@Boolean[true],</span><br><span class="line">    loggerContext=@LoggerContext[ch.qos.logback.classic.LoggerContext[default]],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="修改logback的全局logger-level"><a href="#修改logback的全局logger-level" class="headerlink" title="修改logback的全局logger level"></a>修改logback的全局logger level</h5><p>通过获取<code>root</code> logger，可以修改全局的logger level：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader <span class="string">&#x27;@org.slf4j.LoggerFactory@getLogger(&quot;root&quot;).setLevel(@ch.qos.logback.classic.Level@DEBUG)&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-4-案例-排查logger冲突问题"><a href="#2-3-4-案例-排查logger冲突问题" class="headerlink" title="2.3.4 案例: 排查logger冲突问题"></a>2.3.4 案例: 排查logger冲突问题</h4><p>在这个案例里，展示排查logger冲突的方法。</p>
+<h5 id="确认应用使用的logger系统"><a href="#确认应用使用的logger系统" class="headerlink" title="确认应用使用的logger系统"></a>确认应用使用的logger系统</h5><p>以<code>UserController</code>为例，它使用的是slf4j api，但实际使用到的logger系统是logback。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader <span class="string">&#x27;@com.example.demo.arthas.user.UserController@logger&#x27;</span></span></span><br><span class="line">@Logger[</span><br><span class="line">    serialVersionUID=@Long[5454405123156820674],</span><br><span class="line">    FQCN=@String[ch.qos.logback.classic.Logger],</span><br><span class="line">    name=@String[com.example.demo.arthas.user.UserController],</span><br><span class="line">    level=null,</span><br><span class="line">    effectiveLevelInt=@Integer[20000],</span><br><span class="line">    parent=@Logger[Logger[com.example.demo.arthas.user]],</span><br><span class="line">    childrenList=null,</span><br><span class="line">    aai=null,</span><br><span class="line">    additive=@Boolean[true],</span><br><span class="line">    loggerContext=@LoggerContext[ch.qos.logback.classic.LoggerContext[default]],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="获取logback实际加载的配置文件"><a href="#获取logback实际加载的配置文件" class="headerlink" title="获取logback实际加载的配置文件"></a>获取logback实际加载的配置文件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ognl --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader <span class="string">&#x27;#map1=@org.slf4j.LoggerFactory@getLogger(&quot;root&quot;).loggerContext.objectMap, #map1.get(&quot;CONFIGURATION_WATCH_LIST&quot;)&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="使用classloader命令查找可能存在的logger配置文件"><a href="#使用classloader命令查找可能存在的logger配置文件" class="headerlink" title="使用classloader命令查找可能存在的logger配置文件"></a>使用classloader命令查找可能存在的logger配置文件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml</span></span><br><span class="line"> jar:file:/Users/hengyunabc/code/java/spring-boot-inside/demo-arthas-spring-boot/target/demo-arthas-spring-boot-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/logback-spring.xml</span><br><span class="line"></span><br><span class="line">Affect(row-cnt:1) cost in 13 ms.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以知道加载的配置的具体来源。</p>
+<p>可以尝试加载容易冲突的文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback.xml</span><br><span class="line"></span><br><span class="line">classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r log4j.properties</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-5-案例-获取Spring-Context"><a href="#2-3-5-案例-获取Spring-Context" class="headerlink" title="2.3.5 案例: 获取Spring Context"></a>2.3.5 案例: 获取Spring Context</h4><p>在这个案例里，展示获取spring context，再获取bean，然后调用函数。</p>
+<h5 id="使用tt命令获取到spring-context"><a href="#使用tt命令获取到spring-context" class="headerlink" title="使用tt命令获取到spring context"></a>使用tt命令获取到spring context</h5><p><code>tt</code>即 TimeTunnel，它可以记录下指定方法每次调用的入参和返回信息，并能对这些不同的时间下调用进行观测。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arthas.aliyun.com/doc/tt.html">https://arthas.aliyun.com/doc/tt.html</a></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter invokeHandlerMethod</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>访问：<a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/user/1">https://2886795326-80-host12nc.environments.katacoda.com/user/1</a></p>
+<p>可以看到<code>tt</code>命令捕获到了一个请求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ tt -t org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdaptePress Q or Ctrl+C to abort.</span><br><span class="line">Affect(class-cnt:1 , method-cnt:1) cost <span class="keyword">in</span> 252 ms.</span><br><span class="line"> INDE  TIMESTAMP    COST(  IS-R  IS-  OBJECT     CLASS               METHOD</span><br><span class="line"> X                  ms)    ET    EXP</span><br><span class="line">-----------------------------------------------------------------------------------------</span><br><span class="line"> 1000  2019-02-15   4.583  <span class="literal">true</span>  fal  0xc93cf1a  RequestMappingHand  invokeHandlerMethod</span><br><span class="line">       15:38:32     923          se              lerAdapter</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="使用tt命令从调用记录里获取到spring-context"><a href="#使用tt命令从调用记录里获取到spring-context" class="headerlink" title="使用tt命令从调用记录里获取到spring context"></a>使用tt命令从调用记录里获取到spring context</h5><p>输入 <code>Q</code> 或者 <code>Ctrl + C</code> 退出上面的 <code>tt -t</code>命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tt -i 1000 -w <span class="string">&#x27;target.getApplicationContext()&#x27;</span></span></span><br><span class="line">@AnnotationConfigEmbeddedWebApplicationContext[</span><br><span class="line">    reader=@AnnotatedBeanDefinitionReader[org.springframework.context.annotation.AnnotatedBeanDefinitionReader@2e457641],</span><br><span class="line">    scanner=@ClassPathBeanDefinitionScanner[org.springframework.context.annotation.ClassPathBeanDefinitionScanner@6eb38026],</span><br><span class="line">    annotatedClasses=null,</span><br><span class="line">    basePackages=null,</span><br><span class="line">]</span><br><span class="line">Affect(row-cnt:1) cost in 439 ms.</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="获取spring-bean，并调用函数"><a href="#获取spring-bean，并调用函数" class="headerlink" title="获取spring bean，并调用函数"></a>获取spring bean，并调用函数</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ tt -i 1000 -w <span class="string">&#x27;target.getApplicationContext().getBean(&quot;helloWorldService&quot;).getHelloMessage()&#x27;</span></span><br><span class="line">@String[Hello World]</span><br><span class="line">Affect(row-cnt:1) cost <span class="keyword">in</span> 52 ms.</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-6-案例-排查HTTP请求返回401"><a href="#2-3-6-案例-排查HTTP请求返回401" class="headerlink" title="2.3.6 案例: 排查HTTP请求返回401"></a>2.3.6 案例: 排查HTTP请求返回401</h4><p>访问： <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/admin">https://2886795326-80-host12nc.environments.katacoda.com/admin</a></p>
+<p>结果是：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Something</span> went wrong: <span class="number">401</span> Unauthorized</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们知道<code>401</code>通常是被权限管理的<code>Filter</code>拦截了，那么到底是哪个<code>Filter</code>处理了这个请求，返回了401？</p>
+<h5 id="跟踪所有的Filter函数"><a href="#跟踪所有的Filter函数" class="headerlink" title="跟踪所有的Filter函数"></a>跟踪所有的Filter函数</h5><p>开始trace：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trace javax<span class="selector-class">.servlet</span><span class="selector-class">.Filter</span> *</span><br></pre></td></tr></table></figure>
+
+
+
+<p>访问： <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/admin">https://2886795326-80-host12nc.environments.katacoda.com/admin</a></p>
+<p>可以在调用树的最深层，找到<code>AdminFilterConfig$AdminFilter</code>返回了<code>401</code>：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+---<span class="literal">[<span class="number">3.806273</span><span class="identifier">ms</span>]</span> javax.servlet.FilterChain:<span class="keyword">do</span><span class="constructor">Filter()</span></span><br><span class="line"><span class="pattern-match">|   `---[3.447472ms] com.example.demo.arthas.<span class="constructor">AdminFilterConfig$AdminFilter</span>:<span class="keyword">do</span><span class="constructor">Filter()</span></span></span><br><span class="line"><span class="pattern-match">|       `---[0.17259ms] javax.servlet.http.<span class="constructor">HttpServletResponse</span>:send<span class="constructor">Error()</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="通过stack获取调用栈"><a href="#通过stack获取调用栈" class="headerlink" title="通过stack获取调用栈"></a>通过stack获取调用栈</h5><p>上面是通过<code>trace</code>命令来获取信息，从结果里，我们可以知道通过<code>stack</code>跟踪<code>HttpServletResponse:sendError()</code>，同样可以知道是哪个<code>Filter</code>返回了<code>401</code></p>
+<p>执行：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stack javax<span class="selector-class">.servlet</span><span class="selector-class">.http</span><span class="selector-class">.HttpServletResponse</span> sendError <span class="string">&#x27;params[0]==401&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>访问： <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/admin">https://2886795326-80-host12nc.environments.katacoda.com/admin</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ stack javax.servlet.http.HttpServletResponse sendError <span class="string">&#x27;params[0]==401&#x27;</span></span><br><span class="line">Press Q or Ctrl+C to abort.</span><br><span class="line">Affect(class-cnt:2 , method-cnt:4) cost <span class="keyword">in</span> 87 ms.</span><br><span class="line">ts=2019-02-15 16:44:06;thread_name=http-nio-8080-exec-6;id=16;is_daemon=<span class="literal">true</span>;priority=5;TCCL=org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedWebappClassLoader@8546cd5</span><br><span class="line">    @org.apache.catalina.connector.ResponseFacade.sendError()</span><br><span class="line">        at com.example.demo.arthas.AdminFilterConfig<span class="variable">$AdminFilter</span>.doFilter(AdminFilterConfig.java:38)</span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)</span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)</span><br><span class="line">        at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)</span><br><span class="line">        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-7-案例-排查HTTP请求返回404"><a href="#2-3-7-案例-排查HTTP请求返回404" class="headerlink" title="2.3.7 案例: 排查HTTP请求返回404"></a>2.3.7 案例: 排查HTTP请求返回404</h4><p>访问： <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/a.txt">https://2886795326-80-host12nc.environments.katacoda.com/a.txt</a></p>
+<p>结果是：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Something</span> went wrong: <span class="number">404</span> Not Found</span><br></pre></td></tr></table></figure>
+
+
+
+<p>那么到底是哪个Servlet处理了这个请求，返回了404？</p>
+<h5 id="跟踪所有的Servlet函数"><a href="#跟踪所有的Servlet函数" class="headerlink" title="跟踪所有的Servlet函数"></a>跟踪所有的Servlet函数</h5><p>开始trace：</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">trace javax.servlet.Servlet * &gt; <span class="regexp">/tmp/</span>servlet.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<p>访问： <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/a.txt">https://2886795326-80-host12nc.environments.katacoda.com/a.txt</a></p>
+<p>在<code>Terminal 3</code>里，查看<code>/tmp/servlet.txt</code>的内容：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">less <span class="regexp">/tmp/</span>servlet.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>/tmp/servlet.txt</code>里的内容会比较多，需要耐心找到调用树里最长的地方。</p>
+<p>可以发现请求最终是被<code>freemarker</code>处理的：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`<span class="operator">---</span>[<span class="number">13</span>.974188ms] org.springframework.web.servlet.<span class="type">ViewResolver</span>:resolveViewName()    <span class="operator">+---</span>[<span class="number">0</span>.045561ms] javax.servlet.<span class="type">GenericServlet</span>:<span class="operator">&lt;</span><span class="keyword">init</span><span class="operator">&gt;</span>()    <span class="operator">+---</span>[min<span class="operator">=</span><span class="number">0</span>.045545ms,max<span class="operator">=</span><span class="number">0</span>.074342ms,total<span class="operator">=</span><span class="number">0</span>.119887ms,count<span class="operator">=</span><span class="number">2</span>] org.springframework.web.servlet.view.freemarker.<span class="type">FreeMarkerView</span><span class="variable">$GenericServletAdapter</span>:<span class="operator">&lt;</span><span class="keyword">init</span><span class="operator">&gt;</span>()    <span class="operator">+---</span>[<span class="number">0</span>.170895ms] javax.servlet.<span class="type">GenericServlet</span>:<span class="function"><span class="keyword">init</span>()</span>    <span class="operator">|</span>   `<span class="operator">---</span>[<span class="number">0</span>.068578ms] javax.servlet.<span class="type">GenericServlet</span>:<span class="function"><span class="keyword">init</span>()</span>    <span class="operator">|</span>       `<span class="operator">---</span>[<span class="number">0</span>.021793ms] javax.servlet.<span class="type">GenericServlet</span>:<span class="function"><span class="keyword">init</span>()</span>    `<span class="operator">---</span>[<span class="number">0</span>.164035ms] javax.servlet.<span class="type">GenericServlet</span>:getServletContext()</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-8-案例-理解Spring-Boot应用的ClassLoader结构"><a href="#2-3-8-案例-理解Spring-Boot应用的ClassLoader结构" class="headerlink" title="2.3.8 案例: 理解Spring Boot应用的ClassLoader结构"></a>2.3.8 案例: 理解Spring Boot应用的ClassLoader结构</h4><p>下面介绍<code>classloader</code>命令的功能。</p>
+<p>先访问一个jsp网页，触发jsp的加载： <a target="_blank" rel="noopener" href="https://2886795326-80-host12nc.environments.katacoda.com/hello">https://2886795326-80-host12nc.environments.katacoda.com/hello</a></p>
+<h5 id="列出所有ClassLoader"><a href="#列出所有ClassLoader" class="headerlink" title="列出所有ClassLoader"></a>列出所有ClassLoader</h5><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ classloader -l</span><br><span class="line"> name                                                             loadedCount  hash      parent</span><br><span class="line"> BootstrapClassLoader                                             <span class="number">2724</span>         null      null</span><br><span class="line"> com<span class="selector-class">.taobao</span><span class="selector-class">.arthas</span><span class="selector-class">.agent</span>.ArthasClassloader@<span class="number">411</span>ce1ab               <span class="number">2009</span>         <span class="number">411</span>ce1ab  sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$ExtClassLoader</span>@<span class="number">7494</span>e528</span><br><span class="line"> com<span class="selector-class">.taobao</span><span class="selector-class">.arthas</span><span class="selector-class">.agent</span>.ArthasClassloader@<span class="number">22</span>ae1234               <span class="number">1253</span>         <span class="number">22</span>ae1234  sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$ExtClassLoader</span>@<span class="number">7494</span>e528</span><br><span class="line"> org<span class="selector-class">.apache</span><span class="selector-class">.jasper</span><span class="selector-class">.servlet</span>.JasperLoader@<span class="number">65361</span>d9a                  <span class="number">1</span>            <span class="number">65361</span>d9a  TomcatEmbeddedWebappClassLoader</span><br><span class="line">                                                                                           context: ROOT</span><br><span class="line">                                                                                           delegate: true</span><br><span class="line">                                                                                         ----------&gt; Parent Classloader:</span><br><span class="line">                                                                                         org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span>.LaunchedURLClassLoader@<span class="number">1</span>be6f5c3</span><br><span class="line"></span><br><span class="line"> TomcatEmbeddedWebappClassLoader                                  <span class="number">0</span>            <span class="number">8546</span>cd5   org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span>.LaunchedURLClassLoader@<span class="number">1</span>be6f5c3</span><br><span class="line">   context: ROOT</span><br><span class="line">   delegate: true</span><br><span class="line"> ----------&gt; Parent Classloader:</span><br><span class="line"> org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span>.LaunchedURLClassLoader@<span class="number">1</span>be6f5c3</span><br><span class="line"></span><br><span class="line"> org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span>.LaunchedURLClassLoader@<span class="number">1</span>be6f5c3  <span class="number">5416</span>         <span class="number">1</span>be6f5c3  sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$AppClassLoader</span>@<span class="number">3</span>d4eac69</span><br><span class="line"> sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$AppClassLoader</span>@<span class="number">3</span>d4eac69                        <span class="number">45</span>           <span class="number">3</span>d4eac69  sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$ExtClassLoader</span>@<span class="number">7494</span>e528</span><br><span class="line"> sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$ExtClassLoader</span>@<span class="number">7494</span>e528                        <span class="number">4</span>            <span class="number">7494</span>e528  null</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>TomcatEmbeddedWebappClassLoader 加载的class数量是0，所以在spring boot embedded tomcat里，它只是一个空壳，所有的类加载都是<code>LaunchedURLClassLoader</code>完成的</li>
+</ul>
+<h5 id="列出ClassLoader里加载的所有类"><a href="#列出ClassLoader里加载的所有类" class="headerlink" title="列出ClassLoader里加载的所有类"></a>列出ClassLoader里加载的所有类</h5><p>列出上面的<code>org.apache.jasper.servlet.JasperLoader</code>加载的类：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">classloader -<span class="selector-tag">a</span> --classLoaderClass org<span class="selector-class">.apache</span><span class="selector-class">.jasper</span><span class="selector-class">.servlet</span><span class="selector-class">.JasperLoader</span></span><br><span class="line">$ classloader -<span class="selector-tag">a</span> --classLoaderClass apache<span class="selector-class">.jasper</span><span class="selector-class">.servlet</span><span class="selector-class">.JasperLoader</span></span><br><span class="line"> hash:<span class="number">1698045338</span>, org<span class="selector-class">.apache</span><span class="selector-class">.jasper</span><span class="selector-class">.servlet</span>.JasperLoader@<span class="number">65361</span>d9a</span><br><span class="line"> org<span class="selector-class">.apache</span><span class="selector-class">.jsp</span><span class="selector-class">.jsp</span>.hello_jsp</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>注：同ognl, 也可用<code>-c &lt;hashcode&gt;</code>而不用<code>--classLoaderClass</code>指定</li>
+</ul>
+<h5 id="反编译jsp的代码"><a href="#反编译jsp的代码" class="headerlink" title="反编译jsp的代码"></a>反编译jsp的代码</h5><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">jad org<span class="selector-class">.apache</span><span class="selector-class">.jsp</span><span class="selector-class">.jsp</span><span class="selector-class">.hello_jsp</span></span><br><span class="line">$ jad org<span class="selector-class">.apache</span><span class="selector-class">.jsp</span><span class="selector-class">.jsp</span><span class="selector-class">.hello_jsp</span></span><br><span class="line"></span><br><span class="line">ClassLoader:</span><br><span class="line">+-org<span class="selector-class">.apache</span><span class="selector-class">.jasper</span><span class="selector-class">.servlet</span>.JasperLoader@<span class="number">65361</span>d9a</span><br><span class="line">  +-TomcatEmbeddedWebappClassLoader</span><br><span class="line">      context: ROOT</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="查看ClassLoader树"><a href="#查看ClassLoader树" class="headerlink" title="查看ClassLoader树"></a>查看ClassLoader树</h5><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">classloader -t</span><br><span class="line">$ classloader -t</span><br><span class="line">+-BootstrapClassLoader</span><br><span class="line">+-sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$ExtClassLoader</span>@<span class="number">28</span>cbbddd</span><br><span class="line">  +-com<span class="selector-class">.taobao</span><span class="selector-class">.arthas</span><span class="selector-class">.agent</span>.ArthasClassloader@<span class="number">8</span>c25e55</span><br><span class="line">  +-sun<span class="selector-class">.misc</span>.Launcher<span class="variable">$AppClassLoader</span>@<span class="number">55</span>f96302</span><br><span class="line">    +-org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span>.LaunchedURLClassLoader@<span class="number">1</span>be6f5c3</span><br><span class="line">      +-TomcatEmbeddedWebappClassLoader</span><br><span class="line">          context: ROOT</span><br><span class="line">          delegate: true</span><br><span class="line">        ----------&gt; Parent Classloader:</span><br><span class="line">        org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span>.LaunchedURLClassLoader@<span class="number">1</span>be6f5c3</span><br><span class="line"></span><br><span class="line">        +-org<span class="selector-class">.apache</span><span class="selector-class">.jasper</span><span class="selector-class">.servlet</span>.JasperLoader@<span class="number">21</span>ae0fe2</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意：请使用你的classLoaderHash值覆盖 <code>&lt;classLoaderHash&gt;</code> ，然后手动执行下面相关命令：</p>
+<h5 id="列出ClassLoader的urls"><a href="#列出ClassLoader的urls" class="headerlink" title="列出ClassLoader的urls"></a>列出ClassLoader的urls</h5><p>比如上面查看到的spring LaunchedURLClassLoader的 hashcode是<code>1be6f5c3</code>，可以通过<code>-c</code>或者<code>--classLoaderClass</code>参数来列出它的所有urls：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader</span><br><span class="line">$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader</span><br><span class="line">jar:<span class="keyword">file</span>:<span class="regexp">/home/</span>scrapbook<span class="regexp">/tutorial/</span>demo-arthas-spring-boot.jar!<span class="regexp">/BOOT-INF/</span>classes!/</span><br><span class="line">jar:<span class="keyword">file</span>:<span class="regexp">/home/</span>scrapbook<span class="regexp">/tutorial/</span>demo-arthas-spring-boot.jar!<span class="regexp">/BOOT-INF/</span>lib/spring-boot-starter-aop-<span class="number">1.5</span></span><br><span class="line">.<span class="number">13</span>.RELEASE.jar!/</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="加载指定ClassLoader里的资源文件"><a href="#加载指定ClassLoader里的资源文件" class="headerlink" title="加载指定ClassLoader里的资源文件"></a>加载指定ClassLoader里的资源文件</h5><p>查找指定的资源文件： <code>classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml</code></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ classloader --classLoaderClass org.springframework.boot.loader.LaunchedURLClassLoader -r logback-spring.xml</span><br><span class="line"> jar:<span class="keyword">file</span>:<span class="regexp">/home/</span>scrapbook<span class="regexp">/tutorial/</span>demo-arthas-spring-boot.jar!<span class="regexp">/BOOT-INF/</span>classes!/logback-spring.xml</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="尝试加载指定的类"><a href="#尝试加载指定的类" class="headerlink" title="尝试加载指定的类"></a>尝试加载指定的类</h5><p>比如用上面的spring LaunchedURLClassLoader 尝试加载 <code>java.lang.String</code> ：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">classloader --classLoaderClass org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span><span class="selector-class">.LaunchedURLClassLoader</span> --load java<span class="selector-class">.lang</span><span class="selector-class">.String</span></span><br><span class="line">$ classloader --classLoaderClass org<span class="selector-class">.springframework</span><span class="selector-class">.boot</span><span class="selector-class">.loader</span><span class="selector-class">.LaunchedURLClassLoader</span> --load java<span class="selector-class">.lang</span><span class="selector-class">.String</span></span><br><span class="line">load class success.</span><br><span class="line"> class-info        java<span class="selector-class">.lang</span><span class="selector-class">.String</span></span><br><span class="line"> code-source</span><br><span class="line"> name              java<span class="selector-class">.lang</span><span class="selector-class">.String</span></span><br><span class="line"> isInterface       false</span><br><span class="line"> isAnnotation      false</span><br><span class="line"> isEnum            false</span><br><span class="line"> isAnonymousClass  false</span><br><span class="line"> isArray           false</span><br><span class="line"> isLocalClass      false</span><br><span class="line"> isMemberClass     false</span><br><span class="line"> isPrimitive       false</span><br><span class="line"> isSynthetic       false</span><br><span class="line"> simple-name       String</span><br><span class="line"> modifier          final,public</span><br><span class="line"> annotation</span><br><span class="line"> interfaces        java<span class="selector-class">.io</span><span class="selector-class">.Serializable</span>,java<span class="selector-class">.lang</span><span class="selector-class">.Comparable</span>,java<span class="selector-class">.lang</span><span class="selector-class">.CharSequence</span></span><br><span class="line"> super-class       +-java<span class="selector-class">.lang</span><span class="selector-class">.Object</span></span><br><span class="line"> class-loader</span><br><span class="line"> classLoaderHash   null</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-3-9-案例：查找Top-N线程"><a href="#2-3-9-案例：查找Top-N线程" class="headerlink" title="2.3.9 案例：查找Top N线程"></a>2.3.9 案例：查找Top N线程</h4><h5 id="查看所有线程信息"><a href="#查看所有线程信息" class="headerlink" title="查看所有线程信息"></a>查看所有线程信息</h5><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">thread</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="查看具体线程的栈"><a href="#查看具体线程的栈" class="headerlink" title="查看具体线程的栈"></a>查看具体线程的栈</h5><p>查看线程ID 16的栈：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">thread</span> <span class="number">16</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="查看CPU使用率top-n线程的栈"><a href="#查看CPU使用率top-n线程的栈" class="headerlink" title="查看CPU使用率top n线程的栈"></a>查看CPU使用率top n线程的栈</h5><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">thread</span> -n <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="查看5秒内的CPU使用率top-n线程栈"><a href="#查看5秒内的CPU使用率top-n线程栈" class="headerlink" title="查看5秒内的CPU使用率top n线程栈"></a>查看5秒内的CPU使用率top n线程栈</h5><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">thread</span> -n <span class="number">3</span> -i <span class="number">5000</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="查找线程是否有阻塞"><a href="#查找线程是否有阻塞" class="headerlink" title="查找线程是否有阻塞"></a>查找线程是否有阻塞</h5><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">thread</span> -b</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-Web-Console"><a href="#2-4-Web-Console" class="headerlink" title="2.4 Web Console"></a>2.4 Web Console</h3><p>Arthas支持通过Web Socket来连接。</p>
+<h4 id="教程里的Web-Console"><a href="#教程里的Web-Console" class="headerlink" title="教程里的Web Console"></a>教程里的Web Console</h4><p><a target="_blank" rel="noopener" href="http://2886795326-8563-host12nc.environments.katacoda.com/?ip=2886795326-8563-host12nc.environments.katacoda.com&amp;port=80">http://2886795326-8563-host12nc.environments.katacoda.com/?ip=2886795326-8563-host12nc.environments.katacoda.com&amp;port=80</a></p>
+<blockquote>
+<p>注意：教程里访问的是80端口，因为做了端口转发。在本地体验时，需要访问8563端口。</p>
+</blockquote>
+<h4 id="本地体验"><a href="#本地体验" class="headerlink" title="本地体验"></a>本地体验</h4><p>当在本地启动时，可以访问 <a target="_blank" rel="noopener" href="http://127.0.0.1:8563/">http://127.0.0.1:8563/</a> ，通过浏览器来使用Arthas。</p>
+<p><img src="https://katacoda.com/arthas/scenarios/common-resources/assets/web-console.png" alt="Arthas WebConsole"></p>
+<p>推荐通过“快速入门”来体验： <a target="_blank" rel="noopener" href="https://arthas.aliyun.com/doc/quick-start.html">https://arthas.aliyun.com/doc/quick-start.html</a></p>
+<h3 id="2-5-Exit-Stop"><a href="#2-5-Exit-Stop" class="headerlink" title="2.5 Exit/Stop"></a>2.5 Exit/Stop</h3><ul>
+<li><p>reset：Arthas在 watch/trace 等命令时，实际上是修改了应用的字节码，插入增强的代码。显式执行 <code>reset</code> 命令，可以清除掉这些增强代码。</p>
+</li>
+<li><p>退出Arthas：</p>
+<p>用 <code>exit</code> 或者 <code>quit</code> 命令可以退出Arthas。</p>
+<p>退出Arthas之后，还可以再次用 <code>java -jar arthas-boot.jar</code> 来连接。</p>
+</li>
+<li><p>彻底退出Arthas：</p>
+<p><code>exit/quit</code>命令只是退出当前session，arthas server还在目标进程中运行。</p>
+<p>想完全退出Arthas，可以执行 <code>stop</code> 命令。</p>
+</li>
+</ul>
+<h3 id="2-6-arthas-boot支持的参数"><a href="#2-6-arthas-boot支持的参数" class="headerlink" title="2.6 arthas-boot支持的参数"></a>2.6 arthas-boot支持的参数</h3><p><code>arthas-boot.jar</code> 支持很多参数，可以执行 <code>java -jar arthas-boot.jar -h</code> 来查看。</p>
+<ul>
+<li><p>允许外部访问：</p>
+<p>默认情况下， arthas server侦听的是 <code>127.0.0.1</code> 这个IP，如果希望远程可以访问，可以使用<code>--target-ip</code>的参数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar arthas-boot.jar --target-ip</span></span><br></pre></td></tr></table></figure></li>
+<li><p>列出所有的版本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar arthas-boot.jar --versions</span></span><br></pre></td></tr></table></figure>
+
+<p>使用指定版本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar arthas-boot.jar --use-version 3.1.0</span></span><br></pre></td></tr></table></figure></li>
+<li><p>只侦听Telnet端口，不侦听HTTP端口：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar arthas-boot.jar --telnet-port 9999 --http-port -1</span></span><br></pre></td></tr></table></figure></li>
+<li><p>打印运行的详情：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar arthas-boot.jar -v</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<p>参考：</p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://arthas.aliyun.com/">Arthas官网</a></p>
+<p>🔗 <a target="_blank" rel="noopener" href="https://arthas.aliyun.com/doc/index.html">Arthas 用户文档 — Arthas 3.5.4 文档 (aliyun.com)</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019122801.html" rel="bookmark">线程安全和锁优化</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019122701.html" rel="bookmark">Java内存模型和线程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019122501.html" rel="bookmark">运行期优化</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019122101.html" rel="bookmark">编译期优化-Java语法糖</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019122201.html" rel="bookmark">编译期优化-实战</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021091601.html" title="Java诊断工具-Arthas">http://linyishui.top/2021091601.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/jvm/" rel="tag"><i class="fa fa-tag"></i> jvm</a>
+              <a href="/tags/Arthas/" rel="tag"><i class="fa fa-tag"></i> Arthas</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021090601.html" rel="prev" title="Oracle优化器hint">
+                  <i class="fa fa-chevron-left"></i> Oracle优化器hint
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021092201.html" rel="next" title="RabbitMQ（九）网络分区">
+                  RabbitMQ（九）网络分区 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">48:21</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>
