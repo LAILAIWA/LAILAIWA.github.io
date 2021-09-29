@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="学习RabbitMQ，第十章《扩展》，内容来自于《RabbitMQ实战指南》，内容：消息追踪，负载均衡等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ（十）扩展">
+<meta property="og:url" content="http://linyishui.top/2021092501.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="学习RabbitMQ，第十章《扩展》，内容来自于《RabbitMQ实战指南》，内容：消息追踪，负载均衡等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010120.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010121.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010122.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010123.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010124.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010129.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010130.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010125.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010126.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010127.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010128.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010106.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010107.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010108.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010109.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010110.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/%E5%BE%85%E4%B8%8A%E4%BC%A0/202109010111.png">
+<meta property="og:image" content="c:/Users/hspcadmin/AppData/Roaming/Typora/typora-user-images/image-20210907194122446.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010112.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010113.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010131.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010132.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010133.png">
+<meta property="article:published_time" content="2021-09-25T06:16:34.000Z">
+<meta property="article:modified_time" content="2021-09-29T12:24:58.000Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="distributed">
+<meta property="article:tag" content="mom">
+<meta property="article:tag" content="rabbitmq">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010120.png">
+
+
+<link rel="canonical" href="http://linyishui.top/2021092501.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021092501.html","path":"2021092501.html","title":"RabbitMQ（十）扩展"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RabbitMQ（十）扩展 | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RabbitMQ%EF%BC%88%E5%8D%81%EF%BC%89%E6%89%A9%E5%B1%95"><span class="nav-text">RabbitMQ（十）扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E6%B6%88%E6%81%AF%E8%BF%BD%E8%B8%AA"><span class="nav-text">一. 消息追踪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Firehose"><span class="nav-text">1.1 Firehose</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-rabbitmq-tracing%E6%8F%92%E4%BB%B6"><span class="nav-text">1.2 rabbitmq_tracing插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%BC%80%E5%90%AFTracing%E6%97%A5%E5%BF%97"><span class="nav-text">（1）开启Tracing日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%B5%8B%E8%AF%95%E9%98%9F%E5%88%97"><span class="nav-text">（2）测试队列</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%8F%AF%E9%9D%A0%E6%80%A7%E6%A3%80%E6%B5%8B"><span class="nav-text">1.3 案例：可靠性检测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-text">（1）前期准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E9%AA%8C%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="nav-text">（2）验证过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">二. 负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%86%85%E9%83%A8%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">2.1 客户端内部实现负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E8%BD%AE%E8%AF%A2%E6%B3%95"><span class="nav-text">（1）轮询法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%8A%A0%E6%9D%83%E8%BD%AE%E8%AF%A2%E6%B3%95"><span class="nav-text">（2）加权轮询法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E9%9A%8F%E6%9C%BA%E6%B3%95"><span class="nav-text">（3）随机法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E5%8A%A0%E6%9D%83%E9%9A%8F%E6%9C%BA%E6%B3%95"><span class="nav-text">（4）加权随机法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E6%BA%90%E5%9C%B0%E5%9D%80%E5%93%88%E5%B8%8C%E6%B3%95"><span class="nav-text">（5）源地址哈希法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89%E6%9C%80%E5%B0%8F%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%B3%95"><span class="nav-text">（6）最小连接数法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E4%BD%BF%E7%94%A8HAProxy%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">2.2 使用HAProxy实现负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%AE%89%E8%A3%85"><span class="nav-text">（1）安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E9%85%8D%E7%BD%AE"><span class="nav-text">（2）配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BD%BF%E7%94%A8Keepalived%E5%AE%9E%E7%8E%B0%E9%AB%98%E5%8F%AF%E9%9D%A0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">2.3 使用Keepalived实现高可靠负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%AE%89%E8%A3%85-1"><span class="nav-text">（1）安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E9%85%8D%E7%BD%AE-1"><span class="nav-text">（2）配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E6%9F%A5%E7%9C%8B%E8%BF%90%E8%A1%8C%E6%83%85%E5%86%B5"><span class="nav-text">（3）查看运行情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%BD%BF%E7%94%A8Keepalived-LVS%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-text">2.4 使用Keepalived+LVS实现负载均衡</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">321</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">108</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021092501.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RabbitMQ（十）扩展
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-25 14:16:34" itemprop="dateCreated datePublished" datetime="2021-09-25T14:16:34+08:00">2021-09-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-29 20:24:58" itemprop="dateModified" datetime="2021-09-29T20:24:58+08:00">2021-09-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>20k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">学习RabbitMQ，第十章《扩展》，内容来自于《RabbitMQ实战指南》，内容：消息追踪，负载均衡等。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="RabbitMQ（十）扩展"><a href="#RabbitMQ（十）扩展" class="headerlink" title="RabbitMQ（十）扩展"></a>RabbitMQ（十）扩展</h1><h2 id="一-消息追踪"><a href="#一-消息追踪" class="headerlink" title="一. 消息追踪"></a>一. 消息追踪</h2><p>使用消息中间件过程难免会遇到消息丢失的情况：</p>
+<ul>
+<li>可能是生产者与Broker断开了连接并且也没有任何重试机制；</li>
+<li>可能是消费者在处理消息时发生了异常，但提前进行了ack；</li>
+<li>可能是交换器没有与任何队列进行绑定，生产者感知不到或未采取相应的措施；</li>
+<li>可能是RabbitMQ本身的集群策略导致消息的丢失。</li>
+</ul>
+<p>需要有一个好的机制来跟踪记录消息的投递过程，方便开发和运维人员快速定位问题。</p>
+<h3 id="1-1-Firehose"><a href="#1-1-Firehose" class="headerlink" title="1.1 Firehose"></a>1.1 Firehose</h3><p>Firehose可以记录每一次发送或消费消息的记录。原理是将生产者投递给MQ的消息或MQ投递给消费者的消息按指定的格式发送到默认交换器 <code>amq.rabbitmq.trace</code> 上（topic类型）。路由键为 <code>publish.&#123;exchangename&#125;</code> 和 <code>deliver.&#123;queuename&#125;</code> 。前者对应生产者投递到交换器的消息，后者对应消费者从队列获取的消息。</p>
+<p>开启/关闭Firehose：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl trace_on [-p vhost]</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmqctl trace_off [-p vhost]</span></span><br></pre></td></tr></table></figure>
+
+<p>Firehose（多少会影响一点性能）默认关闭，且重启MQ后重置为默认。</p>
+<p>创建7个队列，2个交换器与其中两个队列绑定，最后将交换器 <code>amq.rabbitmq.trace</code> 与其余5个队列绑定：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010120.png"></p>
+<p>分别用客户端向exchange和exchange.another发送一条消息”trace test payload”，然后再用客户端消费队列queue和queue.another的消息。</p>
+<p>此时queue1中有2条消息，queue2中有2条消息，queue3中有4条消息，而queue4和queue5中只有一条消息。</p>
+<ul>
+<li>在向exchange发送一条消息后，<code>amq.rabbitmq.trace</code> 分别向queue1、queue3和queue4发送一条内部封装消息。</li>
+<li>在向exchange.another发送一条消息后，queue1和queue3多出一条消息。</li>
+<li>消费queue的时候，queue2、queue3和queue5多出一条消息。</li>
+<li>消费queue.another时，queue2和queue3多出一条消息。</li>
+</ul>
+<p>综述：</p>
+<ul>
+<li><code>publish.#</code> 匹配发送到所有交换器的消息。</li>
+<li><code>deliver.#</code> 匹配消费所有队列的消息。</li>
+<li><code>#</code> 则包含前两者。</li>
+</ul>
+<p>当有客户端发送或消费消息时，Firehose会自动封装相应的消息体，并添加详细的headers属性：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010121.png"></p>
+<p>消费queue时，消息会封装为：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010122.png"></p>
+<p>headers：</p>
+<ul>
+<li>exchange_name：发送消息的交换器。</li>
+<li>routing_keys：对应路由键列表。</li>
+<li>properties：消息本身的属性，如delivery_mode为2表示消息需要持久化处理。</li>
+</ul>
+<h3 id="1-2-rabbitmq-tracing插件"><a href="#1-2-rabbitmq-tracing插件" class="headerlink" title="1.2 rabbitmq_tracing插件"></a>1.2 rabbitmq_tracing插件</h3><p>rabbitmq_tracing插件相当于Firehose的GUI版本，同样能跟踪MQ中的消息流入流出，同样对消息进行封装并存入trace文件之中。</p>
+<p>开启/关闭：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">enable</span> rabbitmq_tracing</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rabbitmq-plugins <span class="built_in">disable</span> rabbitmq_tracing</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>Web管理界面Admin会多出一栏Tracing：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010123.png"></p>
+<p>添加Trace：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010124.png"></p>
+<ul>
+<li>Name：trace任务名称。</li>
+<li>Format：输出的消息日志格式，有Text和JSON。</li>
+<li>Max payload bytes：每条消息的最大限制，单位为B，达到上限会被截断。</li>
+<li>Pattern：设置匹配的模式，<code>#</code> 匹配所有消息流入流出，<code>publish.#</code> 匹配所有消息流入，<code>deliver.#</code> 匹配所有消息流出。</li>
+</ul>
+<p>TEXT格式：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010129.png"></p>
+<p>JSON格式：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010130.png"></p>
+<p>添加完毕后，根据匹配的规则将相应的消息日志输出到对应日志文件中，默认路径为 <code>/var/tmp/rabbitmq-tracing</code> ，也可以在页面直接点击Trace log files直接查看对应文件。</p>
+<p>添加两个trace任务：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010125.png"></p>
+<p>对应文件：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010126.png"></p>
+<p>会多出两个队列：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010127.png"></p>
+<p>查看第一个队列，绑定的交换器就是 <code>amq.rabbitmq.trace</code> ：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010128.png"></p>
+<p>可以看出 rabbitmq_tracing插件和Firehose如出一辙，只是多了层GUI方便使用和管理。</p>
+<h4 id="（1）开启Tracing日志"><a href="#（1）开启Tracing日志" class="headerlink" title="（1）开启Tracing日志"></a>（1）开启Tracing日志</h4><ol>
+<li><p>使用comp用户连接linux服务器</p>
+</li>
+<li><p>输入指令 <code>rabbitmqctl status</code> 确认MQ状态</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010101.png" alt="image-20210331171126692"></p>
+<p><code>command not found</code>：不能识别命令，需要添加配置信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim .bash_profile</span><br><span class="line"></span><br><span class="line">export PATH=$PATH:/home/comp/rabbitmq/rabbitmq_server-3.7.5/sbin</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置信息，后使其生效</span></span><br><span class="line">source .bash_profile</span><br></pre></td></tr></table></figure></li>
+<li><p>通过指令 <code>rabbitmq-plugins list</code> 查看MQ安装的插件，<code>E*</code> 表示已启用。对应文件路径：<code>/home/comp/rabbitmq/rabbitmq_server-3.7.5/sbin</code> </p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010102.png" alt="image-20210331171303814"></p>
+</li>
+<li><p>找到 <code>rabbitmq_tracing</code> 确认是否启用，若未启用，则通过指令 <code>rabbitmq-plugins enable rabbitmq_tracing</code> 开启。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010103.png" alt="image-20210331171436966"></p>
+</li>
+<li><p>通过指令 <code>rabbitmqctl trace_on</code> 开启trace。</p>
+</li>
+<li><p>虚拟主机 server 开启trace：<code>rabbitmqctl trace_on -p server</code> ，添加完成后会多一个交换器：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010104.png" alt="image-20210331171813344"></p>
+</li>
+<li><p>RabbitMQ管理平台新建一个Trace，添加trace追踪文件信息：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010105.png" alt="image-20210331172359303"></p>
+</li>
+<li><p>创建的Trace文件：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010106.png" alt="image-20210331172219234"></p>
+<p>若该步骤出错，如：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010107.png" alt="image-20210907173131624"></p>
+<p>MQ的tracing插件默认使用guest用户，给它开下server权限应该就行了</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010108.png" alt="image-20210907183235365"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010109.png" alt="image-20210907183453592"></p>
+<p>MQ日志路径：<code>/home/comp/rabbitmq/log</code> 。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 日志表示账号密码有问题</span></span><br><span class="line">2021-09-07 17:55:17.143 [info] &lt;0.2303.0&gt; Enabling tracing for vhost &#x27;server&#x27;</span><br><span class="line">2021-09-07 17:55:17.173 [error] &lt;0.3847.0&gt; Supervisor &#123;&lt;0.3847.0&gt;,rabbit_tracing_consumer_sup&#125; had child consumer started with rabbit_tracing_consumer:start_link([&#123;vhost,&lt;&lt;&quot;server&quot;&gt;&gt;&#125;,&#123;name,&lt;&lt;&quot;server-trace-log&quot;&gt;&gt;&#125;,&#123;format,&lt;&lt;&quot;text&quot;&gt;&gt;&#125;,&#123;pattern,&lt;&lt;&quot;#&quot;&gt;&gt;&#125;,&#123;&lt;&lt;&quot;for...&quot;&gt;&gt;,...&#125;,...]) at undefined exit with reason no match of right hand value &#123;error,&#123;auth_failure,&quot;Refused&quot;&#125;&#125; in rabbit_tracing_consumer:init/1 line 58 in context start_error</span><br><span class="line">2021-09-07 17:55:17.173 [error] &lt;0.3848.0&gt; CRASH REPORT Process &lt;0.3848.0&gt; with 0 neighbours exited with reason: no match of right hand value &#123;error,&#123;auth_failure,&quot;Refused&quot;&#125;&#125; in rabbit_tracing_consumer:init/1 line 58 in gen_server:init_it/6 line 352</span><br></pre></td></tr></table></figure></li>
+<li><p>重新核算，触发消息发送。</p>
+</li>
+<li><p>查看步骤8的Trace文件，确认消息是否发送。</p>
+</li>
+</ol>
+<p>如果给guest增加权限server仍不能创建Trac，直接重建guest用户：</p>
+<ol>
+<li><p>删除用户guest</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010110.png" alt="image-20210907194009362"></p>
+</li>
+<li><p>再创建用户guest，用户名密码相同。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/%E5%BE%85%E4%B8%8A%E4%BC%A0/202109010111.png" alt="image-20210907194048653"></p>
+<p><img src="C:\Users\hspcadmin\AppData\Roaming\Typora\typora-user-images\image-20210907194122446.png" alt="image-20210907194122446"></p>
+</li>
+<li><p>增加权限：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010112.png" alt="image-20210907194148405"></p>
+</li>
+<li><p>重新创建Tracing：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010113.png" alt="image-20210907194213958"></p>
+<p>创建成功：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010114.png" alt="image-20210907194229913"></p>
+</li>
+</ol>
+<h4 id="（2）测试队列"><a href="#（2）测试队列" class="headerlink" title="（2）测试队列"></a>（2）测试队列</h4><p>除了开启Tracing排查消息是否投递到MQ，还可以新加一个测试Queue，绑定相同的交换器和路由键。因为无消费者，所以消息都堆积在队列中，通过GetMessage(n) + nack来获取所有消息，也可以ack或purge清空消息。</p>
+<h3 id="1-3-案例：可靠性检测"><a href="#1-3-案例：可靠性检测" class="headerlink" title="1.3 案例：可靠性检测"></a>1.3 案例：可靠性检测</h3><p>生产者将消息发送到交换器时，实际上是由生产者所连接的信道将消息上的路由键同交换器的绑定列表比较，之后再路由消息到相应的队列进程中。    </p>
+<p>那么在信道对比完绑定列表后，将消息路由到队列并保存的过程，是否会因为MQ的内部缺陷而引起偶发性的消息丢失？我们可以使用消息追踪机制来验证这一疑问，一个交换器通过同一个路由键绑定多个队列，生产者客户端采用同一个路由键发送消息到交换器，检测绑定的队列是否有消息丢失。</p>
+<h4 id="（1）前期准备"><a href="#（1）前期准备" class="headerlink" title="（1）前期准备"></a>（1）前期准备</h4><ol>
+<li>开启tracing插件。</li>
+<li>创建一个交换器exchange和三个队列，都由同一个路由键rk绑定。</li>
+<li>创建三个trace分别采用 <code>#.queue1</code> ，<code>#.queue2</code> ，<code>#.queue3</code> 的Pattern追踪各个队列。</li>
+<li>创建一个trace：trace_publish采用 <code>publish.exchange</code> 追踪流入交换器的消息。</li>
+</ol>
+<h4 id="（2）验证过程"><a href="#（2）验证过程" class="headerlink" title="（2）验证过程"></a>（2）验证过程</h4><p>开启一个生产者现场，持续发消息到交换器，消息格式为当前时间戳+自增计数，从而在数据丢失时可以快速在trace日志中定位到。注意设置mandatory参数，防止消息路由不到对应队列而造成对消息丢失的误判。</p>
+<p>消息发送前以[msg, QUEUE_NUM]的形式存入一个全局msgMap中，用来在消费端做数据验证，为3表示创建了三个队列：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;String, Integer&gt; msgMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> BlockingQueue&lt;String&gt; log2disk = <span class="keyword">new</span> LinkedBlockingDeque&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Connection connection;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ProducerThread</span><span class="params">(Connection connection)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.connection = connection;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Channel channel = connection.createChannel();</span><br><span class="line">            channel.addReturnListener((replyCode, replyText, exchange, routingKey, basicProperties, body) -&gt; &#123;</span><br><span class="line">                String errorInfo = <span class="string">&quot;Basic.Return: &quot;</span> + <span class="keyword">new</span> String(body) + <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    log2disk.put(errorInfo);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">                    ex.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(errorInfo);</span><br><span class="line">            &#125;);</span><br><span class="line">            <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                String message = System.currentTimeMillis() + <span class="string">&quot;-&quot;</span> + count++;</span><br><span class="line">                <span class="comment">// 存储消息一定要在发消息之前，否则消息被消费时msgMap中不一定会有相应的消息</span></span><br><span class="line">                <span class="keyword">synchronized</span> (msgMap) &#123;</span><br><span class="line">                    msgMap.put(message, QUEUE_NUM);</span><br><span class="line">                &#125;</span><br><span class="line">                channel.basicPublish(exchange, routingKey, <span class="keyword">true</span>, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// QPS=10，可以自适应调节，不宜过高防止队列堆积严重</span></span><br><span class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">100</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">                    ex.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后，开启三个消费者线程分别消费是三个队列的消息，从存储的msgMap中寻找是否有相应消息，若有则计数减一并删除；若无，则报错：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Connection connection;</span><br><span class="line">    <span class="keyword">private</span> String queue;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConsumerThread</span><span class="params">(Connection connection, String queue)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.connection = connection;</span><br><span class="line">        <span class="keyword">this</span>.queue = queue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">final</span> Channel channel = connection.createChannel();</span><br><span class="line">            channel.basicQos(<span class="number">64</span>);</span><br><span class="line">            channel.basicConsume(<span class="keyword">this</span>.queue, <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                    String msg = <span class="keyword">new</span> String(body);</span><br><span class="line">                    <span class="keyword">synchronized</span> (msgMap) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (msgMap.containsKey(msg)) &#123;</span><br><span class="line">                            <span class="keyword">int</span> count = msgMap.get(msg);</span><br><span class="line">                            count--;</span><br><span class="line">                            <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                                msgMap.put(msg, count);</span><br><span class="line">                            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                msgMap.remove(msg);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            String errorInfo = <span class="string">&quot;unknown msg : &quot;</span> + msg + <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                            <span class="keyword">try</span> &#123;</span><br><span class="line">                                log2disk.put(errorInfo);</span><br><span class="line">                                System.out.println(errorInfo);</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">                                ex.printStackTrace();</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    </span><br><span class="line">                    channel.basicAck(envelope.getDeliveryTag(), <span class="keyword">false</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>最后，开启一个检测进程，每隔10分钟检测一下msgMap中的数据。对比消息中的时间戳和当前时间，如果差值超过10分钟，则说明可能有消息丢失。（该结论的前提是队列没有消息堆积，且消费消息的速度不低于生产消息的速度）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DetectThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.MINUTES.sleep(<span class="number">10</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">synchronized</span> (msgMap) &#123;</span><br><span class="line">                <span class="keyword">long</span> now = System.currentTimeMillis();</span><br><span class="line">                <span class="keyword">for</span> (Map.Entry&lt;String, Integer&gt; entry : msgMap.entrySet()) &#123;</span><br><span class="line">                    String msg = entry.getKey();</span><br><span class="line">                    <span class="keyword">if</span> (now - parseTime(msg) &gt;= <span class="number">10</span> * <span class="number">60</span> * <span class="number">1000</span>) &#123;</span><br><span class="line">                        String findLossInfo = <span class="string">&quot;We find loss msg: &quot;</span> +</span><br><span class="line">                                msg + <span class="string">&quot; , now the time is: &quot;</span> + </span><br><span class="line">                                now + <span class="string">&quot;, and this msg still has &quot;</span> +</span><br><span class="line">                                entry.getValue() + <span class="string">&quot; missed\n&quot;</span>;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            log2disk.put(findLossInfo);</span><br><span class="line">                            System.out.println(findLossInfo);</span><br><span class="line">                            msgMap.remove(msg);</span><br><span class="line">                        &#125; <span class="keyword">catch</span> (InterruptedException ex) &#123;</span><br><span class="line">                            ex.printStackTrace();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Long <span class="title">parseTime</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> index = msg.indexOf(<span class="string">&#x27;-&#x27;</span>);</span><br><span class="line">    String timeStr = msg.substring(<span class="number">0</span>, index);</span><br><span class="line">    <span class="keyword">return</span> Long.parseLong(timeStr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果检测到msgMap有超过10分钟的未处理消息，还不能说明有消息丢失，使用trace，如果看到[msg, count]这条数据有如下情况：</p>
+<ul>
+<li><strong>考虑count=3的情况。</strong>需要检索trace文件trace_publish.log来进一步验证，如果其中没搜到相应的消息说明消息未发送到交换器；如果搜索到消息，则要进一步检索trace1.log、trace2.log和trace3.log。如果3个文件不是全部都有此消息，则说明消息丢失。</li>
+<li><strong>考虑0&lt;count&lt;3的情况。</strong>检索trace1.log、trace2.log和trace3.log。如果3个文件不是全部都有此消息，则说明消息丢失。</li>
+<li><strong>考虑count=0的情况。</strong>说明检查程序异常，可以忽略。</li>
+</ul>
+<p>主线程部分代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Connection connection = connectionFactory.newConnection();</span><br><span class="line"><span class="comment">// 用来读取log2disk这个BlockingQueue中存储的异常日志，然后进行存盘处理，可以用log4j等代替</span></span><br><span class="line">PrintLogThread printLogThread = <span class="keyword">new</span> PrintLogThread(logFileAddr);</span><br><span class="line">ProducerThread producerThread = <span class="keyword">new</span> ProducerThread(connection);</span><br><span class="line">ConsumerThread consumerThread1 = <span class="keyword">new</span> ConsumerThread(connection, <span class="string">&quot;queue1&quot;</span>);</span><br><span class="line">ConsumerThread consumerThread2 = <span class="keyword">new</span> ConsumerThread(connection, <span class="string">&quot;queue2&quot;</span>);</span><br><span class="line">ConsumerThread consumerThread3 = <span class="keyword">new</span> ConsumerThread(connection, <span class="string">&quot;queue3&quot;</span>);</span><br><span class="line">DetectThread detectThread = <span class="keyword">new</span> DetectThread();</span><br><span class="line">System.out.println(<span class="string">&quot;starting check msg loss...&quot;</span>);</span><br><span class="line">ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">executorService.submit(printLogThread);</span><br><span class="line">executorService.submit(producerThread);</span><br><span class="line">executorService.submit(consumerThread1);</span><br><span class="line">executorService.submit(consumerThread2);</span><br><span class="line">executorService.submit(consumerThread3);</span><br><span class="line">executorService.submit(detectThread);</span><br><span class="line">executorService.shutdown();</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="二-负载均衡"><a href="#二-负载均衡" class="headerlink" title="二. 负载均衡"></a>二. 负载均衡</h2><p>大量业务访问、高并发请求的场景，需要用高性能的服务器来提升MQ的负载能力。假设一个集群中有3个节点，所有客户端都与node1建立TCP连接，则node1的网络负载会大大增加，其他节点又由于没有那么多负载而造成资源浪费。</p>
+<p>对于RabbitMQ，客户端只会和集群中一个节点建立连接而不是整个集群。引入负载均衡后，各个客户端的连接会分摊到各个节点：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010131.png"></p>
+<blockquote>
+<p>负载均衡（Load Balance）是一种计算机网络技术，用于在多个计算机（集群）、网络连接、CPU、磁盘驱动器或其他资源中分配负载，以达到最佳资源使用、最大化吞吐率、最小响应时间及避免过载的目的。</p>
+<p>使用带有负载均衡的多个服务器组件，取代单一的组件，可以通过冗余提高可靠性。</p>
+<p>负载均衡分为：</p>
+<ul>
+<li><strong>软件负载均衡：</strong>在一个或多个交互的网络系统中的多台服务器上安装一个或多个相应的负载均衡软件来实现的一种均衡负载技术。软件安装比较方便，技术配置简单，操作方便，成本很低。</li>
+<li><strong>硬件负载均衡：</strong>多台服务器间安装相应的负载均衡设备，即负载均衡器。相比软件会有更好的负载均衡效果，但成本较高，适用于流量较大的大型网站系统。</li>
+</ul>
+</blockquote>
+<h3 id="2-1-客户端内部实现负载均衡"><a href="#2-1-客户端内部实现负载均衡" class="headerlink" title="2.1 客户端内部实现负载均衡"></a>2.1 客户端内部实现负载均衡</h3><p>客户端连接可以任选一种负载均衡算法实现。</p>
+<h4 id="（1）轮询法"><a href="#（1）轮询法" class="headerlink" title="（1）轮询法"></a>（1）轮询法</h4><p>将请求按顺序轮流分配到后端服务器上，不关心每台服务器实际的连接数和当前系统负载，调用 <code>RoundRobin.getConnectionAddress()</code> 获取连接地址。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 轮询法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RoundRobin</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;()&#123;&#123;</span><br><span class="line">        add(<span class="string">&quot;192.168.0.2&quot;</span>);</span><br><span class="line">        add(<span class="string">&quot;192.168.0.3&quot;</span>);</span><br><span class="line">        add(<span class="string">&quot;192.168.0.4&quot;</span>);</span><br><span class="line">    &#125;&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> pos = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getConnectionAddress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String ip = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">            ip = list.get(pos);</span><br><span class="line">            <span class="keyword">if</span> (++pos &gt;= list.size()) &#123;</span><br><span class="line">                pos = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ip;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（2）加权轮询法"><a href="#（2）加权轮询法" class="headerlink" title="（2）加权轮询法"></a>（2）加权轮询法</h4><p>不同服务器的配置可能和当前系统的负载不同，抗压能力也不相同。所以应该给配置高、负载低的机器配置更高的权重，让其处理更多请求；</p>
+<h4 id="（3）随机法"><a href="#（3）随机法" class="headerlink" title="（3）随机法"></a>（3）随机法</h4><p>通过随机算法，根据服务器列表大小值来任选一台服务器访问。由概率理论可知，随着调用服务端次数增多，实际效果会越来越接近轮询法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 随机法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomAccess</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;()&#123;&#123;</span><br><span class="line">        add(<span class="string">&quot;192.168.0.2&quot;</span>);</span><br><span class="line">        add(<span class="string">&quot;192.168.0.3&quot;</span>);</span><br><span class="line">        add(<span class="string">&quot;192.168.0.4&quot;</span>);</span><br><span class="line">    &#125;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getConnectionAddress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">int</span> pos = random.nextInt(list.size());</span><br><span class="line">        <span class="keyword">return</span> list.get(pos);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（4）加权随机法"><a href="#（4）加权随机法" class="headerlink" title="（4）加权随机法"></a>（4）加权随机法</h4><p>与加权轮询法相同，根据机器配置和负载分配不同权重，区别是其按照权重随机分配而非顺序。</p>
+<h4 id="（5）源地址哈希法"><a href="#（5）源地址哈希法" class="headerlink" title="（5）源地址哈希法"></a>（5）源地址哈希法</h4><p>根据获取的客户端IP地址，通过哈希函数计算得到的一个数值，用此数值对服务器列表的大小进行取模运算，得到的结果便是客户端要访问服务器的序号。</p>
+<p>采用该方法，同一IP地址的客户端在服务器列表不变的情况下，每次都会分配给同一台服务器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 源地址哈希法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IpHash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;String&gt;()&#123;&#123;</span><br><span class="line">        add(<span class="string">&quot;192.168.0.2&quot;</span>);</span><br><span class="line">        add(<span class="string">&quot;192.168.0.3&quot;</span>);</span><br><span class="line">        add(<span class="string">&quot;192.168.0.4&quot;</span>);</span><br><span class="line">    &#125;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getConnectionAddress</span><span class="params">()</span> <span class="keyword">throws</span> UnknownHostException </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> ipHashCode = InetAddress.getLocalHost().getHostAddress().hashCode();</span><br><span class="line">        <span class="keyword">int</span> pos = ipHashCode &amp; list.size();</span><br><span class="line">        <span class="keyword">return</span> list.get(pos);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（6）最小连接数法"><a href="#（6）最小连接数法" class="headerlink" title="（6）最小连接数法"></a>（6）最小连接数法</h4><p>由于服务器配置不尽相同，对于请求的处理有快有慢，根据服务器当前连接情况，动态的选取其中当前积压连接数最少的一台服务器来处理当前的请求，尽可能的提高对服务器的利用效率。</p>
+<h3 id="2-2-使用HAProxy实现负载均衡"><a href="#2-2-使用HAProxy实现负载均衡" class="headerlink" title="2.2 使用HAProxy实现负载均衡"></a>2.2 使用HAProxy实现负载均衡</h3><p>HAProxy提供了高可用性、负载均衡及基于TCP和HTTP应用的代理，支持虚拟主机，是一种免费、快速且可靠的解决方案。实现了一种事件驱动、单一进程模型，支持较大的并发连接数。</p>
+<h4 id="（1）安装"><a href="#（1）安装" class="headerlink" title="（1）安装"></a>（1）安装</h4><p><a target="_blank" rel="noopener" href="http://www.haproxy.org/#down">官网下载</a>，<a target="_blank" rel="noopener" href="http://www.haproxy.org/#doc1.7">官方文档</a>。</p>
+<p>将下载的压缩包复制到 <code>/opt</code> 目录下，与RabbitMQ同一个目录，并解压：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tar zxvf haproxy-1.7.8.tar.gz</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> haproxy-1.7.8</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> make指令将其编译为可执行程序，TARGET选择目标平台</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make TARGET=generic</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 编译后目录下有名为haproxy的可执行文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改系统配置</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> vi /etc/profile</span></span><br><span class="line">export PATH=$PATH:/opt/haproxy-1.7.8/haproxy</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">source</span> /etc/profile</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（2）配置"><a href="#（2）配置" class="headerlink" title="（2）配置"></a>（2）配置</h4><p>HAProxy使用单一配置文件来定义所有属性：</p>
+<ul>
+<li>HAProxy主机：192.168.0.9:5671</li>
+<li>RabbitMQ1：192.168.0.2:5672</li>
+<li>RabbitMQ2：192.168.0.3:5672</li>
+<li>RabbitMQ3：192.168.0.4:5672</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全局配置</span></span><br><span class="line"><span class="attr">global</span></span><br><span class="line"><span class="comment">	# 日志输出配置，所有日志都记录在本机，通过local0输出</span></span><br><span class="line">	<span class="attr">log</span> <span class="string">127.0.0.1 local0 info</span></span><br><span class="line"><span class="comment">	# 最大连接数</span></span><br><span class="line">	<span class="attr">maxconn</span> <span class="string">4096</span></span><br><span class="line"><span class="comment">	# 改变当前的工作目录</span></span><br><span class="line">	<span class="attr">chroot</span> <span class="string">/opt/haproxy-1.7.8</span></span><br><span class="line"><span class="comment">	# 以指定的UID运行</span></span><br><span class="line">	<span class="attr">uid</span> <span class="string">99</span></span><br><span class="line"><span class="comment">	# 以指定的GID运行</span></span><br><span class="line">	<span class="attr">gid</span> <span class="string">99</span></span><br><span class="line"><span class="comment">	# 以守护进程方式运行 #debug #quiet</span></span><br><span class="line">	<span class="attr">daemon</span></span><br><span class="line"><span class="comment">	#debug</span></span><br><span class="line"><span class="comment">	# 当前进程pid文件</span></span><br><span class="line">	<span class="attr">pidfile</span> <span class="string">/opt/haproxy-1.7.8/haproxy.pid</span></span><br><span class="line"><span class="comment"># 默认配置</span></span><br><span class="line"><span class="attr">defaults</span></span><br><span class="line"><span class="comment">	# 应用全局的日志配置</span></span><br><span class="line">	<span class="attr">log</span> <span class="string">global</span></span><br><span class="line"><span class="comment">	# 默认的模式mode&#123;tcp|http|health&#125;</span></span><br><span class="line">	<span class="attr">mode</span> <span class="string">tcp</span></span><br><span class="line"><span class="comment">	# 日志类别tcplog</span></span><br><span class="line">	<span class="attr">option</span> <span class="string">tcplog</span></span><br><span class="line"><span class="comment">	# 不记录健康检查日志信息</span></span><br><span class="line">	<span class="attr">option</span> <span class="string">dontlognull</span></span><br><span class="line"><span class="comment">	# 3次失败则认为服务不可用</span></span><br><span class="line">	<span class="meta">retries</span> <span class="string">3</span></span><br><span class="line"><span class="comment">	# 每个进程可用的最大连接数</span></span><br><span class="line">	<span class="attr">maxconn</span> <span class="string">2000</span></span><br><span class="line"><span class="comment">	# 连接超时</span></span><br><span class="line">	<span class="attr">timeout</span> <span class="string">connect 5s</span></span><br><span class="line"><span class="comment">	# 客户端超时</span></span><br><span class="line">	<span class="attr">timeout</span> <span class="string">client 120s</span></span><br><span class="line"><span class="comment">	# 服务端超时</span></span><br><span class="line">	<span class="attr">timeout</span> <span class="string">server 120s</span></span><br><span class="line"><span class="comment"># 绑定配置</span></span><br><span class="line"><span class="meta">listen</span> <span class="string">rabbitmq_cluster :5671</span></span><br><span class="line"><span class="comment">	# 配置TCP模式</span></span><br><span class="line">	<span class="attr">mode</span> <span class="string">tcp</span></span><br><span class="line"><span class="comment">	# 简单的轮询</span></span><br><span class="line">	<span class="attr">balance</span> <span class="string">roundrobin</span></span><br><span class="line"><span class="comment">	# RabbitMQ集群节点配置</span></span><br><span class="line">	<span class="meta">server</span> <span class="string">rmq_node1 192.168.0.2:5672 check inter 5000 rise 2 fall 3 weight 1</span></span><br><span class="line">	<span class="meta">server</span> <span class="string">rmq_node2 192.168.0.3:5672 check inter 5000 rise 2 fall 3 weight 1</span></span><br><span class="line">	<span class="meta">server</span> <span class="string">rmq_node3 192.168.0.4:5672 check inter 5000 rise 2 fall 3 weight 1</span></span><br><span class="line"><span class="comment">#haproxy监控页面地址</span></span><br><span class="line"><span class="meta">listen</span> <span class="string">monitor :8100</span></span><br><span class="line">	<span class="attr">mode</span> <span class="string">http</span></span><br><span class="line">	<span class="attr">option</span> <span class="string">httplog</span></span><br><span class="line">	<span class="meta">stats</span> <span class="string">enabnle</span></span><br><span class="line">	<span class="meta">stats</span> <span class="string">uri /stats</span></span><br><span class="line">	<span class="meta">stats</span> <span class="string">refresh 5s</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>server rmq_node1 192.168.0.2:5672 check inter 5000 rise 2 fall 3 weight 1</code> ：</p>
+<ul>
+<li><code>server &lt;name&gt;</code> ：定义RabbitMQ服务的内部标识，此处rmq_node1指有含义的字符串名称，而非节点名称。</li>
+<li><code>&lt;ip&gt;:&lt;port&gt;</code> ：定义RabbitMQ服务连接的IP地址和端口号。</li>
+<li><code>check inter &lt;value&gt;</code> ：定义每隔多少毫秒检查RabbitMQ服务是否可用。</li>
+<li><code>rise &lt;value&gt;</code> ：定义RabbitMQ服务在发生故障后，需要多少次健康检查才能被再次确认可用。</li>
+<li><code>fall &lt;value&gt;</code> ：定义需要经历多少次失败的健康检查后，HAProxy才会停止使用此RabbitMQ服务。</li>
+<li><code>weight &lt;value&gt;</code>  ：定义当前RabbitMQ服务的权重。</li>
+</ul>
+<p>调用 <code>haproxy -f haproxy.cfg</code> 命令运行服务后，可以查看相关界面 <code>http://192.168.0.9:8100/stats</code> 。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010132.png"></p>
+<h3 id="2-3-使用Keepalived实现高可靠负载均衡"><a href="#2-3-使用Keepalived实现高可靠负载均衡" class="headerlink" title="2.3 使用Keepalived实现高可靠负载均衡"></a>2.3 使用Keepalived实现高可靠负载均衡</h3><p>如果HAProxy主机突然宕机或网卡失效，MQ集群没有故障，但所有外界客户端的连接都会断开（单点问题），HAProxy无法保证负载均衡服务的可靠性。</p>
+<p>通过Keepalived能够通过自身健康检查、资源接管功能做高可用（双机热备），实现故障转移。</p>
+<p>Keepalived采用VRRP（Vistual Router Redundancy Protocol，虚拟路由冗余协议），以软件的形式实现服务的热备功能。通常将两台Linux服务器组出一个热备组（Master和Backup），同一时间内热备组只有一个Master提供服务，Master会虚拟出一个公用的虚拟IP地址（VIP），只存在于Master上并对外提供服务。当Keepalived检测到Master宕机或服务故障，备份服务器自动接管VIP并成为Master，原Master从热备组中被移除待恢复后再自动加入到热备组，默认再抢占成Master起到故障转移的功能。</p>
+<p>Keepalived工作在OSI的：</p>
+<ul>
+<li>第三层：定期向热备组中的服务器发送一个ICMP数据包来判断某台服务器是否故障，如果故障则从热备组移除。</li>
+<li>第四层：以TCP端口的状态判断服务器是否故障，比如检查MQ端口5672，如果故障则从热备组中移除。</li>
+<li>第七层：根据用户设定的策略（通常是一个自定义的检测脚本）判断服务器上的程序是否正常运行，如果故障则从热备组中移除。</li>
+</ul>
+<h4 id="（1）安装-1"><a href="#（1）安装-1" class="headerlink" title="（1）安装"></a>（1）安装</h4><p><a target="_blank" rel="noopener" href="http://keepalived.org/download.html">官网下载</a>。</p>
+<p>解压并安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tar zxvf keepalived-1.3.5.tar.gz</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> keepalived-1.3.5</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 根据系统选择对应的启动方式</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./configure --prefix=/opt/keepalived --with-init=SYSV</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 将安装后的keepalived加入系统服务（注意千万不要输错命令）</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp /opt/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp /opt/keepalived/etc/sysconfig/keepalived /etc/sysconfig</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp /opt/keepalived/sbin/keepalived /usr/sbin/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chmod +x /etc/init.d/keepalived</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chkconfig --add keepalived</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chkconfig keepalived on</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> keepalived会默认读取/etc/keepalived/keepalived.conf 配置文件</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mkdir /etc/keepalived</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp /opt/keepalived/etc/keepalived/keepalived.conf /etc/keepalived</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 之后就可以重启、启动、关闭和查看keepalived状态</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> service keepalived restart</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> service keepalived start</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> service keepalived stop</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> service keepalived status</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（2）配置-1"><a href="#（2）配置-1" class="headerlink" title="（2）配置"></a>（2）配置</h4><p>安装流程已创建了 <code>/etc/keepalived</code> 目录，并将 <code>keepalived.conf </code> 文件复制到此供keepalived读取。更改此文件使keepalived与HAProxy结合。</p>
+<p>两台keepalived服务器通过VRRP交互，对外虚拟出VIP，keepalived与HAProxy部署在同一台机器上，一一配对，从而通过keepalived来实现HAProxy的双机热备。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20210901/202109010133.png"></p>
+<p>调用链路：</p>
+<ul>
+<li>客户端通过VIP创建通信链路；</li>
+<li>通信链路通过keepalived的Master节点路由到对应的HAProxy上；</li>
+<li>HAProxy通过负载均衡算法将负载分发到集群中各个节点上。</li>
+</ul>
+<p>修改配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># keepalived配置文件</span><br><span class="line">global_defs &#123;</span><br><span class="line">	router_id NodeA # 路由ID、主/备的ID不能相同</span><br><span class="line">&#125;</span><br><span class="line"># 自定义监控脚本</span><br><span class="line">vrrp_script chk_haproxy &#123;</span><br><span class="line">	script &quot;/etc/keepalived/check_haproxy.sh&quot;</span><br><span class="line">	interval 5</span><br><span class="line">	weight 2</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">	state MASTER # keepalived的角色</span><br><span class="line">	interface eth0 # 指定监测网卡</span><br><span class="line">	virtual_router_id 1</span><br><span class="line">	priority 100 # 优先级，BACKUP机器上优先级要小于此值</span><br><span class="line">	advert_int 1 # 设置主备之间的检测时间，单位为s</span><br><span class="line">	authentication &#123;</span><br><span class="line">		auth_type PASS</span><br><span class="line">		auth_pass root123</span><br><span class="line">	&#125;</span><br><span class="line">	track_script &#123;</span><br><span class="line">		chk_haproxy</span><br><span class="line">	&#125;</span><br><span class="line">	virtual_ipaddress &#123; # VIP地址，可以设置多个</span><br><span class="line">		192.168.0.10</span><br><span class="line">	&#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+
+
+<p>BACKUP机器大致相同，需要修改 <code>global_defs</code> 的 router_id 为如NodeB；修改 <code>vrrp_script chk_haproxy</code> 的state为BACKUP；最后将priority设置为小于100的值。注意virtual_router_id要保持一致。</p>
+<p>为了防止HAProxy挂掉后，keepalived还在正常工作而未切换到Backup，需要补充一个脚本来检测HAProxy的状态。当服务挂掉，脚本自动重启服务，若不成功则关闭keepalived服务，从而可以切换到Backup。该脚本对应 <code>vrrp_script chk_haproxy</code> 中的 script ：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="keyword">if</span> [ $(ps -C haproxy --no-header | wc -l) -eq 0];<span class="keyword">then</span></span><br><span class="line">	   haproxy -f /opt/haproxy-1.7.8/haproxy.cfg</span><br><span class="line"><span class="keyword">fi</span> </span><br><span class="line">sleep 2</span><br><span class="line"><span class="keyword">if</span> [ $(ps -C haproxy --no-header | wc -l) -eq 0];<span class="keyword">then</span></span><br><span class="line">       service keepalived stop</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如此配置后，使用 <code>service keepalived start</code> 启动两台服务。客户端通过VIP地址 <code>192.168.0.10</code> 来连接MQ服务。</p>
+<h4 id="（3）查看运行情况"><a href="#（3）查看运行情况" class="headerlink" title="（3）查看运行情况"></a>（3）查看运行情况</h4><p>查看Keepalived日志输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tail -f /var/<span class="built_in">log</span>/messages -n 200</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>查看添加的VIP：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ip add show</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>一般情况下，双机热备已足够满足应用需求。</p>
+<h3 id="2-4-使用Keepalived-LVS实现负载均衡"><a href="#2-4-使用Keepalived-LVS实现负载均衡" class="headerlink" title="2.4 使用Keepalived+LVS实现负载均衡"></a>2.4 使用Keepalived+LVS实现负载均衡</h3><p>LVS，Linux Virtual Server，即Linux虚拟服务器。LVS是4层负载均衡，建立在OSI模型的传输层之上。LVS支持TCP/UDP的负载均衡，相对于如DNS域名流转解析、应用层负载的调度、客户端的调度等更高效。</p>
+<p>通过LVS可以实现高可伸缩的、高可用的网络服务。LVS主要由3部分组成：</p>
+<ul>
+<li><strong>负载调度器（Load Balancer/Director）：</strong>负责将客户请求发送到一组服务器上执行，客户则认为服务来自一个IP地址。</li>
+<li><strong>服务器池（Server Pool / RealServer）：</strong>一组真正执行客户端请求的服务器。</li>
+<li><strong>共享存储（Shared Storage）：</strong>为服务器池提供一个共享的存储区，方便其拥有相同内容，提供相同服务。</li>
+</ul>
+<p>LVS的负载均衡方式：</p>
+<ul>
+<li><strong>VS/NAT：</strong>Virtual Server via Network Address Translation 的简称，最简单的方式，<strong>所有RealServer只需将自己的网关指向Director</strong>。客户端可以是任意的OS，但该方式下一个Director只能带动有限的RealServer。</li>
+<li><strong>VS/TUN：</strong>Virtual Server via Direct Routing 的简称，IP隧道（IP Tunneling）是将一个IP报文封装在另一个IP报文的技术，<strong>使目标为一个IP地址的数据报文能够封装和转发到另一个IP地址</strong>。IP隧道技术又叫IP封装技术（IP encapsulation）。</li>
+<li><strong>VS/DR：</strong>Virtual Server via Direct Routing 的简称，通过改写报文中的MAC地址部分来实现。Director和RealServer必须在物理上有一个网卡通过不间断的局域网相连。RealServer上绑定的VIP配置在各自Non-ARP网络设备上，Director的VIP地址对外可见；而RealServer则不可见，其地址既可以是内部地址，也可以是真实地址。</li>
+</ul>
+<p>LVS可以代替HAProxy，不需要额外的配置文件，直接集成在Keepalived的配置中，修改 <code>/etc/keepalived/keepalived.conf</code> ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"># keepalived配置文件（Master）</span><br><span class="line">global_defs &#123;</span><br><span class="line">	router_id NodeA # 路由ID、主/备的ID不能相同</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">	state MASTER # keepalived的角色</span><br><span class="line">	interface eth0 # 指定监测网卡</span><br><span class="line">	virtual_router_id 1</span><br><span class="line">	priority 100 # 优先级，BACKUP机器上优先级要小于此值</span><br><span class="line">	advert_int 1 # 设置主备之间的检测时间，单位为s</span><br><span class="line">	authentication &#123;</span><br><span class="line">		auth_type PASS</span><br><span class="line">		auth_pass root123</span><br><span class="line">	&#125;</span><br><span class="line">	track_script &#123;</span><br><span class="line">		chk_haproxy</span><br><span class="line">	&#125;</span><br><span class="line">	virtual_ipaddress &#123; # VIP地址，可以设置多个</span><br><span class="line">		192.168.0.10</span><br><span class="line">	&#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">virtual_server 192.168.0.10 5672 &#123; # 设置虚拟服务器</span><br><span class="line">	delay_loop 6 # 设置运行情况检查时间，单位为秒</span><br><span class="line">	# 设置负载调度算法，有rr、wrr、lc、wlc、lblc、lblcr、dh、sh共8种</span><br><span class="line">	lb_algo wrr # 加权轮询</span><br><span class="line">	lb_kind DR # 设置LVS实现的负载均衡机制为VS/DR</span><br><span class="line">	# 指定在一定的时间内来自统一IP的连接将会被转发到同一RealServer中</span><br><span class="line">	persistence_timeout 50</span><br><span class="line">	protocal TCP # 指定转发协议类型，包括TCP/UDP两种</span><br><span class="line">	# LVS三大部分之一，此处特指RabbitMQ服务</span><br><span class="line">	real_server 192.168.0.2 5672 &#123; # 配置服务节点</span><br><span class="line">		weight 1 # 权重</span><br><span class="line">		TCP_CHECK &#123;</span><br><span class="line">			connect_timeout 3</span><br><span class="line">			nb_get_retry 3</span><br><span class="line">			delay_before_retry 3</span><br><span class="line">			connect_port 5672</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	real_server 192.168.0.3 5672 &#123; </span><br><span class="line">		weight 1 </span><br><span class="line">		TCP_CHECK &#123;</span><br><span class="line">			connect_timeout 3</span><br><span class="line">			nb_get_retry 3</span><br><span class="line">			delay_before_retry 3</span><br><span class="line">			connect_port 5672</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	real_server 192.168.0.4 5672 &#123; </span><br><span class="line">		weight 1 </span><br><span class="line">		TCP_CHECK &#123;</span><br><span class="line">			connect_timeout 3</span><br><span class="line">			nb_get_retry 3</span><br><span class="line">			delay_before_retry 3</span><br><span class="line">			connect_port 5672</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 为RabbitMQ Management插件设置负载均衡</span><br><span class="line">virtual_server 192.168.0.10 15672 &#123;</span><br><span class="line">	delay_loop 6</span><br><span class="line">	lb_algo wrr</span><br><span class="line">	lb_kind DR</span><br><span class="line">	persistence_timeout 50</span><br><span class="line">	protocal TCP</span><br><span class="line">	real_server 192.168.0.2 5672 &#123;</span><br><span class="line">		weight 1</span><br><span class="line">		TCP_CHECK &#123;</span><br><span class="line">			connect_timeout 3</span><br><span class="line">			nb_get_retry 3</span><br><span class="line">			delay_before_retry 3</span><br><span class="line">			connect_port 15672</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	real_server 192.168.0.3 5672 &#123; </span><br><span class="line">		weight 1 </span><br><span class="line">		TCP_CHECK &#123;</span><br><span class="line">			connect_timeout 3</span><br><span class="line">			nb_get_retry 3</span><br><span class="line">			delay_before_retry 3</span><br><span class="line">			connect_port 15672</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	real_server 192.168.0.4 5672 &#123; </span><br><span class="line">		weight 1 </span><br><span class="line">		TCP_CHECK &#123;</span><br><span class="line">			connect_timeout 3</span><br><span class="line">			nb_get_retry 3</span><br><span class="line">			delay_before_retry 3</span><br><span class="line">			connect_port 15672</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Backup配置参考上一节。</p>
+<ul>
+<li>LVS主要工作是提供调度算法，把客户端请求按需求调度在RealServer中，</li>
+<li>Keepalived主要工作是提供LVS控制器的一个冗余，并对RealServer进行健康检查，发现不健康的从集群剔除。</li>
+<li>RealServer只负载提供服务。</li>
+</ul>
+<p>VS/DR模式下需要在RealServer上配置VIP，因为LVS把客户端的包转发给RealServer时，因为包的目的IP地址是VIP，在RealServer收到包后发现目的地址不是自己系统的IP会认为其不是发给自己的，就会丢弃此包，需要把这个IP地址绑定到网卡下。当发送应答包给客户端，RealServer就会把包的源和目的地址调换，直接恢复给客户端。</p>
+<p>为所有RealServer的lo:0网卡创建启动脚本（vim /opt/realserver.sh）绑定VIP地址：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">VIP=192.168.0.10</span><br><span class="line">/etc/rc.d/init.d/<span class="built_in">functions</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="string">&quot;<span class="variable">$1</span>&quot;</span> <span class="keyword">in</span></span><br><span class="line">start)</span><br><span class="line">	   /sbin/ipconfig lo:0 <span class="variable">$VIP</span> netmask 255.255.255.255 broadcast <span class="variable">$VIP</span></span><br><span class="line">	   /sbin/route add -host <span class="variable">$VIP</span> dev lo:0</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;1&quot;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_ignore</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;2&quot;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;1&quot;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;2&quot;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_announce</span><br><span class="line">	   sysctl -p &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;RealServer Start Ok&quot;</span></span><br><span class="line">;;</span><br><span class="line">stop)</span><br><span class="line">	   /sbin/ipconfig lo:0 down</span><br><span class="line">	   /sbin/route del -host <span class="variable">$VIP</span> dev lo:0</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;0&quot;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_ignore</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;0&quot;</span> &gt;/proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;0&quot;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;0&quot;</span> &gt;/proc/sys/net/ipv4/conf/all/arp_announce</span><br><span class="line">;;</span><br><span class="line">status)</span><br><span class="line">	   islothere=`/sbin/ipconfig lo:0 | grep <span class="variable">$VIP</span> | wc -l`</span><br><span class="line">	   isrothere=`netstat -rn | grep <span class="string">&quot;lo:0&quot;</span> | grep <span class="variable">$VIP</span> | wc -l`</span><br><span class="line">	   <span class="keyword">if</span> [ <span class="variable">$islothere</span> -eq 0]</span><br><span class="line">	   <span class="keyword">then</span></span><br><span class="line">	   		 <span class="keyword">if</span> [ <span class="variable">$isrothere</span> -eq 0]</span><br><span class="line">	   		 <span class="keyword">then</span></span><br><span class="line">	   		 		<span class="built_in">echo</span> <span class="string">&quot;LVS of RealServer Stoped.&quot;</span></span><br><span class="line">	   		 <span class="keyword">else</span></span><br><span class="line">	   		 		<span class="built_in">echo</span> <span class="string">&quot;LVS of RealServer Running.&quot;</span></span><br><span class="line">	   		 <span class="keyword">fi</span></span><br><span class="line">	   <span class="keyword">else</span></span><br><span class="line">	   		 <span class="built_in">echo</span> <span class="string">&quot;LVS of RealServer Running.&quot;</span></span><br><span class="line">	   <span class="keyword">fi</span></span><br><span class="line">;;</span><br><span class="line">*)</span><br><span class="line">	   <span class="built_in">echo</span> <span class="string">&quot;Usage:<span class="variable">$0</span>&#123;start|stop&#125;&quot;</span></span><br><span class="line">	   <span class="built_in">exit</span> 1</span><br><span class="line">;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>掩码为 <code>255.255.255.255 </code> 表示广播地址是自身，不会将ARP发送到实际自己该属于的广播域，防止与LVS的VIP冲突而导致IP地址冲突。</p>
+<p>为 <code>/opt/realserver.sh</code> 文件添加可执行权限后，运行 <code>/opt/realserver.sh start</code> 命令后可以通过 <code>ip add show</code> 命令查看网卡lo:0的状态，注意与Keepalived节点的网卡状态进行区分。</p>
+<hr>
+<p>参考：</p>
+<p>🔗 《RabbitMQ实战指南》</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021092201.html" rel="bookmark">RabbitMQ（九）网络分区</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020101301.html" rel="bookmark">RabbitMQ（八）高阶</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020101001.html" rel="bookmark">RabbitMQ（七）Federation与Shovel</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020100801.html" rel="bookmark">RabbitMQ（六）运维</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020100601.html" rel="bookmark">RabbitMQ（五）配置</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021092501.html" title="RabbitMQ（十）扩展">http://linyishui.top/2021092501.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/distributed/" rel="tag"><i class="fa fa-tag"></i> distributed</a>
+              <a href="/tags/mom/" rel="tag"><i class="fa fa-tag"></i> mom</a>
+              <a href="/tags/rabbitmq/" rel="tag"><i class="fa fa-tag"></i> rabbitmq</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021092201.html" rel="prev" title="RabbitMQ（九）网络分区">
+                  <i class="fa fa-chevron-left"></i> RabbitMQ（九）网络分区
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">48:38</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>
