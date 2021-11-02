@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="内容包括：简述，锁类别（自动锁和显示锁、排他锁和共享锁、DML锁、DLL锁和System Locks），死锁，锁和阻塞，Latch。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle锁 &lt;转&gt;">
+<meta property="og:url" content="http://linyishui.top/2021101301.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="内容包括：简述，锁类别（自动锁和显示锁、排他锁和共享锁、DML锁、DLL锁和System Locks），死锁，锁和阻塞，Latch。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010101.png">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-3489346/a151h62mmr.gif">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-3489346/iocr2chkp6.png?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-3489346/y3likjg8r8.gif">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010106.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010107.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010108.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010109.png">
+<meta property="article:published_time" content="2021-10-13T06:16:34.000Z">
+<meta property="article:modified_time" content="2021-10-15T08:35:06.000Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="lock">
+<meta property="article:tag" content="oracle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010101.png">
+
+
+<link rel="canonical" href="http://linyishui.top/2021101301.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021101301.html","path":"2021101301.html","title":"Oracle锁 \u003c转>"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Oracle锁 <转> | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle%E9%94%81"><span class="nav-text">Oracle锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E7%AE%80%E8%BF%B0"><span class="nav-text">一. 简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E9%94%81%E7%B1%BB%E5%88%AB"><span class="nav-text">二. 锁类别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%87%AA%E5%8A%A8%E9%94%81%E5%92%8C%E6%98%BE%E7%A4%BA%E9%94%81"><span class="nav-text">2.1 自动锁和显示锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8E%92%E5%AE%83%E9%94%81%E5%92%8C%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-text">2.2 排它锁和共享锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-DML%E9%94%81%E3%80%81DLL%E9%94%81%E5%92%8CSystem-Locks"><span class="nav-text">2.3 DML锁、DLL锁和System Locks</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89DML%E9%94%81"><span class="nav-text">（1）DML锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="nav-text">表级锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="nav-text">行级锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E6%96%B9%E5%BC%8F%E7%9A%84%E8%A1%A8%E7%BA%A7%E9%94%81%EF%BC%88-Share%EF%BC%89"><span class="nav-text">共享方式的表级锁（ Share）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%8B%AC%E5%8D%A0%E6%96%B9%E5%BC%8F%E8%A1%A8%E7%BA%A7%E9%94%81%EF%BC%88-Exclusive%EF%BC%89"><span class="nav-text">独占方式表级锁（ Exclusive）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E6%9B%B4%E6%96%B0%E5%8A%A0%E9%94%81%E6%96%B9%E5%BC%8F%EF%BC%88-Share-Update%EF%BC%89"><span class="nav-text">共享更新加锁方式（ Share Update）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89DLL%E9%94%81%EF%BC%88dictionary-locks%EF%BC%89"><span class="nav-text">（2）DLL锁（dictionary locks）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8E%92%E5%AE%83-DDL-%E9%94%81"><span class="nav-text">排它 DDL 锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB-DDL-%E9%94%81"><span class="nav-text">共享 DDL 锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E9%94%81"><span class="nav-text">分析锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E5%B0%81%E9%94%81"><span class="nav-text">悲观封锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E5%B0%81%E9%94%81"><span class="nav-text">乐观封锁</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89System-Locks"><span class="nav-text">（3）System Locks</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E6%AD%BB%E9%94%81"><span class="nav-text">三. 死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%9C%BA%E6%99%AF"><span class="nav-text">3.1 场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%B5%B7%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-text">3.2 起因分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%AD%BB%E9%94%81%E5%90%8E%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-text">3.3 死锁后的解决办法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E9%94%81%E5%92%8C%E9%98%BB%E5%A1%9E"><span class="nav-text">四. 锁和阻塞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%A6%82%E5%BF%B5"><span class="nav-text">4.1 概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%BC%95%E8%B5%B7%E9%98%BB%E5%A1%9E%E7%9A%84%E5%87%A0%E7%A7%8D%E5%B8%B8%E8%A7%81%E6%83%85%E5%86%B5"><span class="nav-text">4.2 引起阻塞的几种常见情况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-1-DML-%E8%AF%AD%E5%8F%A5%E5%BC%95%E8%B5%B7%E9%98%BB%E5%A1%9E"><span class="nav-text">4.2.1 DML 语句引起阻塞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-2-%E5%A4%96%E9%94%AE%E6%B2%A1%E6%9C%89%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-text">4.2.2 外键没有创建索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-Latch"><span class="nav-text">五. Latch</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%A6%82%E8%BF%B0"><span class="nav-text">5.1 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-spin"><span class="nav-text">5.2 spin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-Latch-%E5%92%8C-Lock"><span class="nav-text">5.3 Latch 和 Lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-Latch-%E4%BA%89%E7%94%A8"><span class="nav-text">5.4 Latch 争用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%85%B1%E4%BA%AB%E6%B1%A0%E4%B8%AD%E7%9A%84-Latch-%E4%BA%89%E7%94%A8"><span class="nav-text">（1）共享池中的 Latch 争用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%95%B0%E6%8D%AE%E7%BC%93%E5%86%B2%E6%B1%A0%E4%B8%AD%E7%9A%84-latch-%E4%BA%89%E7%94%A8"><span class="nav-text">（2）数据缓冲池中的 latch 争用</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">324</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">109</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021101301.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle锁 <转>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-13 14:16:34" itemprop="dateCreated datePublished" datetime="2021-10-13T14:16:34+08:00">2021-10-13</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-10-15 16:35:06" itemprop="dateModified" datetime="2021-10-15T16:35:06+08:00">2021-10-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">内容包括：简述，锁类别（自动锁和显示锁、排他锁和共享锁、DML锁、DLL锁和System Locks），死锁，锁和阻塞，Latch。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Oracle锁"><a href="#Oracle锁" class="headerlink" title="Oracle锁"></a>Oracle锁</h1><h2 id="一-简述"><a href="#一-简述" class="headerlink" title="一. 简述"></a>一. 简述</h2><p>数据库是一个多用户使用的共享资源。当多个用户并发地存取数据时，在数据库中就会产生多个事务同时存取同一数据的情况。若对并发操作不加控制就可能会读取和存储不正确的数据，破坏数据库的一致性。Oracle 利用其锁机制来实现事务间的数据并发访问及数据一致性。</p>
+<p>当事务在对某个数据对象进行操作前，先向系统发出请求，对其加锁。加锁后事务就对该数据对象有了一定的控制，在该事务释放锁之前，其他的事务不能对此数据对象进行更新操作。</p>
+<p>Oracle的锁机制是一种轻量级的锁定机制，不是通过构建锁列表来进行数据的锁定管理，而是<strong>直接将锁作为数据块的属性，存储在数据块首部</strong>。在oracle数据库中，不存在真正意义上属于某个对象或数据的锁。oracle锁的信息是数据块的一个<strong>物理属性</strong>，而不是逻辑上属于某个表或某个行。</p>
+<p>在 Oracle 数据库中，它并不是对某个表加上锁或者某几行加上锁， 锁是以数据块的一个属性存在的。 也就是说， 每个数据块本身就存储着自己数据块中数据的信息，这个地方叫 ITL（Interested Transaction List）， 凡是在这个数据块上有活动的事务，它的信息就会记录在这里面供后续的操作查询，以保证事务的一致性。</p>
+<h2 id="二-锁类别"><a href="#二-锁类别" class="headerlink" title="二. 锁类别"></a>二. 锁类别</h2><h3 id="2-1-自动锁和显示锁"><a href="#2-1-自动锁和显示锁" class="headerlink" title="2.1 自动锁和显示锁"></a>2.1 自动锁和显示锁</h3><p>按用户和系统分可以分为自动锁和显示锁</p>
+<ul>
+<li><p>自动锁（ Automatic Locks）：当进行一项数据库操作时，缺省情况下，系统自动为此数据库操作获得所有有必要的锁。</p>
+<p>分为三种：</p>
+<ul>
+<li>DML 锁</li>
+<li>DDL 锁</li>
+<li>systemlocks</li>
+</ul>
+</li>
+<li><p>显示锁（ Manual Data Locks）：某些情况下，需要用户显示的锁定数据库操作要用到的数据，才能使数据库操作执行得更好，显示锁是用户为数据库对象设定的。</p>
+</li>
+</ul>
+<h3 id="2-2-排它锁和共享锁"><a href="#2-2-排它锁和共享锁" class="headerlink" title="2.2 排它锁和共享锁"></a>2.2 排它锁和共享锁</h3><p>按锁级别分可以分为排它锁和共享锁：</p>
+<ul>
+<li><strong>排他锁（exclusive lock，即X锁）</strong>：事务设置排它锁后，该事务单独获得此资源，另一事务不能在此事务提交之前获得相同对象的共享锁或排它锁。</li>
+<li><strong>共享锁（share lock，即S锁）</strong>：共享锁使一个事务对特定数据库资源进行共享访问——另一事务也可对此资源进行访问或获得相同共享锁。共享锁为事务提供高并发性，但如拙劣的事务设计+共享锁容易造成死锁或数据更新丢失。</li>
+</ul>
+<h3 id="2-3-DML锁、DLL锁和System-Locks"><a href="#2-3-DML锁、DLL锁和System-Locks" class="headerlink" title="2.3 DML锁、DLL锁和System Locks"></a>2.3 DML锁、DLL锁和System Locks</h3><p>按操作分可以分为DML锁、DLL锁和System Locks。</p>
+<h4 id="（1）DML锁"><a href="#（1）DML锁" class="headerlink" title="（1）DML锁"></a>（1）DML锁</h4><p><strong>DML锁：</strong>用于控制并发事务中的数据操纵，保证数据的一致性和完整性，保护并发情况下的数据完整性。DML 语句能够自动地获得所需的表级锁（TM）与行级（事务）锁（TX）。</p>
+<p>又分为：</p>
+<ul>
+<li>TM 锁（表级锁）</li>
+<li>TX 锁（事务锁或行级锁）</li>
+</ul>
+<p>当 Oracle 执行 DML 语句时，系统自动在所要操作的表上申请 TM 类型的锁。当 TM 锁获得后，系统再自动申请 TX 类型的锁，并将实际锁定的数据行的锁标志位进行置位。</p>
+<p>这样在事务加锁前检查 TX锁相容性时就不用再逐行检查锁标志，而只需检查 TM 锁模式的相容性即可，大大提高了系统的效率。</p>
+<p>在数据行上只有 X 锁（排他锁）。</p>
+<p>在 Oracle 数据库中，当一个事务首次发起一个 DML 语句时就获得一个 TX 锁，该锁保持到事务被提交或回滚。当两个或多个会话在表的同一条记录上执行 DML 语句时，第一个会话在该条记录上加锁，其他的会话处于等待状态。当第一个会话提交后， TX 锁被释放，其他会话才可以加锁。</p>
+<p>当 Oracle 数据库发生 TX 锁等待时，如果不及时处理常常会引起 Oracle 数据库挂起，或导致死锁的发生，产生ORA-600 的错误。这些现象都会对实际应用产生极大的危害，如长时间未响应，大量事务失败等。</p>
+<p>DML 锁有如下三种加锁方式：</p>
+<ul>
+<li>共享锁方式（ SHARE）</li>
+<li>独占锁方式（ EXCLUSIVE）</li>
+<li>共享更新锁（ SHARE UPDATE）  其中：  SHARE， EXCLUSIVE 用于 TM 锁（表级锁）  SHARE UPDATE 用于 TX 锁（ 行级锁）</li>
+</ul>
+<h5 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h5><p><strong>TM 锁（表级锁）：</strong>TM 锁用于确保在修改表的内容时，表的结构不会改变，例如防止在 DML 语句执行期间相关的表被移除。当用户对表执行 DDL 或 DML 操作时，将获取一个此表的表级锁。</p>
+<p>当事务获得行锁后，此事务也将自动获得该行的表锁(共享锁),以防止其它事务进行 DDL 语句影响记录行的更新。</p>
+<p>事务也可以在进行过程中获得共享锁或排它锁，只有当事务显示使用 LOCK TABLE 语句显示的定义一个排它锁时，事务才会获得表上的排它锁,也可使用 LOCK TABLE 显示的定义一个表级的共享锁。</p>
+<p>TM 锁包括了 SS、 SX、 S、 X 等多种模式，在数据库中用 0－6 来表示。不同的 SQL 操作产生不同类型的 TM 锁.</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010101.png"></p>
+<h5 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h5><p><strong>TX 锁（事务锁或行级锁）：</strong></p>
+<p>当事务执行数据库插入、更新、删除操作时，该事务自动获得操作表中操作行的排它锁。</p>
+<p>事务发起第一个修改时会得到TX 锁（事务锁），而且会一直持有这个锁，直至事务执行提交（COMMIT）或回滚（ROLLBACK）。</p>
+<p>对用户的数据操纵， Oracle 可以自动为操纵的数据进行加锁，但如果有操纵授权，则为满足并发操纵的需要另外实施加锁。</p>
+<p>DML 锁可由一个用户进程以显式的方式加锁，也可通过某些 SQL 语句隐含方式实现。 这部分属于 Manual Data Locks。</p>
+<p>原理：一个事务要修改块中的数据，必须获得该块中的一个itl，通过 itl 和 undo  segment header 中的 transaction table，可以知道事务是否处于活动阶段。事务在修改块时（其实就是在修改行）会检查行中 row header 中的标志位，如果该标志位为0（该行没有被活动的事务锁住），就把该标志位修改为事务在该块获得的itl的序号，这样当前事务就获得了对记录的锁定，然后就可以修改行数据了，这也就是 oracle 行锁实现的原理。</p>
+<h5 id="共享方式的表级锁（-Share）"><a href="#共享方式的表级锁（-Share）" class="headerlink" title="共享方式的表级锁（ Share）"></a><strong>共享方式的表级锁（ Share）</strong></h5><p>共享方式的表级锁是对表中的所有数据进行加锁，该锁用于保护查询数据的一致性，防止其它用户对已加锁的表进行更新。</p>
+<p>其它用户只能对该表再施加共享方式的锁，而不能再对该表施加独占方式的锁，共享更新锁可以再施加，但不允许持有共享更新封锁的进程做更新。</p>
+<p>共享该表的所有用户只能查询表中的数据，但不能更新。</p>
+<p>共享方式的表级锁只能由用户用 SQL 语句来设置.</p>
+<p>语句格式如下：</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOCK TABLE &lt;表名&gt;[,&lt;表名&gt;]... IN SHARE MODE [NOWAIT]</span><br></pre></td></tr></table></figure>
+
+<p>执行该语句，对一个或多个表施加共享方式的表封锁。</p>
+<p>当指定了选择项NOWAIT，若该锁暂时不能施加成功，则返回并由用户决定是进行等待，还是先去执行别的语句。</p>
+<p>持有共享锁的事务，在出现如下之一的条件时，便释放其共享锁：</p>
+<ul>
+<li>A、执行 COMMIT 或 ROLLBACK 语句。</li>
+<li>B、退出数据库（ LOG OFF）。</li>
+<li>C、程序停止运行。</li>
+</ul>
+<p>共享方式表级锁常用于一致性查询过程，即在查询数据期间表中的数据不发生改变。</p>
+<h5 id="独占方式表级锁（-Exclusive）"><a href="#独占方式表级锁（-Exclusive）" class="headerlink" title="独占方式表级锁（ Exclusive）"></a><strong>独占方式表级锁（ Exclusive）</strong></h5><p>独占方式表级锁是用于加锁表中的所有数据，拥有该独占方式表封锁的用户，即可以查询该表，又可以更新该表，其它的用户不能再对该表施加任何加锁（包括共享、独占或共享更新封锁）。</p>
+<p>其它用户虽然不能更新该表，但可以查询该表。</p>
+<p>独占方式的表封锁可通过如下的 SQL 语句来显示地获得：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOCK <span class="keyword">TABLE</span> <span class="operator">&lt;</span>表名<span class="operator">&gt;</span>[,<span class="operator">&lt;</span>表名<span class="operator">&gt;</span>].... <span class="keyword">IN</span> EXCLUSIVE MODE [NOWAIT]</span><br></pre></td></tr></table></figure>
+
+<p>独占方式的表级锁也可以在用户执行 DML 语句 INSERT、UPDATE、DELETE时隐含获得。</p>
+<p>拥有独占方式表封锁的事务，在出现如下条件之一时，便释放该封锁：</p>
+<ul>
+<li>（ 1）执行 COMMIT 或 ROLLBACK 语句。</li>
+<li>（ 2）退出数据库（ LOG OFF）</li>
+<li>（ 3）程序停止运行。</li>
+</ul>
+<p>独占方式封锁通常用于更新数据，当某个更新事务涉及多个表时，可减少发生死锁.</p>
+<h5 id="共享更新加锁方式（-Share-Update）"><a href="#共享更新加锁方式（-Share-Update）" class="headerlink" title="共享更新加锁方式（ Share Update）"></a><strong>共享更新加锁方式（ Share Update）</strong></h5><p>共享更新加锁是对一个表的一行或多行进行加锁，因而也称作行级加锁。表级加锁虽然保证了数据的一致性，但却减弱了操作数据的并行性。</p>
+<p>行级加锁确保在用户取得被更新的行到该行进行更新这段时间内不被其它用户所修改。  因而行级锁即可保证数据的一致性又能提高数据操作的迸发性。</p>
+<p>可通过如下的两种方式来获得行级封锁：  （ 1）、执行如下的 SQL 封锁语句，以显示的方式获得：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOCK <span class="keyword">TABLE</span> <span class="operator">&lt;</span> 表 名 <span class="operator">&gt;</span>[,<span class="operator">&lt;</span> 表 名 <span class="operator">&gt;</span>].... <span class="keyword">IN</span> SHARE UPDATE MODE[NOWAIT]</span><br></pre></td></tr></table></figure>
+
+<p>（ 2）、用如下的 SELECT …FOR UPDATE 语句获得：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT &lt;列名 &gt;[,&lt;列名 &gt;]...FROM &lt;表名 &gt; WHERE &lt;条件 &gt; FORUPDATE OF &lt;列名&gt;[,&lt;列名&gt;].....[NOWAIT]</span><br></pre></td></tr></table></figure>
+
+<p>一旦用户对某个行施加了行级加锁，则该用户可以查询也可以更新被加锁的数据行，其它用户只能查询但不能更新被加锁的数据行．</p>
+<p>如果其它用户想更新该表中的数据行，则也必须对该表施加行级锁．即使多个用户对一个表均使用了共享更新，但也不允许两个事务同时对一个表进行更新，真正对表进行更新时，是以独占方式锁表，一直到提交或复原该事务为止。</p>
+<p>行锁永远是独占方式锁。</p>
+<p>当出现如下之一的条件，便释放共享更新锁：</p>
+<ul>
+<li>（ 1）执行提交（ COMMIT）语句；</li>
+<li>（ 2）退出数据库（ LOG OFF）</li>
+<li>（ 3）程序停止运行。</li>
+</ul>
+<p>执行 ROLLBACK 操作不能释放行锁。</p>
+<h4 id="（2）DLL锁（dictionary-locks）"><a href="#（2）DLL锁（dictionary-locks）" class="headerlink" title="（2）DLL锁（dictionary locks）"></a>（2）DLL锁（dictionary locks）</h4><p>DDL 锁用于保护数据库对象的结构，如表、索引等的结构定义。</p>
+<p>DDL 锁又可以分为：</p>
+<ul>
+<li>排它 DDL 锁</li>
+<li>共享 DDL 锁</li>
+<li>分析锁</li>
+</ul>
+<h5 id="排它-DDL-锁"><a href="#排它-DDL-锁" class="headerlink" title="排它 DDL 锁"></a>排它 DDL 锁</h5><p>创建、修改、删除一个数据库对象的 DDL 语句获得操作对象的 排它锁。</p>
+<p>如使用 alter table 语句时，为了维护数据的完成性、一致性、合法性，该事务获得一排它 DDL 锁。</p>
+<h5 id="共享-DDL-锁"><a href="#共享-DDL-锁" class="headerlink" title="共享 DDL 锁"></a>共享 DDL 锁</h5><p>需在数据库对象之间建立相互依赖关系的 DDL 语句通常需共享获得 DDL锁。</p>
+<p>如创建一个包，该包中的过程与函数引用了不同的数据库表，当编译此包时该事务就获得了引用表的共享 DDL 锁。</p>
+<h5 id="分析锁"><a href="#分析锁" class="headerlink" title="分析锁"></a>分析锁</h5><p>ORACLE 使用共享池存储分析与优化过的 SQL 语句及 PL/SQL 程序，使运行相同语句的应用速度更快。</p>
+<p>一个在共享池中缓存的对象获得它所引用数据库对象的分析锁。</p>
+<p>分析锁是一种独特的 DDL 锁类型， ORACLE 使用它追踪共享池对象及它所引用数据库对象之间的依赖关系。</p>
+<p>当一个事务修改或删除了共享池持有分析锁的数据库对象时， ORACLE 使共享池中的对象作废，下次在引用这条SQL/PLSQL 语 句时， ORACLE 重新分析编译此语句。</p>
+<p>DDL 级加锁也是由 ORACLE RDBMS 来控制，它用于保护数据字典和数据定义改变时的一致性和完整性。 它是系统在对 SQL 定义语句作语法分析时自动地加锁，无需用户干予。</p>
+<p>字典/语法分析加锁共分三类：</p>
+<ul>
+<li>（ 1）字典操作锁：  用于对字典操作时，锁住数据字典，此封锁是独占的，从而保护任何一个时刻仅能对一个字典操作。</li>
+<li>（ 2） 字典定义锁：  用于防止在进行字典操作时又进行语法分析，这样可以避免在查询字典的同时改动某个表的结构。</li>
+<li>（ 3）表定义锁：  用于一个 SQL 语句正当访问某个表时，防止字典中与该表有关的项目被修改。</li>
+</ul>
+<h5 id="悲观封锁"><a href="#悲观封锁" class="headerlink" title="悲观封锁"></a>悲观封锁</h5><p>锁在用户修改之前就发挥作用：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> .. <span class="keyword">for</span> update [nowait] <span class="keyword">Select</span> <span class="operator">*</span> <span class="keyword">from</span> tab1 <span class="keyword">for</span> update </span><br></pre></td></tr></table></figure>
+
+<p>用户发出这条命令之后，oracle将会对返回集中的数据建立行级封锁，以防止其他用户的修改。</p>
+<p>如果此时其他用户对上面返回结果集的数据进行dml或ddl操作都会返回一个错误信息或发生阻塞。</p>
+<ul>
+<li>1：对返回结果集进行update或delete操作会发生阻塞。 左下角的时间执行了很久。 </li>
+</ul>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-3489346/a151h62mmr.gif" alt="img"></p>
+<ul>
+<li>2：对该表进行ddl操作将会报： Ora-00054:resource busy and acquire with nowait specified.</li>
+</ul>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-3489346/iocr2chkp6.png?imageView2/2/w/1620" alt="img"></p>
+<p>原因分析 ：  此时Oracle已经对返回的结果集上加了排它的行级锁，所有其他对这些数据进行的修改或删除操作都必须等待这个锁的释放，产生的外在现象就是其他的操作将发生阻塞，这个这个操作commit或rollback.</p>
+<p>同样这个查询的事务将会对该表加表级锁，不允许对该表的任何ddl操作，否则将会报出ora-00054错误：:resource busy and acquire with nowait specified.</p>
+<p>悲观的缺陷是，加锁的时间可能会很长，这样可能会长时间的限制其他用户的访问，也就是说悲观锁的并 发访问性不好.</p>
+<p>会话A：</p>
+<p>在这里新开一个plsql窗口模拟会话A</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--建表create table xgj (name varchar2(20));--新增数据insert into xgj values(&#x27;xiaogongjiang&#x27;);--提交数据commit ;--使用for update方式获取排他行级锁select * from xgj where name=&#x27;xiaogongjiang&#x27; for update ;</span></span><br></pre></td></tr></table></figure>
+
+<p>会话B：</p>
+<p>在这里是在plsql中另外新开了一个窗口模拟会话B，不能在同一个会话窗口，否则测试不出来。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> xgj <span class="keyword">add</span>(salary  number(<span class="number">5</span>));</span><br></pre></td></tr></table></figure>
+
+<p>注意看左下角的时间，会看到已经执行时间了很长时间，如果会话A不提交则会一直等待，A提交后，马上执行成功。 </p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-3489346/y3likjg8r8.gif" alt="img"></p>
+<h5 id="乐观封锁"><a href="#乐观封锁" class="headerlink" title="乐观封锁"></a>乐观封锁</h5><p>乐观的认为数据在select出来到update数据并提交的这段时间数据不会被更改。乐观锁多个会话可以同时操作数据。这里面有一种潜在的危险就是由于被选出的结果集并没有被锁定，是存在一种可能被其他用户更改的可能。因此Oracle仍然建议是用悲观封锁，因为这样会更安全。</p>
+<p>比较常见的方式使用版本列来，每次更新时都和旧版本的数据比较。</p>
+<h4 id="（3）System-Locks"><a href="#（3）System-Locks" class="headerlink" title="（3）System Locks"></a>（3）System Locks</h4><p>oracle使用不同类型的系统锁来保护内部数据库和内存结构。</p>
+<p>这些机制是用户无法访问的。</p>
+<h2 id="三-死锁"><a href="#三-死锁" class="headerlink" title="三. 死锁"></a>三. 死锁</h2><p>当两个用户希望持有对方的资源时就会发生死锁。</p>
+<p>即两个用户互相等待对方释放资源时，oracle认定为产生了死锁,在这种情况下,将以牺牲一个用户作为代价,另一个用户继续执行,牺牲的用户的事务将回滚。</p>
+<h3 id="3-1-场景"><a href="#3-1-场景" class="headerlink" title="3.1 场景"></a>3.1 场景</h3><p>1：用户 1 对 A 表进行 Update，没有提交。  2：用户 2 对 B 表进行 Update，没有提交。</p>
+<p>此时双反不存在资源共享的问题。</p>
+<p>3：如果用户 2 此时对 A 表作 update,则会发生阻塞，需要等到用户一的事物结束。  4：如果此时用户 1 又对 B 表作 update，则产生死锁。此时 Oracle 会选择其中一个用户进行会滚，使另一个用户继续执行操作。</p>
+<h3 id="3-2-起因分析"><a href="#3-2-起因分析" class="headerlink" title="3.2 起因分析"></a>3.2 起因分析</h3><p>Oracle 的死锁问题实际上很少见，如果发生，基本上都是不正确的程序设计造成的，经过调整后，基本上都会避免死锁的发生。</p>
+<p>在 Oracle 系统中能自动发现死锁，并选择代价最小的，即完成工作量最少的事务予以撤消，释放该事务所拥有的全部锁，记其它的事务继续工作下去。</p>
+<p>从系统性能上考虑，应该尽可能减少资源竞争，增大吞吐量，因此用户在给并发操作加锁时，应注意以下几点：</p>
+<ul>
+<li>1、 对于 UPDATE 和 DELETE 操作，应只锁要做改动的行，在完成修改后立即提交。</li>
+<li>2、 当多个事务正利用共享更新的方式进行更新，则不要使用共享封锁，而应采用共享更新锁，这样其它用户就能使用行级锁，以增加并行性。</li>
+<li>3、 尽可能将对一个表的操作的并发事务施加共享更新锁，从而可提高并行性。</li>
+<li>4、 在应用负荷较高的期间，不宜对基础数据结构（表、索引、簇和视图）进行修改</li>
+</ul>
+<h3 id="3-3-死锁后的解决办法"><a href="#3-3-死锁后的解决办法" class="headerlink" title="3.3 死锁后的解决办法"></a>3.3 死锁后的解决办法</h3><p>死锁不能自动释放，需要手动杀死会话。</p>
+<p>1.查看有无死锁对象。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="string">&#x27;alter system kill session &#x27;&#x27;&#x27;</span> <span class="operator">||</span> sid <span class="operator">||</span> <span class="string">&#x27;,&#x27;</span> <span class="operator">||</span> serial# <span class="operator">||</span> <span class="string">&#x27;&#x27;&#x27;;&#x27;</span> &quot;Deadlock&quot;  <span class="keyword">FROM</span> v$session <span class="keyword">WHERE</span> sid <span class="keyword">IN</span> (<span class="keyword">SELECT</span> sid <span class="keyword">FROM</span> v$lock <span class="keyword">WHERE</span> block <span class="operator">=</span> <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>2.手动杀死会话。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">system</span> kill session <span class="string">&#x27;646,3953&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010102.png"></p>
+<p>查看导致死锁的 SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s.sid, q.sql_textFROM v$sqltext q, v$session sWHERE q.address <span class="operator">=</span> s.sql_address <span class="keyword">AND</span> s.sid <span class="operator">=</span> <span class="operator">&amp;</span>sid</span><br></pre></td></tr></table></figure>
+
+<p>执行后，输入对应的sid即可查看对应的sql。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010103.png"></p>
+<p>如果上述找不到对应的sql，可以先执行查看谁锁了谁（2）的sql，查到另外一个sid，根据另外一个sid，会查到对应的sql：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s1.username<span class="operator">||</span> <span class="string">&#x27;@&#x27;</span><span class="operator">||</span> s1.machine<span class="operator">||</span> <span class="string">&#x27; ( SID=&#x27;</span><span class="operator">||</span> s1.sid<span class="operator">||</span> <span class="string">&#x27; ) is blocking &#x27;</span><span class="operator">||</span> s2.username<span class="operator">||</span> <span class="string">&#x27;@&#x27;</span><span class="operator">||</span> s2.machine<span class="operator">||</span> <span class="string">&#x27; ( SID=&#x27;</span><span class="operator">||</span> s2.sid<span class="operator">||</span> <span class="string">&#x27; ) &#x27;</span><span class="keyword">AS</span> blocking_statusFROM v$lock l1,v$session s1,v$lock l2,v$session s2WHERE s1.sid <span class="operator">=</span> l1.sidAND s2.sid <span class="operator">=</span> l2.sidAND l1.BLOCK <span class="operator">=</span> <span class="number">1</span><span class="keyword">AND</span> l2.request <span class="operator">&gt;</span> <span class="number">0</span><span class="keyword">AND</span> l1.id1 <span class="operator">=</span> l2.id1AND l2.id2 <span class="operator">=</span> l2.id2;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010104.png"></p>
+<p>或者</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> LPAD (<span class="string">&#x27; &#x27;</span>, DECODE (l.xidusn, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>))<span class="operator">||</span> l.oracle_usernameUser_name,o.owner,o.object_name,o.object_type,s.sid,s.serial#<span class="keyword">FROM</span> v$locked_object l, dba_objects o, v$session sWHERE l.object_id <span class="operator">=</span> o.object_id <span class="keyword">AND</span> l.session_id <span class="operator">=</span> s.sidORDER <span class="keyword">BY</span> o.object_id, xidusn <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010105.png"></p>
+<h2 id="四-锁和阻塞"><a href="#四-锁和阻塞" class="headerlink" title="四. 锁和阻塞"></a>四. 锁和阻塞</h2><h3 id="4-1-概念"><a href="#4-1-概念" class="headerlink" title="4.1 概念"></a>4.1 概念</h3><p>通常来讲，系统如果平时运行正常，突然会停止不动，多半是被阻塞（Blocked）住了。 我们可以通过 v$lock 这张视图，看查看阻塞的信息。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">desc</span> v$lockName Type   Nullable <span class="keyword">Default</span> Comments <span class="comment">------- ----------- -------- ------- -------- ADDR RAW(8) Y                        KADDR RAW(8) Y                        SID  NUMBER Y                        TYPE VARCHAR2(2) Y                        ID1  NUMBER Y                        ID2  NUMBER Y                        LMODE NUMBER Y                        REQUEST NUMBER Y                        CTIME NUMBER Y                        BLOCK NUMBER Y                        SQL&gt; </span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010106.png"></p>
+<p>我们关注的比较多的是 request 和 block 字段。  如果某个 request 列是一个非 0 值，那么它就是在等待一个锁。 如果 block 列是1，这个 SID 就持有了一个锁，并且阻塞别人获得这个锁。</p>
+<p>这个锁的类型由 TYPE字段定义。锁的模式有 LMODE 字段定义， ID1 和 ID2 字段定义了这个锁的相关信息。</p>
+<p>ID1 相同，就代表指向同一个资源。 这样就有可能有加锁者和等待者。</p>
+<p>LMODE 的 6 中模式参考上面的 TM 锁类型表。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010107.png"></p>
+<p>可以结合 <code>v$lock</code> 和 <code>v$session</code> 视图来查询相关的信息：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sn.username,       m.SID,       sn.SERIAL#,       m.TYPE,       DECODE(m.lmode,              <span class="number">0</span>,              <span class="string">&#x27;None&#x27;</span>,              <span class="number">1</span>,              <span class="string">&#x27;Null&#x27;</span>,              <span class="number">2</span>,              <span class="string">&#x27;Row Share&#x27;</span>,              <span class="number">3</span>,              <span class="string">&#x27;Row Excl.&#x27;</span>,              <span class="number">4</span>,              <span class="string">&#x27;Share&#x27;</span>,              <span class="number">5</span>,              <span class="string">&#x27;S/Row Excl.&#x27;</span>,              <span class="number">6</span>,              <span class="string">&#x27;Exclusive&#x27;</span>,              lmode,              LTRIM(TO_CHAR(lmode, <span class="string">&#x27;990&#x27;</span>))) lmode,       DECODE(m.request,              <span class="number">0</span>,              <span class="string">&#x27;None&#x27;</span>,              <span class="number">1</span>,              <span class="string">&#x27;Null&#x27;</span>,              <span class="number">2</span>,              <span class="string">&#x27;Row Share&#x27;</span>,              <span class="number">3</span>,              <span class="string">&#x27;Row Excl.&#x27;</span>,              <span class="number">4</span>,              <span class="string">&#x27;Share&#x27;</span>,              <span class="number">5</span>,              <span class="string">&#x27;S/Row Excl.&#x27;</span>,              <span class="number">6</span>,              <span class="string">&#x27;Exclusive&#x27;</span>,              request,              LTRIM(TO_CHAR(m.request, <span class="string">&#x27;990&#x27;</span>))) request,       m.id1,       m.id2  <span class="keyword">FROM</span> v$session sn, v$lock m <span class="keyword">WHERE</span> (sn.SID <span class="operator">=</span> m.SID <span class="keyword">AND</span> m.request <span class="operator">!=</span> <span class="number">0</span>)      <span class="comment">--存在锁请求，即被阻塞    OR (sn.SID = m.SID       --不存在锁请求，但是锁定的对象被其他会话请求锁定       AND m.request = 0 AND lmode != 4 AND       (id1, id2) IN (SELECT s.id1, s.id2                         FROM v$lock s                        WHERE request != 0                          AND s.id1 = m.id1                          AND s.id2 = m.id2)) ORDER BY id1, id2, m.request;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="comment">/*+ rule */</span> s.username, DECODE(l.TYPE, <span class="string">&#x27;TM&#x27;</span>, <span class="string">&#x27;TABLE LOCK&#x27;</span>, <span class="string">&#x27;TX&#x27;</span>, <span class="string">&#x27;ROW LOCK&#x27;</span>, <span class="keyword">NULL</span>) lock_level, o.owner, o.object_name, o.object_type, s.sid, s.serial#, s.terminal, s.machine, s.program, s.osuser  <span class="keyword">FROM</span> v$session s, v$lock l, dba_objects o <span class="keyword">WHERE</span> l.sid <span class="operator">=</span> s.sid   <span class="keyword">AND</span> l.id1 <span class="operator">=</span> o.object_id(<span class="operator">+</span>)   <span class="keyword">AND</span> s.username <span class="keyword">IS</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-2-引起阻塞的几种常见情况"><a href="#4-2-引起阻塞的几种常见情况" class="headerlink" title="4.2 引起阻塞的几种常见情况"></a>4.2 引起阻塞的几种常见情况</h3><h4 id="4-2-1-DML-语句引起阻塞"><a href="#4-2-1-DML-语句引起阻塞" class="headerlink" title="4.2.1 DML 语句引起阻塞"></a>4.2.1 DML 语句引起阻塞</h4><p>当一个会话保持另一个会话正在请求的资源上的锁定时，就会发生阻塞。被阻塞的会话将一直挂起，直到持有锁的会话放弃锁定的资源为止。</p>
+<p>4 个常见的 dml 语句会产生阻塞:</p>
+<ul>
+<li><p><strong>INSERT</strong>：唯一情况就是用户拥有一个建有主键约束的表。当 2 个会话同时试图向表中插入相同的数据时，其中的一个会话将被阻塞，直到另外一个会话提交或会滚。一个会话提交时，另一个会话将收到主键重复的错误。回滚时，被阻塞的会话将继续执行。</p>
+</li>
+<li><p><strong>UPDATE</strong>：当执行 Update 和 delete 操作的数据行已经被另外的会话锁定时，将会发生阻塞，直到另一个会话提交或会滚。</p>
+</li>
+<li><p><strong>DELETE</strong>：同UPDATE。</p>
+</li>
+<li><p><strong>SELECT … FOR UPDATE</strong>：</p>
+<p>当一个用户执行 select..for update 对返回的结果集进行修改时，如  果结果集已经被另一个会话锁定，此时 Oracle 已经对返回的结果集上加了排它的行级锁， 所有其他对这些数据进行的修改或删除操作都必须等待这个锁的释放(操作 commit 或 rollback.)，产生的外在现象就是其他的操作将发生阻塞。</p>
+<p>同样这个查询的事务将会对该表加表级锁，不允许对该表的任何 ddl 操作，否则将会报出 <code>Ora-00054:resource busy and acquire with nowait specified.</code> 。</p>
+<p>可以通过发出 <code>select ... for update nowait</code> 的语句来避免发生阻塞，如果资源已经被另一个会话锁定，则会返回以下错误：<code>Ora-00054:resource busy and acquire with nowait specified.</code> 。</p>
+</li>
+</ul>
+<h4 id="4-2-2-外键没有创建索引"><a href="#4-2-2-外键没有创建索引" class="headerlink" title="4.2.2 外键没有创建索引"></a>4.2.2 外键没有创建索引</h4><p>如果系统中有主，外键引用关系，并且满足一下三个条件中的任意一个，那么就应该考虑给外键字段创建索引，否则系统的性能可能会下降甚至阻塞。</p>
+<ul>
+<li>主表上有频繁的删除操作。</li>
+<li>主键上有频繁的修改操作。</li>
+<li>业务上经常会出现主表和从表做关联查询的情况。</li>
+</ul>
+<p>第一和第二个条件操作的时候，主表会在从表上创建一个锁定，以保证主表主键的修改不会导致从表的数据在引用上出现问题，这是一个数据引用完整性的要求。</p>
+<p>如果主表上经常出现这样的删除或者是对主键列进行修改的操作，或者每次操作的记录数很多，都将会造成从表长时间被锁定，而影响其他用户的正常操作。</p>
+<p>比如主表每次删除 1000 行数据，它就需要扫描从表 1000 次，以确定每一行记录的改变都不会造成从表数据在引用上的不完整。</p>
+<p>特别是在 OLAP 系统中，从表经常会是非常巨大的表，在这种情况下，如果从表没有索引，那么查询几乎是不可想象的。</p>
+<h2 id="五-Latch"><a href="#五-Latch" class="headerlink" title="五. Latch"></a>五. Latch</h2><h3 id="5-1-概述"><a href="#5-1-概述" class="headerlink" title="5.1 概述"></a>5.1 概述</h3><ul>
+<li>Latch属于 System Lock, 用于保护 SGA区中共享数据结构的一种串行化锁定机制。</li>
+<li>Latch 的实现是与操作系统相关的，尤其和一个进程是否需要等待一个latch、需要等待多长时间有关。</li>
+<li>Latch 是 Oracle 提供的轻量级锁资源， 是一种能够极快地被获取和释放的锁，能快速，短时间的锁定资源。</li>
+<li>Latch用于防止多个并发进程同时修改访问某个共享资源， 它只工作在 SGA 中， 通常用于保护描述 buffer cache 中 block 的数据结构。</li>
+</ul>
+<p>比如 SGA 中，各种数据被反复从磁盘读取到内存，又被重新写回到磁盘上，如果有并发的用户做相同的事情， Oracle 必须使用一种机制，来保证数据在读取的时候，只能由一个会话来完成，这种保护机制就是 Latch。</p>
+<ul>
+<li>并发（ concurrency）： 是说有超过两个以上的用户对同样的数据做修改（可能包括插入，删除和修改）。</li>
+<li>并行（ parallel）： 是说将一件事情分成很多小部分，让每一部分同时执行，最后将执行结果汇总成最终结果。</li>
+</ul>
+<p>与每个 latch 相联系的还有一个清除过程，当持有 latch 的进程成为死进程时，该清除过程就会被调用。</p>
+<p>Latch 还具有相关级别，用于防止死锁，一旦一个进程在某个级别上得到一个 latch，它就不可能再获得等同或低于该级别的 latch。</p>
+<p>Latch 不会造成阻塞，只会导致等待。 阻塞是一种系统设计上的问题，等待是一种系统资源争用的问题。</p>
+<h3 id="5-2-spin"><a href="#5-2-spin" class="headerlink" title="5.2 spin"></a>5.2 spin</h3><p>比如数据缓存中的某个块要被读取，我们会获得这个块的 latch， 这个过程叫做 spin，另外一个进程恰好要修改这个块，他也要 spin 这个块，此时他必须等待，当前一个进程释放 latch 后才能 spin 住，然后修改， 如果多个进程同时请求的话，他们之间将出现竞争，没有一个入队机制，一旦前面进程释放所定，后面的进程就蜂拥而上，没有先来后到的概念， 并且这一切都发生的非常快，因为Latch 的特点是快而短暂。</p>
+<p>SPIN 与休眠（ sleep）  Oracle 选择了 spin，让进程继续占有 CPU，运行一些空指令，之后继续请求，继续 spin，直到达到_spin_count 值，这时会放弃 CPU，进行短暂的休眠，再继续刚才的动作。</p>
+<p>进程休眠的时间也是存在算法的.休眠的阀值限制由隐含参数_max_exponential_sleep控制， 默认是 2 秒。</p>
+<p>如果当前进程已经占用了别的 Latch，则他的休眠时间不会太长(过长会引起别的进程的 Latch 等待)，此时的休眠最大时间有隐含参数_max_sleep_holding_latch 决定， 默认是 4 厘秒。</p>
+<p>总之，Latch 获取的流程： 请求-SPIN-休眠-请求-SPIN-休眠 … … 占用。</p>
+<h3 id="5-3-Latch-和-Lock"><a href="#5-3-Latch-和-Lock" class="headerlink" title="5.3 Latch 和 Lock"></a>5.3 Latch 和 Lock</h3><p>从某种意义上说， Latch 是内存中的资源锁，数据库对象(表，索引等)的锁叫Lock。</p>
+<p>Latch 和 Lock 的区别:</p>
+<ul>
+<li>Latch 是对内存数据结构提供互斥访问的一种机制，而 Lock 是以不同的模式来套取共享资源对象，各个模式间存在着兼容或排斥，从这点看出， Latch的访问，包括查询也是互斥的，任何时候，只能有一个进程能 spin 住内存的某一块，幸好这个过程是相当的短暂，否则系统性能将没的保障，从 9I 开始，允许多个进程同时查询相同的内存块。</li>
+<li>Latch 只作用于内存中，他只能被当前实例访问，而 Lock 作用于数据库对象，在 RAC 体系中实例间允许 Lock 检测与访问</li>
+<li>Latch 是瞬间的占用，释放， Lock 的释放需要等到事务正确的结束，他占用的时间长短由事务大小决定</li>
+<li>Latch 是非入队的，而 Lock 是入队的</li>
+<li>Latch 不存在死锁，而 Lock 中存在。</li>
+</ul>
+<h3 id="5-4-Latch-争用"><a href="#5-4-Latch-争用" class="headerlink" title="5.4 Latch 争用"></a>5.4 Latch 争用</h3><p>如果发现系统中经常由于 Lock 导致用户等待，这时需要考虑系统在逻辑设计上是否有问题，比如多用户对主键的删除或者修改，是否有用户使用 select … for update 这样的语法，外键是否创建索引的因素。 这些因素是需要结合系统的业务逻辑性来进行数据库对象设计的。</p>
+<p>如果发现系统慢是因为很多的 Latch 争用，就要考虑系统及数据库自身设计上是否存在问题，比如是否使用绑定变量，是否存在热快，数据存储参数设计是否合理等因素。  导致 Latch 争用而等待的原因非常多，内存中很多资源都可能存在争用。</p>
+<p>最常见的两类 latch 争用如下：</p>
+<ol>
+<li>共享池中的 Latch 争用。 </li>
+<li>数据缓冲池中的 latch 争用。</li>
+</ol>
+<h4 id="（1）共享池中的-Latch-争用"><a href="#（1）共享池中的-Latch-争用" class="headerlink" title="（1）共享池中的 Latch 争用"></a>（1）共享池中的 Latch 争用</h4><p>共享池中如果存在大量的 SQL 被反复分析，就会造成很大的 Latch 争用和长时间的等待， 最常见的现象就是没有绑定变量。</p>
+<p><strong>最常见的集中共享池里的 Latch 是 library cache。</strong></p>
+<p>可以通过一下 SQL 来查询：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$latchname <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">&#x27;library cache%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010108.png"></p>
+<p>在分析系统性能时，如果看到有 library cache 这样的 Latch 争用，就可以断定是共享池中出现了问题，这种问题基本是由 SQL 语句导致的，比如没有绑定变量 或者一些存储过程被反复分析。</p>
+<p><strong>资源的争用可以通过如下 SQL 来查看</strong>：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> event,<span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> v$session_wait <span class="keyword">group</span> <span class="keyword">by</span> event;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010109.png"></p>
+<h4 id="（2）数据缓冲池中的-latch-争用"><a href="#（2）数据缓冲池中的-latch-争用" class="headerlink" title="（2）数据缓冲池中的 latch 争用"></a>（2）数据缓冲池中的 latch 争用</h4><p>访问频率非常高的数据块被称为热快（ Hot Block），当很多用户一起去访问某几个数据块时，就会导致一些 Latch 争用。</p>
+<p>最常见的 latch 争用有：</p>
+<ul>
+<li> buffer busy waits</li>
+<li> cache buffer chain</li>
+</ul>
+<p>这两个 Latch 的争用分别发生在访问数据块的不同时刻。</p>
+<p>产生这些 Latch 争用的直接原因是太多的会话去访问相同的数据块导致热快问题， 造成热快的原因可能是数据库设置导致或者重复执行的 SQL 频繁访问一些相同的数据块导致。</p>
+<hr>
+<p>参考：</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1451003">Oracle数据库各种”锁”</a>》</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021042001.html" rel="bookmark">分布式锁</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020070801.html" rel="bookmark">ConcurrentSkipListMap</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020061401.html" rel="bookmark">BlockingQueue（未完成）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020060501.html" rel="bookmark">CopyOnWriteArrayList的实现原理</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020020301.html" rel="bookmark">ConcurrentSkipListMap</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021101301.html" title="Oracle锁 &lt;转&gt;">http://linyishui.top/2021101301.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/lock/" rel="tag"><i class="fa fa-tag"></i> lock</a>
+              <a href="/tags/oracle/" rel="tag"><i class="fa fa-tag"></i> oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021092601.html" rel="prev" title="Spring AMQP">
+                  <i class="fa fa-chevron-left"></i> Spring AMQP
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021101401.html" rel="next" title="执行计划（更新中）">
+                  执行计划（更新中） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">51:30</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>

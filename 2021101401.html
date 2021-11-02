@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="整理Oracle和MySQL执行计划相关内容，包括：什么是执行计划，如何查看和分析执行计划，访问数据方式，表连接方式等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="执行计划（更新中）">
+<meta property="og:url" content="http://linyishui.top/2021101401.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="整理Oracle和MySQL执行计划相关内容，包括：什么是执行计划，如何查看和分析执行计划，访问数据方式，表连接方式等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010110.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010111.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010112.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010113.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010115.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010116.jpeg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010117.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010119.png">
+<meta property="article:published_time" content="2021-10-14T11:09:02.000Z">
+<meta property="article:modified_time" content="2021-11-01T02:41:08.000Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="updating">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="oracle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010110.png">
+
+
+<link rel="canonical" href="http://linyishui.top/2021101401.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021101401.html","path":"2021101401.html","title":"执行计划（更新中）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>执行计划（更新中） | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-text">执行计划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-Oracle"><span class="nav-text">一. Oracle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%EF%BC%9F"><span class="nav-text">1.1 什么是执行计划？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%EF%BC%9F"><span class="nav-text">1.2 如何查看执行计划？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%9F%A5%E7%9C%8B%E7%9C%9F%E5%AE%9E%E7%9A%84%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-text">1.3 查看真实的执行计划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E5%88%86%E6%9E%90%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-text">1.4 分析执行计划</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-1-%E6%9F%A5%E7%9C%8Bexplain"><span class="nav-text">1.4.1 查看explain</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-2-explain%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="nav-text">1.4.2 explain执行顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-3-%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E6%96%B9%E5%BC%8F"><span class="nav-text">1.4.3 访问数据方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%85%A8%E8%A1%A8%E6%89%AB%E6%8F%8F%EF%BC%88TABLE-ACCESS-FULL%EF%BC%89"><span class="nav-text">（1）全表扫描（TABLE ACCESS FULL）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%882%EF%BC%89ROWID%E6%89%AB%E6%8F%8F%EF%BC%88TABLE-ACCESS-BY-ROWID%EF%BC%89"><span class="nav-text">（2）ROWID扫描（TABLE ACCESS BY ROWID）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E7%B4%A2%E5%BC%95%E5%94%AF%E4%B8%80%E6%89%AB%E6%8F%8F%EF%BC%88INDEX-UNIQUE-SCAN%EF%BC%89"><span class="nav-text">（3）索引唯一扫描（INDEX UNIQUE SCAN）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E7%B4%A2%E5%BC%95%E8%8C%83%E5%9B%B4%E6%89%AB%E6%8F%8F%EF%BC%88INDEX-RANGE-SCAN%EF%BC%89"><span class="nav-text">（4）索引范围扫描（INDEX RANGE SCAN）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E7%B4%A2%E5%BC%95%E5%85%A8%E6%89%AB%E6%8F%8F%EF%BC%88INDEX-FULL-SCAN%EF%BC%89"><span class="nav-text">（5）索引全扫描（INDEX FULL SCAN）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%886%EF%BC%89%E7%B4%A2%E5%BC%95%E5%BF%AB%E9%80%9F%E5%85%A8%E6%89%AB%E6%8F%8F%EF%BC%88INDEX-FAST-FULL-SCAN%EF%BC%89"><span class="nav-text">（6）索引快速全扫描（INDEX FAST FULL SCAN）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%887%EF%BC%89%E7%B4%A2%E5%BC%95%E8%B7%B3%E8%B7%83%E5%BC%8F%E6%89%AB%E6%8F%8F%EF%BC%88INDEX-SKIP-SCAN%EF%BC%89"><span class="nav-text">（7）索引跳跃式扫描（INDEX SKIP SCAN）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-4-%E8%A1%A8%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F"><span class="nav-text">1.4.4 表连接方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E6%8E%92%E5%BA%8F%E5%90%88%E5%B9%B6%E8%BF%9E%E6%8E%A5%EF%BC%88sort-merge-join%EF%BC%89"><span class="nav-text">（1）排序合并连接（sort merge join）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%B5%8C%E5%A5%97%E5%BE%AA%E7%8E%AF%E8%BF%9E%E6%8E%A5%EF%BC%88Nested-loop-join%EF%BC%89"><span class="nav-text">（2）嵌套循环连接（Nested loop join）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%93%88%E5%B8%8C%E8%BF%9E%E6%8E%A5%EF%BC%88Hash-join%EF%BC%89"><span class="nav-text">（3）哈希连接（Hash join）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E7%AC%9B%E5%8D%A1%E5%B0%94%E8%BF%9E%E6%8E%A5%EF%BC%88Cross-join%EF%BC%89"><span class="nav-text">（4）笛卡尔连接（Cross join）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-5-explain%E5%8F%82%E6%95%B0%E4%BF%A1%E6%81%AF"><span class="nav-text">1.4.5 explain参数信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-MySQL"><span class="nav-text">二. MySQL</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E4%BD%BF%E7%94%A8explain"><span class="nav-text">2.1 使用explain</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2"><span class="nav-text">2.2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Extra%E5%8F%AF%E4%BC%98%E5%8C%96%E9%A1%B9"><span class="nav-text">Extra可优化项</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">324</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">109</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021101401.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          执行计划（更新中）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-14 19:09:02" itemprop="dateCreated datePublished" datetime="2021-10-14T19:09:02+08:00">2021-10-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-11-01 10:41:08" itemprop="dateModified" datetime="2021-11-01T10:41:08+08:00">2021-11-01</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>20k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">整理Oracle和MySQL执行计划相关内容，包括：什么是执行计划，如何查看和分析执行计划，访问数据方式，表连接方式等。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="执行计划"><a href="#执行计划" class="headerlink" title="执行计划"></a>执行计划</h1><h2 id="一-Oracle"><a href="#一-Oracle" class="headerlink" title="一. Oracle"></a>一. Oracle</h2><h3 id="1-1-什么是执行计划？"><a href="#1-1-什么是执行计划？" class="headerlink" title="1.1 什么是执行计划？"></a>1.1 什么是执行计划？</h3><p>执行计划是一条查询语句在Oracle中的执行过程或访问路径的描述。</p>
+<p>执行计划描述了SQL引擎为执行SQL语句进行的操作；分析SQL语句相关的性能问题或仅仅质疑查询优化器的决定时，必须知道执行计划；所以执行计划常用于sql调优。</p>
+<p>相关概念：</p>
+<ul>
+<li><p><strong>Rowid</strong>：r伪列，不是用户定义，而是系统加的。 每个表都有一个rowid，可以像使用其它列那样使用它，但是不能删除改列，也不能对该列的值进行修改、插入。一旦一行数据插入数据库，则rowid在该行的生命周期内是唯一的，即即使该行产生行迁移，行的rowid也不会改变。</p>
+</li>
+<li><p><strong>Recursive SQL</strong>：有时为了执行用户发出的一个sql语句，Oracle必须执行一些额外的语句称之为’’recursive calls’’或’’recursive SQL statements’’。</p>
+<p>如当一个DDL语句发出后，ORACLE总是隐含的发出一些recursive SQL语句，来修改数据字典信息，以便用户可以成功的执行该DDL语句。</p>
+<p>当需要的数据字典信息没有在共享内存中时，经常会发生Recursive calls，这些Recursive calls会将数据字典信息从硬盘读入内存中。</p>
+<p>用户不比关心这些recursive SQL语句的执行情况，在需要的时候，ORACLE会自动的在内部执行这些语句。DML语句与SELECT都可能引起recursive SQL，简单的说，我们可以将触发器视为recursive SQL。</p>
+</li>
+<li><p><strong>Row Source（行源）</strong>：在查询中，由上一操作返回的符合条件的行的集合，可以是表的全部行数据的集合，也可以是表的部分行数据的集合，也可以为对上2个row source进行连接操作（如join连接）后得到的行数据集合。</p>
+</li>
+<li><p><strong>Predicate（谓词）</strong>：一个查询中的WHERE限制条件。</p>
+</li>
+<li><p><strong>Driving Table（驱动表）</strong>：又称为外层表（OUTER TABLE）。用于嵌套与HASH连接中。</p>
+<p>如果该row source返回较多的行数据，则对所有的后续操作有负面影响。</p>
+<p>一般说来，是应用查询的限制条件后，返回较少行源的表作为驱动表，所以如果一个大表在WHERE条件有有限制条件（如等值限 制），则该大表作为驱动表也是合适的，正确说法应该为应用查询的限制条件后，返回较少行源的表作为驱动表。</p>
+</li>
+<li><p><strong>Probed Table（被探查表）</strong>：又称为内层表（INNER TABLE）。在我们从驱动表中得到具体一行的数据后，在该表中寻找符合连接条件的行。所以该表应当为大表（实际上应该为返回较大row source的表）且相应的列上应该有索引。</p>
+</li>
+<li><p><strong>组合索引（concatenated index）</strong>：由多个列构成的索引。</p>
+<p>如create index idx_emp on emp(col1, col2, col3, ……)，则我们称idx_emp索引为组合索引。</p>
+<p>在组合索引中有一个重要的概念：<strong>引导列</strong>（leading column），在上面的例子中，col1列为引导列。</p>
+<p>当我们进行查询时可以使用“where col1 = ？ ”，也可以使用“where col1 = ？ and col2 = ？”，这样的限制条件都会使用索引，但是“where col2 = ？ ”查询就不会使用该索引。</p>
+<p>所以限制条件中包含先导列时，该限制条件才会使用该组合索引。</p>
+</li>
+<li><p><strong>可选择性（selectivity）</strong>：比较一下列中唯一键的数量和表中的行数，就可以判断该列的可选择性。 如果该列的“唯一键的数量/表中的行数”的比值越接近1，则该列的可选择性越高，该列就越适合创建索引，同样索引的可选择性也越高。在可选择性高的列上进 行查询时，返回的数据就较少，比较适合使用索引查询。</p>
+</li>
+</ul>
+<h3 id="1-2-如何查看执行计划？"><a href="#1-2-如何查看执行计划？" class="headerlink" title="1.2 如何查看执行计划？"></a>1.2 如何查看执行计划？</h3><p>oracle要使用执行计划一般在sqlplus执行sql：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span> t</span><br></pre></td></tr></table></figure>
+
+
+
+<p>不过如果是使用PLSQL的话，那就可以使用PLSQL提供的查询执行计划了,也就是按F5打开PLSQL工具  -&gt;  首选项  -&gt;  窗口类型  -&gt;  计划窗口  ，在这里加入执行计划需要的参数：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010110.png"></p>
+<p>执行结果：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010111.png"></p>
+<p>参数含义：</p>
+<ul>
+<li>基数(Rows)：Oracle估计的当前步骤的返回结果集行数</li>
+<li>字节(Bytes)：执行SQL对应步骤返回的字节数</li>
+<li>耗费(COST)：CPU耗费：Oracle估计的该步骤的执行耗费和CPU耗费</li>
+<li>时间(Time)：Oracle估计的执行sql对于步骤需要的时间</li>
+</ul>
+<h3 id="1-3-查看真实的执行计划"><a href="#1-3-查看真实的执行计划" class="headerlink" title="1.3 查看真实的执行计划"></a>1.3 查看真实的执行计划</h3><p>sqlplus窗口执行：</p>
+<ul>
+<li>step1：set statistics_level</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> session <span class="keyword">set</span> statistics_level<span class="operator">=</span><span class="keyword">ALL</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>step2：执行业务sql</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="comment">/*+ monitor */</span> <span class="operator">*</span> <span class="keyword">from</span> ... <span class="keyword">where</span> ....;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>step3：为了样式，设置linesize</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> linesize <span class="number">200</span> pagesize <span class="number">300</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>step4：查询真实执行计划</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="keyword">table</span>(dbms_xplan.display_cursor(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="string">&#x27;iostats last&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+
+
+<p>sqlplus一般要数据库管理员才可以使用，如果你不是dba，只能使用plsql developer的话，只能用下面的方法。</p>
+<p>使用存储过程，SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span></span><br><span class="line">  b1 <span class="type">date</span>;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">  <span class="keyword">execute</span> immediate <span class="string">&#x27;alter session set statistics_level=ALL&#x27;</span>;</span><br><span class="line">  b1 :<span class="operator">=</span> sysdate <span class="operator">-</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">for</span> test <span class="keyword">in</span> (</span><br><span class="line">               <span class="comment">/*业务SQL(sql后面不需要加&quot;;&quot;)*/</span></span><br><span class="line">               <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t) loop</span><br><span class="line">    <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">end</span> loop;</span><br><span class="line">  <span class="keyword">for</span> x <span class="keyword">in</span> (<span class="keyword">select</span> p.plan_table_output</span><br><span class="line">              <span class="keyword">from</span> <span class="keyword">table</span>(dbms_xplan.display_cursor(<span class="keyword">null</span>,</span><br><span class="line">                                                   <span class="keyword">null</span>,</span><br><span class="line">                                                   <span class="string">&#x27;advanced -bytes -PROJECTION allstats last&#x27;</span>)) p) loop</span><br><span class="line">    dbms_output.put_line(x.plan_table_output);</span><br><span class="line">  <span class="keyword">end</span> loop;</span><br><span class="line">  <span class="keyword">rollback</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"><span class="operator">/</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>两种窗口：</p>
+<ul>
+<li>1、SQL窗口的，执行SQL后只能去output查看；</li>
+<li>2、command window的，需要先设置<code>set serveroutput on size unlimited</code>，然后再执行存储过程</li>
+</ul>
+<p>output或者命令窗口查看的真实执行计划和统计信息：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010112.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">SQL_ID  abk3ghv9u1tvb, child number <span class="number">0</span></span><br><span class="line"><span class="comment">-------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="comment">/*+ monitor */</span> <span class="operator">*</span> <span class="keyword">FROM</span> APPR_HANDLE_INFO</span><br><span class="line"> </span><br><span class="line">Plan hash <span class="keyword">value</span>: <span class="number">885170757</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"><span class="operator">|</span> Id  <span class="operator">|</span> Operation         <span class="operator">|</span> Name             <span class="operator">|</span> Starts <span class="operator">|</span> E<span class="operator">-</span><span class="keyword">Rows</span> <span class="operator">|</span> Cost (<span class="operator">%</span>CPU)<span class="operator">|</span> E<span class="operator">-</span><span class="type">Time</span>   <span class="operator">|</span> A<span class="operator">-</span><span class="keyword">Rows</span> <span class="operator">|</span>   A<span class="operator">-</span><span class="type">Time</span>   <span class="operator">|</span> Buffers <span class="operator">|</span></span><br><span class="line"><span class="comment">------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">0</span> <span class="operator">|</span> <span class="keyword">SELECT</span> STATEMENT  <span class="operator">|</span>                  <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>        <span class="operator">|</span>   <span class="number">210</span> (<span class="number">100</span>)<span class="operator">|</span>          <span class="operator">|</span>  <span class="number">72059</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.06</span> <span class="operator">|</span>    <span class="number">2460</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">1</span> <span class="operator">|</span>  <span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span><span class="operator">|</span> APPR_HANDLE_INFO <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>  <span class="number">32752</span> <span class="operator">|</span>   <span class="number">210</span>   (<span class="number">1</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">03</span> <span class="operator">|</span>  <span class="number">72059</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.06</span> <span class="operator">|</span>    <span class="number">2460</span> <span class="operator">|</span></span><br><span class="line"><span class="comment">------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> </span><br><span class="line">Query Block Name <span class="operator">/</span> Object Alias (identified <span class="keyword">by</span> operation id):</span><br><span class="line"><span class="comment">-------------------------------------------------------------</span></span><br><span class="line"> </span><br><span class="line">   <span class="number">1</span> <span class="operator">-</span> SEL$<span class="number">1</span> <span class="operator">/</span> APPR_HANDLE_INFO<span class="variable">@SEL</span>$<span class="number">1</span></span><br><span class="line"> </span><br><span class="line">Outline Data</span><br><span class="line"><span class="comment">-------------</span></span><br><span class="line"> </span><br><span class="line">  <span class="comment">/*+</span></span><br><span class="line"><span class="comment">      BEGIN_OUTLINE_DATA</span></span><br><span class="line"><span class="comment">      IGNORE_OPTIM_EMBEDDED_HINTS</span></span><br><span class="line"><span class="comment">      OPTIMIZER_FEATURES_ENABLE(&#x27;11.2.0.4&#x27;)</span></span><br><span class="line"><span class="comment">      DB_VERSION(&#x27;11.2.0.4&#x27;)</span></span><br><span class="line"><span class="comment">      ALL_ROWS</span></span><br><span class="line"><span class="comment">      OUTLINE_LEAF(@&quot;SEL$1&quot;)</span></span><br><span class="line"><span class="comment">      FULL(@&quot;SEL$1&quot; &quot;APPR_HANDLE_INFO&quot;@&quot;SEL$1&quot;)</span></span><br><span class="line"><span class="comment">      END_OUTLINE_DATA</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>关键信息解释：</p>
+<ul>
+<li>Starts：该SQL执行的次数</li>
+<li>E-Rows：为执行计划预计的行数</li>
+<li>A-Rows：实际返回的行数，E-Rows和A-Rows作比较，就可以看出具体那一步执行计划出问题了</li>
+<li>A-Time：每一步实际执行的时间，可以看出耗时的SQL</li>
+<li>Buffers：每一步实际执行的逻辑读或一致性读</li>
+</ul>
+<h3 id="1-4-分析执行计划"><a href="#1-4-分析执行计划" class="headerlink" title="1.4 分析执行计划"></a>1.4 分析执行计划</h3><h4 id="1-4-1-查看explain"><a href="#1-4-1-查看explain" class="headerlink" title="1.4.1 查看explain"></a>1.4.1 查看explain</h4><p>找一条比较复杂的SQL，执行：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010113.png"></p>
+<p> set statistics_level=ALL方式：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010114.png"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">SQL_ID  <span class="number">4</span>qfq3t2ukm0y1, child number <span class="number">0</span></span><br><span class="line"><span class="comment">-------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="comment">/*+ monitor*/</span> A.USER_CODE, A.FULL_NAME, A.USER_PWD, C.UNIT_CODE, </span><br><span class="line">C.UNIT_NAME <span class="keyword">FROM</span> BASE_USER A <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> (<span class="keyword">SELECT</span> UR.USER_CODE, </span><br><span class="line">UR.UNIT_CODE <span class="keyword">FROM</span> APPR_USER_ROLE UR <span class="keyword">WHERE</span> UR.USER_ROLE <span class="operator">&lt;</span> <span class="number">10</span>) B <span class="keyword">ON</span> </span><br><span class="line">A.USER_CODE <span class="operator">=</span> B.USER_CODE <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> LZCITY_APPROVE_UNIT_INFO C <span class="keyword">ON</span> </span><br><span class="line">B.UNIT_CODE <span class="operator">=</span> C.UNIT_CODE <span class="keyword">WHERE</span> C.UNIT_CODE <span class="operator">=</span><span class="string">&#x27;15803&#x27;</span></span><br><span class="line"> </span><br><span class="line">Plan hash <span class="keyword">value</span>: <span class="number">3288287052</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"><span class="operator">|</span> Id  <span class="operator">|</span> Operation                      <span class="operator">|</span> Name                        <span class="operator">|</span> Starts <span class="operator">|</span> E<span class="operator">-</span><span class="keyword">Rows</span> <span class="operator">|</span> Cost (<span class="operator">%</span>CPU)<span class="operator">|</span> E<span class="operator">-</span><span class="type">Time</span>   <span class="operator">|</span> A<span class="operator">-</span><span class="keyword">Rows</span> <span class="operator">|</span>   A<span class="operator">-</span><span class="type">Time</span>   <span class="operator">|</span> Buffers <span class="operator">|</span></span><br><span class="line"><span class="comment">------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">0</span> <span class="operator">|</span> <span class="keyword">SELECT</span> STATEMENT               <span class="operator">|</span>                             <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>        <span class="operator">|</span>     <span class="number">3</span> (<span class="number">100</span>)<span class="operator">|</span>          <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>      <span class="number">38</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">1</span> <span class="operator">|</span>  NESTED LOOPS                  <span class="operator">|</span>                             <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">3</span>   (<span class="number">0</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span> <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>      <span class="number">38</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">2</span> <span class="operator">|</span>   NESTED LOOPS                 <span class="operator">|</span>                             <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">3</span>   (<span class="number">0</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span> <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>      <span class="number">22</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">3</span> <span class="operator">|</span>    NESTED LOOPS                <span class="operator">|</span>                             <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">2</span>   (<span class="number">0</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span> <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>       <span class="number">5</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">4</span> <span class="operator">|</span>     <span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> INDEX ROWID<span class="operator">|</span> LZCITY_APPROVE_UNIT_INFO    <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">1</span>   (<span class="number">0</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>       <span class="number">3</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span><span class="operator">*</span>  <span class="number">5</span> <span class="operator">|</span>      INDEX <span class="keyword">UNIQUE</span> SCAN         <span class="operator">|</span> PK_LZCITY_APPROVE_UNIT_INFO <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">0</span>   (<span class="number">0</span>)<span class="operator">|</span>          <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>       <span class="number">2</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span><span class="operator">*</span>  <span class="number">6</span> <span class="operator">|</span>     INDEX <span class="keyword">RANGE</span> SCAN           <span class="operator">|</span> PK_APPR_USER_ROLE           <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">1</span>   (<span class="number">0</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span> <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>       <span class="number">2</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span><span class="operator">*</span>  <span class="number">7</span> <span class="operator">|</span>    INDEX <span class="keyword">UNIQUE</span> SCAN           <span class="operator">|</span> PK_BASE_USER                <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">0</span>   (<span class="number">0</span>)<span class="operator">|</span>          <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>      <span class="number">17</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">|</span>   <span class="number">8</span> <span class="operator">|</span>   <span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> INDEX ROWID  <span class="operator">|</span> BASE_USER                   <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span>      <span class="number">1</span> <span class="operator">|</span>     <span class="number">1</span>   (<span class="number">0</span>)<span class="operator">|</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">01</span> <span class="operator">|</span>     <span class="number">16</span> <span class="operator">|</span><span class="number">00</span>:<span class="number">00</span>:<span class="number">00.01</span> <span class="operator">|</span>      <span class="number">16</span> <span class="operator">|</span></span><br><span class="line"><span class="comment">------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> </span><br><span class="line">Query Block Name <span class="operator">/</span> Object Alias (identified <span class="keyword">by</span> operation id):</span><br><span class="line"><span class="comment">-------------------------------------------------------------</span></span><br><span class="line"> </span><br><span class="line">   <span class="number">1</span> <span class="operator">-</span> SEL$E3445A69</span><br><span class="line">   <span class="number">4</span> <span class="operator">-</span> SEL$E3445A69 <span class="operator">/</span> C<span class="variable">@SEL</span>$<span class="number">4</span></span><br><span class="line">   <span class="number">5</span> <span class="operator">-</span> SEL$E3445A69 <span class="operator">/</span> C<span class="variable">@SEL</span>$<span class="number">4</span></span><br><span class="line">   <span class="number">6</span> <span class="operator">-</span> SEL$E3445A69 <span class="operator">/</span> UR<span class="variable">@SEL</span>$<span class="number">2</span></span><br><span class="line">   <span class="number">7</span> <span class="operator">-</span> SEL$E3445A69 <span class="operator">/</span> A<span class="variable">@SEL</span>$<span class="number">3</span></span><br><span class="line">   <span class="number">8</span> <span class="operator">-</span> SEL$E3445A69 <span class="operator">/</span> A<span class="variable">@SEL</span>$<span class="number">3</span></span><br><span class="line"> </span><br><span class="line">Outline Data</span><br><span class="line"><span class="comment">-------------</span></span><br><span class="line"> </span><br><span class="line">  <span class="comment">/*+</span></span><br><span class="line"><span class="comment">      BEGIN_OUTLINE_DATA</span></span><br><span class="line"><span class="comment">      IGNORE_OPTIM_EMBEDDED_HINTS</span></span><br><span class="line"><span class="comment">      OPTIMIZER_FEATURES_ENABLE(&#x27;11.2.0.4&#x27;)</span></span><br><span class="line"><span class="comment">      DB_VERSION(&#x27;11.2.0.4&#x27;)</span></span><br><span class="line"><span class="comment">      ALL_ROWS</span></span><br><span class="line"><span class="comment">      OUTLINE_LEAF(@&quot;SEL$E3445A69&quot;)</span></span><br><span class="line"><span class="comment">      MERGE(@&quot;SEL$2&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$A2E96217&quot;)</span></span><br><span class="line"><span class="comment">      OUTER_JOIN_TO_INNER(@&quot;SEL$E9F4A6F9&quot; &quot;B&quot;@&quot;SEL$1&quot;)</span></span><br><span class="line"><span class="comment">      OUTER_JOIN_TO_INNER(@&quot;SEL$E9F4A6F9&quot; &quot;C&quot;@&quot;SEL$4&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$2&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$E9F4A6F9&quot;)</span></span><br><span class="line"><span class="comment">      MERGE(@&quot;SEL$80808B20&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$6&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$80808B20&quot;)</span></span><br><span class="line"><span class="comment">      MERGE(@&quot;SEL$4&quot;)</span></span><br><span class="line"><span class="comment">      MERGE(@&quot;SEL$F1D6E378&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$5&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$4&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$F1D6E378&quot;)</span></span><br><span class="line"><span class="comment">      MERGE(@&quot;SEL$1&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$3&quot;)</span></span><br><span class="line"><span class="comment">      OUTLINE(@&quot;SEL$1&quot;)</span></span><br><span class="line"><span class="comment">      INDEX_RS_ASC(@&quot;SEL$E3445A69&quot; &quot;C&quot;@&quot;SEL$4&quot; (&quot;LZCITY_APPROVE_UNIT_INFO&quot;.&quot;UNIT_CODE&quot;))</span></span><br><span class="line"><span class="comment">      INDEX(@&quot;SEL$E3445A69&quot; &quot;UR&quot;@&quot;SEL$2&quot; (&quot;APPR_USER_ROLE&quot;.&quot;UNIT_CODE&quot; &quot;APPR_USER_ROLE&quot;.&quot;USER_CODE&quot; &quot;APPR_USER_ROLE&quot;.&quot;AREA_SEQ&quot; </span></span><br><span class="line"><span class="comment">              &quot;APPR_USER_ROLE&quot;.&quot;USER_ROLE&quot;))</span></span><br><span class="line"><span class="comment">      INDEX(@&quot;SEL$E3445A69&quot; &quot;A&quot;@&quot;SEL$3&quot; (&quot;BASE_USER&quot;.&quot;USER_CODE&quot;))</span></span><br><span class="line"><span class="comment">      LEADING(@&quot;SEL$E3445A69&quot; &quot;C&quot;@&quot;SEL$4&quot; &quot;UR&quot;@&quot;SEL$2&quot; &quot;A&quot;@&quot;SEL$3&quot;)</span></span><br><span class="line"><span class="comment">      USE_NL(@&quot;SEL$E3445A69&quot; &quot;UR&quot;@&quot;SEL$2&quot;)</span></span><br><span class="line"><span class="comment">      USE_NL(@&quot;SEL$E3445A69&quot; &quot;A&quot;@&quot;SEL$3&quot;)</span></span><br><span class="line"><span class="comment">      NLJ_BATCHING(@&quot;SEL$E3445A69&quot; &quot;A&quot;@&quot;SEL$3&quot;)</span></span><br><span class="line"><span class="comment">      END_OUTLINE_DATA</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> </span><br><span class="line">Predicate Information (identified <span class="keyword">by</span> operation id):</span><br><span class="line"><span class="comment">---------------------------------------------------</span></span><br><span class="line"> </span><br><span class="line">   <span class="number">5</span> <span class="operator">-</span> access(&quot;C&quot;.&quot;UNIT_CODE&quot;<span class="operator">=</span><span class="string">&#x27;15803&#x27;</span>)</span><br><span class="line">   <span class="number">6</span> <span class="operator">-</span> access(&quot;UR&quot;.&quot;UNIT_CODE&quot;<span class="operator">=</span><span class="string">&#x27;15803&#x27;</span> <span class="keyword">AND</span> &quot;UR&quot;.&quot;USER_ROLE&quot;<span class="operator">&lt;</span><span class="number">10</span>)</span><br><span class="line">       <span class="keyword">filter</span>(&quot;UR&quot;.&quot;USER_ROLE&quot;<span class="operator">&lt;</span><span class="number">10</span>)</span><br><span class="line">   <span class="number">7</span> <span class="operator">-</span> access(&quot;A&quot;.&quot;USER_CODE&quot;<span class="operator">=</span>&quot;UR&quot;.&quot;USER_CODE&quot;)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-4-2-explain执行顺序"><a href="#1-4-2-explain执行顺序" class="headerlink" title="1.4.2 explain执行顺序"></a>1.4.2 explain执行顺序</h4><p>不管是用F5方式还是set statistics_level=ALL方式，都有Operation参数，Operation表示sql执行过程，查看怎么执行的，有两个规则：</p>
+<ul>
+<li>根据Operation缩进判断，缩进最多的最先执行；</li>
+<li>Operation缩进相同时，最上面的是最先执行的；</li>
+</ul>
+<p>如图执行计划，根据规则，可以得出<strong>执行顺序</strong>：INDEX UNIQUE SCAN-&gt;TABLE ACCESS BY INDEX ROWID-&gt;INDEX RANGE SCAN -&gt;NESTED LOOPS -&gt;INDEX UNIQUE SCAN-&gt;NESTED LOOPS   -&gt;TABLE ACCESS BY INDEX ROWID-&gt;NESTED LOOPS-&gt; SELECT STATEMENT 。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010115.png"></p>
+<h4 id="1-4-3-访问数据方式"><a href="#1-4-3-访问数据方式" class="headerlink" title="1.4.3 访问数据方式"></a>1.4.3 访问数据方式</h4><p>Oracle访问表中数据的方法有两种：</p>
+<ul>
+<li><p>访问表数据：直接表中访问数据。</p>
+</li>
+<li><p>索引扫描：先访问索引，如果索引数据不符合目标SQL，就回表，符合就不回表，直接访问索引就可以。</p>
+<p>先通过index查找到数据对应的rowid值（对于非唯一索引可能返回多个rowid值），然后根据rowid直接从表中得到具体的数据。该行对应的数据块是通过一次i/o得到的，在此情况下该次i/o只会读取一个数据库块。</p>
+</li>
+</ul>
+<p>Oracle直接<strong>访问表中数据</strong>的方法又分为两种：</p>
+<ul>
+<li><strong>全表扫描（TABLE ACCESS FULL）</strong></li>
+<li><strong>ROWID扫描（TABLE ACCESS BY ROWID）</strong></li>
+</ul>
+<p>访问索引的种类更多（TABLE ACCESS BY INDEX SCAN）：</p>
+<ul>
+<li><strong>索引唯一扫描（INDEX UNIQUE SCAN）</strong></li>
+<li><strong>索引范围扫描（INDEX RANGE SCAN）</strong></li>
+<li><strong>索引全扫描（INDEX FULL SCAN）</strong></li>
+<li><strong>索引快速全扫描（INDEX FAST FULL SCAN）</strong></li>
+<li><strong>索引跳跃式扫描（INDEX SKIP SCAN）</strong></li>
+</ul>
+<p>索引扫描可以由2步组成：</p>
+<ol>
+<li>扫描索引得到对应的rowid值。 </li>
+<li> 通过找到的rowid从表中读出具体的数据。</li>
+</ol>
+<p>每步都是单独的一次I/O，但是对于索引，由于经常使用，绝大多数都已经CACHE到内存中，所以第1步的 I/O经常是逻辑I/O，即数据可以从内存中得到。</p>
+<p>但是对于第2步来说，如果表比较大，则其数据不可能全在内存中，所以其I/O很有可能是物理I/O，这是一个机械操作，相对逻辑I/O来说，是极其费时间的。</p>
+<p>所以如果多大表进行索引扫描，取出的数据如果大于总量的5% —— 10%，使用索引扫描会效率下降很多。如下列所示：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno， ename <span class="keyword">from</span> emp <span class="keyword">where</span> empno<span class="operator">=</span><span class="number">10</span>；</span><br><span class="line">　　Query Plan</span><br><span class="line"></span><br><span class="line"><span class="comment">------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> ROWID EMP [ANALYZED]</span><br><span class="line">INDEX <span class="keyword">UNIQUE</span> SCAN EMP_I1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果查询的数据能全在索引中找到，就可以避免进行第2步操作，避免了不必要的I/O，此时即使通过索引扫描取出的数据比较多，效率还是很高的：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno <span class="keyword">from</span> emp <span class="keyword">where</span> empno<span class="operator">=</span><span class="number">10</span>;<span class="comment">-- 只查询empno列值</span></span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line">INDEX <span class="keyword">UNIQUE</span> SCAN EMP_I1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果sql语句中对索引列进行排序，因为索引已经预先排序好了，所以在执行计划中不需要再对索引列进行排序：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno, ename <span class="keyword">from</span> emp <span class="keyword">where</span> empno <span class="operator">&gt;</span> <span class="number">7876</span> <span class="keyword">order</span> <span class="keyword">by</span> empno;</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">--------------------------------------------------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> ROWID EMP [ANALYZED]</span><br><span class="line">INDEX <span class="keyword">RANGE</span> SCAN EMP_I1 [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="（1）全表扫描（TABLE-ACCESS-FULL）"><a href="#（1）全表扫描（TABLE-ACCESS-FULL）" class="headerlink" title="（1）全表扫描（TABLE ACCESS FULL）"></a>（1）全表扫描（TABLE ACCESS FULL）</h5><ul>
+<li>全表扫描时从第一个区(EXTENT)的第一个块(BLOCK)开始扫描，一直扫描的到表的高水位线(High Water Mark)，这个范围内的数据块都会扫描到。</li>
+<li>全表扫描是采用多数据块一起扫的，并不是一个个数据库扫的，也不是只读取一个数据块，减少了I/O总次数，提高了系统的吞吐量。</li>
+<li>全表扫描慢是针对数据量很多的情况，数据量少的话，全表扫描并不慢的，不过随着数据量越多，高水位线也就越高，也就是说需要扫描的数据库越多，自然扫描所需要的IO越多，时间也越多。</li>
+</ul>
+<p>注意：数据量越多，全表扫描所需要的时间就越多，然后直接删了表数据呢？查询速度会变快？其实并不会的，因为即使我们删了数据，高位水线并不会改变，也就是同样需要扫描那么多数据块。</p>
+<p><strong>使用场景：</strong>在较大的表上不建议使用全表扫描，除非取出数据的比较多，超过总量的5%到10%，以及想使用并行查询功能时。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SQL</span><span class="operator">&gt;</span> explain plan <span class="keyword">for</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> dual;</span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">-----------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> DUAL</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="（2）ROWID扫描（TABLE-ACCESS-BY-ROWID）"><a href="#（2）ROWID扫描（TABLE-ACCESS-BY-ROWID）" class="headerlink" title="（2）ROWID扫描（TABLE ACCESS BY ROWID）"></a>（2）ROWID扫描（TABLE ACCESS BY ROWID）</h5><p>ROWID也就是表数据行所在的物理存储地址，所谓的ROWID扫描是通过ROWID所在的数据行记录去定位。ROWID是一个伪列，数据库里并没有这个列，它是数据库查询过程中获取的一个物理地址，用于表示数据对应的行数。 <strong>Oracle存取单行数据的最快方法。</strong></p>
+<p>这种存取方法不会用到多块读操作，一次I/O只能读取一个数据块。我们会经常在执行计划中看到该存取方法，如通过索引查询数据。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> dept <span class="keyword">where</span> rowid <span class="operator">=</span> <span class="string">&#x27;&#x27;</span>AAAAyGAADAAAAATAAF<span class="string">&#x27;&#x27;</span>；</span><br><span class="line"> </span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> ROWID DEPT [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以用sql查询rowid：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> t.<span class="operator">*</span>,rowid <span class="keyword">from</span> 表格</span><br></pre></td></tr></table></figure>
+
+
+
+<p>随意获取一个ROWID序列：AAAWSJAAFAAAWwUAAA</p>
+<ul>
+<li>前6位表示对象编号(Data Object number)</li>
+<li>其后3位文件编号(Relative file number)</li>
+<li>再后6位表示块编号(Block number)</li>
+<li>最后3位表示行编号(Row number)</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010116.jpeg"></p>
+<p><strong>ROWID编码方法是：A ~ Z表示0到25；a ~ z表示26到51；0~9表示52到61；+表示62；/表示63；刚好64个字符。</strong></p>
+<p>随意找张表查一下文件编号、区编号、行编号，查询后会返回rowid的一系列物理地址和文件编号(rowid_relative_fno(rowid))、块编号(rowid_block_number(rowid))、行编号(rowid_row_number(rowid))：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> t.seq,</span><br><span class="line">       rowid,</span><br><span class="line">       dbms_rowid.rowid_relative_fno(rowid),</span><br><span class="line">       dbms_rowid.rowid_block_number(rowid),</span><br><span class="line">       dbms_rowid.rowid_row_number(rowid)</span><br><span class="line">  <span class="keyword">from</span> t_info t</span><br></pre></td></tr></table></figure>
+
+
+
+<p>SQL查询一下表格名称为TABLE的对象编码</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> owner,object_id,data_object_id,status <span class="keyword">from</span> dba_objects <span class="keyword">where</span> </span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>相对文件id和绝对文件编码</strong>：相对文件id是指相对于表空间，在表空间唯一;绝对文件编码是指相当于全局数据库而言的，全局唯一。</p>
+<p>查询一下相对文件id和绝对文件编码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> file_name,file_id,relative_fno <span class="keyword">from</span> dba_data_files;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="（3）索引唯一扫描（INDEX-UNIQUE-SCAN）"><a href="#（3）索引唯一扫描（INDEX-UNIQUE-SCAN）" class="headerlink" title="（3）索引唯一扫描（INDEX UNIQUE SCAN）"></a>（3）索引唯一扫描（INDEX UNIQUE SCAN）</h5><ul>
+<li>索引唯一性扫描（INDEX UNIQUE SCAN）是针对唯一性索引（UNIQUE INDEX）来说的，也就是建立唯一性索引才能索引唯一性扫描。</li>
+<li>唯一性扫描，其结果集只会返回一条记录。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno，ename <span class="keyword">from</span> emp <span class="keyword">where</span> empno<span class="operator">=</span><span class="number">10</span>；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> ROWID EMP [ANALYZED]</span><br><span class="line">INDEX <span class="keyword">UNIQUE</span> SCAN EMP_I1</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="（4）索引范围扫描（INDEX-RANGE-SCAN）"><a href="#（4）索引范围扫描（INDEX-RANGE-SCAN）" class="headerlink" title="（4）索引范围扫描（INDEX RANGE SCAN）"></a>（4）索引范围扫描（INDEX RANGE SCAN）</h5><ul>
+<li>当扫描的对象是非唯一性索引的情况，where谓词条件为Between、=、&lt;、&gt;等等的情况就是索引范围扫描，注意，可以是等值查询，也可以是范围查询。</li>
+<li>适用于所有类型的B树索引，一般不包括唯一性索引，因为唯一性索引走索引唯一性扫描。</li>
+</ul>
+<p>使用index rang scan的3种情况：</p>
+<ul>
+<li>在唯一索引列上使用了range操作符（&gt; &lt; &lt;&gt; &gt;= &lt;= between）</li>
+<li>在组合索引上，只使用部分列进行查询，导致查询出多行</li>
+<li>对非唯一索引列上进行的任何查询</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno，ename <span class="keyword">from</span> emp <span class="keyword">where</span> empno <span class="operator">&gt;</span> <span class="number">7876</span> <span class="keyword">order</span> <span class="keyword">by</span> empno；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">--------------------------------------------------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">BY</span> ROWID EMP [ANALYZED]</span><br><span class="line">INDEX <span class="keyword">RANGE</span> SCAN EMP_I1 [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>如果where条件里有一个索引键值列没限定为非空的，那就可以走索引范围扫描，如果改索引列是非空的，那就走索引全扫描。</strong></p>
+<p>前面说了，同样的SQL建的索引不同，就可能是走索引唯一性扫描，也有可能走索引范围扫描。在同等的条件下，索引范围扫描所需要的逻辑读和索引唯一性扫描对比，逻辑读如何？索引范围扫描可能返回多条记录，所以优化器为了确认，肯定会多扫描，<strong>所以在同等条件，索引范围扫描所需要的逻辑读至少会比相应的唯一性扫描的逻辑读多1。</strong></p>
+<h5 id="（5）索引全扫描（INDEX-FULL-SCAN）"><a href="#（5）索引全扫描（INDEX-FULL-SCAN）" class="headerlink" title="（5）索引全扫描（INDEX FULL SCAN）"></a>（5）索引全扫描（INDEX FULL SCAN）</h5><ul>
+<li>适用于所有类型的B树索引(包括唯一性索引和非唯一性索引)。</li>
+<li>查询出的数据都必须从索引中可以直接得到。</li>
+<li>索引全扫描是指扫描目标索引所有叶子块的索引行，但不意思着需要扫描所有的分支块，索引全扫描时只需要访问必要的分支块，然后定位到位于改索引最左边的叶子块的第一行索引行，就可以利用改索引叶子块之间的双向指针链表，从左往右依次顺序扫描所有的叶子块的索引行。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">An Index <span class="keyword">full</span> scan will <span class="keyword">not</span> perform single block i<span class="operator">/</span>o<span class="string">&#x27;&#x27;</span>s <span class="keyword">and</span> so it may prove <span class="keyword">to</span> be inefficient. </span><br><span class="line">e.g.</span><br><span class="line"></span><br><span class="line">Index BE_IX <span class="keyword">is</span> a concatenated index <span class="keyword">on</span> big_emp(empno, ename)</span><br><span class="line"></span><br><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno， ename <span class="keyword">from</span> big_emp <span class="keyword">order</span> <span class="keyword">by</span> empno，ename；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">--------------------------------------------------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span><span class="number">26</span></span><br><span class="line">INDEX <span class="keyword">FULL</span> SCAN BE_IX [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="（6）索引快速全扫描（INDEX-FAST-FULL-SCAN）"><a href="#（6）索引快速全扫描（INDEX-FAST-FULL-SCAN）" class="headerlink" title="（6）索引快速全扫描（INDEX FAST FULL SCAN）"></a>（6）索引快速全扫描（INDEX FAST FULL SCAN）</h5><ul>
+<li>索引快速全扫描和索引全扫描很类似，也适用于所有类型的B树索引(包括唯一性索引和非唯一性索引)。</li>
+<li>和索引全扫描类似，也是扫描所有叶子块的索引行，这些都是索引快速全扫描和索引全扫描的相同点。</li>
+<li>它不对查询出的数据进行排序，即数据不是以排序顺序被返回。</li>
+<li>可以使用多块读功能，也可以使用并行读入，以便获得最大吞吐量与缩短执行时间。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># BE_IX索引是一个多列索引： big_emp(empno, ename)</span><br><span class="line"></span><br><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> empno，ename <span class="keyword">from</span> big_emp；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">------------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line">INDEX FAST <span class="keyword">FULL</span> SCAN BE_IX [ANALYZED]</span><br><span class="line"></span><br><span class="line"># 只选择多列索引的第<span class="number">2</span>列：</span><br><span class="line">explain plan <span class="keyword">for</span> <span class="keyword">select</span> ename <span class="keyword">from</span> big_emp；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">------------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span><span class="number">1</span></span><br><span class="line">INDEX FAST <span class="keyword">FULL</span> SCAN BE_IX [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>索引快速全扫描和索引全扫描区别：</p>
+<ul>
+<li>索引快速全扫描只适应于CBO(基于成本的优化器)</li>
+<li>索引快速全扫描可以使用多块读，也可以并行执行</li>
+<li>索引全扫描会按照叶子块排序返回，而索引快速全扫描则是按照索引段内存储块顺序返回</li>
+<li>索引快速全扫描的执行结果不一定是有序的，而索引全扫描的执行结果是有序的，因为索引快速全扫描是根据索引行在磁盘的物理存储顺序来扫描的，不是根据索引行的逻辑顺序来扫描的</li>
+</ul>
+<h5 id="（7）索引跳跃式扫描（INDEX-SKIP-SCAN）"><a href="#（7）索引跳跃式扫描（INDEX-SKIP-SCAN）" class="headerlink" title="（7）索引跳跃式扫描（INDEX SKIP SCAN）"></a>（7）索引跳跃式扫描（INDEX SKIP SCAN）</h5><p>索引跳跃式扫描(INDEX SKIP SCAN)适用于所有类型的<em><strong>复合B树索引</strong></em>(包括唯一性索引和非唯一性索引)，索引跳跃式扫描可以使那些在where条件中没有目标索引的前导列指定查询条件但是有索引的非前导列指定查询条件的目标SQL依然可以使用跳跃索引。</p>
+<p>如图执行计划就有INDEX RANGE SCAN、 INDEX UNIQUE SCAN 等等：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010117.png"></p>
+<h4 id="1-4-4-表连接方式"><a href="#1-4-4-表连接方式" class="headerlink" title="1.4.4 表连接方式"></a>1.4.4 表连接方式</h4><p>如图，执行计划中有如下NESTED LOOPS等，是Oracle中表连接的方法：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010118.png"></p>
+<ul>
+<li>Join是一种试图将两个表结合在一起的谓词，一次只能连接2个表，表连接也可以被称为表关联。</li>
+<li>使用row source来代替表的描述更准确，将参与连接的2个row source分别称为row source1和row source 2。</li>
+<li>Join过程的各个步骤经常是串行操作，即使相关的row source可以被并行访问，即可以并行的读取做join连接的两个row source的数据，但是在将表中符合限制条件的数据读入到内存形成row source后，join的其它步骤一般是串行的。</li>
+</ul>
+<p>row source之间的<strong>连接顺序对于查询的效率</strong>有非常大的影响。通过首先存取特定的表，即将该表作为驱动表，这样可以先应用某些限制条件，从而得到一个较小的row source，使连接的效率较高，这也就是我们常说的要先执行限制条件的原因。一般是在将表读入内存时，应用where子句中对该表的限制条件。</p>
+<p>表连接方式：</p>
+<ul>
+<li><strong>排序合并连接（sort merge join）</strong> ：先将关联表的关联列各自做排序，然后从各自的排序表中抽取数据，到另一个排序表中做匹配。<ul>
+<li> 对于非等值连接，这种连接方式的效率是比较高的。</li>
+<li>如果在关联的列上都有索引，效果更好。</li>
+<li>对于将2个较大的row source做连接，该连接方法比NL连接要好一些。</li>
+<li>但是如果sort merge返回的row source过大，则又会导致使用过多的rowid在表中查询数据时，数据库性能下降，因为过多的I/O。</li>
+</ul>
+</li>
+<li><strong>嵌套循环连接（Nested loop join）</strong>：Nested loops 工作方式是循环从一张表中读取数据(驱动表outer table)，然后访问另一张表（被查找表 inner table,通常有索引）。驱动表中的每一行与inner表中的相应记录JOIN。类似一个嵌套的循环。<strong>对于被连接的数据子集较小的情况，nested loop连接是个较好的选择</strong>。<ul>
+<li>如果driving row source（外部表）比较小，并且在inner row source（内部表）上有唯一索引，或有高选择性非唯一索引时，使用这种方法可以得到较好的效率。</li>
+<li>NESTED LOOPS有其它连接方法没有的的一个优点是：可以先返回已经连接的行，而不必等待所有的连接操作处理完才返回数据，这可以实现快速的响应时间。</li>
+</ul>
+</li>
+<li><strong>哈希连接（Hash join）</strong>：散列连接是CBO 做<a target="_blank" rel="noopener" href="https://cloud.tencent.com/solution/bigdata?from=10680">大数据</a>集连接时的常用方式，优化器使用两个表中较小的表（或数据源）利用连接键在内存中建立散列表，然后扫描较大的表并探测散列表，找出与散列表匹配的行。 <ul>
+<li>这种方法是在oracle7后来引入的，使用了比较先进的连接理论，一般来说，其效率应该好于其它2种连接，但是这种连接只能用在CBO优化器中，而且需要设置合适的hash_area_size参数，才能取得较好的性能。</li>
+<li>在2个较大的row source之间连接时会取得相对较好的效率，在一个row source较小时则能取得更好的效率。</li>
+<li>只能用于等值连接中</li>
+</ul>
+</li>
+<li><strong>笛卡尔连接（Cross join）</strong>：如果两个表做表连接而没有连接条件，而会产生笛卡尔积，在实际工作中应该尽可能避免笛卡尔积。</li>
+</ul>
+<h5 id="（1）排序合并连接（sort-merge-join）"><a href="#（1）排序合并连接（sort-merge-join）" class="headerlink" title="（1）排序合并连接（sort merge join）"></a>（1）排序合并连接（sort merge join）</h5><p>内部连接过程：</p>
+<ol>
+<li>首先生成row source1需要的数据，然后对这些数据按照连接操作关联列（如A.col3）进行排序。</li>
+<li>随后生成row source2需要的数据，然后对这些数据按照与sort source1对应的连接操作关联列（如B.col4）进行排序。</li>
+<li>最后两边已排序的行被放在一起执行合并操作，即将2个row source按照连接条件连接起来。</li>
+</ol>
+<p>如果row source已经在连接关联列上被排序，则该连接操作就不需要再进行sort操作，这样可以大大提高这种连接操作的连接速度，因为排序是个极其费资源的操作，特别是对于较大的表。</p>
+<p>预先排序的row source包括已经被索引的列（如a.col3或b.col4上有索引）或row source已经在前面的步骤中被排序了。</p>
+<p>尽管合并两个row source的过程是串行的，但是可以并行访问这两个row source（如并行读入数据，并行排序）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span></span><br><span class="line"><span class="keyword">select</span> <span class="comment">/*+ ordered */</span> e.deptno， d.deptno</span><br><span class="line"><span class="keyword">from</span> emp e， dept d</span><br><span class="line"><span class="keyword">where</span> e.deptno <span class="operator">=</span> d.deptno</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> e.deptno， d.deptno；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">-------------------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">17</span></span><br><span class="line"><span class="keyword">MERGE</span> <span class="keyword">JOIN</span></span><br><span class="line">SORT <span class="keyword">JOIN</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> EMP [ANALYZED]</span><br><span class="line">SORT <span class="keyword">JOIN</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> DEPT [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>排序是一个费时、费资源的操作，特别对于大表。基于这个原因，SMJ经常不是一个特别有效的连接方法，但是如果2个row source都已经预先排序，则这种连接方法的效率也是蛮高的。</p>
+<h5 id="（2）嵌套循环连接（Nested-loop-join）"><a href="#（2）嵌套循环连接（Nested-loop-join）" class="headerlink" title="（2）嵌套循环连接（Nested loop join）"></a>（2）嵌套循环连接（Nested loop join）</h5><p>这个连接方法有驱动表（外部表）的概念。其实，该连接过程就是一个2层嵌套循环，所以外层循环的次数越少越好，这也就是我们为什么将小表或返回较小row source的表作为驱动表（用于外层循环）的理论依据。</p>
+<p>但是这个理论只是一般指导原则，因为遵循这个理论并不能总保证使语句产生的I/O次数最少。有时不遵守这个理论依据，反而会获得更好的效率。如果使用这种方法，决定使用哪个表作为驱动表很重要。有时如果驱动表选择不正确，将会导致语句的性能很差。</p>
+<p>内部连接过程：</p>
+<ul>
+<li>Row source1的Row 1 —— Probe -&gt;Row source 2</li>
+<li>Row source1的Row 2 —— Probe -&gt;Row source 2</li>
+<li>Row source1的Row 3 —— Probe -&gt;Row source 2</li>
+<li>……</li>
+<li>Row source1的Row n —— Probe -&gt;Row source 2</li>
+</ul>
+<p>从内部连接过程来看，需要用row source1中的每一行，去匹配row source2中的所有行，所以此时保持row source1尽可能的小与高效的访问row source2（一般通过索引实现）是影响这个连接效率的关键问题。</p>
+<p>这只是理论指导原则，目的是使整个连接操作产生最少的物理I/O次数，而且如果遵守这个原则，一般也会使总的物理I/O数最少。但是如果不遵从这个指导原则，反而能用更少的物理I/O实现连接操作，那尽管违反指导原则吧！因为最少的物理 I/O次数才是我们应该遵从的真正的指导原则。</p>
+<p>在NESTED LOOPS连接中，Oracle读取row source1中的每一行，然后在row sourc2中检查是否有匹配的行，所有被匹配的行都被放到结果集中，然后处理row source1中的下一行。这个过程一直继续，直到row source1中的所有行都被处理。这是从连接操作中可以得到第一个匹配行的最快的方法之一，这种类型的连接可以用在需要快速响应的语句中，以响应速度为主要目标。</p>
+<p>如果driving row source（外部表）比较小，并且在inner row source（内部表）上有唯一索引，或有高选择性非唯一索引时，使用这种方法可以得到较好的效率。</p>
+<p>NESTED LOOPS有其它连接方法没有的的一个优点是：可以先返回已经连接的行，而不必等待所有的连接操作处理完才返回数据，这可以实现快速的响应时间。</p>
+<p>如果不使用并行操作，最好的驱动表是那些应用了where限制条件后，可以返回较少行数据的的表，所以大表也可能称为驱动表，关键看限制条件。</p>
+<p>对于并行查询，我们经常选择大表作为驱动表，因为大表可以充分利用并行功能。当然，有时对查询使用并行操作并不一定会比查询不使用并行操作效率高，因为最后可能每个表只有很少的行符合限制条件，而且还要看你的硬件配置是否 可以支持并行（如是否有多个CPU，多个硬盘控制器），所以要具体问题具体对待。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span></span><br><span class="line"><span class="keyword">select</span> a.dname，b.sql</span><br><span class="line"><span class="keyword">from</span> dept a，emp b</span><br><span class="line"><span class="keyword">where</span> a.deptno <span class="operator">=</span> b.deptno；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">-------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">5</span></span><br><span class="line">NESTED LOOPS</span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> DEPT [ANALYZED]</span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> EMP [ANALYZED]</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="（3）哈希连接（Hash-join）"><a href="#（3）哈希连接（Hash-join）" class="headerlink" title="（3）哈希连接（Hash join）"></a>（3）哈希连接（Hash join）</h5><p>这种连接是在oracle 7.3以后引入的，从理论上来说比NL与SMJ更高效，而且只用在CBO优化器中。</p>
+<p>较小的row source被用来构建hash table与bitmap，第2个row source被用来被hansed，并与第一个row source生成的hash table进行匹配，以便进行进一步的连接。</p>
+<p>内部连接过程：</p>
+<ul>
+<li>取出 row source 1（驱动表，在HASH JOIN中又称为Build Table） 的数据集，然后将其构建成内存中的一个 Hash Table（Hash函数的Hash KEY就是连接操作关联列），创建Hash位图（bitmap）</li>
+<li>取出 row source 2（匹配表）的数据集，对其中的每一条数据的连接操作关联列使用相同的Hash函数并找到对应的 a) 里的数据在 Hash Table 中的位置，在该位置上检查能否找到匹配的数据</li>
+</ul>
+<p>Bitmap被用来作为一种比较快的查找方法，来检查在hash table中是否有匹配的行。特别的，当hash table比较大而不能全部容纳在内存中时，这种查找方法更为有用。</p>
+<p>这种连接方法也有NL连接中所谓的驱动表的概念，被构建为hash table与bitmap的表为驱动表，当被构建的hash table与bitmap能被容纳在内存中时，这种连接方式的效率极高。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span></span><br><span class="line"><span class="keyword">select</span> <span class="comment">/*+ use_hash（emp） */</span> empno</span><br><span class="line"><span class="keyword">from</span> emp, dept</span><br><span class="line"><span class="keyword">where</span> emp.deptno <span class="operator">=</span> dept.deptno；</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">----------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT[CHOOSE] Cost<span class="operator">=</span><span class="number">3</span></span><br><span class="line">HASH <span class="keyword">JOIN</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> DEPT</span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> EMP</span><br></pre></td></tr></table></figure>
+
+
+
+<p>要使哈希连接有效，需要设置HASH_JOIN_ENABLED=TRUE，缺省情况下该参数为TRUE，另外，不要忘了还要设置 hash_area_size参数，以使哈希连接高效运行，因为哈希连接会在该参数指定大小的内存中运行，过小的参数会使哈希连接的性能比其他连接方式还要低。</p>
+<h5 id="（4）笛卡尔连接（Cross-join）"><a href="#（4）笛卡尔连接（Cross-join）" class="headerlink" title="（4）笛卡尔连接（Cross join）"></a>（4）笛卡尔连接（Cross join）</h5><p>当两个row source做连接，但是它们之间没有关联条件时，就会在两个row source中做笛卡儿乘积，这通常由编写代码疏漏造成（即程序员忘了写关联条件）。</p>
+<p>笛卡尔乘积是一个表的每一行依次与另一个表中的所有行匹配。在特殊情况下我们可以使用笛卡儿乘积，如在星形连接中，除此之外，我们要尽量不使用笛卡儿乘积。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">explain plan <span class="keyword">for</span></span><br><span class="line"><span class="keyword">select</span> emp.deptno，dept，deptno</span><br><span class="line"><span class="keyword">from</span> emp，dept</span><br><span class="line"></span><br><span class="line">Query Plan</span><br><span class="line"><span class="comment">------------------------</span></span><br><span class="line"><span class="keyword">SELECT</span> STATEMENT [CHOOSE] Cost<span class="operator">=</span><span class="number">5</span></span><br><span class="line"><span class="keyword">MERGE</span> <span class="keyword">JOIN</span> CARTESIAN</span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> DEPT</span><br><span class="line">SORT <span class="keyword">JOIN</span></span><br><span class="line"><span class="keyword">TABLE</span> ACCESS <span class="keyword">FULL</span> EMP</span><br></pre></td></tr></table></figure>
+
+
+
+<p>CARTESIAN关键字指出了在2个表之间做笛卡尔乘积。假如表emp有n行，dept表有m行，笛卡尔乘积的结果就是得到n * m行结果。</p>
+<h4 id="1-4-5-explain参数信息"><a href="#1-4-5-explain参数信息" class="headerlink" title="1.4.5 explain参数信息"></a>1.4.5 explain参数信息</h4><p>执行计划关键信息介绍：</p>
+<ul>
+<li>Starts：该SQL执行的次数</li>
+<li>E-Rows：为执行计划预计的行数</li>
+<li><a target="_blank" rel="noopener" href="http://www.itpub.net/forum.php?mod=viewthread&tid=1264620&highlight=">Cost (%CPU)</a>：CPU cost在整个cost中占的百分比</li>
+<li>A-Rows：实际返回的行数，E-Rows和A-Rows作比较，就可以看出具体那一步执行计划出问题了</li>
+<li>A-Time：每一步实际执行的时间，可以看出耗时的SQL</li>
+<li>Buffers：每一步实际执行的逻辑读或一致性读</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211001/202110010119.png"></p>
+<h2 id="二-MySQL"><a href="#二-MySQL" class="headerlink" title="二. MySQL"></a>二. MySQL</h2><h3 id="2-1-使用explain"><a href="#2-1-使用explain" class="headerlink" title="2.1 使用explain"></a>2.1 使用explain</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> actor;</span><br><span class="line"><span class="operator">+</span><span class="comment">----+-------------+-------+------+---------------+------+---------+------+------+-------+</span></span><br><span class="line"><span class="operator">|</span> id <span class="operator">|</span> select_type <span class="operator">|</span> <span class="keyword">table</span> <span class="operator">|</span> type <span class="operator">|</span> possible_keys <span class="operator">|</span> key  <span class="operator">|</span> key_len <span class="operator">|</span> <span class="keyword">ref</span>  <span class="operator">|</span> <span class="keyword">rows</span> <span class="operator">|</span> Extra <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+-------------+-------+------+---------------+------+---------+------+------+-------+</span></span><br><span class="line"><span class="operator">|</span>  <span class="number">1</span> <span class="operator">|</span> SIMPLE      <span class="operator">|</span> actor <span class="operator">|</span> <span class="keyword">ALL</span>  <span class="operator">|</span> <span class="keyword">NULL</span>          <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span> <span class="keyword">NULL</span>    <span class="operator">|</span> <span class="keyword">NULL</span> <span class="operator">|</span>    <span class="number">2</span> <span class="operator">|</span> <span class="keyword">NULL</span>  <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----+-------------+-------+------+---------------+------+---------+------+------+-------+</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-2"><a href="#2-2" class="headerlink" title="2.2"></a>2.2</h3><h4 id="Extra可优化项"><a href="#Extra可优化项" class="headerlink" title="Extra可优化项"></a>Extra可优化项</h4><ul>
+<li>using index condition：表的读取是通过访问索引图元并首先测试它们来确定是否要读取全表的行。通过这种方式，索引信息被用来推迟(“push down”) 读取全表的行，除非有必要。<ul>
+<li>详细参考： <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/index-condition-pushdown-optimization.html">Section 8.2.1.6, “Index Condition Pushdown Optimization” </a>。</li>
+<li>存储引擎根据索引尽可能的过滤数据，然后在返回给服务器层根据where其他条件进行过滤。</li>
+<li>假设有联合索引 <code>XXX_index(a, b, c) </code> ，查询的时候 <code>where a=&#39;xxx&#39; and c=1</code> ，没有按顺序与索引字段一直，就导致后面条件c无法命中索引。</li>
+<li>type值为range、 ref、 eq_ref或者ref_or_null的时候 , 会使用到索引条件下推技术。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>参考：</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1648496">Oracle调优之看懂SQL执行计划explain</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://blog.csdn.net/p6620582/article/details/74181523">Oracle执行计划详细解读</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Dreamer-1/p/6076440.html">看懂Oracle执行计划</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://blog.csdn.net/u014427391/article/details/89604262">Orace SQL调优系列之执行计划学习笔记</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html">MySQL :: MySQL 8.0 Reference Manual :: 8.8.2 EXPLAIN Output Format</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://blog.csdn.net/u014427391/article/details/94862797">《收获，不止SQL优化》读书笔记</a>》</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020021801.html" rel="bookmark">Oralce和MySql笔记（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019091401.html" rel="bookmark">SQL规范和优化<整>（持续更新）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020092401.html" rel="bookmark">SqlLoader</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019102001.html" rel="bookmark">面经整理——导航页</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021070101.html" rel="bookmark">Hexo搭建个人博客 (四) 升级与功能配置（持续更新）</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021101401.html" title="执行计划（更新中）">http://linyishui.top/2021101401.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/updating/" rel="tag"><i class="fa fa-tag"></i> updating</a>
+              <a href="/tags/mysql/" rel="tag"><i class="fa fa-tag"></i> mysql</a>
+              <a href="/tags/oracle/" rel="tag"><i class="fa fa-tag"></i> oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021101301.html" rel="prev" title="Oracle锁 <转>">
+                  <i class="fa fa-chevron-left"></i> Oracle锁 <转>
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">51:30</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>
