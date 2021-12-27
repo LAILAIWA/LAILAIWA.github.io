@@ -171,7 +171,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">324</span>
+          <span class="site-state-item-count">327</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -249,6 +249,328 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020012401.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020012401.html" class="post-title-link" itemprop="url">观察者模式（未完成）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-24 21:05:35" itemprop="dateCreated datePublished" datetime="2020-01-24T21:05:35+08:00">2020-01-24</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-10-02 17:19:38" itemprop="dateModified" datetime="2020-10-02T17:19:38+08:00">2020-10-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a><strong>观察者模式</strong></h1><p>&emsp;&emsp;观察者模式（Observer），又叫发布-订阅（Publish/Subscribe）模式。定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象。这个主题对象在状态发生变化时，会通知所有观察者对象，使它们能够自动更新自己。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200101/202001010111.png" alt="观察者模式结构图"></p>
+<h4 id="3-6-x-案例"><a href="#3-6-x-案例" class="headerlink" title="3.6.x 案例"></a><strong>3.6.x 案例</strong></h4><p>&emsp;&emsp;秘书通知职员老板来审查工作了，初步实现。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//前台秘书</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Secretary</span> </span>&#123;</span><br><span class="line">    <span class="comment">//同时列表</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;StockObserver&gt; observers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> action;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//增加</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">attach</span>(<span class="params">StockObserver observer</span>)</span>&#123;</span><br><span class="line">        observers.add(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通知</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">notifyy</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (StockObserver observer : observers)&#123;</span><br><span class="line">            observer.update();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">getSecretaryAction</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> action;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setSecretaryAction</span>(<span class="params"><span class="built_in">String</span> value</span>)</span>&#123;</span><br><span class="line">        action = value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//看股票的同事</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StockObserver</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> name;</span><br><span class="line">    <span class="keyword">private</span> Secretary sub;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">StockObserver</span>(<span class="params"><span class="built_in">String</span> name, Secretary sub</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.sub = sub;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        System.out.println(sub.getSecretaryAction() + name + <span class="string">&quot; 关闭股票行情，继续工作！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="function"><span class="title">main</span>(<span class="params"><span class="built_in">String</span>[] args</span>)</span> &#123;</span><br><span class="line">        <span class="comment">//模拟前台通知摸鱼职员躲避老板审查工作</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//前台小姐</span></span><br><span class="line">        Secretary qiantai = <span class="keyword">new</span> Secretary();</span><br><span class="line">        <span class="comment">//看股票的同事</span></span><br><span class="line">        StockObserver tongshi1 = <span class="keyword">new</span> StockObserver(<span class="string">&quot;张三&quot;</span>,qiantai);</span><br><span class="line">        StockObserver tongshi2 = <span class="keyword">new</span> StockObserver(<span class="string">&quot;李四&quot;</span>,qiantai);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//前台登记两名同事</span></span><br><span class="line">        qiantai.attach(tongshi1);</span><br><span class="line">        qiantai.attach(tongshi2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//发现老板回来</span></span><br><span class="line">        qiantai.setSecretaryAction(<span class="string">&quot;老板回来了！&quot;</span>);</span><br><span class="line">        <span class="comment">//发送通知</span></span><br><span class="line">        qiantai.notifyy();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//此结构下前台和同事两类相互耦合，难以扩展</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;根据观察者模式进行解耦。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> <span class="built_in">String</span> name;</span><br><span class="line">    <span class="keyword">protected</span> Subject sub;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">Observer</span>(<span class="params"><span class="built_in">String</span> name, Subject sub</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.sub = sub;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="built_in">void</span> update();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StockObserver</span> <span class="keyword">extends</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">StockObserver</span>(<span class="params"><span class="built_in">String</span> name, Subject sub</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(name,sub);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.sub.getSecretaryAction() + <span class="built_in">this</span>.name + <span class="string">&quot; 关闭股票行情，继续工作！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NBAObserver</span> <span class="keyword">extends</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">NBAObserver</span>(<span class="params"><span class="built_in">String</span> name, Subject sub</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(name,sub);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.sub.getSecretaryAction() + <span class="built_in">this</span>.name + <span class="string">&quot; 关闭NBA直播，继续工作！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通知者接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> Subject &#123;</span><br><span class="line">    <span class="built_in">void</span> attach(Observer observer);</span><br><span class="line">    <span class="built_in">void</span> detach(Observer observer);</span><br><span class="line">    <span class="built_in">void</span> notifyy();</span><br><span class="line">    <span class="built_in">String</span> getSecretaryAction();</span><br><span class="line">    <span class="built_in">void</span> setSecretaryAction(<span class="built_in">String</span> value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="title">implements</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Observer&gt; observers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> action;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">attach</span>(<span class="params">Observer observer</span>)</span> &#123;</span><br><span class="line">        observers.add(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">detach</span>(<span class="params">Observer observer</span>)</span> &#123;</span><br><span class="line">        observers.remove(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">notifyy</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span>(Observer o : observers)&#123;</span><br><span class="line">            o.update();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">getSecretaryAction</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> action;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setSecretaryAction</span>(<span class="params"><span class="built_in">String</span> value</span>)</span>&#123;</span><br><span class="line">        action = value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//前台秘书</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Secretary</span> </span>&#123;</span><br><span class="line">    <span class="comment">//针对抽象编程，减少了和具体类的耦合</span></span><br><span class="line">    <span class="comment">//同时列表</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Observer&gt; observers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> action;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//增加</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">attach</span>(<span class="params">Observer observer</span>)</span>&#123;</span><br><span class="line">        observers.add(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//减少</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">detach</span>(<span class="params">Observer observer</span>)</span>&#123;</span><br><span class="line">        observers.remove(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通知</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">notifyy</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Observer observer : observers)&#123;</span><br><span class="line">            observer.update();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">getSecretaryAction</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> action;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setSecretaryAction</span>(<span class="params"><span class="built_in">String</span> value</span>)</span>&#123;</span><br><span class="line">        action = value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="function"><span class="title">main</span>(<span class="params"><span class="built_in">String</span>[] args</span>)</span> &#123;</span><br><span class="line">        Boss boss = <span class="keyword">new</span> Boss();</span><br><span class="line"></span><br><span class="line">        StockObserver tongshi1 = <span class="keyword">new</span> StockObserver(<span class="string">&quot;张三&quot;</span>,boss);</span><br><span class="line">        NBAObserver tongshi2 = <span class="keyword">new</span> NBAObserver(<span class="string">&quot;李四&quot;</span>,boss);</span><br><span class="line"></span><br><span class="line">        boss.attach(tongshi1);</span><br><span class="line">        boss.attach(tongshi2);</span><br><span class="line"></span><br><span class="line">        boss.detach(tongshi1);</span><br><span class="line"></span><br><span class="line">        boss.setSecretaryAction(<span class="string">&quot;老板回来了！&quot;</span>);</span><br><span class="line">        boss.notifyy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-6-x-代码结构"><a href="#3-6-x-代码结构" class="headerlink" title="3.6.x 代码结构"></a><strong>3.6.x 代码结构</strong></h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 主题，或抽象通知者</span></span><br><span class="line"><span class="comment"> * 一般用一个抽象类或一个接口实现。</span></span><br><span class="line"><span class="comment"> * 它把所有对观察者对象的引用保存在一个聚集里，每个主题都可以有任何数量的观察者。</span></span><br><span class="line"><span class="comment"> * 抽象主题提供一个接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Observer&gt; observers = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//增加</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">attach</span>(<span class="params">Observer observer</span>)</span>&#123;</span><br><span class="line">        observers.add(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//减少</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">detach</span>(<span class="params">Observer observer</span>)</span>&#123;</span><br><span class="line">        observers.remove(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通知</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">notifyy</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Observer observer : observers)&#123;</span><br><span class="line">            observer.update();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 抽象观察者</span></span><br><span class="line"><span class="comment"> * 为所有的具体观察者定义一个接口，在得到主题的通知时更新自己。</span></span><br><span class="line"><span class="comment"> * 这个接口叫更新接口。抽象观察者一般用一个抽象类或者一个接口实现。</span></span><br><span class="line"><span class="comment"> * 更新接口通常包含一个update方法，叫做更新方法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="built_in">void</span> update();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 具体主题，或具体通知者</span></span><br><span class="line"><span class="comment"> * 将有关状态存入具体观察者对象；</span></span><br><span class="line"><span class="comment"> * 在具体主题的内部状态改变时，给所有登记过的观察者发出通知</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteSubject</span> <span class="keyword">extends</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> subjectState;</span><br><span class="line">    <span class="comment">//具体被观察者状态</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">getSubjectState</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> subjectState;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setSubjectState</span>(<span class="params"><span class="built_in">String</span> subjectState</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.subjectState = subjectState;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 具体观察者</span></span><br><span class="line"><span class="comment"> * 实现抽象观察者角色所要求的更新接口，以便使本身的状态与主题的状态相协调。</span></span><br><span class="line"><span class="comment"> * 具体观察者角色可以保存一个指向具体主题对象的引用。</span></span><br><span class="line"><span class="comment"> * 具体观察者角色通常用一个具体子类实现</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcreteObserver</span> <span class="keyword">extends</span> <span class="title">Observer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> name;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> observerState;</span><br><span class="line">    <span class="keyword">private</span> ConcreteSubject subject;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">ConcreteObserver</span>(<span class="params"><span class="built_in">String</span> name, ConcreteSubject subject</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.subject = subject;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">update</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        observerState = subject.getSubjectState();</span><br><span class="line">        System.out.println(<span class="string">&quot;观察者&quot;</span> + name + <span class="string">&quot;的新状态是&quot;</span> + observerState);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> ConcreteSubject <span class="function"><span class="title">getSubject</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> subject;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setSubject</span>(<span class="params">ConcreteSubject subject</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.subject = subject;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 客户端代码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="function"><span class="title">main</span>(<span class="params"><span class="built_in">String</span>[] args</span>)</span> &#123;</span><br><span class="line">        ConcreteSubject s = <span class="keyword">new</span> ConcreteSubject();</span><br><span class="line"></span><br><span class="line">        s.attach(<span class="keyword">new</span> ConcreteObserver(<span class="string">&quot;X&quot;</span>,s));</span><br><span class="line">        s.attach(<span class="keyword">new</span> ConcreteObserver(<span class="string">&quot;Y&quot;</span>,s));</span><br><span class="line">        s.attach(<span class="keyword">new</span> ConcreteObserver(<span class="string">&quot;Z&quot;</span>,s));</span><br><span class="line">        s.setSubjectState(<span class="string">&quot;ABC&quot;</span>);</span><br><span class="line">        s.notifyy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-6-x-适用场景"><a href="#3-6-x-适用场景" class="headerlink" title="3.6.x 适用场景"></a><strong>3.6.x 适用场景</strong></h2><p>&emsp;&emsp;将一个系统分割成一系列相互协作的类有一个很不好的副作用，那就是需要维护相关对象间的一致性。我们不希望为了维持一致性而使得各类紧密耦合，这样会给维护、扩展和重用都带来不便。</p>
+<p>&emsp;&emsp;关键对象在于主题Subject和观察者Observer，一个主题对应多个观察者，主题不需要知道具体谁是其观察者，只要推送即可使所有观察者收到通知。</p>
+<p>&emsp;&emsp;当一个对象的改变需要同时改变其他对象，而且它不知道具体有多少对象有待改变时，应该考虑使用观察者模式。</p>
+<p>&emsp;&emsp;当一个抽象模型有两个方面，一个方面依赖于另一方面，这时用观察者模式可以将这两者封装在独立的对象中使它们各自独立地改变和复用。</p>
+<h2 id="3-6-x-特点"><a href="#3-6-x-特点" class="headerlink" title="3.6.x 特点"></a><strong>3.6.x 特点</strong></h2><p>&emsp;&emsp;观察者模式所做的工作其实就是解除耦合，让耦合的双方都依赖于抽象，而不是依赖于具体，从而使得各自的变化都不会影响另一边的变化，即依赖倒转原则的具体应用。</p>
+<h2 id="3-6-x-不足"><a href="#3-6-x-不足" class="headerlink" title="3.6.x 不足"></a><strong>3.6.x 不足</strong></h2><p>&emsp;&emsp;当观察者无法统一抽象，没有相同的方法，当收到通知时行为各不相同，主题和观察者互相没有联系，观察者模式很难去实现。</p>
+<p>&emsp;&emsp;此时观察者无法建立统一的抽象类或接口，主题也无法声明观察者的增减方法。</p>
+<h2 id="3-6-x-事件委托"><a href="#3-6-x-事件委托" class="headerlink" title="3.6.x 事件委托"></a><strong>3.6.x 事件委托</strong></h2><p>&emsp;&emsp;可以通过事件委托来解决观察者模式的不足，比如通知者可以完全不知道观察者的存在，完全解耦；一次通知可以使不同的观察者执行不同的方法等。</p>
+<p>&emsp;&emsp;委托就是一种引用方法的类型，一旦为委托分配了方法，委托将与该方法具有完全相同的行为。委托方法的使用可以像其他任何方法一样，具有参数和返回值。委托可以看作是对函数的抽象，是函数的‘类’，委托的实例将代表一个具体的函数。</p>
+<p>&emsp;&emsp;一个委托可以搭载多个方法，所有方法被依次唤起，可以使得委托对象所搭载的方法并不需要属于同一个类。但委托对象所搭载的所有方法必须具有相同的原型和形式，也就是拥有相同的参数列表和返回值类型。</p>
+<p>&emsp;&emsp;通过事件委托机制改写案例如下。Java没有.NET中的delegate关键字，但可以通过反射机制来实现事件委托。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NBAObserver</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">NBAObserver</span>(<span class="params"><span class="built_in">String</span> name</span>)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我是&quot;</span> + name + <span class="string">&quot;，开始看NBA直播&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">closeNBADirectSeeding</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.name + <span class="string">&quot; 关闭NBA直播，继续工作！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StockObserver</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">StockObserver</span>(<span class="params"><span class="built_in">String</span> name</span>)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我是&quot;</span> + name + <span class="string">&quot;，开始看股票行情&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">closeStockMarket</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        System.out.println(<span class="built_in">this</span>.name + <span class="string">&quot; 关闭股票行情，继续工作！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> EventHandler eventHandler = <span class="keyword">new</span> EventHandler();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="built_in">void</span> notifyy();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> EventHandler <span class="function"><span class="title">getEventHandler</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> eventHandler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="built_in">void</span> addObserver(<span class="built_in">Object</span> o,<span class="built_in">String</span> methodName,<span class="built_in">Object</span>... args);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setEventHandler</span>(<span class="params">EventHandler eventHandler</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.eventHandler = eventHandler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">extends</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> action;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">notifyy</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;委托人通知老板来了&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            EventHandler handler = <span class="built_in">this</span>.getEventHandler();</span><br><span class="line">            handler.notifyy();</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception ex)&#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">addObserver</span>(<span class="params"><span class="built_in">Object</span> o, <span class="built_in">String</span> methodName, <span class="built_in">Object</span>... args</span>)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;委托人新增被通知人&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            EventHandler handler = <span class="built_in">this</span>.getEventHandler();</span><br><span class="line">            handler.addEvent(o,methodName,args);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception ex)&#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventHandler</span> </span>&#123;</span><br><span class="line">    <span class="comment">//是用一个List</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Event&gt; objects;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">EventHandler</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        objects=<span class="keyword">new</span> ArrayList&lt;Event&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加某个对象要执行的事件，及需要的参数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">addEvent</span>(<span class="params"><span class="built_in">Object</span> <span class="built_in">object</span>,<span class="built_in">String</span> methodName,<span class="built_in">Object</span>...args</span>)</span>&#123;</span><br><span class="line">        objects.add(<span class="keyword">new</span> Event(<span class="built_in">object</span>,methodName,args));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//通知所有的对象执行指定的事件</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> notifyy() throws Exception&#123;</span><br><span class="line">        <span class="keyword">for</span>(Event e : objects)&#123;</span><br><span class="line">            e.invoke();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Event</span> </span>&#123;</span><br><span class="line">    <span class="comment">//要执行方法的对象</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">Object</span> <span class="built_in">object</span>;</span><br><span class="line">    <span class="comment">//要执行的方法名称</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">String</span> methodName;</span><br><span class="line">    <span class="comment">//要执行方法的参数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">Object</span>[] params;</span><br><span class="line">    <span class="comment">//要执行方法的参数类型</span></span><br><span class="line">    <span class="keyword">private</span> Class[] paramTypes;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">Event</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="title">Event</span>(<span class="params"><span class="built_in">Object</span> <span class="built_in">object</span>,<span class="built_in">String</span> methodName,<span class="built_in">Object</span>...args</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.object=<span class="built_in">object</span>;</span><br><span class="line">        <span class="built_in">this</span>.methodName=methodName;</span><br><span class="line">        <span class="built_in">this</span>.params=args;</span><br><span class="line">        contractParamTypes(<span class="built_in">this</span>.params);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据参数数组生成参数类型数组</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">void</span> <span class="function"><span class="title">contractParamTypes</span>(<span class="params"><span class="built_in">Object</span>[] params</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.paramTypes=<span class="keyword">new</span> Class[params.length];</span><br><span class="line">        <span class="keyword">for</span>(int i=<span class="number">0</span>;i&lt;params.length;i++)&#123;</span><br><span class="line">            <span class="built_in">this</span>.paramTypes[i]=params[i].getClass();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">Object</span> <span class="function"><span class="title">getObject</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">object</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setObject</span>(<span class="params"><span class="built_in">Object</span> <span class="built_in">object</span></span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.object = <span class="built_in">object</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> <span class="function"><span class="title">getMethodName</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> methodName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setMethodName</span>(<span class="params"><span class="built_in">String</span> methodName</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.methodName = methodName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">Object</span>[] <span class="function"><span class="title">getParams</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> params;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setParams</span>(<span class="params"><span class="built_in">Object</span>[] params</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.params = params;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Class[] <span class="function"><span class="title">getParamTypes</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> paramTypes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> <span class="function"><span class="title">setParamTypes</span>(<span class="params">Class[] paramTypes</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.paramTypes = paramTypes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据该对象的方法名，方法参数，利用反射机制，执行该方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws <span class="variable">Exception</span></span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">void</span> invoke() throws Exception&#123;</span><br><span class="line">        Method method = <span class="built_in">object</span>.getClass().getMethod(<span class="built_in">this</span>.getMethodName(),</span><br><span class="line">                <span class="built_in">this</span>.getParamTypes());</span><br><span class="line">        <span class="keyword">if</span>(<span class="literal">null</span>==method)&#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        method.invoke(<span class="built_in">this</span>.getObject(), <span class="built_in">this</span>.getParams());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 客户端代码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="function"><span class="title">main</span>(<span class="params"><span class="built_in">String</span>[] args</span>)</span> &#123;</span><br><span class="line">        Subject s = <span class="keyword">new</span> Boss();</span><br><span class="line">        NBAObserver nba = <span class="keyword">new</span> NBAObserver(<span class="string">&quot;X&quot;</span>);</span><br><span class="line">        StockObserver stock = <span class="keyword">new</span> StockObserver(<span class="string">&quot;Y&quot;</span>);</span><br><span class="line">        s.addObserver(nba,<span class="string">&quot;closeNBADirectSeeding&quot;</span>);</span><br><span class="line">        s.addObserver(stock,<span class="string">&quot;closeStockMarket&quot;</span>);</span><br><span class="line">        s.notifyy();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>参考：</p>
+<p>🔗 《设计模式：可复用面向对象软件的基础》</p>
+<p>🔗 《大话设计模式》</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020012301.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020012301.html" class="post-title-link" itemprop="url">备忘录模式（未完成）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-23 21:05:29" itemprop="dateCreated datePublished" datetime="2020-01-23T21:05:29+08:00">2020-01-23</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-10-02 17:18:10" itemprop="dateModified" datetime="2020-10-02T17:18:10+08:00">2020-10-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>65</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="备忘录模式"><a href="#备忘录模式" class="headerlink" title="备忘录模式"></a><strong>备忘录模式</strong></h1><p>&emsp;&emsp;备忘录模式（Memento）</p>
+<hr>
+<p>参考：</p>
+<p>🔗 《设计模式：可复用面向对象软件的基础》</p>
+<p>🔗 《大话设计模式》</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020012201.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020012201.html" class="post-title-link" itemprop="url">中介者模式（未完成）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-22 21:05:23" itemprop="dateCreated datePublished" datetime="2020-01-22T21:05:23+08:00">2020-01-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-10-02 17:18:22" itemprop="dateModified" datetime="2020-10-02T17:18:22+08:00">2020-10-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>66</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="中介者模式"><a href="#中介者模式" class="headerlink" title="中介者模式"></a><strong>中介者模式</strong></h1><p>&emsp;&emsp;中介者模式（Mediator）</p>
+<hr>
+<p>参考：</p>
+<p>🔗 《设计模式：可复用面向对象软件的基础》</p>
+<p>🔗 《大话设计模式》</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -449,325 +771,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020011901.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
-      <meta itemprop="name" content="Lys">
-      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="俺的部落格">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020011901.html" class="post-title-link" itemprop="url">职责链模式（未完成）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-19 20:43:45" itemprop="dateCreated datePublished" datetime="2020-01-19T20:43:45+08:00">2020-01-19</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-02 17:19:52" itemprop="dateModified" datetime="2020-10-02T17:19:52+08:00">2020-10-02</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>79</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="职责链模式"><a href="#职责链模式" class="headerlink" title="职责链模式"></a><strong>职责链模式</strong></h1><p>&emsp;&emsp;职责链模式（Chain of Responsibility）</p>
-<hr>
-<p>参考：</p>
-<p>🔗 《设计模式：可复用面向对象软件的基础》<br>🔗 《大话设计模式》</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020011801.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
-      <meta itemprop="name" content="Lys">
-      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="俺的部落格">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020011801.html" class="post-title-link" itemprop="url">代理模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-18 20:43:38" itemprop="dateCreated datePublished" datetime="2020-01-18T20:43:38+08:00">2020-01-18</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-02 17:18:36" itemprop="dateModified" datetime="2020-10-02T17:18:36+08:00">2020-10-02</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a><strong>代理模式</strong></h1><p>&emsp;&emsp;代理模式（Proxy），为其他对象提供一种代理以控制这个对象的访问。</p>
-<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200101/202001010104.png" alt="代理模式结构图"></p>
-<h2 id="2-7-1-案例"><a href="#2-7-1-案例" class="headerlink" title="2.7.1 案例"></a><strong>2.7.1 案例</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//追求者类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pursuit</span> </span>&#123;</span><br><span class="line">    SchoolGirl mm;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Pursuit</span><span class="params">(SchoolGirl mm)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mm = mm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你洋娃娃&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你鲜花&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你巧克力&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//被追求者类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SchoolGirl</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//追求者调用被追求者，增送各种礼物</span></span><br><span class="line">        System.out.println(<span class="string">&quot;--------------追求者调用被追求者，增送各种礼物&quot;</span>);</span><br><span class="line">        SchoolGirl jiaojiao = <span class="keyword">new</span> SchoolGirl();</span><br><span class="line">        jiaojiao.setName(<span class="string">&quot;李娇娇&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Pursuit zhuojiayi = <span class="keyword">new</span> Pursuit(jiaojiao);</span><br><span class="line">        zhuojiayi.giveDolls();</span><br><span class="line">        zhuojiayi.giveFlowers();</span><br><span class="line">        zhuojiayi.giveChocolate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//增加代理人</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        System.out.println(<span class="string">&quot;--------------增加代理人&quot;</span>);</span><br><span class="line">        PursuitImpl zhuojiayiNew = <span class="keyword">new</span> PursuitImpl(jiaojiao);</span><br><span class="line">        Proxy daili = <span class="keyword">new</span> Proxy(zhuojiayiNew);</span><br><span class="line">        daili.giveDolls();</span><br><span class="line">        daili.giveFlowers();</span><br><span class="line">        daili.giveChocolate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//代理接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IGiveGift</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">IGiveGift</span> </span>&#123;</span><br><span class="line">    PursuitImpl gg;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Proxy</span><span class="params">(PursuitImpl gg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.gg = gg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>&#123;</span><br><span class="line">        gg.giveDolls();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>&#123;</span><br><span class="line">        gg.giveFlowers();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        gg.giveChocolate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PursuitImpl</span> <span class="keyword">implements</span> <span class="title">IGiveGift</span> </span>&#123;</span><br><span class="line">    SchoolGirl mm;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PursuitImpl</span><span class="params">(SchoolGirl mm)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mm = mm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你洋娃娃&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你鲜花&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你巧克力&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="2-7-2-代码结构"><a href="#2-7-2-代码结构" class="headerlink" title="2.7.2 代码结构"></a><strong>2.7.2 代码结构</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义了RealSubject和Proxy的共用接口，这样就可以在使用RealSubject的地方使用Proxy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义Proxy所代表的真实实体</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RealSubject</span> <span class="keyword">extends</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;真实的请求&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//保存一个引用使得代理可以访问实体，并提供一个与Subject接口相同的接口，使代理可代替实体</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">extends</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    RealSubject realSubject;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(realSubject == <span class="keyword">null</span>)&#123;</span><br><span class="line">            realSubject = <span class="keyword">new</span> RealSubject();</span><br><span class="line">        &#125;</span><br><span class="line">        realSubject.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Proxy proxy = <span class="keyword">new</span> Proxy();</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;&emsp;代理模式</p>
-<blockquote>
-<p>代理模式的应用场景：</p>
-<ul>
-<li><strong>远程代理</strong>，也就是为一个对象在不同的地址空间提供局部代表。这样可以隐藏一个对象存在于不同地址空间的事实，如WebService通过代理来解决远程访问问题。</li>
-<li><strong>虚拟代理</strong>，是根据需要创建开销很大的对象。通过它来存放实例化需要很长时间的真实对象，以达到性能的优化，比如HTML文件中较大的图片，需要一个个的下载，未打开的图片框就是用虚拟代理代替了真实的图片，此时代理存储了真实图片的路径和尺寸。</li>
-<li><strong>安全代理</strong>，用来控制真实对象访问时的权限，一般用于对象应该有不同的访问权限的时候。</li>
-<li><strong>智能指引</strong>，是指当调用真实的对象时，代理处理另外一些事。比如计算真实对象的引用次数，当对象没有引用时就可以自动释放它；或是当第一次引用一个持久对象时，将它装入内存；或在访问一个实际对象前，检查是否已经锁定它，以确保其他对象不能改变它。这些都是通过代理在访问一个对象时附加一些内务处理。</li>
-</ul>
-</blockquote>
-<hr>
-<p>参考：</p>
-<p>🔗 《设计模式：可复用面向对象软件的基础》</p>
-<p>🔗 《大话设计模式》</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020011701.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
-      <meta itemprop="name" content="Lys">
-      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="俺的部落格">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020011701.html" class="post-title-link" itemprop="url">享元模式（未完成）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-17 20:43:23" itemprop="dateCreated datePublished" datetime="2020-01-17T20:43:23+08:00">2020-01-17</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-02 17:19:20" itemprop="dateModified" datetime="2020-10-02T17:19:20+08:00">2020-10-02</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>65</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a><strong>享元模式</strong></h1><p>&emsp;&emsp;享元模式（Flyweight）</p>
-<hr>
-<p>参考：</p>
-<p>🔗 《设计模式：可复用面向对象软件的基础》</p>
-<p>🔗 《大话设计模式》</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/23/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><span class="space">&hellip;</span><a class="page-number" href="/page/65/">65</a><a class="extend next" rel="next" href="/page/25/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/23/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/25/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
@@ -798,7 +803,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:47</span>
+    <span title="站点阅读时长">52:09</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动

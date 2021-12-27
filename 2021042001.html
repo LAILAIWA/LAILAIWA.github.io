@@ -23,19 +23,18 @@
   <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="简单整理了分布式锁相关知识，内容包括：等。">
+<meta name="description" content="简单整理了分布式锁相关知识，内容包括：幂等问题，案例，幂等方案，分布式锁等。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式锁">
 <meta property="og:url" content="http://linyishui.top/2021042001.html">
 <meta property="og:site_name" content="俺的部落格">
-<meta property="og:description" content="简单整理了分布式锁相关知识，内容包括：等。">
+<meta property="og:description" content="简单整理了分布式锁相关知识，内容包括：幂等问题，案例，幂等方案，分布式锁等。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://p6-tt.byteimg.com/origin/pgc-image/ee6b8a81617a444fb8bac512ee7d3ebd?from=pc">
 <meta property="article:published_time" content="2021-04-20T13:26:57.000Z">
-<meta property="article:modified_time" content="2021-05-13T08:26:16.000Z">
+<meta property="article:modified_time" content="2021-12-16T11:57:27.117Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="lock">
-<meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="distributed">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://p6-tt.byteimg.com/origin/pgc-image/ee6b8a81617a444fb8bac512ee7d3ebd?from=pc">
@@ -162,7 +161,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%82%E7%AD%89"><span class="nav-text">幂等</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81%E6%96%B9%E6%A1%88"><span class="nav-text">乐观锁方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%94%AF%E4%B8%80ID-%E6%8C%87%E7%BA%B9%E7%A0%81"><span class="nav-text">唯一ID + 指纹码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redis%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-text">redis原子操作</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-text">分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%B9%82%E7%AD%89"><span class="nav-text">一. 幂等</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%EF%BC%9F"><span class="nav-text">1.1 什么是幂等？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%B9%82%E7%AD%89%E5%9C%BA%E6%99%AF"><span class="nav-text">1.2 分布式系统的幂等场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%B8%B8%E8%A7%81%E7%9A%84%E5%B9%82%E7%AD%89%E6%93%8D%E4%BD%9C"><span class="nav-text">1.3 常见的幂等操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%A1%88%E4%BE%8B"><span class="nav-text">二. 案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%B8%B8%E8%A7%81%E5%B9%82%E7%AD%89%E6%96%B9%E6%A1%88%E5%AE%9E%E7%8E%B0"><span class="nav-text">三. 常见幂等方案实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B9%90%E8%A7%82%E9%94%81"><span class="nav-text">3.1 乐观锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%94%AF%E4%B8%80ID-%E6%8C%87%E7%BA%B9%E7%A0%81"><span class="nav-text">3.2 唯一ID + 指纹码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Redis%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-text">3.3 Redis原子操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-text">四. 分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-MVCC"><span class="nav-text">4.1 MVCC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Redis"><span class="nav-text">4.2 Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Redisson"><span class="nav-text">4.3 Redisson</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-RedLock"><span class="nav-text">4.4 RedLock</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -179,7 +178,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">324</span>
+          <span class="site-state-item-count">327</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -298,7 +297,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-05-13 16:26:16" itemprop="dateModified" datetime="2021-05-13T16:26:16+08:00">2021-05-13</time>
+        <time title="修改时间：2021-12-16 19:57:27" itemprop="dateModified" datetime="2021-12-16T19:57:27+08:00">2021-12-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -318,18 +317,18 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.5k</span>
+      <span>9.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
-            <div class="post-description">简单整理了分布式锁相关知识，内容包括：等。</div>
+            <div class="post-description">简单整理了分布式锁相关知识，内容包括：幂等问题，案例，幂等方案，分布式锁等。</div>
         </div>
       </header>
 
@@ -337,19 +336,88 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="幂等"><a href="#幂等" class="headerlink" title="幂等"></a>幂等</h2><p>我们先了解一下什么叫幂等？在分布式应用中，幂等是非常重要的，也就是相同条件下对一个业务的操作，不管操作多少次，结果都是一样。</p>
-<p>为什么要有幂等这种场景？因为在大的系统中，都是分布式部署，如：订单业务 和 库存业务有可能都是独立部署的，都是单独的服务。用户下订单，会调用到订单服务和库存服务。</p>
+        <h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><h2 id="一-幂等"><a href="#一-幂等" class="headerlink" title="一. 幂等"></a>一. 幂等</h2><h3 id="1-1-什么是幂等？"><a href="#1-1-什么是幂等？" class="headerlink" title="1.1 什么是幂等？"></a>1.1 什么是幂等？</h3><p>幂等操作是任意多次执行所产生的影响均与一次执行的影响相同。幂等函数，或幂等方法，是指可以使用相同参数重复执行，并能获得相同结果的函数。这些函数不会影响系统状态，也不用担心重复执行会对系统造成改变。</p>
+<p>在分布式应用中，幂等是非常重要的，也就是相同条件下对一个业务的操作，不管操作多少次，结果都是一样。</p>
+<h3 id="1-2-分布式系统的幂等场景"><a href="#1-2-分布式系统的幂等场景" class="headerlink" title="1.2 分布式系统的幂等场景"></a>1.2 分布式系统的幂等场景</h3><p>为什么要有幂等这种场景？分布式部署如：订单业务 和库存业务有可能都是独立部署的，都是单独的服务。用户下订单，会调用到订单服务和库存服务。</p>
 <p><img src="https://p6-tt.byteimg.com/origin/pgc-image/ee6b8a81617a444fb8bac512ee7d3ebd?from=pc" alt="海量订单产生的业务高峰期，如何避免消息的重复消费？"></p>
-<p>因为分布式部署，很有可能在调用库存服务时，因为网络等原因，订单服务调用失败，但其实库存服务已经处理完成，只是返回给订单服务处理结果时出现了异常。这个时候一般系统会作补偿方案，也就是订单服务再此放起库存服务的调用,库存减1.</p>
-<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> t_goods <span class="keyword">set</span> <span class="built_in">count</span> = <span class="built_in">count</span> <span class="number">-1</span> <span class="keyword">where</span> good_id=<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>因为分布式部署，很有可能在调用库存服务时，因为网络等原因，订单服务调用失败，但其实库存服务已经处理完成，只是返回给订单服务处理结果时出现了异常。这个时候一般系统会作补偿方案，也就是订单服务再此放起库存服务的调用，库存减1。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update t_goods <span class="keyword">set</span> count <span class="operator">=</span> count <span class="number">-1</span> <span class="keyword">where</span> good_id<span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+
 
 <p>这样就出现了问题，其实上一次调用已经减了1，只是订单服务没有收到处理结果。现在又调用一次，又要减1，这样就不符合业务了，多扣了。</p>
 <p>幂等这个概念就是，不管库存服务在相同条件下调用几次，处理结果都一样。这样才能保证补偿方案的可行性。</p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="乐观锁方案"><a href="#乐观锁方案" class="headerlink" title="乐观锁方案"></a>乐观锁方案</h3><p>借鉴数据库的乐观锁机制，如：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update t_goods <span class="keyword">set</span> <span class="built_in">count</span> = <span class="built_in">count</span> <span class="number">-1</span> , <span class="built_in">version</span> = <span class="built_in">version</span> + <span class="number">1</span> <span class="keyword">where</span> good_id=<span class="number">2</span> <span class="keyword">and</span> <span class="built_in">version</span> = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-3-常见的幂等操作"><a href="#1-3-常见的幂等操作" class="headerlink" title="1.3 常见的幂等操作"></a>1.3 常见的幂等操作</h3><ul>
+<li><p><strong>查询</strong>：数据不变时查询都是幂等操作。</p>
+</li>
+<li><p><strong>删除</strong>：虽然返回结果不一样，但操作效果一样。</p>
+</li>
+<li><p><strong>唯一数据</strong>：数据库增加唯一约束保证数据唯一性，无论多少次新增都只会回库成功一条。</p>
+</li>
+<li><p><strong>页面防止重复提交</strong>：重复点击或Nginx重发等导致数据被重复提交。</p>
+<ul>
+<li>集群环境下使用token+redis</li>
+<li>单机下采用token+redis或token+jvm</li>
+<li>提交数据前，先向后台申请token，放置于redis或jvm内存，并设置有效时间。提交后校验token并删除，生成新的token返回表示token校验通过。</li>
+</ul>
+</li>
+<li><p><strong>悲观锁</strong>：总是假设最坏的情况。认为每次取数据的时候都会被修改，所以每次在拿数据的时候都会上锁。</p>
+<p>注意id要为主键或唯一索引不然会导致锁表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tableA <span class="keyword">where</span> id<span class="operator">=</span>’xxx’ <span class="keyword">for</span> update;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>乐观锁</strong>：总是假设最好的情况。认为每次取数据的时候都不会被修改，所以每次都不会上锁。通过版本号机制和CAS算法实现，乐观锁适用于多读的应用类型，这样可以提高吞吐量。</p>
+</li>
+<li><p><strong>分布式锁</strong>：分布式系统构建全局唯一索引比较困难，例如唯一性的字段没法确定，这时候可以引入分布式锁，通过第三方的系统(redis或zookeeper)，在业务系统插入数据或者更新数据，获取分布式锁，然后做操作，之后释放锁，其实就是为了控制多线程并发的操作，也是分布式系统中经常用到的解决思路。</p>
+</li>
+<li><p><strong>select + insert</strong>：</p>
+<p>并发不高的后台系统，或者一些任务JOB，为了支持幂等，支持重复执行，简单的处理方法是，先查询下一些关键数据，判断是否已经执行过，在进行业务处理，就可以了。</p>
+<p>注意：核心高并发流程不要用这种方法。</p>
+</li>
+<li><p><strong>状态机幂等</strong>：</p>
+<p>在设计单据相关的业务，或者是任务相关的业务，肯定会涉及到状态机(状态变更图)，就是业务单据上面有个状态，状态在不同的情况下会发生变更，一般情况下存在有限状态机，这时候，如果状态机已经处于下一个状态，这时候来了一个上一个状态的变更，理论上是不能够变更的，这样的话，保证了有限状态机的幂等。</p>
+<p>注意：订单等单据类业务，存在很长的状态流转，一定要深刻理解状态机，对业务系统设计能力提高有很大帮助。</p>
+</li>
+<li><p><strong>对外提供接口的api如何保证幂等</strong>：</p>
+<p>如银联提供的付款接口：需要接入商户提交付款请求时附带：source来源，seq序列号</p>
+<p>source+seq在数据库里面做唯一索引，防止多次付款，(并发时，只能处理一个请求)。</p>
+<p>对外提供接口为了支持幂等调用，接口有两个字段必须传，一个是来源source，一个是来源方序列号seq，这个两个字段在提供方系统里面做联合唯一索引，这样当第三方调用时，先在本方系统里面查询一下，是否已经处理过，返回相应处理结果；没有处理过，进行相应处理，返回结果。</p>
+</li>
+</ul>
+<h2 id="二-案例"><a href="#二-案例" class="headerlink" title="二. 案例"></a>二. 案例</h2><ul>
+<li><strong>问题表象</strong>：某系统用户个人证书要保证唯一，但确产生了多条证书数据。</li>
+<li><strong>问题原因</strong>：并发导致。</li>
+<li><strong>业务流程</strong>：<ol>
+<li>用户选择上传证书，初始化一条数据。</li>
+<li>上传证书。</li>
+<li>校验通过后修改数据的状态字段。</li>
+</ol>
+</li>
+</ul>
+<p>修改数据库状态前，会先检查是否已上传成功、是否已校验通过以及当前状态是否需要修改等来保证幂等，只有首次请求修改数据状态才能修改成功。后续请求则直接返回。但实际运行中多次请求可能会并发执行，同时通过了上述的幂等判断，导致对数据进行了多次修改。</p>
+<p>一次请求可以只是新增一条数据，那么通过数据库创建唯一索引就可以解决幂等问题，但当请求不仅仅只做一件事情时，这种复杂的场景下如果组件无法支持幂等，就需要额外的方案，如分布式锁。</p>
+<h2 id="三-常见幂等方案实现"><a href="#三-常见幂等方案实现" class="headerlink" title="三. 常见幂等方案实现"></a>三. 常见幂等方案实现</h2><h3 id="3-1-乐观锁"><a href="#3-1-乐观锁" class="headerlink" title="3.1 乐观锁"></a>3.1 乐观锁</h3><p>借鉴数据库的乐观锁机制，如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update t_goods <span class="keyword">set</span> count <span class="operator">=</span> count <span class="number">-1</span> , version <span class="operator">=</span> version <span class="operator">+</span> <span class="number">1</span> <span class="keyword">where</span> good_id<span class="operator">=</span><span class="number">2</span> <span class="keyword">and</span> version <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
 
-<p>根据version版本，也就是在操作库存前先获取当前商品的version版本号，然后操作的时候带上此version号。我们梳理下，我们第一次操作库存时，得到version为1，调用库存服务version变成了2；但返回给订单服务出现了问题，订单服务又一次发起调用库存服务，当订单服务传如的version还是1，再执行上面的sql语句时，就不会执行；因为version已经变为2了，where条件就不成立。这样就保证了不管调用几次，只会真正的处理一次。</p>
-<h3 id="唯一ID-指纹码"><a href="#唯一ID-指纹码" class="headerlink" title="唯一ID + 指纹码"></a>唯一ID + 指纹码</h3><p>原理就是利用数据库主键去重，业务完成后插入主键标识</p>
+
+
+<p>根据version版本，也就是在操作库存前先获取当前商品的version版本号，然后操作的时候带上此version号。第一次操作库存时，得到version为1，调用库存服务version变成了2；但返回给订单服务出现了问题，订单服务又一次发起调用库存服务，当订单服务传如的version还是1，再执行上面的sql语句时，就不会执行；因为version已经变为2了，where条件就不成立。这样就保证了不管调用几次，只会真正的处理一次。</p>
+<p>通过版本号实现：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update table_xxx <span class="keyword">set</span> name <span class="operator">=</span> &#123;name&#125;, version <span class="operator">=</span> version <span class="operator">+</span> <span class="number">1</span> <span class="keyword">where</span> version <span class="operator">=</span> &#123;version&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>通过条件限制：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update table_xxx <span class="keyword">set</span> avai_amount <span class="operator">=</span> avai_amount <span class="operator">-</span> &#123;subAmount&#125; <span class="keyword">where</span> avai_amount <span class="operator">-</span> &#123;subAmount&#125; <span class="operator">&gt;=</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>要求：<code>avai_amount-subAmount &gt;= 0</code></p>
+<p>这个情景适合不用版本号，只更新是做数据安全校验，适合库存模型，扣份额和回滚份额，性能更高。</p>
+<p>注意：乐观锁的更新操作，最好用主键或者唯一索引来更新，这样是行锁，否则更新时会锁表，上面两个sql改成下面的两个更好。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">update table_xxx <span class="keyword">set</span> name <span class="operator">=</span> &#123;name&#125;, version <span class="operator">=</span> version <span class="operator">+</span> <span class="number">1</span> <span class="keyword">where</span> id <span class="operator">=</span> &#123;id&#125; <span class="keyword">and</span> version <span class="operator">=</span> &#123;version&#125;</span><br><span class="line"></span><br><span class="line">update table_xxx <span class="keyword">set</span> avai_amount <span class="operator">=</span> avai_amount <span class="operator">-</span> &#123;subAmount&#125; <span class="keyword">where</span> id <span class="operator">=</span> &#123;id&#125; <span class="keyword">and</span> </span><br><span class="line">avai_amount <span class="operator">-</span> &#123;subAmount&#125; <span class="operator">&gt;=</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-唯一ID-指纹码"><a href="#3-2-唯一ID-指纹码" class="headerlink" title="3.2 唯一ID + 指纹码"></a>3.2 唯一ID + 指纹码</h3><p>原理就是利用数据库主键去重，业务完成后插入主键标识：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> t_check <span class="keyword">where</span> ID<span class="operator">=</span>唯一ID <span class="operator">+</span> 指纹码</span><br></pre></td></tr></table></figure>
 
 <ul>
@@ -361,32 +429,89 @@
 <li>返回如果为0 表示没有操作过，那业务操作后就可以insert into t_check(唯一ID+指纹码)</li>
 <li>返回如果大于0 表示操作过，就直接返回</li>
 </ul>
-<p>好处：实现简单</p>
-<p>坏处：高并发下数据库瓶颈</p>
-<p>解决方案：根据ID进行分库分表进行算法路由</p>
-<h3 id="redis原子操作"><a href="#redis原子操作" class="headerlink" title="redis原子操作"></a>redis原子操作</h3><p>利用redis的原子操作，做个操作完成的标记。这个性能就比较好。但会遇到一些问题。</p>
-<p>第一：我们是否需要把业务结果进行数据落库，如果落库，关键解决的问题时数据库和redis操作如何做到原子性？</p>
-<blockquote>
-<p>这个意思就是库存减1了，但redis进行操作完成标记时，失败了怎么办？也就是一定要保证落库和redis 要么一起成功，要么一起失败</p>
-</blockquote>
-<p>第二：如果不进行落库，那么都存储到缓存中，如何设置定时同步策略？</p>
-<blockquote>
-<p>这个意思就是库存减1，不落库，直接先操作redis操作完成标记，然后由另外的同步服务进行库存落库，这个就是增加了系统复杂性，而且同步策略如何设置</p>
-</blockquote>
 <ul>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/zhishixingqiu/?zhihu">《Java 2019 超神之路》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Dubbo/good-collection/?zhihu">《Dubbo 实现原理与源码解析 —— 精品合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Spring/good-collection/?zhihu">《Spring 实现原理与源码解析 —— 精品合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/MyBatis/good-collection/?zhihu">《MyBatis 实现原理与源码解析 —— 精品合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Spring-MVC/good-collection/?zhihu">《Spring MVC 实现原理与源码解析 —— 精品合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Spring-Boot/good-collection/?zhihu">《Spring Boot 实现原理与源码解析 —— 精品合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Entity/good-collection/?zhihu">《数据库实体设计合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Interview/good-collection/?zhihu">《Java 面试题 —— 精品合集》</a></li>
-<li><a href="https://link.zhihu.com/?target=http://www.iocoder.cn/Interview/good-collection/?zhihu">《Java 学习指南 —— 精品合集》</a></li>
+<li>优点：实现简单</li>
+<li>缺点：高并发下数据库瓶颈</li>
+</ul>
+<p>解决方案：根据ID进行分库分表进行算法路由。</p>
+<h3 id="3-3-Redis原子操作"><a href="#3-3-Redis原子操作" class="headerlink" title="3.3 Redis原子操作"></a>3.3 Redis原子操作</h3><p>利用Redis的原子操作，做个操作完成的标记。性能较好，但会遇到一些问题：</p>
+<ol>
+<li><p>我们是否需要把业务结果进行数据落库，如果落库，关键解决的问题时数据库和redis操作如何做到原子性？</p>
+<p>这个意思就是库存减1了，但redis进行操作完成标记时，失败了怎么办？也就是一定要保证落库和redis 要么一起成功，要么一起失败。</p>
+</li>
+<li><p>如果不进行落库，那么都存储到缓存中，如何设置定时同步策略？</p>
+<p>这个意思就是库存减1，不落库，直接先操作redis操作完成标记，然后由另外的同步服务进行库存落库，这个就是增加了系统复杂性，而且同步策略如何设置。</p>
+</li>
+</ol>
+<h2 id="四-分布式锁"><a href="#四-分布式锁" class="headerlink" title="四. 分布式锁"></a>四. 分布式锁</h2><p>分布式锁要考虑到两个分布式场景的问题：</p>
+<ul>
+<li>单点故障：当持有锁的应用发生单点故障时，锁会被长期持有无法释放。</li>
+<li>网络超时：当客户端超时但实际上获取锁时，无法再次成功获取锁。</li>
+</ul>
+<p>单点故障的解决方案是加入过期时间。网络超时问题则使用可重入锁，记录占有锁的用户ID，当超时重试时使占有锁的用户能再次请求成功。</p>
+<h3 id="4-1-MVCC"><a href="#4-1-MVCC" class="headerlink" title="4.1 MVCC"></a>4.1 MVCC</h3><p>综上所述可以给出一个实现方案：使用缓存作为锁的存储介质，利用MVCC（Multiversion concurrency control）机制解决共享资源互斥访问问题。</p>
+<p>分布式锁：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MdbDistributeLock</span> <span class="keyword">implements</span> <span class="title">DistributeLock</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 锁的命名空间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> namespace;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 锁对应的缓存key</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String lockName;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 锁的唯一标识，保证可重入，以应对put成功，但是返回超时的情况</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String lockId;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 是否持有锁。true：是</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> locked;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 缓存实例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TairManager tairManager;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MdbDistributeLock</span><span class="params">(TairManager tairManager, <span class="keyword">int</span> namespace, String lockCacheKey)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.tairManager = tairManager;</span><br><span class="line">        <span class="keyword">this</span>.namespace = namespace;</span><br><span class="line">        <span class="keyword">this</span>.lockName = lockCacheKey;</span><br><span class="line">        <span class="keyword">this</span>.lockId = UUID.randomUUID().toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//获取锁状态</span></span><br><span class="line">            Result&lt;DataEntry&gt; getResult = <span class="keyword">null</span>;</span><br><span class="line">            ResultCode getResultCode = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> cnt = <span class="number">0</span>; cnt &lt; DEFAULT_RETRY_TIMES; cnt++) &#123;</span><br><span class="line">                getResult = tairManager.get(namespace, lockName);</span><br><span class="line">                getResultCode = getResult == <span class="keyword">null</span> ? <span class="keyword">null</span> : getResult.getRc();</span><br><span class="line">                <span class="keyword">if</span> (noNeedRetry(getResultCode)) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//重入，已持有锁，返回成功</span></span><br><span class="line">            <span class="keyword">if</span> (ResultCode.SUCCESS.equals(getResultCode)</span><br><span class="line">                &amp;&amp; getResult.getValue() != <span class="keyword">null</span> &amp;&amp; lockId.equals(getResult.getValue().getValue())) &#123;</span><br><span class="line">                locked = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//不可获取锁，返回失败</span></span><br><span class="line">            <span class="keyword">if</span> (!ResultCode.DATANOTEXSITS.equals(getResultCode)) &#123;</span><br><span class="line">                log.error(<span class="string">&quot;tryLock fail code=&#123;&#125; lock=&#123;&#125; traceId=&#123;&#125;&quot;</span>, getResultCode, <span class="keyword">this</span>, EagleEye.getTraceId());</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//尝试获取锁</span></span><br><span class="line">            ResultCode putResultCode = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> cnt = <span class="number">0</span>; cnt &lt; DEFAULT_RETRY_TIMES; cnt++) &#123;</span><br><span class="line">                putResultCode = tairManager.put(namespace, lockName, lockId, MDB_CACHE_VERSION,</span><br><span class="line">                    DEFAULT_EXPIRE_TIME_SEC);</span><br><span class="line">                <span class="keyword">if</span> (noNeedRetry(putResultCode)) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!ResultCode.SUCCESS.equals(putResultCode)) &#123;</span><br><span class="line">                log.error(<span class="string">&quot;tryLock fail code=&#123;&#125; lock=&#123;&#125; traceId=&#123;&#125;&quot;</span>, getResultCode, <span class="keyword">this</span>, EagleEye.getTraceId());</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            locked = <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;DistributedLock.tryLock fail lock=&#123;&#125;&quot;</span>, <span class="keyword">this</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!locked) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        ResultCode resultCode = tairManager.invalid(namespace, lockName);</span><br><span class="line">        <span class="keyword">if</span> (!resultCode.isSuccess()) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;DistributedLock.unlock fail lock=&#123;&#125; resultCode=&#123;&#125; traceId=&#123;&#125;&quot;</span>, <span class="keyword">this</span>, resultCode,</span><br><span class="line">                EagleEye.getTraceId());</span><br><span class="line">        &#125;</span><br><span class="line">        locked = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断是否需要重试</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> resultCode 缓存的返回码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true：不用重试</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">noNeedRetry</span><span class="params">(ResultCode resultCode)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> resultCode != <span class="keyword">null</span> &amp;&amp; !ResultCode.CONNERROR.equals(resultCode) &amp;&amp; !ResultCode.TIMEOUT.equals(</span><br><span class="line">            resultCode) &amp;&amp; !ResultCode.UNKNOW.equals(resultCode);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>分布式锁工厂类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MdbDistributeLockFactory</span> <span class="keyword">implements</span> <span class="title">DistributeLockFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 缓存的命名空间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> namespace;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Setter</span></span><br><span class="line">    <span class="keyword">private</span> MultiClusterTairManager mtairManager;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DistributeLock <span class="title">getLock</span><span class="params">(String lockName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MdbDistributeLock(mtairManager, namespace, lockName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用分布式锁：</p>
+<p>● 初始化分布式锁的工厂<br>● 利用工厂生成一个分布式锁实例<br>● 使用该分布式实例上锁和解锁操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testTryLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化工厂</span></span><br><span class="line">    MdbDistributeLockFactory mdbDistributeLockFactory = <span class="keyword">new</span> MdbDistributeLockFactory();</span><br><span class="line">    mdbDistributeLockFactory.setNamespace(<span class="number">603</span>);</span><br><span class="line">    mdbDistributeLockFactory.setMtairManager(<span class="keyword">new</span> MultiClusterTairManager());</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获得锁</span></span><br><span class="line">    DistributeLock lock = mdbDistributeLockFactory.getLock(<span class="string">&quot;TestLock&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//上锁解锁操作</span></span><br><span class="line">    <span class="keyword">boolean</span> locked = lock.tryLock();</span><br><span class="line">    <span class="keyword">if</span> (!locked) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//do something </span></span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>问题：释放锁的时候只是简单的将缓存中的key失效，所以存在错误释放他人已持有锁问题。所幸只要锁的租期设置的足够长，该问题出现几率就足够小。</p>
+<p>当占有锁的Client 1在释放锁之前，锁就已经到期了，Client 2将获取锁，此时锁被Client 2持有，但是Client 1可能会错误的将其释放。一个更优秀的方案，我们给每个锁都设置一个身份标识，在释放锁的时候，1）首先查询锁是否是自己的，2）如果是自己的则释放锁。受限于实现方式，步骤1和步骤2不是原子操作，在步骤1和步骤2之间，如果锁到期被其他客户端获取，此时也会错误的释放他人的锁。</p>
+<h3 id="4-2-Redis"><a href="#4-2-Redis" class="headerlink" title="4.2 Redis"></a>4.2 Redis</h3><p>借助Redis的Lua脚本，可以完美的解决存在错误释放他人已持有锁问题的。</p>
+<p>当我们想要获取锁时，我们可以执行如下方法：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET resource_name my_random_value NX PX <span class="number">30000</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>当我们想要释放锁时，我们可以执行如下的Lua脚本：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span>    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>,KEYS[<span class="number">1</span>])<span class="keyword">else</span>    <span class="keyword">return</span> <span class="number">0</span><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-3-Redisson"><a href="#4-3-Redisson" class="headerlink" title="4.3 Redisson"></a>4.3 Redisson</h3><p>在方案一和方案二的讨论过程中，有一个问题被我们反复提及：锁的自动释放。</p>
+<p>这是一把双刃剑：</p>
+<ol>
+<li>一方面它很好的解决了持有锁的客户端单点故障的问题</li>
+<li>另一方面，如果锁提前释放，就会出现锁的错误持有状态</li>
+</ol>
+<p>这个时候，我们可以引入Watch Dog自动续租机制，我们可以参考以下Redisson是如何实现的。</p>
+<p>在上锁成功后，Redisson会调用 <code>renewExpiration()</code> 方法开启一个Watch Dog线程，为锁自动续期。每过1/3时间续一次，成功则继续下一次续期，失败取消续期操作。</p>
+<p>我们可以再看看Redisson是如何续期的。<code>renewExpiration()</code> 方法调用的 <code>renewExpirationAsync()</code> 方法是执行锁续期的关键操作，我们进入到方法内部，可以看到Redisson也是使用Lua脚本进行锁续租的：</p>
+<ol>
+<li>判断锁是否存在；</li>
+<li>如果存在则重置过期时间。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">renewExpiration</span><span class="params">()</span> </span>&#123;    </span><br><span class="line">    ExpirationEntry ee = EXPIRATION_RENEWAL_MAP.get(getEntryName());    </span><br><span class="line">    <span class="keyword">if</span> (ee == <span class="keyword">null</span>) &#123;        </span><br><span class="line">        <span class="keyword">return</span>;    </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    Timeout task = commandExecutor.getConnectionManager().newTimeout(timeout -&gt; &#123;        </span><br><span class="line">        ExpirationEntry ent = EXPIRATION_RENEWAL_MAP.get(getEntryName());        </span><br><span class="line">        <span class="keyword">if</span> (ent == <span class="keyword">null</span>) &#123;            </span><br><span class="line">            <span class="keyword">return</span>;        </span><br><span class="line">        &#125;        </span><br><span class="line">        Long threadId = ent.getFirstThreadId();        </span><br><span class="line">        <span class="keyword">if</span> (threadId == <span class="keyword">null</span>) &#123;            </span><br><span class="line">            <span class="keyword">return</span>;        </span><br><span class="line">        &#125;</span><br><span class="line">        RFuture&lt;Boolean&gt; future = renewExpirationAsync(threadId);        </span><br><span class="line">        future.onComplete((res, e) -&gt; &#123;            </span><br><span class="line">            <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;                </span><br><span class="line">                log.error(<span class="string">&quot;Can&#x27;t update lock &quot;</span> + getRawName() + <span class="string">&quot; expiration&quot;</span>, e);       </span><br><span class="line">                EXPIRATION_RENEWAL_MAP.remove(getEntryName());                </span><br><span class="line">                <span class="keyword">return</span>;            </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (res) &#123;                </span><br><span class="line">                <span class="comment">// reschedule itself                </span></span><br><span class="line">                renewExpiration();            </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;                </span><br><span class="line">                cancelExpirationRenewal(<span class="keyword">null</span>);            </span><br><span class="line">            &#125;        </span><br><span class="line">        &#125;);    </span><br><span class="line">    &#125;, internalLockLeaseTime / <span class="number">3</span>, TimeUnit.MILLISECONDS);</span><br><span class="line">    </span><br><span class="line">    ee.setTimeout(task);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用Lua脚本进行锁续租：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> RFuture&lt;Boolean&gt; <span class="title">renewExpirationAsync</span><span class="params">(<span class="keyword">long</span> threadId)</span> </span>&#123;    </span><br><span class="line">    <span class="keyword">return</span> evalWriteAsync(getRawName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">                          <span class="string">&quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then &quot;</span> +</span><br><span class="line">                          <span class="string">&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot;</span> +</span><br><span class="line">                          <span class="string">&quot;return 1; &quot;</span> +                          </span><br><span class="line">                          <span class="string">&quot;end; &quot;</span> +                          </span><br><span class="line">                          <span class="string">&quot;return 0;&quot;</span>, </span><br><span class="line">                          Collections.singletonList(getRawName()), </span><br><span class="line">                          internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-4-RedLock"><a href="#4-4-RedLock" class="headerlink" title="4.4 RedLock"></a>4.4 RedLock</h3><p>借助Redisson的自动续期机制，我们无需再担心锁的自动释放。但是讨论到这里，我还是不得不面对一个问题：分布式锁本身不是一个分布式应用。当Redis服务器故障无法正常工作时，整个分布式锁也就无法提供服务。</p>
+<p>更进一步，我们可以看看Distributed locks with Redis这篇文章中提到的Redlock算法及其实现。</p>
+<p>Redlock算法不是银弹，关于它的好与坏，也有很多争论：</p>
+<ul>
+<li>《<a target="_blank" rel="noopener" href="https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a>》</li>
+<li>《<a target="_blank" rel="noopener" href="http://antirez.com/news/101">Is Redlock safe?</a>》</li>
+<li>《<a target="_blank" rel="noopener" href="https://news.ycombinator.com/item">Martin Kleppmann和Antirez关于Redlock的争辩</a>》</li>
 </ul>
 <hr>
 <p>参考：</p>
-<p>🔗 《从Paxos到Zookeeper-分布式一致性原理与实践》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/uupgv50JN7AGWp2VjsCRuQ">并发场景下的幂等问题——分布式锁详解</a>》</p>
 
     </div>
 
@@ -414,7 +539,6 @@
 
           <div class="post-tags">
               <a href="/tags/lock/" rel="tag"><i class="fa fa-tag"></i> lock</a>
-              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
               <a href="/tags/distributed/" rel="tag"><i class="fa fa-tag"></i> distributed</a>
           </div>
 
@@ -470,7 +594,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:47</span>
+    <span title="站点阅读时长">52:09</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动

@@ -31,7 +31,7 @@
 <meta property="og:description" content="介绍Java中的锁机制相关内容，包括：锁的概念，Java中锁相关的实现：volatile，synchronized，Lock，队列同步器，重入锁：ReentrantLock，读写锁：ReentrantReadWriteLock，LockSupport工具和Condition条件对象等，同步阻塞。了解常见的一些锁的设计：乐观锁与悲观锁，独占锁与共享锁，公平锁与非公平锁等">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-03-29T09:13:07.000Z">
-<meta property="article:modified_time" content="2020-08-01T13:36:12.000Z">
+<meta property="article:modified_time" content="2021-12-16T11:15:14.932Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="lock">
@@ -159,7 +159,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%81%E6%9C%BA%E5%88%B6"><span class="nav-text">锁机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81"><span class="nav-text">第一节 什么是锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8A%82-volatile"><span class="nav-text">第二节 volatile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E8%8A%82-synchronized"><span class="nav-text">第三节 synchronized</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-synchronized%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-text">3.1 synchronized的条件变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%86%85%E9%83%A8%E9%94%81"><span class="nav-text">3.2 内部锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%9B%B4%E5%A4%9A%E5%86%85%E5%AE%B9"><span class="nav-text">3.3 更多内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E8%8A%82-Lock%E6%8E%A5%E5%8F%A3"><span class="nav-text">第四节 Lock接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E8%8A%82-%E9%98%9F%E5%88%97%E5%90%8C%E6%AD%A5%E5%99%A8"><span class="nav-text">第五节 队列同步器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E8%8A%82-%E9%87%8D%E5%85%A5%E9%94%81-ReentrantLock"><span class="nav-text">第六节 重入锁-ReentrantLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E8%8A%82-%E8%AF%BB%E5%86%99%E9%94%81-ReentrantReadWriteLock"><span class="nav-text">第七节 读写锁-ReentrantReadWriteLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E8%8A%82-LockSupport%E5%B7%A5%E5%85%B7"><span class="nav-text">第八节 LockSupport工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E8%8A%82-Condition%E6%8E%A5%E5%8F%A3"><span class="nav-text">第九节 Condition接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E8%8A%82-%E5%90%8C%E6%AD%A5%E9%98%BB%E5%A1%9E"><span class="nav-text">第十节 同步阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%80%E8%8A%82-final"><span class="nav-text">第十一节 final</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%8A%82-%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81"><span class="nav-text">第十二节 乐观锁与悲观锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E5%BA%94%E7%94%A8"><span class="nav-text">12.1 应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">12.2 使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">12.3 实现方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%89%E8%8A%82-%E7%8B%AC%E5%8D%A0%E9%94%81-%E6%8E%92%E4%BB%96%E9%94%81-%E4%B8%8E%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-text">第十三节 独占锁(排他锁)与共享锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">13.1 介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%9B%9B%E8%8A%82-%E5%85%AC%E5%B9%B3%E9%94%81%E5%92%8C%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81"><span class="nav-text">第十四节 公平锁和非公平锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%94%E8%8A%82-%E8%AF%BB%E9%94%81%E5%92%8C%E5%86%99%E9%94%81"><span class="nav-text">第十五节 读锁和写锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E5%85%AD%E8%8A%82-%E8%87%AA%E6%97%8B%E9%94%81%E4%B8%8E%E9%80%82%E5%BA%94%E6%80%A7%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-text">第十六节 自旋锁与适应性自旋锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-text">16.1 什么是自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-%E8%87%AA%E9%80%82%E5%BA%94%E6%98%AF%E6%8C%87%E4%BB%80%E4%B9%88"><span class="nav-text">16.2 自适应是指什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E4%B8%83%E8%8A%82-%E6%AD%BB%E9%94%81"><span class="nav-text">第十七节 死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q-amp-A"><span class="nav-text">Q&amp;A</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%81%E6%9C%BA%E5%88%B6"><span class="nav-text">锁机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81"><span class="nav-text">一. 什么是锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-volatile"><span class="nav-text">二. volatile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-synchronized"><span class="nav-text">三. synchronized</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-synchronized%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-text">3.1 synchronized的条件变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%86%85%E9%83%A8%E9%94%81"><span class="nav-text">3.2 内部锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E6%9B%B4%E5%A4%9A%E5%86%85%E5%AE%B9"><span class="nav-text">3.3 更多内容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-Lock%E6%8E%A5%E5%8F%A3"><span class="nav-text">四. Lock接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E9%98%9F%E5%88%97%E5%90%8C%E6%AD%A5%E5%99%A8"><span class="nav-text">五. 队列同步器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E9%87%8D%E5%85%A5%E9%94%81-ReentrantLock"><span class="nav-text">六. 重入锁-ReentrantLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E8%AF%BB%E5%86%99%E9%94%81-ReentrantReadWriteLock"><span class="nav-text">七. 读写锁-ReentrantReadWriteLock</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-LockSupport%E5%B7%A5%E5%85%B7"><span class="nav-text">八. LockSupport工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-Condition%E6%8E%A5%E5%8F%A3"><span class="nav-text">九. Condition接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81-%E5%90%8C%E6%AD%A5%E9%98%BB%E5%A1%9E"><span class="nav-text">十. 同步阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80-final"><span class="nav-text">十一. final</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C-%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81"><span class="nav-text">十二. 乐观锁与悲观锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#12-1-%E5%BA%94%E7%94%A8"><span class="nav-text">12.1 应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-2-%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">12.2 使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-3-%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">12.3 实现方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89-%E7%8B%AC%E5%8D%A0%E9%94%81-%E6%8E%92%E4%BB%96%E9%94%81-%E4%B8%8E%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-text">十三. 独占锁(排他锁)与共享锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#13-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">13.1 介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B-%E5%85%AC%E5%B9%B3%E9%94%81%E5%92%8C%E9%9D%9E%E5%85%AC%E5%B9%B3%E9%94%81"><span class="nav-text">十四. 公平锁和非公平锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94-%E8%AF%BB%E9%94%81%E5%92%8C%E5%86%99%E9%94%81"><span class="nav-text">十五. 读锁和写锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD-%E8%87%AA%E6%97%8B%E9%94%81%E4%B8%8E%E9%80%82%E5%BA%94%E6%80%A7%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-text">十六. 自旋锁与适应性自旋锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#16-1-%E4%BB%80%E4%B9%88%E6%98%AF%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-text">16.1 什么是自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-2-%E8%87%AA%E9%80%82%E5%BA%94%E6%98%AF%E6%8C%87%E4%BB%80%E4%B9%88"><span class="nav-text">16.2 自适应是指什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83-%E6%AD%BB%E9%94%81"><span class="nav-text">十七. 死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q-amp-A"><span class="nav-text">Q&amp;A</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -176,7 +176,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">324</span>
+          <span class="site-state-item-count">327</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -295,7 +295,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-08-01 21:36:12" itemprop="dateModified" datetime="2020-08-01T21:36:12+08:00">2020-08-01</time>
+        <time title="修改时间：2021-12-16 19:15:14" itemprop="dateModified" datetime="2021-12-16T19:15:14+08:00">2021-12-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -334,16 +334,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a><strong>锁机制</strong></h1><h2 id="第一节-什么是锁"><a href="#第一节-什么是锁" class="headerlink" title="第一节 什么是锁"></a><strong>第一节 什么是锁</strong></h2><p>锁是用来控制多个线程访问共享资源的方式。</p>
+        <h1 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a>锁机制</h1><h2 id="一-什么是锁"><a href="#一-什么是锁" class="headerlink" title="一. 什么是锁"></a>一. 什么是锁</h2><p>锁是用来控制多个线程访问共享资源的方式。</p>
 <p>Java提供了多种锁的实现方式，如synchronized关键字，Lock相关实现类等。1.5版本前Java靠synchronized关键字来实现锁功能，1.5后并发包提供了Lock接口和相关实现类。</p>
 <hr>
-<h2 id="第二节-volatile"><a href="#第二节-volatile" class="headerlink" title="第二节 volatile"></a><strong>第二节 volatile</strong></h2><p>参考：<a href="../2019040201.html" title="Title">volatile</a>。</p>
+<h2 id="二-volatile"><a href="#二-volatile" class="headerlink" title="二. volatile"></a>二. volatile</h2><p>参考：<a href="../2019040201.html" title="Title">volatile</a>。</p>
 <hr>
-<h2 id="第三节-synchronized"><a href="#第三节-synchronized" class="headerlink" title="第三节 synchronized"></a><strong>第三节 synchronized</strong></h2><p>synchronized是嵌入Java语言的锁机制，synchronized修饰方法时，必须有对象锁才可以调用该方法。</p>
-<h3 id="3-1-synchronized的条件变量"><a href="#3-1-synchronized的条件变量" class="headerlink" title="3.1 synchronized的条件变量"></a><strong>3.1 synchronized的条件变量</strong></h3><p>对比Lock的条件对象，可以通过Object.wait(),notifyAll()来代替。</p>
-<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sufficientFunds<span class="selector-class">.await</span>(); -&gt; wait();</span><br><span class="line">sufficientFunds<span class="selector-class">.signalAll</span>(); -&gt; notifyAll();</span><br><span class="line">sufficientFunds<span class="selector-class">.signal</span>(); -&gt; notify();</span><br></pre></td></tr></table></figure>
+<h2 id="三-synchronized"><a href="#三-synchronized" class="headerlink" title="三. synchronized"></a>三. synchronized</h2><p>synchronized是嵌入Java语言的锁机制，synchronized修饰方法时，必须有对象锁才可以调用该方法。</p>
+<h3 id="3-1-synchronized的条件变量"><a href="#3-1-synchronized的条件变量" class="headerlink" title="3.1 synchronized的条件变量"></a>3.1 synchronized的条件变量</h3><p>对比Lock的条件对象，可以通过<code>Object.wait()</code> ，<code>notifyAll()</code> 来代替。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sufficientFunds.await(); -&gt; wait();</span><br><span class="line">sufficientFunds.signalAll(); -&gt; notifyAll();</span><br><span class="line">sufficientFunds.signal(); -&gt; notify();</span><br></pre></td></tr></table></figure>
 
-<h3 id="3-2-内部锁"><a href="#3-2-内部锁" class="headerlink" title="3.2 内部锁"></a><strong>3.2 内部锁</strong></h3><p>每个对象都有一个内部锁，每个锁都有一个内部条件，锁来管理想要调用方法的线程，条件来管理调用wait()的线程。</p>
+
+
+<h3 id="3-2-内部锁"><a href="#3-2-内部锁" class="headerlink" title="3.2 内部锁"></a>3.2 内部锁</h3><p>每个对象都有一个内部锁，每个锁都有一个内部条件，锁来管理想要调用方法的线程，条件来管理调用wait()的线程。</p>
 <blockquote>
 <p>内部锁有其局限：</p>
 <ul>
@@ -352,55 +354,55 @@
 <li>每个锁只有一个条件，可能是不够的</li>
 </ul>
 </blockquote>
-<h3 id="3-3-更多内容"><a href="#3-3-更多内容" class="headerlink" title="3.3 更多内容"></a><strong>3.3 更多内容</strong></h3><p>所以在实际使用时，Java在java.util.concurrent包中提供了不同的机制来处理所有的加锁，即阻塞队列，相关详细内容在《<a href="../2019082501.html" title="Title">阻塞队列</a>》，《<a href="../2019032101.html" title="Title">对象流和序列化</a>》，《<a href="../2019032501.html" title="Title">IO和NIO</a>》这些博客中整理。</p>
+<h3 id="3-3-更多内容"><a href="#3-3-更多内容" class="headerlink" title="3.3 更多内容"></a>3.3 更多内容</h3><p>所以在实际使用时，Java在java.util.concurrent包中提供了不同的机制来处理所有的加锁，即阻塞队列，相关详细内容在《<a href="../2019082501.html" title="Title">阻塞队列</a>》，《<a href="../2019032101.html" title="Title">对象流和序列化</a>》，《<a href="../2019032501.html" title="Title">NIO</a>》这些博客中整理。</p>
 <p>当程序比较简单，并且快速开发时，可以尽量使用synchronized，因为代码非常简洁，且易于实现。</p>
 <p>更多内容参考：《<a href="../2019032701.html" title="Title">synchronized</a>》</p>
 <hr>
-<h2 id="第四节-Lock接口"><a href="#第四节-Lock接口" class="headerlink" title="第四节 Lock接口"></a><strong>第四节 Lock接口</strong></h2><p>更多内容参考：《<a href="../2019081201.html" title="Title">Lock接口</a>》</p>
+<h2 id="四-Lock接口"><a href="#四-Lock接口" class="headerlink" title="四. Lock接口"></a>四. Lock接口</h2><p>更多内容参考：《<a href="../2019081201.html" title="Title">Lock接口</a>》</p>
 <hr>
-<h2 id="第五节-队列同步器"><a href="#第五节-队列同步器" class="headerlink" title="第五节 队列同步器"></a><strong>第五节 队列同步器</strong></h2><p>更多内容参考：《<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a>》</p>
+<h2 id="五-队列同步器"><a href="#五-队列同步器" class="headerlink" title="五. 队列同步器"></a>五. 队列同步器</h2><p>更多内容参考：《<a href="../2019040401.html" title="Title">同步器AQS的实现原理</a>》</p>
 <hr>
-<h2 id="第六节-重入锁-ReentrantLock"><a href="#第六节-重入锁-ReentrantLock" class="headerlink" title="第六节 重入锁-ReentrantLock"></a><strong>第六节 重入锁-ReentrantLock</strong></h2><p>更多内容参考：《<a href="../2019032901.html" title="Title">ReentrantLock</a>》</p>
+<h2 id="六-重入锁-ReentrantLock"><a href="#六-重入锁-ReentrantLock" class="headerlink" title="六. 重入锁-ReentrantLock"></a>六. 重入锁-ReentrantLock</h2><p>更多内容参考：《<a href="../2019032901.html" title="Title">可重入的独占锁ReentrantLock的实现原理</a>》</p>
 <hr>
-<h2 id="第七节-读写锁-ReentrantReadWriteLock"><a href="#第七节-读写锁-ReentrantReadWriteLock" class="headerlink" title="第七节 读写锁-ReentrantReadWriteLock"></a><strong>第七节 读写锁-ReentrantReadWriteLock</strong></h2><p>更多内容参考：《<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a>》</p>
+<h2 id="七-读写锁-ReentrantReadWriteLock"><a href="#七-读写锁-ReentrantReadWriteLock" class="headerlink" title="七. 读写锁-ReentrantReadWriteLock"></a>七. 读写锁-ReentrantReadWriteLock</h2><p>更多内容参考：《<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a>》</p>
 <hr>
-<h2 id="第八节-LockSupport工具"><a href="#第八节-LockSupport工具" class="headerlink" title="第八节 LockSupport工具"></a><strong>第八节 LockSupport工具</strong></h2><p>更多内容参考：《<a href="../2019081501.html" title="Title">LockSupport工具</a>》</p>
+<h2 id="八-LockSupport工具"><a href="#八-LockSupport工具" class="headerlink" title="八. LockSupport工具"></a>八. LockSupport工具</h2><p>更多内容参考：《<a href="../2019081501.html" title="Title">LockSupport工具</a>》</p>
 <hr>
-<h2 id="第九节-Condition接口"><a href="#第九节-Condition接口" class="headerlink" title="第九节 Condition接口"></a><strong>第九节 Condition接口</strong></h2><p>更多内容参考：《<a href="../2019081601.html" title="Title">Condition接口及实现原理</a>》</p>
+<h2 id="九-Condition接口"><a href="#九-Condition接口" class="headerlink" title="九. Condition接口"></a>九. Condition接口</h2><p>更多内容参考：《<a href="../2019081601.html" title="Title">Condition接口及实现原理</a>》</p>
 <hr>
-<h2 id="第十节-同步阻塞"><a href="#第十节-同步阻塞" class="headerlink" title="第十节 同步阻塞"></a><strong>第十节 同步阻塞</strong></h2><p>synchronized除了修饰方法外，还可以修饰代码块，即同步阻塞。</p>
+<h2 id="十-同步阻塞"><a href="#十-同步阻塞" class="headerlink" title="十. 同步阻塞"></a>十. 同步阻塞</h2><p>synchronized除了修饰方法外，还可以修饰代码块，即同步阻塞。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transfer</span><span class="params">(<span class="keyword">int</span> from, <span class="keyword">int</span> to, <span class="keyword">double</span> amount)</span> <span class="keyword">throws</span> InterruptedException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">synchronized</span> (lock)&#123;</span><br><span class="line">      accounts[from] -= amount;</span><br><span class="line">      System.out.print(Thread.currentThread());</span><br><span class="line">      System.out.printf(<span class="string">&quot; %10.2f from %d to %d&quot;</span>, amount, from, to);</span><br><span class="line">      accounts[to] += amount;</span><br><span class="line">      System.out.printf(<span class="string">&quot; Total Balance: %10.2f%n&quot;</span>, getTotalBalance());</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 
 <p>线程调用方法，获得lock的锁，但一般不会这样去实现。</p>
 <hr>
-<h2 id="第十一节-final"><a href="#第十一节-final" class="headerlink" title="第十一节 final"></a><strong>第十一节 final</strong></h2><p>若共享域被声明为final时，也可以线程安全的读取此域，因为线程会在构造函数结束后才能访问到此域，当然如果此域存储有其他对象的引用，或者是集合，对于其内的操作无法保证线程安全。</p>
+<h2 id="十一-final"><a href="#十一-final" class="headerlink" title="十一. final"></a>十一. final</h2><p>若共享域被声明为final时，也可以线程安全的读取此域，因为线程会在构造函数结束后才能访问到此域，当然如果此域存储有其他对象的引用，或者是集合，对于其内的操作无法保证线程安全。</p>
 <hr>
-<h2 id="第十二节-乐观锁与悲观锁"><a href="#第十二节-乐观锁与悲观锁" class="headerlink" title="第十二节 乐观锁与悲观锁"></a><strong>第十二节 乐观锁与悲观锁</strong></h2><ul>
+<h2 id="十二-乐观锁与悲观锁"><a href="#十二-乐观锁与悲观锁" class="headerlink" title="十二. 乐观锁与悲观锁"></a>十二. 乐观锁与悲观锁</h2><ul>
 <li><p>悲观锁：总是假设最坏的情况。认为每次取数据的时候都会被修改，所以每次在拿数据的时候都会上锁。</p>
 </li>
 <li><p>乐观锁：总是假设最好的情况。认为每次取数据的时候都不会被修改，所以每次都不会上锁。通过版本号机制和CAS算法实现，乐观锁适用于多读的应用类型，这样可以提高吞吐量。</p>
 </li>
 </ul>
-<h3 id="12-1-应用"><a href="#12-1-应用" class="headerlink" title="12.1 应用"></a><strong>12.1 应用</strong></h3><ul>
+<h3 id="12-1-应用"><a href="#12-1-应用" class="headerlink" title="12.1 应用"></a>12.1 应用</h3><ul>
 <li><p>悲观锁：数据库中行锁，表锁等，读锁，写锁等，以及 <code>Java中synchronized</code> 和 <code>ReentrantLock</code> 等独占锁。</p>
 </li>
 <li><p>乐观锁：数据库如MVCC多版本并发控制机制，以及Java中 <code>java.util.concurrent.atomic</code> 包中的递增操作就通过CAS自旋实现的。</p>
 </li>
 </ul>
-<h3 id="12-2-使用场景"><a href="#12-2-使用场景" class="headerlink" title="12.2 使用场景"></a><strong>12.2 使用场景</strong></h3><ul>
+<h3 id="12-2-使用场景"><a href="#12-2-使用场景" class="headerlink" title="12.2 使用场景"></a>12.2 使用场景</h3><ul>
 <li><p>悲观锁：多写少读。</p>
 </li>
 <li><p>乐观锁：多读少写。</p>
 </li>
 </ul>
-<h3 id="12-3-实现方式"><a href="#12-3-实现方式" class="headerlink" title="12.3 实现方式"></a><strong>12.3 实现方式</strong></h3><ul>
-<li><p>悲观锁：可以参考<a href="../2019032701.html" title="Title">synchronized</a>，<a href="../2019032901.html" title="Title">ReentrantLock</a>。</p>
-</li>
-<li><p>乐观锁：可以参考<a href="../2019032901.html" title="Title">版本号机制</a>，<a href="../2019032901.html" title="Title">CAS算法</a>。</p>
-</li>
+<h3 id="12-3-实现方式"><a href="#12-3-实现方式" class="headerlink" title="12.3 实现方式"></a>12.3 实现方式</h3><ul>
+<li>悲观锁：可以参考《<a href="../2019032701.html" title="Title">synchronized</a>》，《<a href="../2019032901.html" title="Title">可重入的独占锁ReentrantLock的实现原理</a>》。</li>
+<li>乐观锁：可以参考《<a href="../2019051801.html" title="Title">CAS原理</a>》。</li>
 </ul>
 <hr>
-<h2 id="第十三节-独占锁-排他锁-与共享锁"><a href="#第十三节-独占锁-排他锁-与共享锁" class="headerlink" title="第十三节 独占锁(排他锁)与共享锁"></a><strong>第十三节 独占锁(排他锁)与共享锁</strong></h2><h3 id="13-1-介绍"><a href="#13-1-介绍" class="headerlink" title="13.1 介绍"></a><strong>13.1 介绍</strong></h3><ul>
+<h2 id="十三-独占锁-排他锁-与共享锁"><a href="#十三-独占锁-排他锁-与共享锁" class="headerlink" title="十三. 独占锁(排他锁)与共享锁"></a>十三. 独占锁(排他锁)与共享锁</h2><h3 id="13-1-介绍"><a href="#13-1-介绍" class="headerlink" title="13.1 介绍"></a>13.1 介绍</h3><ul>
 <li><p>独占锁(排他锁)：每次只能有一个线程能持有锁。当锁被头节点获取后，只有头节点获取锁，其余节点的线程继续沉睡，等待锁被释放后，才会唤醒下一个节点的线程。</p>
 </li>
 <li><p>共享锁：允许多个线程同时获取锁。只要头节点获取锁成功，就在唤醒自身节点对应的线程的同时，继续唤醒AQS队列中的下一个节点的线程，每个节点在唤醒自身的同时还会唤醒下一个节点对应的线程，以实现共享状态的“向后传播”，从而实现共享功能。</p>
@@ -408,8 +410,8 @@
 </ul>
 <p>ReentrantLock基于aqs实现，基本原理是aqs的status为0时表示锁被占用，为1时表示锁被释放。ReentrantLock就是独占锁，独占锁又分为公平锁和非公平锁。</p>
 <p>ReadWriteLock属于独占锁，ReadWriteLock 里面的读锁不是排他锁，它允许多线程同时持有读锁，这是共享锁。共享锁和排他锁是通过 Node 类里面的 nextWaiter 字段区分的。</p>
-<p>具体可以参考<a href="../2019032901.html" title="Title">可重入的独占锁ReentrantLock的实现原理</a>，<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a></p>
-<h2 id="第十四节-公平锁和非公平锁"><a href="#第十四节-公平锁和非公平锁" class="headerlink" title="第十四节 公平锁和非公平锁"></a><strong>第十四节 公平锁和非公平锁</strong></h2><ul>
+<p>具体可以参考《<a href="../2019032901.html" title="Title">可重入的独占锁ReentrantLock的实现原理</a>》，《<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a>》。</p>
+<h2 id="十四-公平锁和非公平锁"><a href="#十四-公平锁和非公平锁" class="headerlink" title="十四. 公平锁和非公平锁"></a>十四. 公平锁和非公平锁</h2><ul>
 <li><p>公平锁：保证按照获取锁的顺序来得到锁。</p>
 </li>
 <li><p>非公平锁：可以进行抢占。</p>
@@ -425,24 +427,29 @@
 </ol>
 <p>独占锁获取锁时，设置节点模式为Node.EXCLUSIVE</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">    acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">    selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
 <p>共享锁获取锁，节点模式则为Node.SHARED</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doAcquireShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node node = addWaiter(Node.SHARED);</span><br><span class="line">    <span class="keyword">boolean</span> failed = <span class="keyword">true</span>;</span><br><span class="line">    .....    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
 
 <p>非公平锁与公平锁的唯一区别是，在获取锁时，不管是否有线程在等待锁，直接通过aqs修改同步状态，进行锁抢占，如果抢占失败，那后面的流程就与公平锁一致了。</p>
 <p>共享锁的基本流程与独占锁相同，主要区别在于判断锁获取的条件上，由于是共享锁，也就允许多个线程同时获取，所以同步状态的数量同时的大于1的，如果同步状态为非0，则线程就可以获取锁，只有当同步状态为0时，才说明共享数量的锁已经被全部获取，其余线程只能等待。共享锁的释放过程正好与之相反，释放锁对应的AQS操作时增加同步状态的值。</p>
 <hr>
-<h2 id="第十五节-读锁和写锁"><a href="#第十五节-读锁和写锁" class="headerlink" title="第十五节 读锁和写锁"></a><strong>第十五节 读锁和写锁</strong></h2><p>读写锁分为两个锁对象 ReadLock 和 WriteLock，这两个锁对象共享同一个AQS。</p>
+<h2 id="十五-读锁和写锁"><a href="#十五-读锁和写锁" class="headerlink" title="十五. 读锁和写锁"></a>十五. 读锁和写锁</h2><p>读写锁分为两个锁对象 ReadLock 和 WriteLock，这两个锁对象共享同一个AQS。</p>
 <p>AQS 的锁计数变量 state 将分为两个部分，前 16bit 为共享锁 ReadLock 计数，后 16bit 为互斥锁 WriteLock 计数。互斥锁记录的是当前写锁重入的次数，共享锁记录的是所有当前持有共享读锁的线程重入总次数。</p>
 <p>读写锁同样也需要考虑公平锁和非公平锁。共享锁和互斥锁的公平锁策略和 ReentrantLock 一样，就是看看当前还有没有其它线程在排队，自己会乖乖排到队尾。非公平锁策略不一样，它会比较偏向于给写锁提供更多的机会。如果当前 AQS 队列里有任何读写请求的线程在排队，那么写锁可以直接去争抢，但是如果队头是写锁请求，那么读锁需要将机会让给写锁，去队尾排队。</p>
 <p>毕竟读写锁适合读多写少的场合，对于偶尔出现一个写锁请求就应该得到更高的优先级去处理。</p>
-<p>具体可以参考<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a></p>
+<p>具体可以参考《<a href="../2019040502.html" title="Title">读写锁ReentrantReadWriteLock的实现原理</a>》。</p>
 <hr>
-<h2 id="第十六节-自旋锁与适应性自旋锁"><a href="#第十六节-自旋锁与适应性自旋锁" class="headerlink" title="第十六节 自旋锁与适应性自旋锁"></a><strong>第十六节 自旋锁与适应性自旋锁</strong></h2><h3 id="16-1-什么是自旋锁"><a href="#16-1-什么是自旋锁" class="headerlink" title="16.1 什么是自旋锁"></a><strong>16.1 什么是自旋锁</strong></h3><p>锁的开销之一即线程切换，在一些场景中同步资源的锁定时间很短，为了这一点时间就去切换、挂起线程以及恢复线程有些得不偿失。<strong>自旋锁即使当前线程自旋一段时间尝试获取锁，在此期间线程不放弃CPU时间片，推迟一段时间后仍未获取锁再阻塞</strong>。</p>
-<h3 id="16-2-自适应是指什么"><a href="#16-2-自适应是指什么" class="headerlink" title="16.2 自适应是指什么"></a><strong>16.2 自适应是指什么</strong></h3><p><code>JDK 1.4.2</code> 时引入自旋锁，通过参数 <code>-XX:+UseSpinning</code> 开启。<code>JDK 6</code> 后默认开启，并且引入了自适应的自旋锁：<strong>适应性自旋锁</strong>。</p>
+<h2 id="十六-自旋锁与适应性自旋锁"><a href="#十六-自旋锁与适应性自旋锁" class="headerlink" title="十六. 自旋锁与适应性自旋锁"></a>十六. 自旋锁与适应性自旋锁</h2><h3 id="16-1-什么是自旋锁"><a href="#16-1-什么是自旋锁" class="headerlink" title="16.1 什么是自旋锁"></a>16.1 什么是自旋锁</h3><p>锁的开销之一即线程切换，在一些场景中同步资源的锁定时间很短，为了这一点时间就去切换、挂起线程以及恢复线程有些得不偿失。<strong>自旋锁即使当前线程自旋一段时间尝试获取锁，在此期间线程不放弃CPU时间片，推迟一段时间后仍未获取锁再阻塞</strong>。</p>
+<h3 id="16-2-自适应是指什么"><a href="#16-2-自适应是指什么" class="headerlink" title="16.2 自适应是指什么"></a>16.2 自适应是指什么</h3><p><code>JDK 1.4.2</code> 时引入自旋锁，通过参数 <code>-XX:+UseSpinning</code> 开启。<code>JDK 6</code> 后默认开启，并且引入了自适应的自旋锁：<strong>适应性自旋锁</strong>。</p>
 <p><strong>自适应是指自旋时间/次数不再固定，而是由前一次在同一个锁上的自旋时间及锁的拥有者的状态来决定</strong>。如果在同一个锁对象上，自旋等待刚刚成功获得过锁，并且持有锁的线程正在运行中，那么虚拟机就会认为这次自旋也是很有可能再次成功，进而它将允许自旋等待持续相对更长的时间。如果对于某个锁，自旋很少成功获得过，那在以后尝试获取这个锁时将可能省略掉自旋过程，直接阻塞线程，避免浪费处理器资源。</p>
 <p>在自旋锁中 另有三种常见的锁形式： <code>TicketLock</code> 、<code>CLHlock</code> 和 <code>MCSlock</code> ，这里不作扩展。</p>
 <hr>
-<h2 id="第十七节-死锁"><a href="#第十七节-死锁" class="headerlink" title="第十七节 死锁"></a><strong>第十七节 死锁</strong></h2><p>即线程之间互相等待，导致程序瘫痪。</p>
+<h2 id="十七-死锁"><a href="#十七-死锁" class="headerlink" title="十七. 死锁"></a>十七. 死锁</h2><p>即线程之间互相等待，导致程序瘫痪。</p>
 <p><strong>死锁产生的四个必要条件：</strong></p>
 <ol>
 <li>互斥条件：资源同时只能被一个线程占有，线程间互斥等待。</li>
@@ -458,22 +465,13 @@
 <li>对于数据库锁，加锁和解锁必须在同一个数据库连接里，避免解锁失败情况</li>
 </ol>
 <hr>
-<h2 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a><strong>Q&amp;A</strong></h2><p><a href="../2019081401.html" title="Title">锁Q&amp;A</a></p>
+<h2 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h2><p>《<a href="../2019081401.html" title="Title">锁Q&amp;A</a>》</p>
 <hr>
-<p><em>参考博客和文章书籍等：</em></p>
-<blockquote>
-<p>《Java核心技术 卷Ⅰ》</p>
-</blockquote>
-<blockquote>
-<p>《Java并发编程的艺术》</p>
-</blockquote>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/11/15/java-lock.html">不可不说的Java“锁”事</a></p>
-</blockquote>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/57354304">漫画|Linux 并发、竞态、互斥锁、自旋锁、信号量都是什么鬼？</a></p>
-</blockquote>
-<p><em>因博客主等未标明不可引用，若部分内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<p>参考：</p>
+<p>🔗 《Java核心技术 卷Ⅰ》</p>
+<p>🔗 《Java并发编程的艺术》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://tech.meituan.com/2018/11/15/java-lock.html">不可不说的Java“锁”事</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/57354304">漫画|Linux 并发、竞态、互斥锁、自旋锁、信号量都是什么鬼？</a>》</p>
 
     </div>
 
@@ -556,7 +554,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">51:47</span>
+    <span title="站点阅读时长">52:09</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
