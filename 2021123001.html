@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/gamepad%20playstation.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Dig%20Dug.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/gamepad%20playstation.png">
+  <link rel="mask-icon" href="/images/gamepad%20playstation.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic%7CMa+Shan+Zheng:300,300italic,400,400italic,700,700italic%7CNoto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" integrity="sha256-no0c5ccDODBwp+9hSmV5VvPpKwHCpbVzXHexIkupM6U=" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js" integrity="sha256-a5YRB27CcBwBFcT5EF/f3E4vzIqyHrSR878nseNYw64=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="整理Oracle-AWR报告相关内容，内容主要来自博主《宅必备》，包括：简述（什么是AWR、使用场景、如何生成AWR），相关知识点（硬解析和软解析），AWR解析等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle-AWR报告 &lt;整&gt;">
+<meta property="og:url" content="http://linyishui.top/2021123001.html">
+<meta property="og:site_name" content="俺的部落格">
+<meta property="og:description" content="整理Oracle-AWR报告相关内容，内容主要来自博主《宅必备》，包括：简述（什么是AWR、使用场景、如何生成AWR），相关知识点（硬解析和软解析），AWR解析等。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010101.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010102.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010103.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010104.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010105.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010106.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010113.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010114.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010115.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010116.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010107.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010122.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010123.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010108.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010109.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010110.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010117.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010118.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010119.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010120.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010121.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010111.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010112.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010124.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010125.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010126.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010127.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010128.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010129.png">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010130.png">
+<meta property="article:published_time" content="2021-12-31T07:01:22.000Z">
+<meta property="article:modified_time" content="2022-01-04T07:21:20.000Z">
+<meta property="article:author" content="Lys">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="oracle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010101.png">
+
+
+<link rel="canonical" href="http://linyishui.top/2021123001.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2021123001.html","path":"2021123001.html","title":"Oracle-AWR报告 \u003c整>"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Oracle-AWR报告 <整> | 俺的部落格</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="俺的部落格" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">俺的部落格</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">俺寻思俺需要记点东西</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-tools"><a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>工具</a></li>
+        <li class="menu-item menu-item-books"><a href="/books/" rel="section"><i class="fa fa-book fa-fw"></i>书架</a></li>
+        <li class="menu-item menu-item-movies"><a href="/movies/" rel="section"><i class="fa fa-video fa-fw"></i>剧院</a></li>
+        <li class="menu-item menu-item-games"><a href="/games/" rel="section"><i class="fa fa-gamepad fa-fw"></i>游戏</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle-AWR%E6%8A%A5%E5%91%8A"><span class="nav-text">Oracle-AWR报告</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E7%AE%80%E8%BF%B0"><span class="nav-text">一. 简述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AFAWR%E6%8A%A5%E5%91%8A%EF%BC%9F"><span class="nav-text">1.1 什么是AWR报告？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">1.2 使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%94%9F%E6%88%90AWR%E6%8A%A5%E5%91%8A"><span class="nav-text">1.3 生成AWR报告</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-text">二. 相关知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%A1%AC%E8%A7%A3%E6%9E%90%E5%92%8C%E8%BD%AF%E8%A7%A3%E6%9E%90"><span class="nav-text">2.1 硬解析和软解析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89SQL%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">（1）SQL执行过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E4%BB%80%E4%B9%88%E6%98%AF%E8%BD%AF%E3%80%81%E7%A1%AC%E8%A7%A3%E6%9E%90%EF%BC%9F"><span class="nav-text">（2）什么是软、硬解析？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E7%BB%91%E5%AE%9A%E5%8F%98%E9%87%8F"><span class="nav-text">（3）绑定变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89Oracle%E6%8E%92%E6%9F%A5%E7%A1%AC%E8%A7%A3%E6%9E%90SQL"><span class="nav-text">（4）Oracle排查硬解析SQL</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-AWR%E8%A7%A3%E6%9E%90"><span class="nav-text">三. AWR解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BF%A1%E6%81%AF"><span class="nav-text">3.1 数据库信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%BF%A1%E6%81%AF"><span class="nav-text">3.2 服务器信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-SnapShot%E4%BF%A1%E6%81%AF"><span class="nav-text">3.3 SnapShot信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Shared-Pool-Statistics"><span class="nav-text">3.4 Shared Pool Statistics</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-Load-Profile"><span class="nav-text">3.5 Load Profile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-Instance-Efficiency-Percentages"><span class="nav-text">3.6 Instance Efficiency Percentages</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-1-Buffer-Nowait"><span class="nav-text">3.6.1 Buffer Nowait %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-2-Redo-NoWait"><span class="nav-text">3.6.2 Redo NoWait %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-3-Buffer-Hit"><span class="nav-text">3.6.3 Buffer Hit %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-4-In-memory-Sort"><span class="nav-text">3.6.4 In-memory Sort %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-5-Library-Hit"><span class="nav-text">3.6.5 Library Hit %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-6-Soft-Parse"><span class="nav-text">3.6.6 Soft Parse %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-7-Execute-to-Parse"><span class="nav-text">3.6.7 Execute to Parse %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-8-Latch-Hit"><span class="nav-text">3.6.8 Latch Hit %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-9-Parse-CPU-to-Parse-Elapsd"><span class="nav-text">3.6.9 Parse CPU to Parse Elapsd %</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-10-Non-Parse-CPU"><span class="nav-text">3.6.10 % Non-Parse CPU</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-Top-10-Foreground-Events-by-Total-Wait-Time"><span class="nav-text">3.7 Top 10 Foreground Events by Total Wait Time</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-1-db-file-sequential-read"><span class="nav-text">3.7.1 db file sequential read</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-2-db-file-scattered-read"><span class="nav-text">3.7.2 db file scattered read</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-3-log-file-sync"><span class="nav-text">3.7.3 log file sync</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-4-log-file-parallel-write"><span class="nav-text">3.7.4 log file parallel write</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-5-log-buffer-space"><span class="nav-text">3.7.5 log buffer space</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-6-SQL-Net-message-from-dblink"><span class="nav-text">3.7.6 SQL*Net message from dblink</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-7-SQL-Net-message-to-dblink"><span class="nav-text">3.7.7 SQL*Net message to dblink</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-8-SQL-Net-message-from-client"><span class="nav-text">3.7.8 SQL*Net message from client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-9-SQL-Net-message-to-client"><span class="nav-text">3.7.9 SQL*Net message to client</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-Wait-Events-Statistics"><span class="nav-text">3.8 Wait Events Statistics</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-1-Time-Model-Statistics"><span class="nav-text">3.8.1 Time Model Statistics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-2-Operating-System-Statistics"><span class="nav-text">3.8.2 Operating System Statistics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-3-Wait-Class"><span class="nav-text">3.8.3 Wait Class</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-4-Wait-Events"><span class="nav-text">3.8.4 Wait Events</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-5-Background-Wait-Events"><span class="nav-text">3.8.5 Background Wait Events</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-6-Service-Statistics"><span class="nav-text">3.8.6 Service Statistics</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-7-Service-Wait-Class-Stats"><span class="nav-text">3.8.7 Service Wait Class Stats</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-9-SQL-Statistics"><span class="nav-text">3.9 SQL Statistics</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-1-SQL-ordered-by-Elapsed-Time"><span class="nav-text">3.9.1 SQL ordered by Elapsed Time</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-2-SQL-ordered-by-CPU-Time"><span class="nav-text">3.9.2 SQL ordered by CPU Time</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-3-SQL-ordered-by-Gets"><span class="nav-text">3.9.3 SQL ordered by Gets</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-4-SQL-ordered-by-Reads"><span class="nav-text">3.9.4 SQL ordered by Reads</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-5-SQL-ordered-by-Executions"><span class="nav-text">3.9.5 SQL ordered by Executions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-6-SQL-ordered-by-Parse-Calls"><span class="nav-text">3.9.6 SQL ordered by Parse Calls</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-7-SQL-ordered-by-Sharable-Memory"><span class="nav-text">3.9.7 SQL ordered by Sharable Memory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-8-SQL-ordered-by-Version-Count"><span class="nav-text">3.9.8 SQL ordered by Version Count</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-9-9-Complete-List-of-SQL-Text"><span class="nav-text">3.9.9 Complete List of SQL Text</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lys"
+      src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+  <p class="site-author-name" itemprop="name">Lys</p>
+  <div class="site-description" itemprop="description">记录编程点滴，写点生活中的酸甜</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">328</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">109</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LAILAIWA" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LAILAIWA" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:linyishui168@outlook.com" title="E-Mail → mailto:linyishui168@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/5340162234" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;5340162234" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/linyishui618" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/users/13018339/lin-yishui" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;13018339&#x2F;lin-yishui" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/linyishui618" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;linyishui618" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="far fa-smile-wink fa-fw"></i>
+      个人
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://music.163.com/#/user/home?id=68425607" title="https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;68425607" rel="noopener" target="_blank">网易云音乐</a>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/LAILAIWA" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2021123001.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Oracle-AWR报告 <整>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-31 15:01:22" itemprop="dateCreated datePublished" datetime="2021-12-31T15:01:22+08:00">2021-12-31</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-01-04 15:21:20" itemprop="dateModified" datetime="2022-01-04T15:21:20+08:00">2022-01-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>26k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>24 分钟</span>
+    </span>
+</div>
+
+            <div class="post-description">整理Oracle-AWR报告相关内容，内容主要来自博主《宅必备》，包括：简述（什么是AWR、使用场景、如何生成AWR），相关知识点（硬解析和软解析），AWR解析等。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Oracle-AWR报告"><a href="#Oracle-AWR报告" class="headerlink" title="Oracle-AWR报告"></a>Oracle-AWR报告</h1><h2 id="一-简述"><a href="#一-简述" class="headerlink" title="一. 简述"></a>一. 简述</h2><h3 id="1-1-什么是AWR报告？"><a href="#1-1-什么是AWR报告？" class="headerlink" title="1.1 什么是AWR报告？"></a>1.1 什么是AWR报告？</h3><p>AWR (Automatic Workload Repository) 是自动负载信息库的英文缩写，是Oracle 10g以后版本提供的一种性能收集和分析工具，能提供一个时间段内整个系统资源使用情况的报告，通过报告可以了解一个系统的整个运行情况，生成的报告包括多个部分。</p>
+<p>AWR每小时对 <code>v$active_session_history</code> 视图（内存中的ASH采集信息，理论为1小时）进行采样一次，并将信息保存到磁盘中，并且保留7天，7天后旧的记录才会被覆盖。这些采样信息被保存在 <code>wrh$_active_session_history</code> 视图（写入AWR库中的ASH信息，理论为1小时以上）中。而这个采样频率（1小时）和保留时间（7天）是可以根据实际情况进行调整的。</p>
+<h3 id="1-2-使用场景"><a href="#1-2-使用场景" class="headerlink" title="1.2 使用场景"></a>1.2 使用场景</h3><ul>
+<li>查看数据库详细运行状态</li>
+<li>测试过程中发现数据库出现瓶颈但无法定位到具体原因时，可以借用AWR报告进行分析定位。</li>
+</ul>
+<p>数据库出现性能问题，一般都在三个地方：IO、内存、CPU，这三个地方又是息息相关的。当IO负载增大时，肯定需要更多的内存来存放，同时也需要CPU花费更多的时间来过滤这些数据。相反，CPU时间花费多的话，有可能是解析SQL语句，也可能是过滤太多的数据，倒不一定是和IO或内存有关系。</p>
+<ul>
+<li>CPU：解析SQL语句，生成的执行计划。</li>
+<li>内存：SQL语句和执行计划都需要在内存保留一段时间，还有取到的数据，根据LRU算法也会尽量在内存中保留，在执行SQL语句过程中，各种表之间的连接，排序等操作也要占用内存。</li>
+<li>IO：如果需要的数据不在内存中，则需要到磁盘中去取，就会涉及到物理IO了；还有表之间的连接数据太多，以及排序等操作内存放不下的时候，需要用到临时表空间，也会消耗物理IO。</li>
+</ul>
+<p>ORACLE分配的内存中PGA一般只占20%，对于专用服务器模式，每次执行SQL语句、表数据的运算等操作，都在PGA中进行的，也就是说只能用ORACL分配内存的20%左右。如果多个用户都执行多表关联，而且表数据又多，再加上关联不当的话，内存就成为瓶颈了，所以优化SQL很重要的一点就是，减少逻辑读和物理读。</p>
+<h3 id="1-3-生成AWR报告"><a href="#1-3-生成AWR报告" class="headerlink" title="1.3 生成AWR报告"></a>1.3 生成AWR报告</h3><p>Linux使用sqlplus生成AWR报告，安装：<a target="_blank" rel="noopener" href="https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html">Instant Client for Linux x86-64</a></p>
+<p>下载basic和sqlplus的rpm包后，上传到tmp目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /tmp</span><br><span class="line">rpm -ivh oracle-instantclientXXX-basic-XXX-1.x86_64.rpm</span><br><span class="line">rpm -ivh oracle-instantclientXXX-sqlplus-XXX-1.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+
+
+<p>安装完毕后，生成的客户端目录在 <strong>/usr/lib/oracle/12.2/client64</strong> ，在该目录下新建<strong>network</strong>目录，并编写<strong>tnsnames.ora</strong>文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mkdir network</span><br><span class="line">vi tnsnames.ora</span><br><span class="line"></span><br><span class="line">testdb =</span><br><span class="line">  (DESCRIPTION =</span><br><span class="line">    (ADDRESS_LIST =</span><br><span class="line">      (ADDRESS = (PROTOCOL = TCP)(HOST = XXX.XXX.XXX.XXX)(PORT = 1521))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA =</span><br><span class="line">      (SID = testdb)</span><br><span class="line">      (SERVER = DEDICATED)</span><br><span class="line">    )</span><br><span class="line">  )</span><br></pre></td></tr></table></figure>
+
+<p>修改完成后按下 <code>esc</code> + <code>:wq</code> 保存退出。</p>
+<p>配置环境变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi ~/.bash_profile</span><br><span class="line"></span><br><span class="line">export  ORACLE_HOME=/usr/lib/oracle/12.2/client64</span><br><span class="line">export  TNS_ADMIN=$ORACLE_HOME/network</span><br><span class="line">export  LD_LIBRARY_PATH=$ORACLE_HOME/lib:/usr/local/lib:$LD_LIBRARY_PATH:.</span><br><span class="line">export  ORABIN=$ORACLE_HOME/bin</span><br><span class="line">export  NLS_LANG=AMERICAN_AMERICA.ZHS16GBK</span><br><span class="line">export ORACLE_SID=orcl</span><br><span class="line">PATH=$PATH:$ORACLE_HOME/bin:$ORABIN</span><br><span class="line"></span><br><span class="line">source ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
+
+
+<p>登陆sqlplus：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sqlplus sys@XXX.XXX.XXX.XXX:1521/orcl AS SYSDBA</span><br><span class="line"><span class="meta">sql&gt;</span><span class="bash"> @/u01/app/oracle/12c/rdbms/admin/awrrpt.sql</span></span><br><span class="line"></span><br><span class="line">Enter value of report_type</span><br><span class="line"><span class="meta">#</span><span class="bash"> 意思是生成报告的格式有两种，html和txt，这里选择html</span></span><br><span class="line">Enter value of num_days</span><br><span class="line"><span class="meta">#</span><span class="bash"> 收集几天的报告信息，数字，可以输入1</span></span><br><span class="line">Enter value of begin_snap</span><br><span class="line"><span class="meta">#</span><span class="bash"> 输入开始快照id，要根据日志打印的快照id范围来填</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>生成的 <code>.lst</code> 文件直接拷贝为html打开即可。</p>
+<h2 id="二-相关知识点"><a href="#二-相关知识点" class="headerlink" title="二. 相关知识点"></a>二. 相关知识点</h2><h3 id="2-1-硬解析和软解析"><a href="#2-1-硬解析和软解析" class="headerlink" title="2.1 硬解析和软解析"></a>2.1 硬解析和软解析</h3><h4 id="（1）SQL执行过程"><a href="#（1）SQL执行过程" class="headerlink" title="（1）SQL执行过程"></a>（1）SQL执行过程</h4><p>Oracle中SQL的执行过程：</p>
+<ol>
+<li><strong>语法检查</strong>（syntax check）：检查此SQL的拼写是否符合语法。如关键字书写错误等。</li>
+<li><strong>语义检查</strong>（semantic check）：诸如检查SQL语句中的访问对象是否存在及该用户是否具备相应的权限。如 <code>ORA-00942: table or view does not exist</code> 等。</li>
+<li>对SQL语句进行<strong>解析</strong>（prase）：利用内部算法对SQL进行解析，生成解析树（parse tree）及执行计划（execution plan）。</li>
+<li>执行SQL，返回结果（execute and return）。</li>
+</ol>
+<h4 id="（2）什么是软、硬解析？"><a href="#（2）什么是软、硬解析？" class="headerlink" title="（2）什么是软、硬解析？"></a>（2）什么是软、硬解析？</h4><p>硬解析和软解析就发生在第三步。Oracle利用hash算法来取得SQL的hash值，然后在library cache里查找是否存在该hash值；</p>
+<ul>
+<li>假设存在，则将此SQL与cache中的进行比较；</li>
+<li>假设“相同”，就将利用已有的解析树与执行计划，而省略了优化器的相关工作。这也就是软解析的过程。</li>
+</ul>
+<p>当然，如果上面的2个假设中任有一个不成立，那么优化器都将进行创建解析树、生成执行计划的动作。这个过程就叫硬解析。创建解析树、生成执行计划对于SQL的执行来说是开销昂贵的动作；以及会占据重要的门闩（latch）资源，严重的影响系统的规模的扩大（即限制了系统的并发行）， 而且引起的问题不能通过增加内存条和cpu的数量来解决。所以应当极力避免硬解析，尽量使用软解析。</p>
+<blockquote>
+<p>闩是锁的细化，可以理解为是一种轻量级的串行化设备。当进程申请到闩后，则这些闩用于保护共享内存的数在同一时刻不会被两个以上的进程修改。在硬解析时，需要申请闩的使用，而闩的数量在有限的情况下需要等待。大量的闩的使用由此造成需要使用闩的进程排队越频繁，性能则逾低下。</p>
+<p>绝大多数latch问题都与没有使用绑定变量有关：</p>
+<ul>
+<li>library-cache latch（库缓存latch）</li>
+<li>重做日志生成问题（redo-allocation latch，重做日志的分配latch ）</li>
+<li>缓存竞争问题（cache-buffers LRU-chain latch，缓存的最近最少使用链latch）</li>
+<li>缓存中的热块（cache-buffers chain latch，缓存链latch）</li>
+</ul>
+</blockquote>
+<p><strong>软解析执行过程</strong>：</p>
+<ul>
+<li>语法、语义及权限检查;</li>
+<li>将整条SQL hash后从库缓存中执行计划。</li>
+</ul>
+<p><strong>硬解析执行过程</strong>：</p>
+<ul>
+<li>语法、语义及权限检查;</li>
+<li>查询转换，通过应用各种不同的转换技巧，会生成语义上等同的新的SQL语句，如 <code>count(1)</code> 会转为 <code>count(*)</code> 。</li>
+<li>根据统计信息生成执行计划，找出成本最低的路径，这一步比较耗时</li>
+<li>将游标信息（执行计划）保存到库缓存（library cache）。</li>
+</ul>
+<p>还包括一种软软解析，指设置了session_cursor_cache后，Cursor被直接Cache在当前Session的PGA中的，在解析的时候只需要对其语法分析、权限对象分析之后就可以转到PGA中查找。</p>
+<p>DDL和DML：</p>
+<ul>
+<li>DDL：CREATE,DROP,ALTER等，必然进行硬解析。</li>
+<li>DML：INSERT,UPDATE,DELETE,SELECT等，进行硬解析或软解析。</li>
+</ul>
+<p>硬解析和软解析模拟：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 硬解析，不使用绑定变量</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> object_id<span class="operator">=</span><span class="number">20</span>; </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> object_id<span class="operator">=</span><span class="number">30</span>; </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> object_id<span class="operator">=</span><span class="number">40</span>; </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> test <span class="keyword">where</span> object_id<span class="operator">=</span><span class="number">50</span>; </span><br><span class="line"></span><br><span class="line"># 软解析，使用绑定变量</span><br><span class="line"><span class="keyword">declare</span></span><br><span class="line">  sql_stat varchar2(<span class="number">200</span>);</span><br><span class="line">  p00      number(<span class="number">10</span>);</span><br><span class="line">  p01      varchar2(<span class="number">20</span>);</span><br><span class="line">  p02      varchar2(<span class="number">20</span>);</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">  p00 :<span class="operator">=</span> <span class="number">3</span>; </span><br><span class="line">  p01 :<span class="operator">=</span> <span class="string">&#x27;321&#x27;</span>; </span><br><span class="line">  p02 :<span class="operator">=</span> <span class="string">&#x27;34030&#x27;</span>;</span><br><span class="line">  sql_stat :<span class="operator">=</span> <span class="string">&#x27;update xxx_table set XXX_time = TO_NUMBER(TO_CHAR(SYSDATE,&#x27;&#x27;YYYYMMDD.HH24MISS&#x27;&#x27;)), XXX_no = &#x27;</span><span class="operator">||</span> p00 <span class="operator">||</span><span class="string">&#x27;,    XXX_desc = &#x27;</span><span class="operator">||</span> p01 <span class="operator">||</span><span class="string">&#x27;    where XXX_ID = &#x27;</span><span class="operator">||</span> p02 <span class="operator">||</span><span class="string">&#x27;   and XXX_no != &#x27;&#x27;4&#x27;&#x27; &#x27;</span>;</span><br><span class="line">  dbms_output.put_line(sql_stat);</span><br><span class="line">  <span class="keyword">execute</span> immediate sql_stat;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（3）绑定变量"><a href="#（3）绑定变量" class="headerlink" title="（3）绑定变量"></a>（3）绑定变量</h4><p>日常使用中，硬解析过高常常因为SQL未使用绑定变量导致。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 使用绑定变量</span></span><br><span class="line"><span class="keyword">select</span> xxx <span class="keyword">from</span> table_a <span class="keyword">where</span> a <span class="operator">=</span> :a <span class="keyword">and</span> b <span class="operator">=</span> :b;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 不使用绑定变量</span></span><br><span class="line"><span class="keyword">select</span> xxx <span class="keyword">from</span> table_a <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">1</span> <span class="keyword">and</span> b <span class="operator">=</span> <span class="string">&#x27;A&#x27;</span>;</span><br><span class="line"><span class="keyword">select</span> xxx <span class="keyword">from</span> table_a <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">2</span> <span class="keyword">and</span> b <span class="operator">=</span> <span class="string">&#x27;A&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Oracle接收SQL后，首先根据Hash算法得到Hash值，然后在共享池寻找是否有匹配的SQL。如果存在则直接用已有的SQL执行计划来执行，最后返回结果。如果不存在，则需要执行硬解析。</p>
+<p>绑定变量只是起到占位的作用，让Oracle每次对用户发来的SQL做hash运算时，运算出的结果都是同样的Hash值，于是将所有的用户发来的SQL看作是同一个SQL来对象。</p>
+<p>所以合理的使用绑定变量后，Oracle可以在共享池中命中相同SQL，然后从而避免了高昂的硬解析操作，以及减少latch争用，特别是在这个SQL调用次数较多和频繁的场景下。</p>
+<h4 id="（4）Oracle排查硬解析SQL"><a href="#（4）Oracle排查硬解析SQL" class="headerlink" title="（4）Oracle排查硬解析SQL"></a>（4）Oracle排查硬解析SQL</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看系统解析统计信息</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">&#x27;%parse%&#x27;</span>;</span><br><span class="line"><span class="comment">-- 硬解析统计信息，通过观察value变化可以来确定SQL是否走了硬解析</span></span><br><span class="line"><span class="keyword">select</span> name,class,<span class="keyword">value</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;parse count (hard)&#x27;</span>; </span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> a.value,b.name <span class="keyword">from</span> v$mystat a, v$statname b </span><br><span class="line"><span class="keyword">where</span> a.STATISTIC#<span class="operator">=</span>b.STATISTIC# <span class="keyword">and</span> b.name <span class="keyword">like</span> <span class="string">&#x27;%parse%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看指定SQL内容的执行信息，如解析次数，加载次数，执行次数等</span></span><br><span class="line"><span class="keyword">select</span> sql_text,s.parse_calls,loads,executions,FORCE_MATCHING_SIGNATURE </span><br><span class="line"><span class="keyword">from</span> v$<span class="keyword">sql</span> s <span class="keyword">where</span> sql_text <span class="keyword">like</span> <span class="string">&#x27;update XXX_table%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> sql_id,sql_text,executions,last_load_time <span class="keyword">from</span> v$sqlarea </span><br><span class="line"><span class="keyword">where</span> sql_text <span class="keyword">like</span> <span class="string">&#x27;update XXX_table%&#x27;</span></span><br><span class="line"><span class="keyword">and</span> last_load_time <span class="operator">&gt;</span> trunc(sysdate<span class="number">-1</span><span class="operator">/</span><span class="number">24</span>) <span class="keyword">order</span> <span class="keyword">by</span> last_load_time <span class="keyword">desc</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 按解析次数排序，找出解析次数较多的SQL</span></span><br><span class="line"><span class="keyword">SELECT</span> sql_id,substr(sql_text,<span class="number">1</span>,<span class="number">40</span>) <span class="keyword">sql</span>, parse_calls, executions, hash_value,address <span class="keyword">FROM</span> V$SQLAREA <span class="keyword">WHERE</span> parse_calls <span class="operator">&gt;</span> <span class="number">10</span> <span class="keyword">order</span> <span class="keyword">by</span> parse_calls <span class="keyword">desc</span>;</span><br><span class="line"><span class="comment">-- 变种1</span></span><br><span class="line"><span class="keyword">SELECT</span> sql_id,sql_text, parse_calls,loads, executions, hash_value,address <span class="keyword">FROM</span> V$SQLAREA </span><br><span class="line"><span class="keyword">WHERE</span> parse_calls <span class="operator">&gt;</span> <span class="number">100</span></span><br><span class="line"><span class="keyword">and</span> kept_versions <span class="operator">=</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">and</span> executions <span class="operator">&lt;</span> <span class="number">2</span><span class="operator">*</span>parse_calls</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> parse_calls <span class="keyword">desc</span>;</span><br><span class="line"><span class="comment">-- 变种2</span></span><br><span class="line"><span class="keyword">SELECT</span> sql_id,sql_text, parse_calls,loads, executions, hash_value,address <span class="keyword">FROM</span> V$SQLAREA </span><br><span class="line"><span class="keyword">WHERE</span> executions <span class="operator">&gt;</span> <span class="number">10000</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> executions <span class="keyword">desc</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查找指定的SQL内容，Oracle根据hash_value来查找SQL，所以不同hash值会解析多次</span></span><br><span class="line"><span class="keyword">SELECT</span> sql_id,sql_text, parse_calls,loads, executions, hash_value,address </span><br><span class="line"><span class="keyword">FROM</span> V$SQLAREA </span><br><span class="line"><span class="keyword">WHERE</span> sql_text <span class="keyword">like</span> <span class="string">&#x27;%SELECT xxx FROM xxx%&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>硬解析的SQL会在 <code>v$sql_shared_cursor</code> 返回字段为Y：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">from</span> v$<span class="keyword">sql</span> t <span class="keyword">where</span> t.SQL_ID <span class="operator">=</span> <span class="string">&#x27;5auzajv4fy8gm&#x27;</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sqlarea t <span class="keyword">where</span> t.SQL_ID <span class="operator">=</span> <span class="string">&#x27;5auzajv4fy8gm&#x27;</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sql_shared_cursor <span class="keyword">where</span> SQL_ID <span class="operator">=</span> <span class="string">&#x27;5auzajv4fy8gm&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 分组汇总硬解析次数最多的SQL内容</span></span><br><span class="line"><span class="keyword">SELECT</span> substr (sql_text,<span class="number">0</span>, <span class="number">40</span>), <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> v$sql_shared_cursor c, v$<span class="keyword">sql</span> s</span><br><span class="line"><span class="keyword">where</span> c.sql_id <span class="operator">=</span> s.sql_id </span><br><span class="line">  <span class="keyword">and</span> (UNBOUND_CURSOR <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> </span><br><span class="line">	     SQL_TYPE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 OPTIMIZER_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 OUTLINE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 STATS_ROW_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 LITERAL_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 FORCE_HARD_PARSE <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 EXPLAIN_PLAN_CURSOR <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span> 	</span><br><span class="line">			 BUFFERED_DML_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PDML_ENV_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 INST_DRTLD_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 SLAVE_QC_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 TYPECHECK_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 AUTH_CHECK_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 BIND_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 DESCRIBE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LANGUAGE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 TRANSLATION_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 BIND_EQUIV_FAILURE <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 INSUFF_PRIVS <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 INSUFF_PRIVS_REM <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 REMOTE_TRANS_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LOGMINER_SESSION_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 INCOMP_LTRL_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 OVERLAP_TIME_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 EDITION_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 MV_QUERY_GEN_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 USER_BIND_PEEK_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 TYPCHK_DEP_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 NO_TRIGGER_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 FLASHBACK_CURSOR <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 ANYDATA_TRANSFORMATION <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PDDL_ENV_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 TOP_LEVEL_RPI_CURSOR <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 DIFFERENT_LONG_LENGTH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LOGICAL_STANDBY_APPLY <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 DIFF_CALL_DURN <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 BIND_UACS_DIFF <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PLSQL_CMP_SWITCHS_DIFF <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 CURSOR_PARTS_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 STB_OBJECT_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 CROSSEDITION_TRIGGER_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PQ_SLAVE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 TOP_LEVEL_DDL_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 MULTI_PX_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 BIND_PEEKED_PQ_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 MV_REWRITE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 ROLL_INVALID_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 OPTIMIZER_MODE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PX_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 MV_STALEOBJ_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 FLASHBACK_TABLE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LITREP_COMP_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PLSQL_DEBUG <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LOAD_OPTIMIZER_STATS <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 ACL_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 FLASHBACK_ARCHIVE_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LOCK_USER_SCHEMA_FAILED <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 REMOTE_MAPPING_MISMATCH <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 LOAD_RUNTIME_HEAP_FAILED <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 HASH_MATCH_FAILED <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 PURGED_CURSOR <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 BIND_LENGTH_UPGRADEABLE <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>	<span class="keyword">OR</span>	</span><br><span class="line">			 USE_FEEDBACK_STATS <span class="operator">=</span> <span class="string">&#x27;Y&#x27;</span>)</span><br><span class="line"> <span class="keyword">group</span> <span class="keyword">by</span> substr (sql_text,<span class="number">0</span>, <span class="number">40</span>)</span><br><span class="line"> <span class="keyword">order</span> <span class="keyword">by</span> <span class="built_in">count</span> (<span class="operator">*</span>) <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="三-AWR解析"><a href="#三-AWR解析" class="headerlink" title="三. AWR解析"></a>三. AWR解析</h2><h3 id="3-1-数据库信息"><a href="#3-1-数据库信息" class="headerlink" title="3.1 数据库信息"></a>3.1 数据库信息</h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010101.png"></p>
+<ul>
+<li>数据库的版本</li>
+<li>数据库 DBID</li>
+<li>数据库实例名称及实例号</li>
+<li>数据库最近一次启动时间</li>
+<li>数据库版本</li>
+<li>数据库是否为rac</li>
+</ul>
+<h3 id="3-2-服务器信息"><a href="#3-2-服务器信息" class="headerlink" title="3.2 服务器信息"></a>3.2 服务器信息</h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010102.png"></p>
+<ul>
+<li>数据库主机名</li>
+<li>数据库主机平台</li>
+<li>服务器CPU及核数</li>
+<li>服务器CPU个数</li>
+<li>服务器内存大小</li>
+</ul>
+<h3 id="3-3-SnapShot信息"><a href="#3-3-SnapShot信息" class="headerlink" title="3.3 SnapShot信息"></a>3.3 SnapShot信息</h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010103.png"></p>
+<ul>
+<li>awr报告的起止时间以及当时的session数量等</li>
+<li>awr报告持续时间</li>
+<li>DB 时间</li>
+</ul>
+<p>DB Time= session time spent in database.</p>
+<p>DB Time= CPU Time + Non IDLE wait time.</p>
+<p>可以看到DB Time比 Elapsed大，如果大很多并且有性能问题，需再进一步分析</p>
+<h3 id="3-4-Shared-Pool-Statistics"><a href="#3-4-Shared-Pool-Statistics" class="headerlink" title="3.4 Shared Pool Statistics"></a>3.4 Shared Pool Statistics</h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010104.png"></p>
+<p>% SQL with executions&gt;1指的是执行次数大于1的SQL比例，越大越好，如过小则可能是为使用绑定变量导致</p>
+<ul>
+<li><p><code>Memory Usage %</code> ：</p>
+<ul>
+<li><p>该指标指的是Oracle数据库Shared Pool的使用率，适用于OLTP系统。</p>
+</li>
+<li><p>该指标一般要求在70%-85%之间。</p>
+</li>
+<li><p>过高说明Shared Pool 剩余空间不足，我们需要查找具体原因或者增加其空间。</p>
+</li>
+<li><p>过低说明Shared Pool 剩余空间过多，造成内存的浪费需要减少Shared Pool 的大小。</p>
+</li>
+</ul>
+</li>
+<li><p><code>% SQL with executions&gt;1</code> :</p>
+<ul>
+<li>该指标指的是Shared Pool 中的SQL语句执行次数大于1的比例，适用于OLTP系统。</li>
+<li>该指标越高越好，如过低说明SQL 未被复用，请检查绑定变量的问题。</li>
+<li>该指标可和上节Instance Efficiency Percentages 部分中的Parse相关指标作对比。</li>
+</ul>
+</li>
+<li><p><code>% Memory for SQL w/exec&gt;1</code> ：</p>
+<ul>
+<li>该指标指的是执行次数大于1的SQL语句占用的Shared Pool内存比例。</li>
+<li>该指标越低说明Shared Pool内存更多的被用在存储不能复用的语句上。从侧面反映出硬解析比较严重。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-5-Load-Profile"><a href="#3-5-Load-Profile" class="headerlink" title="3.5 Load Profile"></a>3.5 Load Profile</h3><p>了解系统负载的情况：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010105.png"></p>
+<ul>
+<li><strong>DB CPU(s) per second</strong>：说明的是每秒钟同时工作的CPU数量，从主机配置可以看到共24个虚拟cpu，而DB CPU(s) per second只有0.2则说明cpu没有瓶颈</li>
+</ul>
+<p>其次关注hard parses和 parses的比例，如硬解析率非常高则需要查看cursor_sharing参数和应用程序的绑定变量问题，一般都是由于绑定变量引起的。</p>
+<h3 id="3-6-Instance-Efficiency-Percentages"><a href="#3-6-Instance-Efficiency-Percentages" class="headerlink" title="3.6 Instance Efficiency Percentages"></a>3.6 Instance Efficiency Percentages</h3><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010106.png"></p>
+<p>上面的百分比越高越好，<code>% Non-Parse CPU</code> 指的是数据的CPU资源有78.03%用在非解析上，不算高。理论上说上述比例应接近100%。</p>
+<h4 id="3-6-1-Buffer-Nowait"><a href="#3-6-1-Buffer-Nowait" class="headerlink" title="3.6.1 Buffer Nowait %"></a>3.6.1 Buffer Nowait %</h4><p>该指标指的是可立即访问SGA 中所有数据而不用等待的次数的比例，该指标应接近100%</p>
+<p>如发现该指标过低,则检查awr报告中 <strong>Buffer Wait Statistics</strong> 部分来查看哪种类型的块导致等待。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010113.png"></p>
+<h4 id="3-6-2-Redo-NoWait"><a href="#3-6-2-Redo-NoWait" class="headerlink" title="3.6.2 Redo NoWait %"></a>3.6.2 Redo NoWait %</h4><p>该指标指的是redo条目（redo-entries）在redo log中可立即生成而不用等待的次数与全部redo entries的比例。redo entry对应的是每一个DML语句。</p>
+<p>计算公式：<code>100 x (1- (redo log space requests/redo entries)</code> </p>
+<ul>
+<li><strong>redo log space requests</strong> 该请求会在数据库进程请求生成redo entry，而这时redo log空间满的情况下发生，这时数据库会被动的进行日志切换以使事务可以继续进行。</li>
+<li><strong>redo entries</strong> 会在每次redo entry 写入 redo log时增加</li>
+</ul>
+<p>上述2个值可通过视图 <code>v$sysstat</code> 查看，<strong>注意它们的值是累积的</strong>。一般来说我们需要保持redo log space requests的值不增长。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">in</span> (<span class="string">&#x27;redo log space requests&#x27;</span>, <span class="string">&#x27;redo entries&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果该参数过低:</p>
+<ol>
+<li>如redo log切换十分频繁(约15分钟切换一次)，则需要增加online redo log大小。</li>
+<li>如果redo log切换不频繁，则说明可能是磁盘IO性能太慢，需将online redo log放置到高性能磁盘中。</li>
+</ol>
+<h4 id="3-6-3-Buffer-Hit"><a href="#3-6-3-Buffer-Hit" class="headerlink" title="3.6.3 Buffer Hit %"></a>3.6.3 Buffer Hit %</h4><p>该指标指的是数据库请求的数据在buffer cache中直接命中的比例。该指标越高代表oracle在buffer cache直接找到需要的数据越多，从而不需要从磁盘进行读取。buffer cache（内存）中读取的速率是从磁盘读取速率的成百上千倍。</p>
+<p>该参数在OLAP和DSS系统中不太重要，因为他们有大量的全表扫描或者并行操作。并行操作有时会跳过buffer cache 而使用PGA。该参数对于OLTP系统非常重要，需要保持在90%以上，因为其有大量连续的操作，从磁盘读取将大大影响系统性能。</p>
+<p>如该指标过低可使用 <strong>data buffer cache advisory</strong> 查看合适建议并修改 <strong>db_cache_size</strong> 参数大小。</p>
+<h4 id="3-6-4-In-memory-Sort"><a href="#3-6-4-In-memory-Sort" class="headerlink" title="3.6.4 In-memory Sort %"></a>3.6.4 In-memory Sort %</h4><p>该参数反应了内存内排序和磁盘排序之间的比例，计算公式为 ：<code>(DeltaMemorySorts / (DeltaDiskSorts + DeltaMemorySorts)) * 100</code> 。disk sort的在temp表空间中进行，他的速度比内存排序慢成百上千倍。</p>
+<p>该查询的值为累计值，计算时应取观察时间段的差值（从instance启动开始）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">in</span> (<span class="string">&#x27;sorts (memory)&#x27;</span>, <span class="string">&#x27;sorts (disk)&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>存储区域：</p>
+<ul>
+<li>专用服务器( dedicated )类型中，排序区域分配在PGA中。</li>
+<li>共享服务器(shared)类型中，排序区域在 large pool 中，由于是共用的无法手动指定各个session使用的大小。</li>
+</ul>
+<p>如该指标过低，需增加sort area 的大小。in-memory sorts的大小被sort_area_size或者pga_aggregate_target控制。</p>
+<h4 id="3-6-5-Library-Hit"><a href="#3-6-5-Library-Hit" class="headerlink" title="3.6.5 Library Hit %"></a>3.6.5 Library Hit %</h4><p>library cache hit ratio，指的是将要执行的SQL 语句或者PL/SQL 代码已经存在于shared pool中的library cache中并可复用。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010114.png"></p>
+<p>查看：</p>
+<ul>
+<li><p><strong>监控库缓冲命中率及重载率(9i及以上)：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">sum</span> (pins) &quot;Eexcutions&quot;,</span><br><span class="line">       <span class="built_in">sum</span>(pinhits) &quot;Hits&quot;,</span><br><span class="line">       round((( <span class="built_in">sum</span> (pinhits) <span class="operator">/</span> <span class="built_in">sum</span> (pins)) <span class="operator">*</span> <span class="number">100</span>),<span class="number">2</span> ) &quot;PinHitRatio&quot;,</span><br><span class="line">       <span class="built_in">sum</span>(reloads) &quot;Misses&quot;,</span><br><span class="line">     round((( <span class="built_in">sum</span> (pins) <span class="operator">/</span> (<span class="built_in">sum</span> (pins) <span class="operator">+</span> <span class="built_in">sum</span>(reloads))) <span class="operator">*</span> <span class="number">100</span> ),<span class="number">2</span>) &quot;RelodHitRatio&quot;</span><br><span class="line">  <span class="keyword">from</span> v$librarycache;</span><br></pre></td></tr></table></figure></li>
+<li><p>**查看库缓冲命中率(10g及以上)**：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysmetric <span class="keyword">where</span> metric_name <span class="operator">=</span> <span class="string">&#x27;Library Cache Hit Ratio&#x27;</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>如果该指标过低说明SQL过早的被挤出shared pool，可能是由于shared pool过小导致。需要和软解析(soft parse)率进行比较，如过两者都低，需检查解析问题，如绑定变量是否使用。</p>
+<h4 id="3-6-6-Soft-Parse"><a href="#3-6-6-Soft-Parse" class="headerlink" title="3.6.6 Soft Parse %"></a>3.6.6 Soft Parse %</h4><p>软解析指的是需要执行的SQL语句或PL/SQL程序可以在library cache中找到并重复使用。计算公式为：<code>((DeltaParseCountTotal - DeltaParseCountHard) / DeltaParseCountTotal) * 100</code> </p>
+<p>可以通过 <code>v$sysstat</code> 查看到，注意该参数是累积的，计算时需计算时间段的差值：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">in</span> (<span class="string">&#x27;parse count (hard)&#x27;</span>, <span class="string">&#x27;parse count (total)&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如该指标过低(80%),需检查是否有绑定变量问题，并查看parse 的TOP SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysmetric <span class="keyword">where</span> metric_name <span class="operator">=</span> <span class="string">&#x27;Library Cache Hit Ratio&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如果该指标很高，也不代表不能优化，也需要查看排在前列的语句是否需要优化</p>
+<h4 id="3-6-7-Execute-to-Parse"><a href="#3-6-7-Execute-to-Parse" class="headerlink" title="3.6.7 Execute to Parse %"></a>3.6.7 Execute to Parse %</h4><p>该指标是SQL执行次数和解析次数的比值，计算公式为：<code>round(100*(1-parse/exe),2)</code> 。</p>
+<p>从公式可以看出:</p>
+<ul>
+<li>当parse和execute相差不大时，比值趋近于0，说明每次执行都会进行解析</li>
+<li>当parse远小于execute使，比值接近1，说明解析一次可以执行多次，这是非常好的</li>
+</ul>
+<p>可以通过 <code>v$sysstat</code> 查看到，注意该参数是累积的，计算时需时时间段的差值：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">in</span> (<span class="string">&#x27;parse count (total)&#x27;</span>, <span class="string">&#x27;execute count&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>有人会建议设置cursor sharing = similar，会针对相似语句使用软解析，但这样是不可取的，可能会导致性能问题。</p>
+<p>若该指标过低，往往是开发人员的程序造成的，如未使用绑定变量。可参考 <a target="_blank" rel="noopener" href="https://asktom.oracle.com/pls/asktom/f?p=100:11:0::::P11_QUESTION_ID:1594740500346667363">官方</a> ：</p>
+<ul>
+<li>You should do it in a single SQL statement if at all possible.</li>
+<li>If you cannot do it in a single SQL Statement, then do it in PL/SQL.</li>
+<li>If you cannot do it in PL/SQL, try a Java Stored Procedure.</li>
+<li>If you cannot do it in Java, do it in a C external procedure.</li>
+<li>If you cannot do it in a C external routine, you might want to seriously think about why it is you need to do it…</li>
+</ul>
+<h4 id="3-6-8-Latch-Hit"><a href="#3-6-8-Latch-Hit" class="headerlink" title="3.6.8 Latch Hit %"></a>3.6.8 Latch Hit %</h4><p>该指标指的是latch不需要等待即可获取的比例。计算公式为：<code>SELECT (1 - (Sum(misses) / Sum(gets))) * 100 FROM v$latch;</code> 。</p>
+<p>可以从 <code>v$latch</code> 视图获取相关信息：</p>
+<ul>
+<li>GETS:以 willing-to-wait 模式请求latch的次数</li>
+<li>MISSES:以 willing-to-wait 模式请求latch但是需要等待的次数</li>
+<li>SLEEPS:以 willing-to-wait 模式请求latch需要等待并且超时的次数</li>
+<li>IMMEDIATE_GETS:以no-wait模式请求latch的次数</li>
+<li>IMMEDIATE_MISSES:以no-wait模式请求latch且失败(miss)的次数</li>
+<li>SPIN_GETS:以willing-to-wait模式请求latch需要等待，但是在spin中获得的次数</li>
+</ul>
+<p>latch是Oracle的一种轻量级的锁，用于保护共享内存，如确保一个数据块同一时间只能被一个session访问等等</p>
+<ul>
+<li>Cache Buffer Chains</li>
+<li>Redo Copy Latch</li>
+<li>…..</li>
+</ul>
+<p>latch获取有2种方式</p>
+<ol>
+<li><p>willing-to-wait：大部分latch采用如下模式，若第一次未取得latch时采用等待的方法。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010115.png"></p>
+</li>
+<li><p>no-wait：少部分latch采用这种模式，当第一次获取不到该latch时就不进行等待，直接进入sleep状态。</p>
+</li>
+</ol>
+<p>如此指标低于90%则说明latch等待严重，可查看awr报告的等待事件部分。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010116.png"></p>
+<p>如上图表明library cache存在冲突。</p>
+<h4 id="3-6-9-Parse-CPU-to-Parse-Elapsd"><a href="#3-6-9-Parse-CPU-to-Parse-Elapsd" class="headerlink" title="3.6.9 Parse CPU to Parse Elapsd %"></a>3.6.9 Parse CPU to Parse Elapsd %</h4><p>该指标指的是解析过程中CPU时间占的比重。由于解析需要CPU进行操作，如在解析过程中有什么东西阻止进程访问CPU，则会导致该比例过小。如该比例为100%说明解析过程中没有等待。该指标的计算公式为：<code>(parse time cpu/parse time elapsed)*100</code> </p>
+<p>数值可从 <code>v$sysstat</code> 视图获取，注意该参数是累积的，计算时需时时间段的差值：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">in</span> (<span class="string">&#x27;parse time cpu&#x27;</span>, <span class="string">&#x27;parse time elapsed&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如此指标过低说明可能为shared pool 存在冲突，可能为shared pool过小或未使用绑定变量所致。</p>
+<h4 id="3-6-10-Non-Parse-CPU"><a href="#3-6-10-Non-Parse-CPU" class="headerlink" title="3.6.10 % Non-Parse CPU"></a>3.6.10 % Non-Parse CPU</h4><p>该参数的意义就像是字面上的，表明的是用在非解析上面的CPU时间。该指标的计算公式为：<code>(parse time cpu/CPU used by this session)*100</code> 。</p>
+<p>数值可从 <code>v$sysstat</code> 视图获取，注意该参数是累积的，计算时需时时间段的差值：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$sysstat <span class="keyword">where</span> name <span class="keyword">in</span> (<span class="string">&#x27;parse time cpu&#x27;</span>, <span class="string">&#x27;CPU used by this session&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如此指标过低(95%)说明CPU时间用在解析上的时间过多，一般是由于SQL未复用导致，也就是未使用绑定变量。</p>
+<h3 id="3-7-Top-10-Foreground-Events-by-Total-Wait-Time"><a href="#3-7-Top-10-Foreground-Events-by-Total-Wait-Time" class="headerlink" title="3.7 Top 10 Foreground Events by Total Wait Time"></a>3.7 Top 10 Foreground Events by Total Wait Time</h3><p>这里是排名前十的前台等待事件：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010107.png"></p>
+<ol>
+<li>首先看wait class栏位，如果是 User I/O , System I/O, Others这种的可以不用太担心，如发现Concurrency这类等待需要特别关心</li>
+<li>其次看等待时间，wait avg=total wait time(总等待时间)/waits(等待次数),最主要看平均等待时间是否正常</li>
+</ol>
+<h4 id="3-7-1-db-file-sequential-read"><a href="#3-7-1-db-file-sequential-read" class="headerlink" title="3.7.1 db file sequential read"></a>3.7.1 db file sequential read</h4><ul>
+<li><strong>物理读</strong>发生在一个用户需要的数据块不在SGA，从而将其从磁盘读取到SGA中。如果此时别的会话需要该数据块则必须等待这个过程结束，这时就产生了等待。</li>
+<li><strong>顺序读</strong>是物理读的一种方式，这里的顺序指的是读取数据块到一个连续的内存区域，而且总是读取单个数据块(single-block read)。</li>
+</ul>
+<p>如果该等待严重说明数据块存在严重的争用情况。</p>
+<p>单个数据块读（single-block read）是由SQL语句引起的，用户发出或者递归调用，一般发生在以下情况：</p>
+<ul>
+<li>索引扫描</li>
+<li>表扫描（access by rowid）</li>
+<li>全表扫描（很少发生，例如刚好在extent边缘恰巧被分割成单块，或者已经在buffer cache中）</li>
+</ul>
+<p>由于物理读是非常正常的，出现这个等待事件不意味着数据库出现性能问题。但是如果在AWR报告等待事件相关中看到其处于非常前的位置时就需要引起我们的注意了。</p>
+<p>特别需要关注Avg Waits 参数，最好小于10ms，这里可采用如下方法进行解决：</p>
+<ul>
+<li>将数据文件放在高速磁盘中，提高读取性能，避免热块。</li>
+<li>将数据文件放在LUN（即一些存储设备）中，可确保数据块分散在足够多的磁盘中。</li>
+</ul>
+<p>在优化磁盘的同时，我们还需要注意应用程序的SQL语句问题，因为一般这种等待都是由SQL语句造成的，我们需要找出找出相应的SQL语句。可能是索引使用不当导致，这时我们可以定位到具体的表或索引，通过执行计划判断索引是否合理，是否需要走全表扫描等等方式来进行优化。</p>
+<p>如下是一些常用的诊断方式，通过如下方式定位到具体的会话，在通过sql_id或hash_value找出具体的语句用于优化：</p>
+<ol>
+<li><p>查看当前正在等待的会话：</p>
+<p>我们可以查看 <code>v$session_wait</code> 视图的TIME_WAITED栏位来定位当前哪个会话等待sequential read过长时间（实时）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$session_Wait <span class="keyword">where</span> event <span class="operator">=</span> <span class="string">&#x27;db file sequential read&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>P1代表File ID，可通过dba_data_File视图的FILE_ID字段看出是哪个数据文件。</li>
+<li>P2代表 First block，即该块在数据文件上开始的位置。</li>
+<li>P3代表块数，由于sequential read为单块读，则该值始终为1。</li>
+</ul>
+<p>我们可以通过P1，P2参数得出对象的名称和类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span></span><br><span class="line">   segment_name,</span><br><span class="line">   segment_type</span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">   dba_extents</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">   file_id <span class="operator">=</span> <span class="number">128</span> </span><br><span class="line"><span class="keyword">and</span></span><br><span class="line">   <span class="number">3277531</span> <span class="keyword">between</span> </span><br><span class="line">   (block_id <span class="keyword">and</span> block_id <span class="operator">+</span> blocks <span class="operator">-</span> <span class="number">1</span>);</span><br></pre></td></tr></table></figure></li>
+<li><p>查看从实例启动以来等待的会话：</p>
+<p>使用 <code>v$session_event</code> 视图来定位哪个会话等待sequential read过长时间（非实时）。也可使用 <code>v$system_event</code> 视图查看系统整体的等待事件。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sid, total_waits, time_waited</span><br><span class="line">  <span class="keyword">FROM</span> v$session_event</span><br><span class="line"> <span class="keyword">WHERE</span> event<span class="operator">=</span><span class="string">&#x27;db file sequential read&#x27;</span></span><br><span class="line">  <span class="keyword">and</span> total_waits<span class="operator">&gt;</span><span class="number">0</span></span><br><span class="line"> <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">3</span> <span class="keyword">desc</span>,<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>注意由于SID是可以复用的，这样查出来的有可能有问题。比如查看SID为617的会话对应的语句也有可能是上个SQL语句导致的sequential read等待，这点需要注意。</p>
+</li>
+</ol>
+<ul>
+<li><p>查看高物理读的数据文件：可以通过awr报告中的 <code>Tablespace IO Stats</code> 和 <code>File IO Stats</code> 区域来定位最多IO操作的表空间和数据文件，如果可以请将其放置在高速的磁盘中（SSD）。</p>
+</li>
+<li><p>查看高物理读的SQL语句：同样可以查看v$sql中高物理读的语句以及awr报告中的 <code>SQL ordered by Reads</code> 区域</p>
+</li>
+</ul>
+<h4 id="3-7-2-db-file-scattered-read"><a href="#3-7-2-db-file-scattered-read" class="headerlink" title="3.7.2 db file scattered read"></a>3.7.2 db file scattered read</h4><p>离散读是物理读的一种方式，这里的离散指的是读取数据块到一块离散(不连续)的内存区域，而且一般读取多个数据块（multi-block read），可能为单个数据库。每次读取的块数由 <code>DB_FILE_MULTIBLOCK_READ_COUNT</code> 参数控制，这点不同于sequential read。</p>
+<p>下图为各种读取方式的比较：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010122.png"></p>
+<p>多数据块读（multi-block read）是由SQL语句引起的，用户发出或者递归调用，一般发生在以下情况：</p>
+<ul>
+<li>全表扫描( full table scans )</li>
+<li>索引快速全扫描( index fast full scans)</li>
+</ul>
+<p>在优化磁盘的同时，我们还需要注意应用程序的SQL语句问题，因为一般这种等待都是SQL语句造成的，我们需要找出相应的SQL语句：</p>
+<ol>
+<li>通过执行计划进行优化判断全表扫描或者索引全扫描是否合理，是否使用了合适的驱动表，以需要达到减少物理读和逻辑读的目的。</li>
+<li>执行计划中 <code>HASH JOIN</code> 和 <code>SORT MERGE</code> 动作（operation）会导致scattered read。</li>
+<li>可增加 <code>DB_FILE_MULTIBLOCK_READ_COUNT</code> 参数的值来减少IO次数。</li>
+<li>调整 <code>HASH_AREA_SIZE</code> 和 <code>OPTIMIZER_INDEX_COST_ADJ</code> 参数的值也可用来优化scattered read。</li>
+<li>保证统计信息的及时性。</li>
+</ol>
+<p>与db file sequential read的区别在event值为 <code>db file scattered read</code> 。</p>
+<h4 id="3-7-3-log-file-sync"><a href="#3-7-3-log-file-sync" class="headerlink" title="3.7.3 log file sync"></a>3.7.3 log file sync</h4><p>当用户提交（commit）语句时，一个进程会建立一个redo记录并把它拷贝至SGA中的log buffer中，然后这个进程会通知LGWR进程再将log buffer中的内容写入日志文件（redo file）中，同时清空log buffer的内容，最后返回完成消息，这就完成了一次commit操作。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010123.png"></p>
+<p>commit动作在LGWR进程没有返回完成消息前是不会完成的，我们把LGWR将log buffer中的内容写入日志文件（redo file）以及返回完成消息的这段时间标记为log file sync等待事件，它有个1s的超时时间。这个等待事件往往伴随着log file parallel write等待事件。</p>
+<p>log buffer大小：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SQL</span><span class="operator">&gt;</span> <span class="keyword">show</span> <span class="keyword">parameter</span> log_buffer</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是LGWR写log buffer内容至日志文件有多种情况：</p>
+<ul>
+<li>每三秒钟</li>
+<li>每一次commit</li>
+<li>当其1/3满的时候</li>
+<li>当其达到1M的时候</li>
+</ul>
+<p>查看LGWR进程等待情况（整体）：通过上面的讲解我们知道log file sync事件和LWGR进程相关，我们可以查询</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> sid, event, time_waited, time_waited_micro</span><br><span class="line">  <span class="keyword">from</span> v$session_event</span><br><span class="line"> <span class="keyword">where</span> sid <span class="keyword">in</span> (<span class="keyword">select</span> sid <span class="keyword">from</span> v$session <span class="keyword">where</span> program <span class="keyword">like</span> <span class="string">&#x27;%LGWR%&#x27;</span>)</span><br><span class="line"> <span class="keyword">order</span> <span class="keyword">by</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到LGWR进程主要的等待有哪些，哪些等待比较严重：</p>
+<ol>
+<li>rdbms ipc message表示LGWR正在等待写redo log，表示其处于空闲状体，我们不必理会。</li>
+<li>log file single/parallel write即我们今天所说的LGWR写redo文件。</li>
+</ol>
+<p>查询当前LGWR进程状态（实时）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a.<span class="operator">*</span></span><br><span class="line">  <span class="keyword">from</span> v$Session_wait a, v$session b</span><br><span class="line"> <span class="keyword">where</span> a.sid <span class="operator">=</span> b.sid</span><br><span class="line">   <span class="keyword">and</span> b.program <span class="keyword">like</span> <span class="string">&#x27;%LGWR%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如发现为log file write等说明目前LGWR进程正在繁忙。如等待事件为log file parallel write 则其参数意义如下</p>
+<ul>
+<li>P1：需要写入的redo log的数量，即日志文件组的成员数量。</li>
+<li>P2：需要写入每个redo log 成员的redo block数。</li>
+<li>P3：写入完成需要进行的I/O请求次数。</li>
+</ul>
+<p>如果log file sync等待事件占有过多的CPU时间，我们就需要注意了：</p>
+<ol>
+<li>低速的磁盘可能会导致LGWR进程写文件较慢从而导致log file sync等待，我们可以简单的通过avg waits来判断，如超过15ms则说明磁盘可能是瓶颈，需要放到高速的磁盘，另外加日志组中成员文件放在不同的磁盘中。</li>
+<li>服务器CPU内存资源不足会导致进程相应缓慢，同样会增加log file sync等待，所以在调优时首先保证系统资源充足。</li>
+<li>数据库锁及latch也会影响log file sync等待。</li>
+<li>过大的log buffer大小，log buffer过大可能导致刷新过于次数过低，从而导致单次刷新过慢。</li>
+<li>过多的commit操作，通过上面我们知道每次commit操作都会导致LGWR写操作，如commit过多则该等待则会明显的上升。</li>
+</ol>
+<h4 id="3-7-4-log-file-parallel-write"><a href="#3-7-4-log-file-parallel-write" class="headerlink" title="3.7.4 log file parallel write"></a>3.7.4 log file parallel write</h4><p>为了冗余考虑，redo log组一般都会有多个成员，log file parallel write中的parallel指的是并行的写入多个redo log成员文件。log file parallel write指的是LGWR进程并行的将log buffer中的内容写入redo log，在全部写入到所有redo log前的等待计入log file parallel write 等待事件。</p>
+<p>查看redo log文件情况：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> thread#, <span class="keyword">group</span>#, members, bytes <span class="operator">/</span> <span class="number">1024</span> <span class="operator">/</span> <span class="number">1024</span> byte_mb, status</span><br><span class="line"> <span class="keyword">FROM</span> v$log</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> thread#, <span class="keyword">group</span>#;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>log file sync（LFS）和log file parallel write（LFPW）对比：</p>
+<p>通过上面的定义我们知道LFS和LFPW都是等待LGWR进程完成I/O操作。</p>
+<ul>
+<li>LFS是用户进程等待LGWR进程完成I/O操作。</li>
+<li>LFPW是LGWR进程本身等待其I/O操作完成。</li>
+</ul>
+<p>例如有五个用户进程同时commit，每个完成耗时都是10ms。则LFS次数增加五次，LFS的wait time增加50ms。而LFPW次数增加一次，LFPW的wait time增加10ms。注意LGWR 进行写日志动作原因有很多，用户commit只是其中一个。</p>
+<ul>
+<li>每三秒钟</li>
+<li>每一次commit/rollback</li>
+<li>当其 1/3满的时候，这个由_LOG_IO_SIZE参数控制</li>
+<li>当其达到1M的时候</li>
+</ul>
+</blockquote>
+<p>减少日志组中成员的数量可减少I/O此时从而减少log file parallel write等待。</p>
+<p>查看日志切换频率：直接将如下代码执行，PLSQL请使用command界面。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">column</span> h0 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h1 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h2 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h3 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h4 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h5 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h6 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h7 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h8 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h9 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h10 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h11 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h12 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h13 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h14 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h15 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h16 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h17 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h18 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h19 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h20 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h21 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h22 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> h23 format <span class="number">999</span></span><br><span class="line"><span class="keyword">column</span> avg format <span class="number">999.99</span></span><br><span class="line"><span class="keyword">column</span> <span class="keyword">day</span> format a6</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> TRUNC (first_time) &quot;Date&quot;, TO_CHAR (first_time, <span class="string">&#x27;Dy&#x27;</span>) &quot;Day&quot;, <span class="built_in">COUNT</span> (<span class="number">1</span>) &quot;Total&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;00&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) h0,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;01&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h1&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;02&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h2&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;03&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h3&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;04&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h4&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;05&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h5&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;06&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h6&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;07&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h7&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;08&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h8&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;09&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h9&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;10&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h10&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;11&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h11&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;12&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h12&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;13&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h13&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;14&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h14&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;15&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h15&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;16&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h16&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;17&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h17&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;18&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h18&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;19&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h19&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;20&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h20&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;21&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h21&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;22&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h22&quot;,</span><br><span class="line"><span class="built_in">SUM</span> (DECODE (TO_CHAR (first_time, <span class="string">&#x27;hh24&#x27;</span>), <span class="string">&#x27;23&#x27;</span>, <span class="number">1</span>, <span class="number">0</span>)) &quot;h23&quot;, ROUND (<span class="built_in">COUNT</span> (<span class="number">1</span>) <span class="operator">/</span> <span class="number">24</span>, <span class="number">2</span>) &quot;Avg&quot;</span><br><span class="line"><span class="keyword">FROM</span> gv$log_history</span><br><span class="line"><span class="keyword">WHERE</span> first_time <span class="operator">&gt;=</span> trunc(SYSDATE) <span class="operator">-</span> <span class="number">30</span></span><br><span class="line"><span class="keyword">and</span> thread# <span class="operator">=</span> inst_id</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> TRUNC (first_time), TO_CHAR (first_time, <span class="string">&#x27;Dy&#x27;</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="number">1</span> <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-7-5-log-buffer-space"><a href="#3-7-5-log-buffer-space" class="headerlink" title="3.7.5 log buffer space"></a>3.7.5 log buffer space</h4><p>log buffer space这个等待事件一般来说很少发生，一旦等待比较严重往往说明是系统的设置问题。Oracle的一些DML操作（insert,update,insert）会产生redo条目，并存储在log buffer中，当发生以下情况时LGWR进程会把log buffer中的信息写入redo log，之后清空log buffer。当redo条目的产生速度快于LGWR清理的速度就会发生redo log space requests等待事件。</p>
+<ol>
+<li>每三秒钟</li>
+<li>每一次commit/rollback</li>
+<li>当其 1/3满的时候，这个由_LOG_IO_SIZE参数控制</li>
+<li>当其达到1M的时候</li>
+</ol>
+<p>log buffer的大小由参数log_buffer参数决定。默认值为512k或者128k*CPU数量，一般来说这个默认值是够用的。如果系统DML操作很多且这个等待事件比较严重时可以考虑增加log buffer参数的大小。修改该参数需要重启数据库。</p>
+<p>log buffer过大也会有问题。上面说到当log bufffer达到1/3满时LGWR进程会清空log buffer。如log buffer为10m，则意味着在没有commit/rollbak的情况下，需要等到3m才会切换，这样会导致LGWR写入redo log缓慢，从而导致log file sync等待。所以我们在调优log buffer space时不应该增加其他等待事件，需要取得一个平衡。</p>
+<p>如何调优：</p>
+<ol>
+<li>IO性能不好会导致LGWR进程清空log buffer过慢从而导致log buffer space等待，这时需要将redo log放在高速的磁盘（SSD）或裸设备上。</li>
+<li>减少应用的commit活动，或者使用nologging选项，仅更新表中需要更新的栏位。</li>
+<li>物化视图更新使用fast代替complete模式。</li>
+<li>查看 log file switch 是否频繁。</li>
+</ol>
+<h4 id="3-7-6-SQL-Net-message-from-dblink"><a href="#3-7-6-SQL-Net-message-from-dblink" class="headerlink" title="3.7.6 SQL*Net message from dblink"></a>3.7.6 SQL*Net message from dblink</h4><p>这个等待事件发生在会话在等待从远程数据库获取信息，该信息是通过dblink进行传输的，oracle把该等待事件归类于network类。</p>
+<ul>
+<li><p>查询实时的等待：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$session_wait <span class="keyword">where</span> event<span class="operator">=</span> <span class="string">&#x27;SQL*Net message from dblink&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>P1代表driver id。</p>
+</li>
+<li><p>P2代表通过dblink传输的字节数。</p>
+</li>
+</ul>
+</li>
+<li><p>查询非实时的等待：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"> <span class="keyword">from</span> v$session_event</span><br><span class="line"><span class="keyword">where</span> event <span class="keyword">like</span> <span class="string">&#x27;%SQL*Net message from  dblink%&#x27;</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> time_waited <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+
+<p>注意这里的信息是从实例起来的汇总，同时由于SID是可以复用的，所以查看出来的SID并不代表上次的语句是这个等待。</p>
+</li>
+</ul>
+<p>当我们的SQL语句通过dblink访问远程数据库时，需要先将远程数据传输到本地再进行处理，在完成这个动作之前该会话处于SQL*Net message from dblink等待。该等待主要发生在如下几种情形：</p>
+<ol>
+<li>数据库中有大量的物化视图需要定时同步远程数据库至本地。</li>
+<li>数据库中有大量SQL语句需要通过dblink从远程获取数据。</li>
+</ol>
+<p>如何调优：</p>
+<ol>
+<li>针对物化视图我们首先需要减少不必要的物化视图数量，同时采用增量更新的方式，对于DML操作频繁的主表我们需要提高刷新频率。</li>
+<li>针对SQL语句中有大量dblink的语句我们需要尽量减少dblink的访问。</li>
+<li>如果不能减少可以通过在源库建立view的方式使其在源库执行。</li>
+<li>也可以使用DRIVING_SITE hint的方式，手动指定oracle让其在源库执行。</li>
+</ol>
+<h4 id="3-7-7-SQL-Net-message-to-dblink"><a href="#3-7-7-SQL-Net-message-to-dblink" class="headerlink" title="3.7.7 SQL*Net message to dblink"></a>3.7.7 SQL*Net message to dblink</h4><p>这个等待事件发生在会话在等待一个远程数据库一个确认信息，确认其发送的数据远程数据库是否收到，该数据通过dblink发送。一般是由于目标服务器无法及时接受信息，Oracle将该等待事件列为Network类。</p>
+<ul>
+<li><p>查询实时的等待：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> v$session_wait <span class="keyword">where</span> event <span class="operator">=</span> <span class="string">&#x27;SQL*Net message to dblink&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>P1代表driver id。</li>
+<li>P2代表通过dblink传输的字节数。</li>
+</ul>
+</li>
+<li><p>查询非实时的等待：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line">  <span class="keyword">from</span> v$session_event</span><br><span class="line"> <span class="keyword">where</span> event <span class="keyword">like</span> <span class="string">&#x27;%SQL*Net message to dblink%&#x27;</span></span><br><span class="line"> <span class="keyword">order</span> <span class="keyword">by</span> time_waited <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+
+<p>注意这里的信息是从实例起来的汇总，同时由于SID是可以复用的，所以查看出来的SID并不代表上次的语句是这个等待</p>
+</li>
+</ul>
+<p>当我们的SQL语句通过dblink访问远程数据库时，需要先将远程数据传输到本地再进行处理，这时远端数据库会发送数据至本地，此时远端数据库如不能及时接受消息，会话处于SQL*Net message to dblink等待。该等待主要发生在如下几种情形：</p>
+<ol>
+<li>数据库中有大量的物化视图需要定时同步远程数据库至本地。</li>
+<li>数据库中有大量SQL语句需要通过dblink从远程获取数据。</li>
+</ol>
+<p>如何调优：</p>
+<ol>
+<li>针对物化视图我们首先需要减少不必要的物化视图数量，同时采用增量更新的方式，对于DML操作频繁的主表我们需要提高刷新频率。</li>
+<li>针对SQL语句中有大量dblink的语句我们需要尽量减少dblink的访问。</li>
+<li>如果不能减少可以通过在源库建立view的方式使其在源库执行。</li>
+<li>也可以使用DRIVING_SITE hint的方式，手动指定oracle让其在源库执行。</li>
+</ol>
+<h4 id="3-7-8-SQL-Net-message-from-client"><a href="#3-7-8-SQL-Net-message-from-client" class="headerlink" title="3.7.8 SQL*Net message from client"></a>3.7.8 SQL*Net message from client</h4><p>这个等待事件发生在会话在完成请求后等待后续client发送命令，查询 <code>v$session</code> 可以看到处于这种等待事件的session状态为非活动。Oracle将该等待事件列为Idle类，对于此类等待我们无须理会。</p>
+<p>通过如下语句查询实时的等待事件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"> <span class="keyword">from</span> v$session_wait</span><br><span class="line"><span class="keyword">where</span> event <span class="operator">=</span> <span class="string">&#x27;SQL*Net message from client&#x27;</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> sid</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-7-9-SQL-Net-message-to-client"><a href="#3-7-9-SQL-Net-message-to-client" class="headerlink" title="3.7.9 SQL*Net message to client"></a>3.7.9 SQL*Net message to client</h4><p>这个等待事件发生在会话发送数据到客户端时客户端无法及时接受时发生，Oracle将该等待事件列为Network类。</p>
+<p>通过如下语句查询实时的等待事件</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"> <span class="keyword">from</span> v$session_wait</span><br><span class="line"><span class="keyword">where</span> event <span class="operator">=</span> <span class="string">&#x27;SQL*Net message to client&#x27;</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> sid</span><br></pre></td></tr></table></figure>
+
+
+
+<p>查询非实时的等待事件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"> <span class="keyword">from</span> v$session_event</span><br><span class="line"><span class="keyword">where</span> event <span class="operator">=</span><span class="string">&#x27;SQL*Net message to client&#x27;</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> time_waited <span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>该等待一般是由网络问题导致。</p>
+<h3 id="3-8-Wait-Events-Statistics"><a href="#3-8-Wait-Events-Statistics" class="headerlink" title="3.8 Wait Events Statistics"></a>3.8 Wait Events Statistics</h3><h4 id="3-8-1-Time-Model-Statistics"><a href="#3-8-1-Time-Model-Statistics" class="headerlink" title="3.8.1 Time Model Statistics"></a>3.8.1 Time Model Statistics</h4><p>该视图说明的是各过程所占的资源比例：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010108.png"></p>
+<p>我们注意到所有 <code>% of DB Time</code> 总和大于100%，因为这是一个累计的比例，下面DB CPU相关的过程包含在DB CPU中。我们需要注意的是一些异常的高占用情况，如hard parse elapsed time (硬解析时间)占用时间过长等。</p>
+<ul>
+<li>Statistic Name：表示状态的名称。</li>
+<li>Time (s)：表示在awr报告时间内持续的时间。</li>
+<li>% of DB Time：表示和DB Time相比其占用的比例。<code>DB Time=DB CPU+Non-Idle Wait Time</code> 。</li>
+</ul>
+<p>Oracle进程(服务器，前台，影子等)的运行需要消耗CPU时间，我们把这些时间成为DB CPU ，注意后台进程的消耗不包括在DB Time中。如果一个进程不消耗CPU资源，它就会处于等待状态。等待包含空闲等待和非空闲等待，非空闲等待（顺序读,离散读,log sync,锁,闩等）所消耗的时间我们称为 <code>Non-Idle Wait Time</code> 。</p>
+<ul>
+<li>sql execute elapsed time：表示执行SQL语句语句所用的时间，102%说明大部分DB Time都在执行SQL语句，这是非常好的，说明DB Time没有浪费在其他动作上，如解析。</li>
+<li>DB CPU：如上面所说表示消耗CPU的时间。</li>
+<li>parse time elapsed：表示解析所占用的时间。</li>
+<li>hard parse elapsed time：表示硬解析所占用的时间。</li>
+<li>DB time = DB CPU+Non-Idle Wait Time。</li>
+<li>background elapsed time：表示后台进程持续的时间。</li>
+<li>background cpu time：表示后台进程的CPU时间。</li>
+</ul>
+<p><strong>如何计算Non-Idle Wait Time？</strong></p>
+<p><code>Non-Idle Wait Time=DB Time-DB CPU</code> 通过上面公式我们可以计算非空闲等待时间的时间.回到上图，Non-Idle Wait Time=18877-11432=7445。</p>
+<p><strong>80/20原则</strong>：这个原则告诉我们80%的等待是由20%的事件造成的，我们需要集中精力解决排行前几的事件</p>
+<h4 id="3-8-2-Operating-System-Statistics"><a href="#3-8-2-Operating-System-Statistics" class="headerlink" title="3.8.2 Operating System Statistics"></a>3.8.2 Operating System Statistics</h4><p>该视图是操作系统层面的性能指标</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010109.png"></p>
+<p>该部分说明的是OS层面的一些状态信息,如CPU,IO</p>
+<ul>
+<li>CPU使用率=BUSY_TIME/(BUSY_TIME+IDLE_TIME)=20%。</li>
+<li>BUSY_TIME=SYS_TIME+USER_TIME。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010110.png"></p>
+<p>这里需要注意%iowait，他代表CPU在等待io操作完成，这个可能是io过慢或者io操作过多导致。</p>
+<h4 id="3-8-3-Wait-Class"><a href="#3-8-3-Wait-Class" class="headerlink" title="3.8.3 Wait Class"></a>3.8.3 Wait Class</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010117.png"></p>
+<p>这部分是根据等待的类型来排序等待事件。</p>
+<h4 id="3-8-4-Wait-Events"><a href="#3-8-4-Wait-Events" class="headerlink" title="3.8.4 Wait Events"></a>3.8.4 Wait Events</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010118.png"></p>
+<p>这部分以具体的等待事件名称来进行排序，让我们可以清晰的知道是什么等待事件占的比例高。</p>
+<h4 id="3-8-5-Background-Wait-Events"><a href="#3-8-5-Background-Wait-Events" class="headerlink" title="3.8.5 Background Wait Events"></a>3.8.5 Background Wait Events</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010119.png"></p>
+<p>这部分是以后台进程的等待事件来进行排序的，让我们知道后台等待事件哪些占用的比例高。</p>
+<h4 id="3-8-6-Service-Statistics"><a href="#3-8-6-Service-Statistics" class="headerlink" title="3.8.6 Service Statistics"></a>3.8.6 Service Statistics</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010120.png"></p>
+<p>这部分是根据服务名称来所消耗的DB Time进行排序的。<code>SYS$USERS</code> 指的是用户连接是没有制定服务名称时默认的服务名。</p>
+<h4 id="3-8-7-Service-Wait-Class-Stats"><a href="#3-8-7-Service-Wait-Class-Stats" class="headerlink" title="3.8.7 Service Wait Class Stats"></a>3.8.7 Service Wait Class Stats</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010121.png"></p>
+<p>这部分是将上一部分的DB Time细分后展现。</p>
+<h3 id="3-9-SQL-Statistics"><a href="#3-9-SQL-Statistics" class="headerlink" title="3.9 SQL Statistics"></a>3.9 SQL Statistics</h3><p>接下来是最重要的一块，能帮助我们定位占用相关资源的TOP SQL语句：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010111.png"></p>
+<h4 id="3-9-1-SQL-ordered-by-Elapsed-Time"><a href="#3-9-1-SQL-ordered-by-Elapsed-Time" class="headerlink" title="3.9.1 SQL ordered by Elapsed Time"></a>3.9.1 SQL ordered by Elapsed Time</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010112.png"></p>
+<p>上图为根据持续时间排序的SQL语句，所有栏位可根据字面上意思得出意义</p>
+<ul>
+<li>如executions过多可能会引起CPU占用率高</li>
+<li>如executions低，而elapsed time很高，则需要优化该SQL，降低执行时间</li>
+</ul>
+<p>需要注意的是execution如果为0不代表未执行，代表在awr报告的持续范围内该语句未执行完成。</p>
+<h4 id="3-9-2-SQL-ordered-by-CPU-Time"><a href="#3-9-2-SQL-ordered-by-CPU-Time" class="headerlink" title="3.9.2 SQL ordered by CPU Time"></a>3.9.2 SQL ordered by CPU Time</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010124.png"></p>
+<p>这部分是按SQL语句消耗的CPU时间来排序的。</p>
+<h4 id="3-9-3-SQL-ordered-by-Gets"><a href="#3-9-3-SQL-ordered-by-Gets" class="headerlink" title="3.9.3 SQL ordered by Gets"></a>3.9.3 SQL ordered by Gets</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010125.png"></p>
+<p>该部分是按SQL语句的逻辑读来排序的。这里需要注意的是执行次数非常多的语句，可能会导致操作系统CPU使用率飙升。</p>
+<h4 id="3-9-4-SQL-ordered-by-Reads"><a href="#3-9-4-SQL-ordered-by-Reads" class="headerlink" title="3.9.4 SQL ordered by Reads"></a>3.9.4 SQL ordered by Reads</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010126.png"></p>
+<p>这部分是按SQL语句的物理读来排序的。</p>
+<h4 id="3-9-5-SQL-ordered-by-Executions"><a href="#3-9-5-SQL-ordered-by-Executions" class="headerlink" title="3.9.5 SQL ordered by Executions"></a>3.9.5 SQL ordered by Executions</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010127.png"></p>
+<p>这部分是按SQL语句的执行次数来进行排序的。这里需要注意的是执行次数非常多的语句，可能会导致操作系统CPU使用率飙升。</p>
+<h4 id="3-9-6-SQL-ordered-by-Parse-Calls"><a href="#3-9-6-SQL-ordered-by-Parse-Calls" class="headerlink" title="3.9.6 SQL ordered by Parse Calls"></a>3.9.6 SQL ordered by Parse Calls</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010128.png"></p>
+<p>这部分是按SQL语句的解析次数进行排序的.</p>
+<ul>
+<li><code>Parse Calls/Executions &gt; 1</code> ：说明每次执行需要多次解析。</li>
+<li><code>Parse Calls/Executions &lt; 1</code> ：说明一次解析可供多次执行使用。</li>
+</ul>
+<p>越接近1说明解析没有被复用。</p>
+<h4 id="3-9-7-SQL-ordered-by-Sharable-Memory"><a href="#3-9-7-SQL-ordered-by-Sharable-Memory" class="headerlink" title="3.9.7 SQL ordered by Sharable Memory"></a>3.9.7 SQL ordered by Sharable Memory</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010129.png"></p>
+<p>该部分按SQL语句使用的共享内存排序。</p>
+<h4 id="3-9-8-SQL-ordered-by-Version-Count"><a href="#3-9-8-SQL-ordered-by-Version-Count" class="headerlink" title="3.9.8 SQL ordered by Version Count"></a>3.9.8 SQL ordered by Version Count</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20211201/202112010130.png"></p>
+<p>该部分按照SQL 语句的version count数量进行排序。version count 多说明相同语句在内存中shared pool没有被复用，需要查看具体原因。</p>
+<h4 id="3-9-9-Complete-List-of-SQL-Text"><a href="#3-9-9-Complete-List-of-SQL-Text" class="headerlink" title="3.9.9 Complete List of SQL Text"></a>3.9.9 Complete List of SQL Text</h4><p>这里列出了上面提到的所有SQL语句的全部语句。</p>
+<hr>
+<p>参考：</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="http://www.zhaibibei.cn/awr/">Oracle awr 报告全解析</a>》</p>
+<p>🔗 《<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1861840">Oracle-绑定变量binding variable解读 </a>》</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Lys
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://linyishui.top/2021123001.html" title="Oracle-AWR报告 &lt;整&gt;">http://linyishui.top/2021123001.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/sql/" rel="tag"><i class="fa fa-tag"></i> sql</a>
+              <a href="/tags/oracle/" rel="tag"><i class="fa fa-tag"></i> oracle</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021121801.html" rel="prev" title="海量数据处理">
+                  <i class="fa fa-chevron-left"></i> 海量数据处理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lys</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">3.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">52:32</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{"enable":true,"spinner":true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: '32px',
+  left: 'unset',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: true,
+  label: '🌓',
+  autoMatchOsTheme: true
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+</script>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"LAILAIWA/LAILAIWA.github.io","issue_term":"pathname","theme":"github-light"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+
+
+</body>
+</html>
