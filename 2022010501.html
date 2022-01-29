@@ -31,7 +31,7 @@
 <meta property="og:description" content="记录Oracle日常所遇到的问题排查情况。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-01-05T01:49:32.000Z">
-<meta property="article:modified_time" content="2022-01-06T03:13:34.000Z">
+<meta property="article:modified_time" content="2022-01-21T07:53:39.987Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="sql">
 <meta property="article:tag" content="oracle">
@@ -159,7 +159,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E8%AE%B0%E5%BD%95"><span class="nav-text">Oracle问题排查记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2SQL"><span class="nav-text">慢查询SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ORA-24347"><span class="nav-text">ORA-24347</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E8%AE%B0%E5%BD%95"><span class="nav-text">Oracle问题排查记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2SQL"><span class="nav-text">慢查询SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ORA-24347"><span class="nav-text">ORA-24347</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E7%8E%B0%E8%B1%A1"><span class="nav-text">（1）现象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%88%86%E6%9E%90"><span class="nav-text">（2）分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%A7%A3%E5%86%B3"><span class="nav-text">（3）解决</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2SQL-%E5%A4%A7%E8%A1%A8%E5%85%B3%E8%81%94"><span class="nav-text">慢查询SQL-大表关联</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -176,20 +176,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">329</span>
+          <span class="site-state-item-count">330</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">109</span>
+        <span class="site-state-item-count">110</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -295,7 +295,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-06 11:13:34" itemprop="dateModified" datetime="2022-01-06T11:13:34+08:00">2022-01-06</time>
+        <time title="修改时间：2022-01-21 15:53:39" itemprop="dateModified" datetime="2022-01-21T15:53:39+08:00">2022-01-21</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,14 +315,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.1k</span>
+      <span>2.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -336,13 +336,13 @@
     <div class="post-body" itemprop="articleBody">
         <h1 id="Oracle问题排查记录"><a href="#Oracle问题排查记录" class="headerlink" title="Oracle问题排查记录"></a>Oracle问题排查记录</h1><p>本篇开始记录日常工作中遇到的Oracle数据库相关问题和排查过程，隐去了敏感信息，内容整理形式为个人备忘录，一些问题受限于个人能力和时间不会进行全面的解析。</p>
 <h3 id="慢查询SQL"><a href="#慢查询SQL" class="headerlink" title="慢查询SQL"></a>慢查询SQL</h3><p>相关内容：《<a href="../2019091401.html" title="Title">SQL规范和优化</a>》查看优化案例内容。</p>
-<h3 id="ORA-24347"><a href="#ORA-24347" class="headerlink" title="ORA-24347"></a>ORA-24347</h3><p>某生产环境突然发现异常情况，SQL查询一直报错，导致后续流程无法执行。远程查看生产日志后发现报错信息为：<code>ORA-24347: Warning of a NULL column in an aggregate function but no null field</code> 。</p>
+<h3 id="ORA-24347"><a href="#ORA-24347" class="headerlink" title="ORA-24347"></a>ORA-24347</h3><h4 id="（1）现象"><a href="#（1）现象" class="headerlink" title="（1）现象"></a>（1）现象</h4><p>某生产环境突然发现异常情况，SQL查询一直报错，导致后续流程无法执行。远程查看生产日志后发现报错信息为：<code>ORA-24347: Warning of a NULL column in an aggregate function but no null field</code> 。</p>
 <p>有问题的SQL：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span>  a.XXX, ...,</span><br><span class="line">        (<span class="keyword">case</span> <span class="keyword">when</span> b.xxx <span class="keyword">is</span> <span class="keyword">null</span> <span class="keyword">then</span> <span class="number">0</span> <span class="keyword">else</span> b.xxx <span class="keyword">end</span>) xxx,</span><br><span class="line"><span class="keyword">from</span> table_1 a</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> (<span class="keyword">select</span> <span class="built_in">min</span>(xxx) xxx, ... </span><br><span class="line">           <span class="keyword">from</span> table_2 </span><br><span class="line">           <span class="keyword">group</span> <span class="keyword">by</span> ...) c  </span><br><span class="line"><span class="keyword">on</span> ...</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> table_2 b </span><br><span class="line"><span class="keyword">on</span> ...</span><br><span class="line"><span class="keyword">where</span> a.xxx_1 <span class="operator">=</span> :xxx_1 <span class="keyword">and</span> a.xxx_date <span class="operator">&gt;=</span> :begin_date <span class="keyword">and</span> a.xxx_date <span class="operator">&lt;=</span> :end_date</span><br></pre></td></tr></table></figure>
 
 
 
-<p>根据异常信息可知问题是聚合函数中Column字段中存在Null值，但该系统所有字段应该都有加非空约束，所以首先排查了表结构和约束是否有构建成功：</p>
+<h4 id="（2）分析"><a href="#（2）分析" class="headerlink" title="（2）分析"></a>（2）分析</h4><p>根据异常信息可知问题是聚合函数中Column字段中存在Null值，但该系统所有字段应该都有加非空约束，所以首先排查了表结构和约束是否有构建成功：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> TABLE_NAME,COLUMN_NAME,DATA_TYPE,DATA_LENGTH,DATA_PRECISION,DATA_SCALE,NULLABLE,DATA_DEFAULT</span><br><span class="line"><span class="keyword">from</span> user_tab_columns </span><br><span class="line"><span class="keyword">where</span> TABLE_NAME <span class="operator">=</span> <span class="string">&#x27;table_2&#x27;</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> DATA_LENGTH,TABLE_NAME,COLUMN_NAME,DATA_TYPE;</span><br></pre></td></tr></table></figure>
 
 
@@ -352,7 +352,13 @@
 <li>现场有多个库环境，我远程看的是正常数据的库，但实际程序执行SQL是异常的库环境（但这个猜想被现场同事否认）。</li>
 <li>PLSQL工具查看时隐藏了异常数据，导致我们无法通过查询命中到Null值的数据（生产无其他工具可供使用）。</li>
 </ol>
-<p>所以先临时修改SQL，将 <code>min(xxx)</code> 改为 <code>min(NVL(xxx, &#39; &#39;))</code> ，挑了一个空闲间隔重启了程序。重新执行相关功能后，发现问题解决。证明异常数据存在，但暂时无法定位到。</p>
+<h4 id="（3）解决"><a href="#（3）解决" class="headerlink" title="（3）解决"></a>（3）解决</h4><p>所以先临时修改SQL，将 <code>min(xxx)</code> 改为 <code>min(NVL(xxx, &#39; &#39;))</code> ，挑了一个空闲间隔重启了程序。重新执行相关功能后，发现问题解决。证明异常数据存在，但暂时无法定位到。</p>
+<h3 id="慢查询SQL-大表关联"><a href="#慢查询SQL-大表关联" class="headerlink" title="慢查询SQL-大表关联"></a>慢查询SQL-大表关联</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--     1.查询当前在活动的会话获得SQL_ID值</span></span><br><span class="line"><span class="keyword">select</span> a.USERNAME,</span><br><span class="line">       a.SQL_ID,</span><br><span class="line">       a.SID,</span><br><span class="line">       a.MACHINE,</span><br><span class="line">       a.PROGRAM,</span><br><span class="line">       a.sql_hash_value,</span><br><span class="line">       a.blocking_session_status</span><br><span class="line"><span class="keyword">from</span> v$session a</span><br><span class="line"><span class="keyword">where</span> a.status <span class="operator">=</span> <span class="string">&#x27;ACTIVE&#x27;</span></span><br><span class="line">  <span class="keyword">AND</span> a.SCHEMA# <span class="operator">&gt;</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">--     2.获得此sql_id对应的sql语句 </span></span><br><span class="line"><span class="keyword">select</span> sql_id, sql_fulltext <span class="keyword">from</span> v$<span class="keyword">sql</span> <span class="keyword">where</span> sql_id <span class="operator">=</span> <span class="string">&#x27;9j2c5zhzvsfd7&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">--     3.查询此sql_id历史执行信息</span></span><br><span class="line"><span class="keyword">select</span> a.INSTANCE_NUMBER,</span><br><span class="line">       a.snap_id,</span><br><span class="line">       a.sql_id,</span><br><span class="line">       a.plan_hash_value,</span><br><span class="line">       b.begin_interval_time</span><br><span class="line"><span class="keyword">from</span> dba_hist_sqlstat a, dba_hist_snapshot b</span><br><span class="line"><span class="keyword">where</span> sql_id <span class="operator">=</span> <span class="string">&#x27;9j2c5zhzvsfd7&#x27;</span></span><br><span class="line">  <span class="keyword">and</span> a.snap_id <span class="operator">=</span> b.snap_id</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> instance_number, snap_id;</span><br><span class="line"></span><br><span class="line"><span class="comment">--     4.查询变更前后的执行计划</span></span><br><span class="line"><span class="keyword">select</span> sql_id,</span><br><span class="line">       plan_hash_value,</span><br><span class="line">       id,</span><br><span class="line">       operation,</span><br><span class="line">       options,</span><br><span class="line">       object_owner,</span><br><span class="line">       object_name,</span><br><span class="line">       depth,</span><br><span class="line">       cost,</span><br><span class="line">       <span class="type">timestamp</span></span><br><span class="line"><span class="keyword">from</span> DBA_HIST_SQL_PLAN</span><br><span class="line"><span class="keyword">where</span> sql_id <span class="operator">=</span> <span class="string">&#x27;dxx8pvcttf5qv&#x27;</span></span><br><span class="line">  <span class="keyword">and</span> plan_hash_value <span class="keyword">in</span> (<span class="number">1904478120</span>, <span class="number">2125777269</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">--     5.根据执行计划的不同点查找原因-使用coe_xfr_sql_profile.sql可以发现两种执行计划的效率(AVG_ET_SECS)</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">from</span> dba_objects</span><br><span class="line"><span class="keyword">where</span> object_name <span class="operator">=</span> <span class="string">&#x27;MOD_LOTHISTORY_IDX01&#x27;</span></span><br><span class="line">  <span class="keyword">and</span> owner <span class="operator">=</span> <span class="string">&#x27;MDWMGR&#x27;</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> last_ddl_time <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
 <hr>
 
     </div>
@@ -393,6 +399,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022012901.html" rel="next" title="食物归纳">
+                  食物归纳 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -433,7 +442,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">52:44</span>
+    <span title="站点阅读时长">52:47</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
