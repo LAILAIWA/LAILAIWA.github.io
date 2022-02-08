@@ -30,12 +30,14 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="《Redis开发与运维》读书笔记（六）复制，内容包括：配置，拓扑，原理，开发与运维中的问题等。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060124.jpg">
 <meta property="article:published_time" content="2020-03-10T08:25:54.000Z">
-<meta property="article:modified_time" content="2021-08-08T10:58:25.181Z">
+<meta property="article:modified_time" content="2022-02-03T11:40:01.414Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060124.jpg">
 
 
 <link rel="canonical" href="http://linyishui.top/2020031001.html">
@@ -295,7 +297,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-08-08 18:58:25" itemprop="dateModified" datetime="2021-08-08T18:58:25+08:00">2021-08-08</time>
+        <time title="修改时间：2022-02-03 19:40:01" itemprop="dateModified" datetime="2022-02-03T19:40:01+08:00">2022-02-03</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,7 +317,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>186</span>
+      <span>829</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -334,7 +336,29 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="第六章-复制"><a href="#第六章-复制" class="headerlink" title="第六章 复制"></a>第六章 复制</h1><h2 id="6-1-配置"><a href="#6-1-配置" class="headerlink" title="6.1 配置"></a>6.1 配置</h2><h3 id="6-1-1-建立复制"><a href="#6-1-1-建立复制" class="headerlink" title="6.1.1 建立复制"></a>6.1.1 建立复制</h3><h3 id="6-1-2-断开复制"><a href="#6-1-2-断开复制" class="headerlink" title="6.1.2 断开复制"></a>6.1.2 断开复制</h3><h3 id="6-1-3-安全性"><a href="#6-1-3-安全性" class="headerlink" title="6.1.3 安全性"></a>6.1.3 安全性</h3><h3 id="6-1-4-只读"><a href="#6-1-4-只读" class="headerlink" title="6.1.4 只读"></a>6.1.4 只读</h3><h3 id="6-1-5-传输延迟"><a href="#6-1-5-传输延迟" class="headerlink" title="6.1.5 传输延迟"></a>6.1.5 传输延迟</h3><hr>
+        <h1 id="第六章-复制"><a href="#第六章-复制" class="headerlink" title="第六章 复制"></a>第六章 复制</h1><p>分布式系统中为了解决单点问题，会把数据复制多个副本部署到其它机器，来满足故障恢复和负载均衡等需求。对于Redis来说，复制功能是高可用的基础。</p>
+<h2 id="6-1-配置"><a href="#6-1-配置" class="headerlink" title="6.1 配置"></a>6.1 配置</h2><h3 id="6-1-1-建立复制"><a href="#6-1-1-建立复制" class="headerlink" title="6.1.1 建立复制"></a>6.1.1 建立复制</h3><p>参与复制的Redis实例划分为主节点和从节点（默认都是主节点）。每个从节点只能有一个主节点，主节点可以同时有多个从节点。<strong>复制的数据流是单向的，只能由主节点复制到从节点</strong>。</p>
+<p>配置方式：</p>
+<ol>
+<li>在配置文件中加入 <code>slaveof &#123;masterHost&#125; &#123;masterPort&#125;</code> 随Redis启动生效。</li>
+<li>在 redis-server 启动命令后加入 <code>--slaveof &#123;masterHost&#125; &#123;masterPort&#125;</code> 生效。</li>
+<li>直接使用命令：<code>slaveof &#123;masterHost&#125; &#123;masterPort&#125;</code> 生效。</li>
+</ol>
+<p>slaveof配置都是在从节点发起，针对主节点的任何修改都会同步到从节点。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 6380为从节点，6379为主节点</span></span><br><span class="line">127.0.0.1:6380&gt;slaveof 127.0.0.1 6379</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt;set hello redis</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt;get hello</span><br><span class="line">&quot;redis&quot;</span><br><span class="line">127.0.0.1:6380&gt;get hello</span><br><span class="line">&quot;redis&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060124.jpg"></p>
+<p>slaveof本身是异步命令，节点只保存主节点信息后返回，后续复制流程在节点内部异步执行。</p>
+<p>查看复制相关状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="6-1-2-断开复制"><a href="#6-1-2-断开复制" class="headerlink" title="6.1.2 断开复制"></a>6.1.2 断开复制</h3><h3 id="6-1-3-安全性"><a href="#6-1-3-安全性" class="headerlink" title="6.1.3 安全性"></a>6.1.3 安全性</h3><h3 id="6-1-4-只读"><a href="#6-1-4-只读" class="headerlink" title="6.1.4 只读"></a>6.1.4 只读</h3><h3 id="6-1-5-传输延迟"><a href="#6-1-5-传输延迟" class="headerlink" title="6.1.5 传输延迟"></a>6.1.5 传输延迟</h3><hr>
 <h2 id="6-2-拓扑"><a href="#6-2-拓扑" class="headerlink" title="6.2 拓扑"></a>6.2 拓扑</h2><hr>
 <h2 id="6-3-原理"><a href="#6-3-原理" class="headerlink" title="6.3 原理"></a>6.3 原理</h2><h3 id="6-3-1-复制过程"><a href="#6-3-1-复制过程" class="headerlink" title="6.3.1 复制过程"></a>6.3.1 复制过程</h3><h3 id="6-3-2-数据同步"><a href="#6-3-2-数据同步" class="headerlink" title="6.3.2 数据同步"></a>6.3.2 数据同步</h3><h3 id="6-3-3-全量复制"><a href="#6-3-3-全量复制" class="headerlink" title="6.3.3 全量复制"></a>6.3.3 全量复制</h3><h3 id="6-3-4-部分复制"><a href="#6-3-4-部分复制" class="headerlink" title="6.3.4 部分复制"></a>6.3.4 部分复制</h3><h3 id="6-3-5-心跳"><a href="#6-3-5-心跳" class="headerlink" title="6.3.5 心跳"></a>6.3.5 心跳</h3><h3 id="6-3-6-异步复制"><a href="#6-3-6-异步复制" class="headerlink" title="6.3.6 异步复制"></a>6.3.6 异步复制</h3><hr>
 <h2 id="6-4-开发与运维中的问题"><a href="#6-4-开发与运维中的问题" class="headerlink" title="6.4 开发与运维中的问题"></a>6.4 开发与运维中的问题</h2><h3 id="6-4-1-读写分离"><a href="#6-4-1-读写分离" class="headerlink" title="6.4.1 读写分离"></a>6.4.1 读写分离</h3><h3 id="6-4-2-主从配置不一致"><a href="#6-4-2-主从配置不一致" class="headerlink" title="6.4.2 主从配置不一致"></a>6.4.2 主从配置不一致</h3><h3 id="6-4-3-规避全量复制"><a href="#6-4-3-规避全量复制" class="headerlink" title="6.4.3 规避全量复制"></a>6.4.3 规避全量复制</h3><h3 id="6-4-4-规避复制风暴"><a href="#6-4-4-规避复制风暴" class="headerlink" title="6.4.4 规避复制风暴"></a>6.4.4 规避复制风暴</h3><hr>
@@ -394,8 +418,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020030801.html" rel="prev" title="《Redis开发与运维》读书笔记（五）持久化（未完成）">
-                  <i class="fa fa-chevron-left"></i> 《Redis开发与运维》读书笔记（五）持久化（未完成）
+                <a href="/2020030801.html" rel="prev" title="《Redis开发与运维》读书笔记（五）持久化">
+                  <i class="fa fa-chevron-left"></i> 《Redis开发与运维》读书笔记（五）持久化
                 </a>
             </div>
             <div class="post-nav-item">
@@ -442,7 +466,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">52:53</span>
+    <span title="站点阅读时长">52:55</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
