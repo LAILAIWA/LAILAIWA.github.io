@@ -25,16 +25,35 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="《Redis开发与运维》读书笔记（六）复制，内容包括：配置，拓扑，原理，开发与运维中的问题等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《Redis开发与运维》读书笔记（六）复制（未完成）">
+<meta property="og:title" content="《Redis开发与运维》读书笔记（六）复制">
 <meta property="og:url" content="http://linyishui.top/2020031001.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="《Redis开发与运维》读书笔记（六）复制，内容包括：配置，拓扑，原理，开发与运维中的问题等。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060124.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060125.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060126.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060127.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060128.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060130.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060131.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060132.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060129.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060133.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060134.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060135.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060136.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060137.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060138.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060139.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060140.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060141.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060142.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060143.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060144.jpg">
 <meta property="article:published_time" content="2020-03-10T08:25:54.000Z">
-<meta property="article:modified_time" content="2022-02-03T11:40:01.414Z">
+<meta property="article:modified_time" content="2022-02-16T14:28:10.009Z">
 <meta property="article:author" content="Lys">
-<meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060124.jpg">
@@ -44,10 +63,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031001.html","path":"2020031001.html","title":"《Redis开发与运维》读书笔记（六）复制（未完成）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031001.html","path":"2020031001.html","title":"《Redis开发与运维》读书笔记（六）复制"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>《Redis开发与运维》读书笔记（六）复制（未完成） | 俺的部落格</title>
+<title>《Redis开发与运维》读书笔记（六）复制 | 俺的部落格</title>
   
 
 
@@ -161,7 +180,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%A4%8D%E5%88%B6"><span class="nav-text">第六章 复制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E9%85%8D%E7%BD%AE"><span class="nav-text">6.1 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-1-%E5%BB%BA%E7%AB%8B%E5%A4%8D%E5%88%B6"><span class="nav-text">6.1.1 建立复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-2-%E6%96%AD%E5%BC%80%E5%A4%8D%E5%88%B6"><span class="nav-text">6.1.2 断开复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-3-%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-text">6.1.3 安全性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-4-%E5%8F%AA%E8%AF%BB"><span class="nav-text">6.1.4 只读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-5-%E4%BC%A0%E8%BE%93%E5%BB%B6%E8%BF%9F"><span class="nav-text">6.1.5 传输延迟</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E6%8B%93%E6%89%91"><span class="nav-text">6.2 拓扑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E5%8E%9F%E7%90%86"><span class="nav-text">6.3 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-1-%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B"><span class="nav-text">6.3.1 复制过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-2-%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="nav-text">6.3.2 数据同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-3-%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6"><span class="nav-text">6.3.3 全量复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-4-%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6"><span class="nav-text">6.3.4 部分复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-5-%E5%BF%83%E8%B7%B3"><span class="nav-text">6.3.5 心跳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-6-%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-text">6.3.6 异步复制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E5%BC%80%E5%8F%91%E4%B8%8E%E8%BF%90%E7%BB%B4%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">6.4 开发与运维中的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-1-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-text">6.4.1 读写分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-2-%E4%B8%BB%E4%BB%8E%E9%85%8D%E7%BD%AE%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-text">6.4.2 主从配置不一致</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-3-%E8%A7%84%E9%81%BF%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6"><span class="nav-text">6.4.3 规避全量复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-4-%E8%A7%84%E9%81%BF%E5%A4%8D%E5%88%B6%E9%A3%8E%E6%9A%B4"><span class="nav-text">6.4.4 规避复制风暴</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%A4%8D%E5%88%B6"><span class="nav-text">第六章 复制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-%E9%85%8D%E7%BD%AE"><span class="nav-text">6.1 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-1-%E5%BB%BA%E7%AB%8B%E5%A4%8D%E5%88%B6"><span class="nav-text">6.1.1 建立复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-2-%E6%96%AD%E5%BC%80%E5%A4%8D%E5%88%B6"><span class="nav-text">6.1.2 断开复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-3-%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-text">6.1.3 安全性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-4-%E5%8F%AA%E8%AF%BB"><span class="nav-text">6.1.4 只读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-5-%E4%BC%A0%E8%BE%93%E5%BB%B6%E8%BF%9F"><span class="nav-text">6.1.5 传输延迟</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-2-%E6%8B%93%E6%89%91"><span class="nav-text">6.2 拓扑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E4%B8%80%E4%B8%BB%E4%B8%80%E4%BB%8E%E7%BB%93%E6%9E%84"><span class="nav-text">（1）一主一从结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%BB%93%E6%9E%84"><span class="nav-text">（2）一主多从结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E6%A0%91%E7%8A%B6%E4%B8%BB%E4%BB%8E%E7%BB%93%E6%9E%84"><span class="nav-text">（3）树状主从结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-3-%E5%8E%9F%E7%90%86"><span class="nav-text">6.3 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-1-%E5%A4%8D%E5%88%B6%E8%BF%87%E7%A8%8B"><span class="nav-text">6.3.1 复制过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-2-%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="nav-text">6.3.2 数据同步</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%A4%8D%E5%88%B6%E5%81%8F%E7%A7%BB%E9%87%8F"><span class="nav-text">（1）复制偏移量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%A4%8D%E5%88%B6%E7%A7%AF%E5%8E%8B%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-text">（2）复制积压缓冲区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E4%B8%BB%E8%8A%82%E7%82%B9%E8%BF%90%E8%A1%8CID"><span class="nav-text">（3）主节点运行ID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89psync%E5%91%BD%E4%BB%A4"><span class="nav-text">（4）psync命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-3-%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6"><span class="nav-text">6.3.3 全量复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-4-%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6"><span class="nav-text">6.3.4 部分复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-5-%E5%BF%83%E8%B7%B3"><span class="nav-text">6.3.5 心跳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-6-%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-text">6.3.6 异步复制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-4-%E5%BC%80%E5%8F%91%E4%B8%8E%E8%BF%90%E7%BB%B4%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">6.4 开发与运维中的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-1-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-text">6.4.1 读写分离</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%A4%8D%E5%88%B6%E6%95%B0%E6%8D%AE%E5%BB%B6%E8%BF%9F"><span class="nav-text">（1）复制数据延迟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E8%AF%BB%E5%88%B0%E8%BF%87%E6%9C%9F%E6%95%B0%E6%8D%AE"><span class="nav-text">（2）读到过期数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E4%BB%8E%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C"><span class="nav-text">（3）从节点故障</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-2-%E4%B8%BB%E4%BB%8E%E9%85%8D%E7%BD%AE%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-text">6.4.2 主从配置不一致</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-3-%E8%A7%84%E9%81%BF%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6"><span class="nav-text">6.4.3 规避全量复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-4-%E8%A7%84%E9%81%BF%E5%A4%8D%E5%88%B6%E9%A3%8E%E6%9A%B4"><span class="nav-text">6.4.4 规避复制风暴</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -279,7 +298,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《Redis开发与运维》读书笔记（六）复制（未完成）
+          《Redis开发与运维》读书笔记（六）复制
         </h1>
 
         <div class="post-meta-container">
@@ -297,7 +316,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-02-03 19:40:01" itemprop="dateModified" datetime="2022-02-03T19:40:01+08:00">2022-02-03</time>
+        <time title="修改时间：2022-02-16 22:28:10" itemprop="dateModified" datetime="2022-02-16T22:28:10+08:00">2022-02-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -317,14 +336,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>829</span>
+      <span>10k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -352,16 +371,297 @@
 <p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060124.jpg"></p>
 <p>slaveof本身是异步命令，节点只保存主节点信息后返回，后续复制流程在节点内部异步执行。</p>
 <p>查看复制相关状态：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; info replication</span><br></pre></td></tr></table></figure>
 
 
 
+<h3 id="6-1-2-断开复制"><a href="#6-1-2-断开复制" class="headerlink" title="6.1.2 断开复制"></a>6.1.2 断开复制</h3><p>断开复制不会影响原有数据，命令：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">slaveof</span> <span class="literal">no</span> one</span><br></pre></td></tr></table></figure>
 
 
-<h3 id="6-1-2-断开复制"><a href="#6-1-2-断开复制" class="headerlink" title="6.1.2 断开复制"></a>6.1.2 断开复制</h3><h3 id="6-1-3-安全性"><a href="#6-1-3-安全性" class="headerlink" title="6.1.3 安全性"></a>6.1.3 安全性</h3><h3 id="6-1-4-只读"><a href="#6-1-4-只读" class="headerlink" title="6.1.4 只读"></a>6.1.4 只读</h3><h3 id="6-1-5-传输延迟"><a href="#6-1-5-传输延迟" class="headerlink" title="6.1.5 传输延迟"></a>6.1.5 传输延迟</h3><hr>
-<h2 id="6-2-拓扑"><a href="#6-2-拓扑" class="headerlink" title="6.2 拓扑"></a>6.2 拓扑</h2><hr>
-<h2 id="6-3-原理"><a href="#6-3-原理" class="headerlink" title="6.3 原理"></a>6.3 原理</h2><h3 id="6-3-1-复制过程"><a href="#6-3-1-复制过程" class="headerlink" title="6.3.1 复制过程"></a>6.3.1 复制过程</h3><h3 id="6-3-2-数据同步"><a href="#6-3-2-数据同步" class="headerlink" title="6.3.2 数据同步"></a>6.3.2 数据同步</h3><h3 id="6-3-3-全量复制"><a href="#6-3-3-全量复制" class="headerlink" title="6.3.3 全量复制"></a>6.3.3 全量复制</h3><h3 id="6-3-4-部分复制"><a href="#6-3-4-部分复制" class="headerlink" title="6.3.4 部分复制"></a>6.3.4 部分复制</h3><h3 id="6-3-5-心跳"><a href="#6-3-5-心跳" class="headerlink" title="6.3.5 心跳"></a>6.3.5 心跳</h3><h3 id="6-3-6-异步复制"><a href="#6-3-6-异步复制" class="headerlink" title="6.3.6 异步复制"></a>6.3.6 异步复制</h3><hr>
-<h2 id="6-4-开发与运维中的问题"><a href="#6-4-开发与运维中的问题" class="headerlink" title="6.4 开发与运维中的问题"></a>6.4 开发与运维中的问题</h2><h3 id="6-4-1-读写分离"><a href="#6-4-1-读写分离" class="headerlink" title="6.4.1 读写分离"></a>6.4.1 读写分离</h3><h3 id="6-4-2-主从配置不一致"><a href="#6-4-2-主从配置不一致" class="headerlink" title="6.4.2 主从配置不一致"></a>6.4.2 主从配置不一致</h3><h3 id="6-4-3-规避全量复制"><a href="#6-4-3-规避全量复制" class="headerlink" title="6.4.3 规避全量复制"></a>6.4.3 规避全量复制</h3><h3 id="6-4-4-规避复制风暴"><a href="#6-4-4-规避复制风暴" class="headerlink" title="6.4.4 规避复制风暴"></a>6.4.4 规避复制风暴</h3><hr>
+
+<p>流程：</p>
+<ol>
+<li>断开与主节点的复制关系。</li>
+<li>从节点晋升主节点。</li>
+</ol>
+<p>切换主节点会删除原有数据，操作：</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slaveof &#123;<span class="keyword">new</span><span class="type">MasterIp</span>&#125; &#123;<span class="keyword">new</span><span class="type">MasterPort</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>流程：</p>
+<ol>
+<li>断开与主节点的复制关系。</li>
+<li>与新主节点建立复制关系。</li>
+<li>删除从节点当前所有数据。</li>
+<li>对新主节点进行复制操作。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060125.jpg"></p>
+<h3 id="6-1-3-安全性"><a href="#6-1-3-安全性" class="headerlink" title="6.1.3 安全性"></a>6.1.3 安全性</h3><p>设置 <code>requirepass</code> 参数进行密码验证，客户端访问需要使用auth命令进行校验。从节点和主节点的复制连接是通过一个特殊标识的客户端完成，所以需要配置从节点的 <code>masterauth</code> 与主节点密码一致。</p>
+<h3 id="6-1-4-只读"><a href="#6-1-4-只读" class="headerlink" title="6.1.4 只读"></a>6.1.4 只读</h3><p>默认下，从节点会设置为只读模式：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">slave-read-only</span>=<span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>非必要不要修改从节点数据造成主从不一致。</p>
+<h3 id="6-1-5-传输延迟"><a href="#6-1-5-传输延迟" class="headerlink" title="6.1.5 传输延迟"></a>6.1.5 传输延迟</h3><p>Redis提供了 <code>repl-disable-tcp-nodelay</code> 参数来控制是否关闭 TCP_NODELAY，默认关闭。</p>
+<ul>
+<li>关闭时，主节点产生的命令数据无论大小都会及时的发送给从节点，主从延迟很小，但增加了网络带宽的消耗。适用于主从节点网络连接良好，如同机架或同机房部署。</li>
+<li>开启时，主节点会合并较小的TCP数据包来节省带宽。默认发送间隔取决于Linux内核，一般为40毫秒。适用于主从网络环境复杂或带宽紧张的场景，如跨机房部署。</li>
+</ul>
+<hr>
+<h2 id="6-2-拓扑"><a href="#6-2-拓扑" class="headerlink" title="6.2 拓扑"></a>6.2 拓扑</h2><p>Redis的复制拓扑结构支持单层或多层复制关系。</p>
+<h3 id="（1）一主一从结构"><a href="#（1）一主一从结构" class="headerlink" title="（1）一主一从结构"></a>（1）一主一从结构</h3><ul>
+<li>最简单，用于主节点宕机时从节点提供故障转移支持。</li>
+<li>当写命令并发较高且支持持久化时，可以在从节点开启AOF，这样既保证了数据安全性，同时避免了持久化对主节点的性能干扰。但主节点关闭持久化功能后，脱机时要避免自动重启操作，因为主节点未开启持久化自动重启后数据集为空，此时从节点继续复制会导致原有数据被清空。<strong>安全的做法是在从节点执行 slaveof no one 操作断开和主节点的复制关系，再重启主节点</strong>。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060126.jpg"></p>
+<h3 id="（2）一主多从结构"><a href="#（2）一主多从结构" class="headerlink" title="（2）一主多从结构"></a>（2）一主多从结构</h3><ul>
+<li>又叫星型拓扑结构，使应用端可以利用多个从节点实现读写分离。</li>
+<li>对于读操作占比较大的场景，可以把读命令发送到从节点来减轻主节点压力。</li>
+<li>耗时的读操作也可以放到从节点执行，防止慢查询阻塞主节点。</li>
+<li>但对于写操作并发比较高的场景，多个从节点会导致主节点写命令多次发送从而加倍消耗网络带宽，也加重了主节点的负载影响服务稳定性。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060127.jpg"></p>
+<h3 id="（3）树状主从结构"><a href="#（3）树状主从结构" class="headerlink" title="（3）树状主从结构"></a>（3）树状主从结构</h3><ul>
+<li>又叫树状拓扑结构，使从节点不但可以复制主节点数据，同时可以作为其他从节点的主节点继续向下复制。</li>
+<li>引入复制中间层，可以有效降低主节点的负载和需要传送给从节点的数据量。</li>
+<li>当主节点需要挂载多个从节点时避免了对主节点的性能干扰。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060128.jpg"></p>
+<hr>
+<h2 id="6-3-原理"><a href="#6-3-原理" class="headerlink" title="6.3 原理"></a>6.3 原理</h2><h3 id="6-3-1-复制过程"><a href="#6-3-1-复制过程" class="headerlink" title="6.3.1 复制过程"></a>6.3.1 复制过程</h3><p>流程：</p>
+<ol>
+<li><p>保存主节点信息。</p>
+<p>slaveof执行后，从节点只保存主节点信息便返回，此时复制连接还未建立，info replication：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">master_host:</span><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="symbol">master_port:</span><span class="number">6379</span></span><br><span class="line"><span class="meta"># 下线状态</span></span><br><span class="line"><span class="symbol">master_link_status:</span>down</span><br></pre></td></tr></table></figure>
+
+<p>Redis此时会打印日志：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">SLAVE</span> OF <span class="number">127.0.0.1:6379</span> enabled (...)</span><br></pre></td></tr></table></figure>
+
+<p>通过日志方便定位发送slaveof命令的客户端。</p>
+</li>
+<li><p>从节点内部通过每秒运行的定时任务维护复制相关逻辑，当定时任务发现存在新的主节点后，会尝试与该节点建立网络连接。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060130.jpg"></p>
+<p>从节点会建立一个socket，专门用于接受主节点发送的复制命令，连接成功后打印：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* Connecting to <span class="keyword">MASTER</span> <span class="title">127</span>.<span class="number">0.0</span>.<span class="number">1</span>:<span class="number">6379</span></span><br><span class="line">* <span class="keyword">MASTER</span> <span class="title">&lt;-&gt; SLAVE</span> sync <span class="literal">started</span></span><br></pre></td></tr></table></figure>
+
+<p>若从节点无法建立连接，定时任务会无限重试直到成功或执行取消复制命令。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060131.jpg"></p>
+<p>连接失败时，可以查看info replication的 <code>master_link_down_since_seconds</code> 指标，其记录了与主节点连接失败的系统时间。从节点也会打印失败日志：</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># <span class="meta">Error</span> condition <span class="meta">on</span> socket for SYNC: &#123;socket_error_reason&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>发送PING命令。</p>
+<p>连接成功建立后首次通信，目的是：</p>
+<ul>
+<li>检测主从之间socket是否可用。</li>
+<li>检测主节点当前是否可接受处理命令。</li>
+</ul>
+<p>从节点若没收到pong回复或超时，会断开复制连接，下次定时任务会重连。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060132.jpg"></p>
+<p>PING命令成功后，打印日志：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Master</span> <span class="title">replied</span> to PING, replication can continue...</span><br></pre></td></tr></table></figure></li>
+<li><p>权限验证。若主节点设置了requirepass参数，从节点需要配置 <code>masterauth</code> 与主节点密码一致。若验证失败则复制过程终止，从节点重新发起复制流程。</p>
+</li>
+<li><p>同步数据集。此时复制连接可以正常通信，首次建立复制，主节点会把持有的数据全部发送给从节点，该步骤是最耗时的过程。Redis在2.8版本后采用新复制命令psync进行数据同步，该同步分为全量和部分同步两种情况。</p>
+</li>
+<li><p>命令持续复制。完成首次复制后，主节点会持续的把写命令发送给从节点来保证主从数据一致。</p>
+</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060129.jpg"></p>
+<h3 id="6-3-2-数据同步"><a href="#6-3-2-数据同步" class="headerlink" title="6.3.2 数据同步"></a>6.3.2 数据同步</h3><p>Redis在2.8版本后使用psync命令来完成主从数据同步，过程分为：</p>
+<ul>
+<li>全量复制：一般用于初次复制场景，会把主节点数据一次性发送给从节点，当数据量较大时，会对主从节点和网络造成很大开销。</li>
+<li>部分复制：用于处理在主从复制中因网络闪断等原因造成数据丢失的场景，当从节点再次连上主节点后，如果条件允许，主节点会补发丢失数据给从节点。补发的数据远远小于全量数据。</li>
+</ul>
+<p>psync命令需要以下组件支持：</p>
+<ul>
+<li>主从节点各自复制偏移量。</li>
+<li>主节点复制积压缓冲区。</li>
+<li>主节点运行id。</li>
+</ul>
+<h4 id="（1）复制偏移量"><a href="#（1）复制偏移量" class="headerlink" title="（1）复制偏移量"></a>（1）复制偏移量</h4><ul>
+<li>参与复制的主从节点都会维护自身复制偏移量。</li>
+<li>主节点处理完写入命令后，会把命令的字节长度做累加记录。通过info replication的 <code>master_repl_offset</code> 指标查看。</li>
+<li>从节点每秒上报自身的复制偏移量，因此主节点也会保存。从节点在接收到主节点发送的命令后，也会累加记录自身的偏移量。通过info replication的 <code>slave_repl_offset</code> 指标查看。</li>
+<li><strong>通过对比主从节点的复制偏移量，可以判断主从节点数据是否一致</strong>。</li>
+</ul>
+<h4 id="（2）复制积压缓冲区"><a href="#（2）复制积压缓冲区" class="headerlink" title="（2）复制积压缓冲区"></a>（2）复制积压缓冲区</h4><p>复制积压缓冲区是保存在主节点上的一个固定长度的队列，默认大小为1MB。当主节点有连接的从节点时创建，主节点响应命令时，不但会发送给从节点，还要写入该缓冲区。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060133.jpg"></p>
+<p>缓冲区本质是先进先出的定长队列，能实现保存最近已复制数据的功能，可以用于部分复制和复制命令丢失的数据补救。通过info replication查看：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; info replication</span><br><span class="line"><span class="meta">#</span><span class="bash"> Replication</span></span><br><span class="line">role:master</span><br><span class="line">...</span><br><span class="line">repl_backlog_active:1               // 开启复制缓冲区</span><br><span class="line">repl_backlog_size:1048576           // 缓冲区最大长度</span><br><span class="line">repl_backlog_first_byte_offset:7479 // 起始偏移量，计算当前缓冲区可用范围</span><br><span class="line">repl_backlog_histlen:1048576        // 已保存数据的有效长度</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可用偏移量范围 = [repl_backlog_first_byte_offset, repl_backlog_first_byte_offset + repl_backlog_histlen]。</p>
+<h4 id="（3）主节点运行ID"><a href="#（3）主节点运行ID" class="headerlink" title="（3）主节点运行ID"></a>（3）主节点运行ID</h4><p>每个Redis节点启动后都会动态分配一个40位的十六进制字符串作为运行ID。主要作用是用来唯一识别Redis节点，若只使用ip+port的方式识别主节点，当主节点重启变更了整体数据集（如替换RDB/AOF文件），从节点再基于偏移量复制数据是不安全的，当运行ID发生变化时将做全量复制。</p>
+<p>可以通过info server查看当前节点的运行ID（run_id）。Redis关闭再启动会导致运行ID变化。如何在不影响运行ID的情况下重启？比如一些内存相关的配置需要重启Redis才能优化已存在的数据，此时可以使用debug reload命令重新加载RDB并保持运行ID不变。此命令会阻塞Redis节点主线程，阻塞期间会生成本地RDB快照并清空数据后再加载RDB文件。对于大数据量的主节点和无法容忍阻塞的场景需要谨慎使用。</p>
+<h4 id="（4）psync命令"><a href="#（4）psync命令" class="headerlink" title="（4）psync命令"></a>（4）psync命令</h4><p>命令格式：</p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">psync </span><span class="template-variable">&#123;runId&#125;</span><span class="xml"> </span><span class="template-variable">&#123;offset&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>runId：从节点复制主节点的运行ID。</li>
+<li>offset：当前从节点已复制的数据偏移量。</li>
+</ul>
+<p>流程：</p>
+<ol>
+<li>从节点发送psync命令给主节点，runId若无则默认为?，参数offset若是第一次参与复制则默认值为-1。</li>
+<li>主节点根据psync参数和自身数据情况决定响应结果：<ul>
+<li>如果回复 +FULLRESYNC {runId} {offset} ，那么从节点将触发全量复制流程。</li>
+<li>如果回复 +CONTINUE，从节点将触发部分复制流程。</li>
+<li>如果回复 +ERR，说明主节点版本低于2.8，无法识别psync命令，从节点将发送旧版本的sync命令触发全量复制流程。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060134.jpg"></p>
+<h3 id="6-3-3-全量复制"><a href="#6-3-3-全量复制" class="headerlink" title="6.3.3 全量复制"></a>6.3.3 全量复制</h3><p>全量复制的流程：</p>
+<ol>
+<li><p>发送psync命令进行数据同步，由于是第一次复制，从节点没有复制偏移量和主节点的运行ID，所以发送psync ? -1。</p>
+</li>
+<li><p>主节点解析出当前为全量复制，回复 +FULLRESYNC响应。</p>
+</li>
+<li><p>从节点接收主节点的响应数据保存运行ID和偏移量offset，该步骤打印日志：</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Partial resynchronization <span class="keyword">not</span> possible (<span class="literal">no</span> cached master)</span><br><span class="line">Full resync <span class="keyword">from</span> master: .....</span><br></pre></td></tr></table></figure></li>
+<li><p>主节点执行bgsave保存RDB文件到本地，打印日志：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">M * <span class="keyword">Full</span> resync requested <span class="keyword">by</span> slave <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6380</span></span><br><span class="line">M * Starting BGSAVE <span class="keyword">for</span> SYNC <span class="keyword">with</span> target: disk</span><br><span class="line">C * Background saving started <span class="keyword">by</span> pid <span class="number">32618</span></span><br><span class="line">C * RDB: <span class="number">0</span> MB <span class="keyword">of</span> memory used <span class="keyword">by</span> <span class="keyword">copy</span>-<span class="keyword">on</span>-<span class="keyword">write</span></span><br><span class="line">M * Background saving terminated <span class="keyword">with</span> success</span><br></pre></td></tr></table></figure>
+
+<p>其中M表示当前为主节点日志，S为从节点，C为子进程日志。</p>
+</li>
+<li><p>主节点发送RDB文件给从节点，从节点将其保存在本地并作为从节点的数据文件，打印相关日志：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">16</span>:<span class="number">24</span>:<span class="number">03</span>.<span class="number">057</span> * MASTER &lt;-&gt; SLAVE sync: receiving <span class="number">24777842</span> bytes from master</span><br></pre></td></tr></table></figure>
+
+<p>如果主节点数据量特别大，该过程会很耗时，上述日志可以看到数据大小，通过Full resync和这一行的时间差也可以算出从创建RDB文件到传输的总耗时。如果耗时超过repl-timeout（默认60秒）配置，从节点会放弃接收RDB文件并清理已下载的内容，从而导致全量复制失败。</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">..... # Timeout receiving bulk data <span class="keyword">from</span> MASTER... <span class="keyword">If</span> the problem persists <span class="keyword">try</span> <span class="keyword">to</span> <span class="keyword">set</span> the <span class="string">&#x27;repl-timeout&#x27;</span> parameter <span class="keyword">in</span> redis.conf <span class="keyword">to</span> a larger value.</span><br></pre></td></tr></table></figure>
+
+<p>例如千兆网卡的机器理论网络带宽峰值为100MB，不考虑其它情况下6GB的文件最少需要60s传输时间。<strong>默认配置下很容易出现主从数据同步超时</strong>。</p>
+</li>
+<li><p>从节点接收RDB快照期间，主节点仍然响应读写命令，此期间的命令会写入复制客户端缓冲区内。从节点接收完毕，主节点再发送缓冲区内容，保证主从一致。如果RDB传输时间过长，很容易导致缓冲区溢出，默认配置为 <code>client-output-buffer-limit slave 256MB 64MB 60</code> ，如果60秒内消耗持续大于64MB或直接超过256MB时，主节点会直接关闭复制客户端连接，导致全量同步失败，对应日志：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">...</span> <span class="python"><span class="comment"># Client ... scheduled to be closed ASAP for overcoming of output buffer limits.</span></span></span><br></pre></td></tr></table></figure>
+
+<p>运维人员需要根据主节点数据量和写命令并发量调整配置。</p>
+<p>主节点发送完数据后打印日志，此时从节点还未完成：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Synchronization</span> with slave <span class="number">127.0.0.1:6380</span> succeeded</span><br></pre></td></tr></table></figure></li>
+<li><p>从节点接收完全部数据后会清空自身的旧数据，打印日志：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">... * <span class="keyword">MASTER</span> <span class="title">&lt;-&gt; SLAVE</span> sync: Flushing old data</span><br></pre></td></tr></table></figure></li>
+<li><p>从节点清空数据后开始加载RDB文件，当文件较大时，该步骤仍会比较耗时。可以通过日志时间戳判断耗时：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">16</span>:<span class="number">24</span>:<span class="number">03</span>.<span class="number">578</span> * MASTER &lt;-&gt; SLAVE sync: Loading DB in memory</span><br><span class="line"><span class="attribute">16</span>:<span class="number">24</span>:<span class="number">06</span>.<span class="number">756</span> * MASTER &lt;-&gt; SLAVE sync: Finished with success</span><br></pre></td></tr></table></figure>
+
+<p>读写分离的场景下，从节点也负责影响读命令。若从节点处于全量复制阶段或复制中断，此时响应的读命令可能会读取到过期或错误的数据。Redis提供了参数 <code>slave-serve-stale-data</code>（默认开启），当关闭时从节点除了info或slaveof命令外，其余命令只返回”SYNC with master in progress“信息。</p>
+</li>
+<li><p>从节点成功加载完RDB后，若当前节点开启了AOF持久化，会立刻做 bgrewriteaof 操作，从而使全量复制后AOF持久化文件可以立即可用。</p>
+</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060135.jpg"></p>
+<p>全量复制是个十分耗时的操作，主要开销包括：</p>
+<ul>
+<li>主节点bgsave的时间</li>
+<li>RDB文件网络传输的时间</li>
+<li>从节点清空数据的时间</li>
+<li>从节点加载RDB的时间</li>
+<li>可能的AOF重写时间</li>
+</ul>
+<p>线上6GB左右数据量的主节点，全量复制总耗时约为2分钟。所以除了首次复制外，应该避免全量复制的发生。</p>
+<h3 id="6-3-4-部分复制"><a href="#6-3-4-部分复制" class="headerlink" title="6.3.4 部分复制"></a>6.3.4 部分复制</h3><p>使用 psync {runId} {offset} 实现，当从节点正在复制主节点时，若出现网络闪断或命令丢失等异常情况时，从节点会要求主节点补发丢失的命令数据。</p>
+<p>流程：</p>
+<ol>
+<li><p>主从节点之间网络出现中断，如果超过repl-timeout时间，主节点会认为从节点故障并中断复制连接，打印日志：</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">M # Disconnecting timeout slave: <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6380</span></span><br><span class="line">M # Connection <span class="keyword">with</span> slave <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6380</span> lost.</span><br></pre></td></tr></table></figure>
+
+<p>若从节点没有宕机，也会打印与主节点断开连接的日志：</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">S <span class="comment"># Connection with master lost.</span></span><br><span class="line">S * Caching the disconnected master <span class="keyword">state</span>.</span><br></pre></td></tr></table></figure></li>
+<li><p>主从连接中断期间主节点仍然响应命令，但无法发送给从节点，期间的命令仍会保存在缓冲区，默认最大缓存1MB。</p>
+</li>
+<li><p>当主从节点网络恢复后，从节点会再次连接上主节点，打印日志：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">S * Connecting to <span class="keyword">MASTER</span> <span class="title">127</span>.<span class="number">0.0</span>.<span class="number">1</span>:<span class="number">6379</span></span><br><span class="line">S * <span class="keyword">MASTER</span> <span class="title">&lt;-&gt; SLAVE</span> sync <span class="literal">started</span></span><br><span class="line">S * Non blocking connect for SYNC fired the event</span><br><span class="line">S * <span class="keyword">Master</span> <span class="title">replied</span> to PING, replication can continue...</span><br></pre></td></tr></table></figure></li>
+<li><p>主从连接恢复后，由于从节点之前保存了自身已复制的偏移量和主节点的运行ID，会将其作为psync参数，向主节点要求做部分复制，打印日志：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">S</span> * <span class="selector-tag">Trying</span> <span class="selector-tag">a</span> <span class="selector-tag">partial</span> <span class="selector-tag">resynchronization</span> (request ...).</span><br></pre></td></tr></table></figure></li>
+<li><p>主节点接收到psync命令后，首先核对runId是否与自己一致，然后根据参数offset查找缓冲区，若数据存在则对从节点发送 +CONTINUE响应。从节点接收到后打印日志：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">S * Successful partial resynchronization with <span class="literal">master</span>.</span><br><span class="line">S * <span class="keyword">MASTER</span> <span class="title">&lt;-&gt; SLAVE</span> sync: <span class="keyword">Master</span> <span class="title">acceptrd</span> a Partial Resynchronization.</span><br></pre></td></tr></table></figure></li>
+<li><p>主节点根据偏移量把复制积压缓冲区的数据发送给从节点，发送的数据量可以在日志获取：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">M</span> * Slave <span class="number">127.0.0.1:6380</span> asks for synchronization</span><br><span class="line"><span class="attribute">M</span> * Partial resynchronization request from <span class="number">127.0.0.1:6380</span> accepted. Sending <span class="number">78</span> bytes of backlog starting from offset <span class="number">49769216</span>.</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060136.jpg"></p>
+<h3 id="6-3-5-心跳"><a href="#6-3-5-心跳" class="headerlink" title="6.3.5 心跳"></a>6.3.5 心跳</h3><p>主从节点建立复制后，彼此会发送心跳命令：</p>
+<ol>
+<li>主从节点彼此都有心跳检测机制，各自模拟成对方的客户端进行通信，通过client list查看复制相关客户端信息，主节点的连接状态为flags=M，从节点则为flags=S。</li>
+<li>主节点默认每隔10s对从节点发送一次PING命令，判断从节点的存活和连接状态，可以通过 <code>repl-ping-slave-period</code> 参数控制。</li>
+<li>从节点在主线程中每隔1s发送 replconf ack {offset} 命令，给主节点上报自己当前的复制偏移量。该命令的作用包括：<ul>
+<li>实时监测主从节点网络状态。</li>
+<li>上报自身复制偏移量，检查复制数据是否丢失，如果从节点数据丢失，再从主节点的复制缓冲区中拉取丢失数据。</li>
+<li>实现保证从节点的数量和延迟性功能，通过 min-slaves-to-write、min-slaves-max-lag 参数配置。</li>
+</ul>
+</li>
+</ol>
+<p>主节点根据replconf命令来判断从节点超时时间，在info replication中的lag信息表示与从节点最后一次通信延迟的秒数，正常应该介于0到1间。如果超过repl-timeout值，则判定从节点下线并断开复制连接。为了降低主从延迟，一般会把主从节点部署在相同的机房区域。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060137.jpg"></p>
+<h3 id="6-3-6-异步复制"><a href="#6-3-6-异步复制" class="headerlink" title="6.3.6 异步复制"></a>6.3.6 异步复制</h3><p>写命令发送给从节点是异步完成的，即主节点自身处理完写命令后直接返回客户端，无需等待从节点复制完成。所以从节点的数据相对主节点会有延迟，延迟多少字节可以在主节点执行info replication查看相关指标：</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slave0:ip=<span class="number">127.0</span>.<span class="number">0.1</span>,<span class="keyword">port</span>=<span class="number">6380</span>,<span class="keyword">state</span>=online,offset=<span class="number">841</span>,lag=<span class="number">1</span></span><br><span class="line">master_repl_offset:<span class="number">841</span></span><br></pre></td></tr></table></figure>
+
+<p>offset是从节点的复制偏移量，master_repl_offset表示当前主节点的复制偏移量，二者之差就是延迟量。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060138.jpg"></p>
+<hr>
+<h2 id="6-4-开发与运维中的问题"><a href="#6-4-开发与运维中的问题" class="headerlink" title="6.4 开发与运维中的问题"></a>6.4 开发与运维中的问题</h2><h3 id="6-4-1-读写分离"><a href="#6-4-1-读写分离" class="headerlink" title="6.4.1 读写分离"></a>6.4.1 读写分离</h3><p>使用从节点响应读请求时，业务端可能遇到的问题：</p>
+<ul>
+<li>复制数据延迟。</li>
+<li>读到过期数据。</li>
+<li>从节点故障。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060139.jpg"></p>
+<h4 id="（1）复制数据延迟"><a href="#（1）复制数据延迟" class="headerlink" title="（1）复制数据延迟"></a>（1）复制数据延迟</h4><p>该延迟因为异步复制的特性无法避免，取决于网络带宽和命令阻塞情况。对于无法容忍大量延迟的场景，可以编写外部监控程序监听主从节点的复制偏移量，延迟较大时触发报警或通知客户端避免读取延迟过高的从节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060140.jpg"></p>
+<ol>
+<li>监控程序定期检查主从节点的偏移量，主节点偏移量在info replication的master_repl_offset指标记录中。从节点偏移量查询主节点的slave0字段的offset指标。两者差值是主从节点延迟的字节量。</li>
+<li>当延迟字节过高时，如超过10MB。监控程序触发报警并通知客户端，可以采用Zookeeper的监听回调机制来实现客户端通知。</li>
+<li>客户端接到具体的从节点延迟通知后，修改读命令路由到其它从节点或主节点上。当延迟恢复后，再次通知客户端，恢复从节点的读命令请求。</li>
+</ol>
+<p>该方案成本较高，需要单独修改适配Redis的客户端类库。客户端需要识别读写请求并自动路由，还需要维护故障和恢复的通知。</p>
+<h4 id="（2）读到过期数据"><a href="#（2）读到过期数据" class="headerlink" title="（2）读到过期数据"></a>（2）读到过期数据</h4><p>主节点存储大量超时的数据时，需要内部维护过期数据的删除策略：</p>
+<ul>
+<li>惰性删除：主节点每次处理读取命令都要检查键是否超时，超时则执行del命令，之后del也会异步发送给从节点。为了保证复制的一致性，从节点永不主动删除超时数据。</li>
+<li>定时删除：主节点在内部定时任务会循环采样一定数量的键，当发现采样的键过期时，执行del命令，再同步给从节点。如果大量数据超时，主节点采样速度跟不上过期速度，且主节点没有读取过期键的操作，那么从节点将无法收到del命令。3.2版本从节点读取数据之前会检查键的过期时间来决定是否返回数据。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060141.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060142.jpg"></p>
+<h4 id="（3）从节点故障"><a href="#（3）从节点故障" class="headerlink" title="（3）从节点故障"></a>（3）从节点故障</h4><p>需要在客户端维护可用从节点列表，当从节点故障后立刻切换到其它节点。需要开发者改造客户端类库。</p>
+<p>Redis尽量要在主节点先做充分优化，如解决慢查询、持久化阻塞和合理使用数据结构等。主节点优化空间不大时再考虑扩展从节点的优化方案，做读写分离时可以考虑使用Redis Cluster等分布式解决方案，从而不只扩展了读性能，还可以扩展写性能和可支撑的数据规模，并且一致性和故障转移也可以保证，对于客户端的维护逻辑也相对简单。</p>
+<h3 id="6-4-2-主从配置不一致"><a href="#6-4-2-主从配置不一致" class="headerlink" title="6.4.2 主从配置不一致"></a>6.4.2 主从配置不一致</h3><p>有些配置主从之间是可以不一致的，比如主节点关闭AOF，从节点开启。但对于内存的配置要主从一致，如maxmemory、hash-max-ziplist-entries等。如果从节点maxmemory小于主节点，复制的数据量超过限制，会根据maxmemory-policy策略进行内存溢出控制，导致从节点数据丢失，但主从复制流程正常进行，修复该问题只能手动进行全量复制。压缩列表相关参数不一致时会导致主从节点相同数据内存占用大不相同。</p>
+<h3 id="6-4-3-规避全量复制"><a href="#6-4-3-规避全量复制" class="headerlink" title="6.4.3 规避全量复制"></a>6.4.3 规避全量复制</h3><p>全量复制的各个场景进行避免：</p>
+<ul>
+<li><strong>首次建立复制</strong>：该情况无法避免。<ul>
+<li>在对数据量较大且流量较高的主节点添加从节点时，建议在低峰进行操作，或者干脆规避使用大数量的节点。</li>
+</ul>
+</li>
+<li><strong>节点运行ID不匹配</strong>：当主节点故障重启，其运行ID会改变，从节点发现主节点运行ID不匹配会认为自己复制的是一个新节点导致进行全量复制。<ul>
+<li>避免这种情况需要在架构上规避，如提供故障转移功能，在主节点发生故障后，手动提升从节点为主节点，或采用支持自动故障转移的哨兵或集群方案。</li>
+</ul>
+</li>
+<li><strong>复制积压缓冲区不足</strong>：当主从节点网络中断后，从节点再次连接上主节点时会发送 psync 请求部分复制，如果请求的偏移量不在主节点的缓冲区内，则无法提供给从节点数据，导致部分复制退化为全量复制。<ul>
+<li>避免这种情况需要根据网络中断时长，写命令数据量分析出合理的积压缓冲区大小。</li>
+<li>网络中断一般有闪断、机房割接、网络分区等情况。中断时长一般在分钟级别。</li>
+<li>写命令数据量可以统计高峰期主节点每秒的master_repl_offset差值获取。</li>
+<li>积压缓冲区默认为1MB，对于大流量场景明显不够，加大缓冲区，保证 repl_backlog_size &gt; net_break_time * write_size_per_minute。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-4-4-规避复制风暴"><a href="#6-4-4-规避复制风暴" class="headerlink" title="6.4.4 规避复制风暴"></a>6.4.4 规避复制风暴</h3><p>复制风暴指大量从节点对同一主节点或同台机器的多个主节点短时间内发起全量复制的场景。会导致相应主节点所在机器造成CPU、内存、带宽等大量开销。</p>
+<p>复制风暴的场景：</p>
+<ul>
+<li><p>单主节点复制风暴：</p>
+<p>一般发生在主节点挂载多个从节点的场景。主节点重启恢复后，从节点发起全量复制流程，主节点创建RDB快照，在创建完毕前若有多个从节点都尝试进行全量复制，它们会共享这份RDB。但同时向多个从节点发送RDB文件会使带宽消耗严重，导致主节点延迟变大，极端时使主从节点断开连接。</p>
+<ul>
+<li>解决方案：首先减少主节点挂载的从节点数量，或采用树状的复制结构，加入中间层从节点保护主节点。网络开销分摊给了中间层，但带来了运维的复杂性，增加了手动和自动处理故障转移的难度。</li>
+</ul>
+</li>
+<li><p>单机器复制风暴：</p>
+<p>Redis单线程，所以单台机器常常会部署多个实例。如果这台机器出现故障或网络长时间中断，重启恢复后会有大量从节点对其发起全量复制，导致当前机器带宽耗尽。</p>
+<p>解决方案：</p>
+<ul>
+<li>应该把主节点尽量分散到多台机器上，避免在单台机器上部署过多的节点。</li>
+<li>当主节点所在机器发生故障后，提供故障转移机制。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060143.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003060144.jpg"></p>
+<hr>
 <p>参考：</p>
 <p>🔗 《Redis开发与运维》</p>
 
@@ -374,6 +674,12 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020070101.html" rel="bookmark">Redis底层数据结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050501.html" rel="bookmark">面试整理——Redis</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032801.html" rel="bookmark">《Redis开发与运维》读书笔记（十四）Redis配置统计字典（未完成）</a></div>
     </li>
     <li class="popular-posts-item">
@@ -381,12 +687,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032401.html" rel="bookmark">《Redis开发与运维》读书笔记（十二）开发运维的“陷阱”（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020032101.html" rel="bookmark">《Redis开发与运维》读书笔记（十一）缓存设计（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020031801.html" rel="bookmark">《Redis开发与运维》读书笔记（十）集群（未完成）</a></div>
     </li>
   </ul>
 
@@ -401,7 +701,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://linyishui.top/2020031001.html" title="《Redis开发与运维》读书笔记（六）复制（未完成）">http://linyishui.top/2020031001.html</a>
+      <a href="http://linyishui.top/2020031001.html" title="《Redis开发与运维》读书笔记（六）复制">http://linyishui.top/2020031001.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -410,7 +710,6 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
               <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
           </div>
 
@@ -466,7 +765,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">52:55</span>
+    <span title="站点阅读时长">53:06</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
