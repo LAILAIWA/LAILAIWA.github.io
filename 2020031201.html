@@ -25,27 +25,33 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="《Redis开发与运维》读书笔记（七）阻塞，内容包括：发现阻塞，内在原因（API或数据结构使用不合理、CPU饱和、持久化阻塞），外在原因（CPU竞争、内存交换、网络问题）等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《Redis开发与运维》读书笔记（七）阻塞（未完成）">
+<meta property="og:title" content="《Redis开发与运维》读书笔记（七）阻塞">
 <meta property="og:url" content="http://linyishui.top/2020031201.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="《Redis开发与运维》读书笔记（七）阻塞，内容包括：发现阻塞，内在原因（API或数据结构使用不合理、CPU饱和、持久化阻塞），外在原因（CPU竞争、内存交换、网络问题）等。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120101.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120102.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120104.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120105.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120106.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120107.jpg">
 <meta property="article:published_time" content="2020-03-12T08:26:00.000Z">
-<meta property="article:modified_time" content="2021-08-08T10:58:58.000Z">
+<meta property="article:modified_time" content="2022-02-21T14:43:03.008Z">
 <meta property="article:author" content="Lys">
-<meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120101.jpg">
 
 
 <link rel="canonical" href="http://linyishui.top/2020031201.html">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031201.html","path":"2020031201.html","title":"《Redis开发与运维》读书笔记（七）阻塞（未完成）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031201.html","path":"2020031201.html","title":"《Redis开发与运维》读书笔记（七）阻塞"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>《Redis开发与运维》读书笔记（七）阻塞（未完成） | 俺的部落格</title>
+<title>《Redis开发与运维》读书笔记（七）阻塞 | 俺的部落格</title>
   
 
 
@@ -159,7 +165,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%98%BB%E5%A1%9E"><span class="nav-text">第七章 阻塞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-%E5%8F%91%E7%8E%B0%E9%98%BB%E5%A1%9E"><span class="nav-text">7.1 发现阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-%E5%86%85%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-text">7.2 内在原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-1-API%E6%88%96%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%88%E7%90%86"><span class="nav-text">7.2.1 API或数据结构使用不合理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-2-CPU%E9%A5%B1%E5%92%8C"><span class="nav-text">7.2.2 CPU饱和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-3-%E6%8C%81%E4%B9%85%E5%8C%96%E9%98%BB%E5%A1%9E"><span class="nav-text">7.2.3 持久化阻塞</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-%E5%A4%96%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-text">7.3 外在原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-1-CPU%E7%AB%9E%E4%BA%89"><span class="nav-text">7.3.1 CPU竞争</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-2-%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">7.3.2 内存交换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-3-%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98"><span class="nav-text">7.3.3 网络问题</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E9%98%BB%E5%A1%9E"><span class="nav-text">第七章 阻塞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-1-%E5%8F%91%E7%8E%B0%E9%98%BB%E5%A1%9E"><span class="nav-text">7.1 发现阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-2-%E5%86%85%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-text">7.2 内在原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-1-API%E6%88%96%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%88%E7%90%86"><span class="nav-text">7.2.1 API或数据结构使用不合理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E6%85%A2%E6%9F%A5%E8%AF%A2"><span class="nav-text">（1）如何发现慢查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%A6%82%E4%BD%95%E5%8F%91%E7%8E%B0%E5%A4%A7%E5%AF%B9%E8%B1%A1"><span class="nav-text">（2）如何发现大对象</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-2-CPU%E9%A5%B1%E5%92%8C"><span class="nav-text">7.2.2 CPU饱和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-3-%E6%8C%81%E4%B9%85%E5%8C%96%E9%98%BB%E5%A1%9E"><span class="nav-text">7.2.3 持久化阻塞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89fork%E9%98%BB%E5%A1%9E"><span class="nav-text">（1）fork阻塞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89AOF%E5%88%B7%E7%9B%98%E9%98%BB%E5%A1%9E"><span class="nav-text">（2）AOF刷盘阻塞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89HugePage%E5%86%99%E6%93%8D%E4%BD%9C%E9%98%BB%E5%A1%9E"><span class="nav-text">（3）HugePage写操作阻塞</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-3-%E5%A4%96%E5%9C%A8%E5%8E%9F%E5%9B%A0"><span class="nav-text">7.3 外在原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-1-CPU%E7%AB%9E%E4%BA%89"><span class="nav-text">7.3.1 CPU竞争</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-2-%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">7.3.2 内存交换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-3-%E7%BD%91%E7%BB%9C%E9%97%AE%E9%A2%98"><span class="nav-text">7.3.3 网络问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E8%BF%9E%E6%8E%A5%E6%8B%92%E7%BB%9D"><span class="nav-text">（1）连接拒绝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E7%BD%91%E7%BB%9C%E5%BB%B6%E8%BF%9F"><span class="nav-text">（2）网络延迟</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E7%BD%91%E7%BB%9C%E8%BD%AF%E4%B8%AD%E6%96%AD"><span class="nav-text">（3）网络软中断</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -277,7 +283,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《Redis开发与运维》读书笔记（七）阻塞（未完成）
+          《Redis开发与运维》读书笔记（七）阻塞
         </h1>
 
         <div class="post-meta-container">
@@ -295,7 +301,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-08-08 18:58:58" itemprop="dateModified" datetime="2021-08-08T18:58:58+08:00">2021-08-08</time>
+        <time title="修改时间：2022-02-21 22:43:03" itemprop="dateModified" datetime="2022-02-21T22:43:03+08:00">2022-02-21</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,14 +321,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>109</span>
+      <span>5.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -334,9 +340,108 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="第七章-阻塞"><a href="#第七章-阻塞" class="headerlink" title="第七章 阻塞"></a>第七章 阻塞</h1><h2 id="7-1-发现阻塞"><a href="#7-1-发现阻塞" class="headerlink" title="7.1 发现阻塞"></a>7.1 发现阻塞</h2><hr>
-<h2 id="7-2-内在原因"><a href="#7-2-内在原因" class="headerlink" title="7.2 内在原因"></a>7.2 内在原因</h2><h3 id="7-2-1-API或数据结构使用不合理"><a href="#7-2-1-API或数据结构使用不合理" class="headerlink" title="7.2.1 API或数据结构使用不合理"></a>7.2.1 API或数据结构使用不合理</h3><h3 id="7-2-2-CPU饱和"><a href="#7-2-2-CPU饱和" class="headerlink" title="7.2.2 CPU饱和"></a>7.2.2 CPU饱和</h3><h3 id="7-2-3-持久化阻塞"><a href="#7-2-3-持久化阻塞" class="headerlink" title="7.2.3 持久化阻塞"></a>7.2.3 持久化阻塞</h3><hr>
-<h2 id="7-3-外在原因"><a href="#7-3-外在原因" class="headerlink" title="7.3 外在原因"></a>7.3 外在原因</h2><h3 id="7-3-1-CPU竞争"><a href="#7-3-1-CPU竞争" class="headerlink" title="7.3.1 CPU竞争"></a>7.3.1 CPU竞争</h3><h3 id="7-3-2-内存交换"><a href="#7-3-2-内存交换" class="headerlink" title="7.3.2 内存交换"></a>7.3.2 内存交换</h3><h3 id="7-3-3-网络问题"><a href="#7-3-3-网络问题" class="headerlink" title="7.3.3 网络问题"></a>7.3.3 网络问题</h3><hr>
+        <h1 id="第七章-阻塞"><a href="#第七章-阻塞" class="headerlink" title="第七章 阻塞"></a>第七章 阻塞</h1><p>Redis产生阻塞的原因：</p>
+<ul>
+<li>内在：不合理的使用API或数据结构、CPU饱和、持久化阻塞。</li>
+<li>外在：CPU竞争、内存交换、网络问题。</li>
+</ul>
+<h2 id="7-1-发现阻塞"><a href="#7-1-发现阻塞" class="headerlink" title="7.1 发现阻塞"></a>7.1 发现阻塞</h2><p>发生阻塞时，应用会收到大量Redis超时异常（如JedisConnectionException）。通常会在应用层加入异常统计并通过邮件/短信/微信报警，以便及时发现通知问题。</p>
+<p>何时触发报警？一般根据应用的并发量决定，如1分钟内超过10个异常。因为Redis调用API会分散在项目的多处，若每个地方都监听异常并加入监控代码必然难以维护。此时可以借助于日志系统，通过logback或log4j，异常会记录到Appender，默认一般为日志文件，开发可以自定义一个Appender专门统计异常和触发报警逻辑。项目要统一异常处理，所有异常使用error打印。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120101.jpg"></p>
+<p>如logback代码实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisAppender</span> <span class="keyword">extends</span> <span class="title">AppenderBase</span>&lt;<span class="title">ILoggingEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 使用guava的AtomicLongMap，用于并发计数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicLongMap&lt;String&gt; ATOMIC_LONG_MAP = AtomicLongMap.create();</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 自定义Appender加入到logback的rootLogger中</span></span><br><span class="line">        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();</span><br><span class="line">        Logger rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);</span><br><span class="line">        ErrorStatisticsAppender errorStatisticsAppender = <span class="keyword">new</span> ErrorStatisticsAppender();</span><br><span class="line">        errorStatisticsAppender.setContext(loggerContext);</span><br><span class="line">        errorStatisticsAppender.start();</span><br><span class="line">        rootLogger.addAppender(errorStatisticsAppender);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 重写接收日志事件方法</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">append</span><span class="params">(ILoggingEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 只监控error级别日志</span></span><br><span class="line">        <span class="keyword">if</span> (event.getLevel() == Level.ERROR) &#123;</span><br><span class="line">            IThrowableProxy throwableProxy = event.getThrowableProxy();</span><br><span class="line">            <span class="comment">// 确认抛出异常</span></span><br><span class="line">            <span class="keyword">if</span> (throwableProxy != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// 以每分钟为key，记录每分钟异常数量</span></span><br><span class="line">                String key = DateUtil.formatDate(<span class="keyword">new</span> Date(), <span class="string">&quot;yyyyMMddHHmm&quot;</span>);</span><br><span class="line">                <span class="keyword">long</span> errorCount = ATOMIC_LONG_MAP.incrementAndGet(key);</span><br><span class="line">                <span class="keyword">if</span> (errorCount &gt; <span class="number">10</span>) &#123;</span><br><span class="line">                    <span class="comment">// 超过10次触发报警代码</span></span><br><span class="line">                    ......</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 清理历史计数统计，防止极端情况下内存泄露</span></span><br><span class="line">                <span class="keyword">for</span> (String oldKey : ATOMIC_LONG_MAP.asMap().keySet()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (!StringUtils.equals(key, oldKey)) &#123;</span><br><span class="line">                        ATOMIC_LONG_MAP.remove(oldKey);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>开发人员接到报警后，需要到线上查看错误日志，如果是Redis集群，该如何判断是哪个节点超时？大部分客户端不会在异常信息中打印ip和port。此时可以修改Redis客户端类库。如Jedis修改Connection下的connect、sendCommand、readProtocolWithCheckingBroken方法专门捕捉连接，发送命令，协议读取事件的异常。</p>
+<p>Redis有许多开源的监控系统，会对关键指标全方位监控和异常识别。如命令耗时、慢查询、持久化阻塞、连接拒绝、CPU/内存/网络/磁盘使用过载等。</p>
+<hr>
+<h2 id="7-2-内在原因"><a href="#7-2-内在原因" class="headerlink" title="7.2 内在原因"></a>7.2 内在原因</h2><p>定位到具体异常节点后，可以从以下几方面排查。</p>
+<h3 id="7-2-1-API或数据结构使用不合理"><a href="#7-2-1-API或数据结构使用不合理" class="headerlink" title="7.2.1 API或数据结构使用不合理"></a>7.2.1 API或数据结构使用不合理</h3><p>大部分Redis命令执行速度很快，但如包含上万元素的hash结构执行hgetall操作，算法复杂度为O(n)，执行速度会很慢。</p>
+<h4 id="（1）如何发现慢查询"><a href="#（1）如何发现慢查询" class="headerlink" title="（1）如何发现慢查询"></a>（1）如何发现慢查询</h4><p>执行 slowlog get {n} 命令获得最近的n条慢查询，默认会将执行超过10毫秒的命令记录到定长队列中（默认为128），线上建议调整为1毫秒以方便及时发现毫秒级别以上的命令。若命令执行时间在毫秒级，则实例实际OPS只有1000左右。 不记录数据传输时间和命令排队时间，客户端发生阻塞时不一定是命令执行慢，而是在等待其他命令执行。要重点比对异常发生的时间点，确认是否有慢查询造成的命令阻塞排队。</p>
+<h4 id="（2）如何发现大对象"><a href="#（2）如何发现大对象" class="headerlink" title="（2）如何发现大对象"></a>（2）如何发现大对象</h4><p>执行 redis-cli -h {ip} -p {port} –bigkeys 发现大对象。内部原理是采用分段进行scan操作，把历史扫描过的最大对象统计出来。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120102.jpg"></p>
+<p>根据结果汇总信息方便获取到大对象的键，以及不同类型数据结构的使用情况。</p>
+<h3 id="7-2-2-CPU饱和"><a href="#7-2-2-CPU饱和" class="headerlink" title="7.2.2 CPU饱和"></a>7.2.2 CPU饱和</h3><p>CPU饱和是指单核CPU使用率达到接近100%。使用top命令查看Redis进程的CPU使用率。当CPU饱和时，会严重影响吞吐量和应用方的稳定。当出现这种情况时，首先判断并发量是否达到极限。使用 redis-cli -h {ip} -p {port} –stat 获取当前使用情况。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120104.jpg"></p>
+<p>如图，每秒平均处理6W+的请求。垂直层面的命令优化很难达到效果，需要做集群化水平扩展来分摊OPS压力。如果只有几百上千的OPS就达到DPU饱和是不合理的，可能使用了高算法复杂度的命令。</p>
+<p>也有可能是过度的内存优化，使用info commandstats分析出命令不合理开销时间：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">cmdstat_hset</span>:calls=<span class="number">198757512</span>,usec=<span class="number">27021957243</span>,usec_per_call=<span class="number">135</span>.<span class="number">95</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>hset命令算法复杂度为O(1)，但平均耗时却达到了135微秒，正常应该为10微秒以下。因为Redis实例为了追求低内存使用量，过度放宽了ziplist的使用条件，修改了hash-max-ziplist-entries和hash-max-ziplist-value配置。hash对象平均存储着上万个元素，针对ziplist的操作复杂度在O(n)到O(n^2^)之间。</p>
+<h3 id="7-2-3-持久化阻塞"><a href="#7-2-3-持久化阻塞" class="headerlink" title="7.2.3 持久化阻塞"></a>7.2.3 持久化阻塞</h3><h4 id="（1）fork阻塞"><a href="#（1）fork阻塞" class="headerlink" title="（1）fork阻塞"></a>（1）fork阻塞</h4><p>fork操作在RDB和AOF重写时，产生共享内存的子进程，fork操作本身耗时很长，必然会导致主线程阻塞。可以执行info stats命令获取lates_fork_usec指标，表示最近一次fork操作耗时，如果超过1秒则需要优化。如避免使用过大的内存实例，规避fork缓慢的操作系统等。</p>
+<h4 id="（2）AOF刷盘阻塞"><a href="#（2）AOF刷盘阻塞" class="headerlink" title="（2）AOF刷盘阻塞"></a>（2）AOF刷盘阻塞</h4><p>使用AOF持久化时，文件刷盘的方式一般为1秒1次，后台线程每秒对AOF文件做fsync操作。硬盘压力过大时，fsync需要等待，直到写入完成。若主线程发现距离上次fsync成功超过2秒，为了数据安全会阻塞到后台线程执行fsync操作完成。</p>
+<p>当发生这种阻塞行为时，打印日志：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Asynchronous AOF fsync <span class="keyword">is</span> taking too long (disk <span class="keyword">is</span> busy?). Writing the AOF <span class="keyword">buffer</span> without waiting <span class="keyword">for</span> fsync <span class="keyword">to</span> <span class="built_in">complete</span>, this may slow down Redis.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>也可以查看info persistence中的aof_delayed_fsync指标，每次发生fdatasync阻塞主线程会累加。可以使用iotop查看具体哪个进程导致硬盘过多消耗。</p>
+<h4 id="（3）HugePage写操作阻塞"><a href="#（3）HugePage写操作阻塞" class="headerlink" title="（3）HugePage写操作阻塞"></a>（3）HugePage写操作阻塞</h4><p>子进程在执行重写期间利用Linux写时复制技术降低内存开销，只有写操作时Redis才复制要修改的内存页。开启Transparent HugePages的操作系统，每次写命令引起的复制内存页单位由4K变为2MB，会拖慢写操作的执行时间。</p>
+<hr>
+<h2 id="7-3-外在原因"><a href="#7-3-外在原因" class="headerlink" title="7.3 外在原因"></a>7.3 外在原因</h2><h3 id="7-3-1-CPU竞争"><a href="#7-3-1-CPU竞争" class="headerlink" title="7.3.1 CPU竞争"></a>7.3.1 CPU竞争</h3><ul>
+<li>进程竞争：Redis是CPU密集型应用，不建议和其他多核CPU密集型服务部署在一起。可以通过top、sar等命令定位CPU消耗的时间点合具体进程。</li>
+<li>绑定CPU：为了利用多核CPU，会把多个实例部署在同台机器。将Redis绑定到CPU来避免频繁的上下文切换。</li>
+</ul>
+<p>当父进程创建子进程进行RDB/AOF重写时，若做了CPU绑定，会与父进程共享一个CPU。子进程重写时对单核CPU使用率会达到90%以上，导致父子进程激烈竞争CPU。不建议开启持久化或复制的主节点绑定CPU。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120105.jpg"></p>
+<h3 id="7-3-2-内存交换"><a href="#7-3-2-内存交换" class="headerlink" title="7.3.2 内存交换"></a>7.3.2 内存交换</h3><p>Redis保证高性能的前提是所有数据在内存中。如果操作系统将部分内存换出到硬盘，会造成Redis性能下降几个数量级。</p>
+<p>识别内存交换：</p>
+<ol>
+<li><p>查询Redis进程号：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -p 6383 info server | grep process_id</span></span><br><span class="line">process_id:4476</span><br></pre></td></tr></table></figure></li>
+<li><p>根据进程号查询内存交换信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat /proc/4476/smaps | grep Swap</span></span><br><span class="line">Swap: 0 kB</span><br><span class="line">Swap: 0 kB</span><br><span class="line">Swap: 4 kB</span><br><span class="line">Swap: 0 kB</span><br><span class="line">Swap: 0 kB</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>如果交换量是个位KB是正常现象。</p>
+</li>
+</ol>
+<p>预防内存交换：</p>
+<ul>
+<li>保证机器充足的可用内存。</li>
+<li>确保所有Redis实例设置最大可用内存，防止极端情况下Redis内存不可控的增长。</li>
+<li>降低系统使用swap的优先级，如 <code>echo 10 &gt; /proc/sys/vm/swappiness</code> 。</li>
+</ul>
+<h3 id="7-3-3-网络问题"><a href="#7-3-3-网络问题" class="headerlink" title="7.3.3 网络问题"></a>7.3.3 网络问题</h3><h4 id="（1）连接拒绝"><a href="#（1）连接拒绝" class="headerlink" title="（1）连接拒绝"></a>（1）连接拒绝</h4><ul>
+<li><p><strong>网络闪断：</strong>发生在网络割接或带宽耗尽的情况，可以通过 <code>sar -n DEV</code> 查看本机历史流量是否正常，或使用外部系统监控工具（Ganglia）进行识别。需要考虑架构优化，避免客户端与Redis异地跨机房调用。</p>
+</li>
+<li><p><strong>Redis连接拒绝：</strong>Redis默认maxclients为10000，连接数超过时会拒绝新的连接进入。info stats的rejected_connections指标记录被拒绝连接的数量。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -p 6384 info Stats | grep rejected_connections</span></span><br><span class="line">rejected_connections:0</span><br></pre></td></tr></table></figure>
+
+<p>客户端访问Redis时尽量采用NIO长连接或连接池的方式。默认不会关闭长时间闲置的TCP连接，建议设置top-keepalive和timeout参数主动检查和关闭无效连接。</p>
+</li>
+<li><p><strong>连接溢出：</strong></p>
+<ol>
+<li><p>进程限制：需要突破双重限制才能连上Redis，OS会限制进程的资源使用，如可打开最大文件数，通过 <code>ulimit -n</code> 查看。可以适当调大，防止 Too many open files 错误。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120106.jpg"></p>
+</li>
+<li><p>backlog队列溢出：系统对于特定端口的TCP连接使用backlog队列保存，默认为511，通过tcp-backlog设置。如果Redis设置大于系统值，则以后者为准。系统使用 <code>echo 511 &gt; /proc/sys/net/core/somaxconn</code> 进行修改。通过 <code>netstat -s | grep overflowed</code> 命令获取因backlog队列溢出造成的连接拒绝统计。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="（2）网络延迟"><a href="#（2）网络延迟" class="headerlink" title="（2）网络延迟"></a>（2）网络延迟</h4><p>网络延迟取决于物理拓扑和带宽占用情况。</p>
+<ul>
+<li>物理拓扑按网络延迟由快到慢：同物理机&gt;同机架&gt;跨机器&gt;同机房&gt;同城机房&gt;异地机房。容灾性正相反。</li>
+<li>带宽瓶颈：重点监控机器流量，及时发现网卡打满产生的网络延迟或通信中断等情况、<ul>
+<li>机器网卡带宽。</li>
+<li>机架交换机带宽。</li>
+<li>机房之间专线带宽。</li>
+</ul>
+</li>
+</ul>
+<p>测试机器之间网络延迟，使用 <code>redis-cli -h &#123;host&#125; -p &#123;port&#125;</code> 后加入参数：</p>
+<ul>
+<li>–latency：持续进行延迟测试，分别统计：最小值，最大值，平均值，采样次数。</li>
+<li>–latency–history：统计结果同 –latency，默认每15秒完成一行统计，可通过 -i 参数控制采样时间。</li>
+<li>–latency-dist：使用统计图的形式展示延迟统计，每1秒采样一次。</li>
+</ul>
+<h4 id="（3）网络软中断"><a href="#（3）网络软中断" class="headerlink" title="（3）网络软中断"></a>（3）网络软中断</h4><p>指单个网卡队列只能使用一个CPU，高并发下网卡数据交互都集中在同一个CPU会导致多核无法被利用。一般出现在网络高流量吞吐的场景，使用top+数字1可以看到CPU1的软中断指标过高：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120107.jpg"></p>
+<p>Linux在内核2.6.35以后支持Receive Packet Steering（RPS），实现了在软件层面模拟硬件的多队列网卡功能、</p>
+<hr>
 <p>参考：</p>
 <p>🔗 《Redis开发与运维》</p>
 
@@ -349,6 +454,12 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020070101.html" rel="bookmark">Redis底层数据结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050501.html" rel="bookmark">面试整理——Redis</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032801.html" rel="bookmark">《Redis开发与运维》读书笔记（十四）Redis配置统计字典（未完成）</a></div>
     </li>
     <li class="popular-posts-item">
@@ -356,12 +467,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032401.html" rel="bookmark">《Redis开发与运维》读书笔记（十二）开发运维的“陷阱”（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020032101.html" rel="bookmark">《Redis开发与运维》读书笔记（十一）缓存设计（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020031801.html" rel="bookmark">《Redis开发与运维》读书笔记（十）集群（未完成）</a></div>
     </li>
   </ul>
 
@@ -376,7 +481,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://linyishui.top/2020031201.html" title="《Redis开发与运维》读书笔记（七）阻塞（未完成）">http://linyishui.top/2020031201.html</a>
+      <a href="http://linyishui.top/2020031201.html" title="《Redis开发与运维》读书笔记（七）阻塞">http://linyishui.top/2020031201.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -385,7 +490,6 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
               <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
           </div>
 
@@ -441,7 +545,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:06</span>
+    <span title="站点阅读时长">53:11</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
