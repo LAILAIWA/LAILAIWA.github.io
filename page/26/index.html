@@ -171,7 +171,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">330</span>
+          <span class="site-state-item-count">331</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -249,6 +249,124 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020011801.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
+      <meta itemprop="name" content="Lys">
+      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="俺的部落格">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020011801.html" class="post-title-link" itemprop="url">代理模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-18 20:43:38" itemprop="dateCreated datePublished" datetime="2020-01-18T20:43:38+08:00">2020-01-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-10-02 17:18:36" itemprop="dateModified" datetime="2020-10-02T17:18:36+08:00">2020-10-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a><strong>代理模式</strong></h1><p>&emsp;&emsp;代理模式（Proxy），为其他对象提供一种代理以控制这个对象的访问。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200101/202001010104.png" alt="代理模式结构图"></p>
+<h2 id="2-7-1-案例"><a href="#2-7-1-案例" class="headerlink" title="2.7.1 案例"></a><strong>2.7.1 案例</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//追求者类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Pursuit</span> </span>&#123;</span><br><span class="line">    SchoolGirl mm;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Pursuit</span><span class="params">(SchoolGirl mm)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mm = mm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你洋娃娃&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你鲜花&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你巧克力&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//被追求者类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SchoolGirl</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//追求者调用被追求者，增送各种礼物</span></span><br><span class="line">        System.out.println(<span class="string">&quot;--------------追求者调用被追求者，增送各种礼物&quot;</span>);</span><br><span class="line">        SchoolGirl jiaojiao = <span class="keyword">new</span> SchoolGirl();</span><br><span class="line">        jiaojiao.setName(<span class="string">&quot;李娇娇&quot;</span>);</span><br><span class="line"></span><br><span class="line">        Pursuit zhuojiayi = <span class="keyword">new</span> Pursuit(jiaojiao);</span><br><span class="line">        zhuojiayi.giveDolls();</span><br><span class="line">        zhuojiayi.giveFlowers();</span><br><span class="line">        zhuojiayi.giveChocolate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//增加代理人</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        System.out.println(<span class="string">&quot;--------------增加代理人&quot;</span>);</span><br><span class="line">        PursuitImpl zhuojiayiNew = <span class="keyword">new</span> PursuitImpl(jiaojiao);</span><br><span class="line">        Proxy daili = <span class="keyword">new</span> Proxy(zhuojiayiNew);</span><br><span class="line">        daili.giveDolls();</span><br><span class="line">        daili.giveFlowers();</span><br><span class="line">        daili.giveChocolate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//代理接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IGiveGift</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">IGiveGift</span> </span>&#123;</span><br><span class="line">    PursuitImpl gg;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Proxy</span><span class="params">(PursuitImpl gg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.gg = gg;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>&#123;</span><br><span class="line">        gg.giveDolls();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>&#123;</span><br><span class="line">        gg.giveFlowers();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        gg.giveChocolate();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PursuitImpl</span> <span class="keyword">implements</span> <span class="title">IGiveGift</span> </span>&#123;</span><br><span class="line">    SchoolGirl mm;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PursuitImpl</span><span class="params">(SchoolGirl mm)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.mm = mm;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveDolls</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你洋娃娃&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveFlowers</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你鲜花&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">giveChocolate</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(mm.getName() + <span class="string">&quot;送你巧克力&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="2-7-2-代码结构"><a href="#2-7-2-代码结构" class="headerlink" title="2.7.2 代码结构"></a><strong>2.7.2 代码结构</strong></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义了RealSubject和Proxy的共用接口，这样就可以在使用RealSubject的地方使用Proxy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义Proxy所代表的真实实体</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RealSubject</span> <span class="keyword">extends</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;真实的请求&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//保存一个引用使得代理可以访问实体，并提供一个与Subject接口相同的接口，使代理可代替实体</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">extends</span> <span class="title">Subject</span> </span>&#123;</span><br><span class="line">    RealSubject realSubject;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(realSubject == <span class="keyword">null</span>)&#123;</span><br><span class="line">            realSubject = <span class="keyword">new</span> RealSubject();</span><br><span class="line">        &#125;</span><br><span class="line">        realSubject.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Proxy proxy = <span class="keyword">new</span> Proxy();</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;代理模式</p>
+<blockquote>
+<p>代理模式的应用场景：</p>
+<ul>
+<li><strong>远程代理</strong>，也就是为一个对象在不同的地址空间提供局部代表。这样可以隐藏一个对象存在于不同地址空间的事实，如WebService通过代理来解决远程访问问题。</li>
+<li><strong>虚拟代理</strong>，是根据需要创建开销很大的对象。通过它来存放实例化需要很长时间的真实对象，以达到性能的优化，比如HTML文件中较大的图片，需要一个个的下载，未打开的图片框就是用虚拟代理代替了真实的图片，此时代理存储了真实图片的路径和尺寸。</li>
+<li><strong>安全代理</strong>，用来控制真实对象访问时的权限，一般用于对象应该有不同的访问权限的时候。</li>
+<li><strong>智能指引</strong>，是指当调用真实的对象时，代理处理另外一些事。比如计算真实对象的引用次数，当对象没有引用时就可以自动释放它；或是当第一次引用一个持久对象时，将它装入内存；或在访问一个实际对象前，检查是否已经锁定它，以确保其他对象不能改变它。这些都是通过代理在访问一个对象时附加一些内务处理。</li>
+</ul>
+</blockquote>
+<hr>
+<p>参考：</p>
+<p>🔗 《设计模式：可复用面向对象软件的基础》</p>
+<p>🔗 《大话设计模式》</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -678,107 +796,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://linyishui.top/2020011301.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/cover/IMG_0759.JPG">
-      <meta itemprop="name" content="Lys">
-      <meta itemprop="description" content="记录编程点滴，写点生活中的酸甜">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="俺的部落格">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020011301.html" class="post-title-link" itemprop="url">桥接模式（未完成）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-13 20:42:48" itemprop="dateCreated datePublished" datetime="2020-01-13T20:42:48+08:00">2020-01-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-02 17:21:52" itemprop="dateModified" datetime="2020-10-02T17:21:52+08:00">2020-10-02</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/" itemprop="url" rel="index"><span itemprop="name">技术文档</span></a>
-        </span>
-    </span>
-
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>62</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="桥接模式"><a href="#桥接模式" class="headerlink" title="桥接模式"></a><strong>桥接模式</strong></h1><p>&emsp;&emsp;桥接模式（Bridge）</p>
-<hr>
-<p>参考：</p>
-<p>🔗 《设计模式：可复用面向对象软件的基础》<br>🔗 《大话设计模式》</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/25/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/66/">66</a><a class="extend next" rel="next" href="/page/27/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/25/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><span class="space">&hellip;</span><a class="page-number" href="/page/67/">67</a><a class="extend next" rel="next" href="/page/27/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
@@ -802,14 +821,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">3.5m</span>
+    <span title="站点总字数">3.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:11</span>
+    <span title="站点阅读时长">54:07</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动

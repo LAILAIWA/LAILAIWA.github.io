@@ -25,27 +25,85 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="《Redis开发与运维》读书笔记（九）哨兵，内容包括：基本概念，安装和部署，API，客户端连接，实现原理，开发与运维中的问题等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《Redis开发与运维》读书笔记（九）哨兵（未完成）">
+<meta property="og:title" content="《Redis开发与运维》读书笔记（九）哨兵">
 <meta property="og:url" content="http://linyishui.top/2020031601.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="《Redis开发与运维》读书笔记（九）哨兵，内容包括：基本概念，安装和部署，API，客户端连接，实现原理，开发与运维中的问题等。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160101.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160102.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160103.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160104.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160105.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160106.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160107.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160108.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160109.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160110.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160111.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160112.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160114.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160115.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160116.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160117.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160118.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160119.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160120.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160121.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160122.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160123.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160124.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160125.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160126.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160127.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160128.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160129.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160130.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160131.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160132.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160133.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160134.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160135.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160136.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160137.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160138.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160139.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160140.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160141.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160142.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160148.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160149.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160150.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160151.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160153.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160154.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160143.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160155.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160144.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160156.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160158.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160159.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160160.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160161.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160145.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160146.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160147.jpg">
 <meta property="article:published_time" content="2020-03-16T08:26:13.000Z">
-<meta property="article:modified_time" content="2021-08-08T11:00:40.000Z">
+<meta property="article:modified_time" content="2022-03-22T06:14:08.000Z">
 <meta property="article:author" content="Lys">
-<meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160101.jpg">
 
 
 <link rel="canonical" href="http://linyishui.top/2020031601.html">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031601.html","path":"2020031601.html","title":"《Redis开发与运维》读书笔记（九）哨兵（未完成）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031601.html","path":"2020031601.html","title":"《Redis开发与运维》读书笔记（九）哨兵"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>《Redis开发与运维》读书笔记（九）哨兵（未完成） | 俺的部落格</title>
+<title>《Redis开发与运维》读书笔记（九）哨兵 | 俺的部落格</title>
   
 
 
@@ -159,7 +217,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E5%93%A8%E5%85%B5"><span class="nav-text">第九章 哨兵</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">9.1 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-1-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">9.1.1 主从复制的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-2-%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-text">9.1.2 高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-3-Redis-Sentinel%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="nav-text">9.1.3 Redis Sentinel的高可用性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-%E5%AE%89%E8%A3%85%E5%92%8C%E9%83%A8%E7%BD%B2"><span class="nav-text">9.2 安装和部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-1-%E9%83%A8%E7%BD%B2%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84"><span class="nav-text">9.2.1 部署拓扑结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-2-%E9%83%A8%E7%BD%B2Redis%E6%95%B0%E6%8D%AE%E8%8A%82%E7%82%B9"><span class="nav-text">9.2.2 部署Redis数据节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-3-%E9%83%A8%E7%BD%B2Sentinel%E8%8A%82%E7%82%B9"><span class="nav-text">9.2.3 部署Sentinel节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-4-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96"><span class="nav-text">9.2.4 配置优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-5-%E9%83%A8%E7%BD%B2%E6%8A%80%E5%B7%A7"><span class="nav-text">9.2.5 部署技巧</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-3-API"><span class="nav-text">9.3 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-4-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5"><span class="nav-text">9.4 客户端连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-1-Redis-Sentinel%E7%9A%84%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">9.4.1 Redis Sentinel的客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-2-Redis-Sentinel%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">9.4.2 Redis Sentinel客户端基本实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-3-Java%E6%93%8D%E4%BD%9CRedis-Sentinel"><span class="nav-text">9.4.3 Java操作Redis Sentinel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-5-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">9.5 实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-1-%E4%B8%89%E4%B8%AA%E5%AE%9A%E6%97%B6%E7%9B%91%E6%8E%A7%E4%BB%BB%E5%8A%A1"><span class="nav-text">9.5.1 三个定时监控任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-2-%E4%B8%BB%E8%A7%82%E4%B8%8B%E7%BA%BF%E5%92%8C%E5%AE%A2%E8%A7%82%E4%B8%8B%E7%BA%BF"><span class="nav-text">9.5.2 主观下线和客观下线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-3-%E9%A2%86%E5%AF%BC%E8%80%85Sentinel%E8%8A%82%E7%82%B9%E9%80%89%E4%B8%BE"><span class="nav-text">9.5.3 领导者Sentinel节点选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-4-%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-text">9.5.4 故障转移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-6-%E5%BC%80%E5%8F%91%E4%B8%8E%E8%BF%90%E7%BB%B4%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">9.6 开发与运维中的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-1-%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-text">9.6.1 故障转移日志分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-2-%E8%8A%82%E7%82%B9%E8%BF%90%E7%BB%B4"><span class="nav-text">9.6.2 节点运维</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-3-%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-text">9.6.3 高可用读写分离</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E5%93%A8%E5%85%B5"><span class="nav-text">第九章 哨兵</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">9.1 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-1-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">9.1.1 主从复制的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-2-%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-text">9.1.2 高可用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-3-Redis-Sentinel%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="nav-text">9.1.3 Redis Sentinel的高可用性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-%E5%AE%89%E8%A3%85%E5%92%8C%E9%83%A8%E7%BD%B2"><span class="nav-text">9.2 安装和部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-1-%E9%83%A8%E7%BD%B2%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84"><span class="nav-text">9.2.1 部署拓扑结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-2-%E9%83%A8%E7%BD%B2Redis%E6%95%B0%E6%8D%AE%E8%8A%82%E7%82%B9"><span class="nav-text">9.2.2 部署Redis数据节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%90%AF%E5%8A%A8%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-text">（1）启动主节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%90%AF%E5%8A%A8%E4%B8%A4%E4%B8%AA%E4%BB%8E%E8%8A%82%E7%82%B9"><span class="nav-text">（2）启动两个从节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E7%A1%AE%E8%AE%A4%E4%B8%BB%E4%BB%8E%E5%85%B3%E7%B3%BB"><span class="nav-text">（3）确认主从关系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-3-%E9%83%A8%E7%BD%B2Sentinel%E8%8A%82%E7%82%B9"><span class="nav-text">9.2.3 部署Sentinel节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%85%8D%E7%BD%AE"><span class="nav-text">（1）配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%90%AF%E5%8A%A8"><span class="nav-text">（2）启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E7%A1%AE%E8%AE%A4"><span class="nav-text">（3）确认</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-4-%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96"><span class="nav-text">9.2.4 配置优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E%E5%92%8C%E4%BC%98%E5%8C%96"><span class="nav-text">（1）配置说明和优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%A6%82%E4%BD%95%E7%9B%91%E6%8E%A7%E5%A4%9A%E4%B8%AA%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-text">（2）如何监控多个主节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%B0%83%E6%95%B4%E9%85%8D%E7%BD%AE"><span class="nav-text">（3）调整配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-5-%E9%83%A8%E7%BD%B2%E6%8A%80%E5%B7%A7"><span class="nav-text">9.2.5 部署技巧</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-3-API"><span class="nav-text">9.3 API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%881%EF%BC%89sentinel-masters"><span class="nav-text">（1）sentinel masters</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%882%EF%BC%89sentinel-master-lt-master-name-gt"><span class="nav-text">（2）sentinel master &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%883%EF%BC%89sentinel-slaves-lt-master-name-gt"><span class="nav-text">（3）sentinel slaves &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%884%EF%BC%89sentinel-sentinels-lt-master-name-gt"><span class="nav-text">（4）sentinel sentinels &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%885%EF%BC%89sentinel-get-master-addr-by-name-lt-master-name-gt"><span class="nav-text">（5）sentinel get-master-addr-by-name &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%886%EF%BC%89sentinel-reset-lt-pattern-gt"><span class="nav-text">（6）sentinel reset &lt;pattern&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%887%EF%BC%89sentinel-failover-lt-master-name-gt"><span class="nav-text">（7）sentinel failover &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%888%EF%BC%89sentinel-ckquorum-lt-master-name-gt"><span class="nav-text">（8）sentinel ckquorum &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%889%EF%BC%89sentinel-flushconfig"><span class="nav-text">（9）sentinel flushconfig</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%8810%EF%BC%89sentinel-remove-lt-master-name-gt"><span class="nav-text">（10）sentinel remove &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%8811%EF%BC%89sentinel-monitor-lt-master-name-gt-lt-ip-gt-lt-port-gt-lt-quorum-gt"><span class="nav-text">（11）sentinel monitor &lt;master name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%8812%EF%BC%89sentinel-set-lt-master-name-gt"><span class="nav-text">（12）sentinel set &lt;master name&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%8813%EF%BC%89sentinel-is-master-down-by-addr"><span class="nav-text">（13）sentinel is-master-down-by-addr</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-4-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5"><span class="nav-text">9.4 客户端连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-1-Redis-Sentinel%E7%9A%84%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">9.4.1 Redis Sentinel的客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-2-Redis-Sentinel%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%BA%E6%9C%AC%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">9.4.2 Redis Sentinel客户端基本实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-4-3-Java%E6%93%8D%E4%BD%9CRedis-Sentinel"><span class="nav-text">9.4.3 Java操作Redis Sentinel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-5-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">9.5 实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-1-%E4%B8%89%E4%B8%AA%E5%AE%9A%E6%97%B6%E7%9B%91%E6%8E%A7%E4%BB%BB%E5%8A%A1"><span class="nav-text">9.5.1 三个定时监控任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-2-%E4%B8%BB%E8%A7%82%E4%B8%8B%E7%BA%BF%E5%92%8C%E5%AE%A2%E8%A7%82%E4%B8%8B%E7%BA%BF"><span class="nav-text">9.5.2 主观下线和客观下线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-3-%E9%A2%86%E5%AF%BC%E8%80%85Sentinel%E8%8A%82%E7%82%B9%E9%80%89%E4%B8%BE"><span class="nav-text">9.5.3 领导者Sentinel节点选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-5-4-%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-text">9.5.4 故障转移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-6-%E5%BC%80%E5%8F%91%E4%B8%8E%E8%BF%90%E7%BB%B4%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">9.6 开发与运维中的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-1-%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-text">9.6.1 故障转移日志分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89Redis-Sentinel-%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84"><span class="nav-text">（1）Redis Sentinel 拓扑结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%BC%80%E5%A7%8B%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%E6%B5%8B%E8%AF%95"><span class="nav-text">（2）开始故障转移测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%A7%82%E5%AF%9F%E6%95%88%E6%9E%9C"><span class="nav-text">（3）观察效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%E5%88%86%E6%9E%90"><span class="nav-text">（4）故障转移分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#6379%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="nav-text">6379节点日志</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6380%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="nav-text">6380节点日志</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6381%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="nav-text">6381节点日志</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sentinel-1%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="nav-text">sentinel-1节点日志</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sentinel-2%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="nav-text">sentinel-2节点日志</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sentinel-3%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="nav-text">sentinel-3节点日志</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%885%EF%BC%89%E5%8E%9F%E4%B8%BB%E8%8A%82%E7%82%B9%E5%90%8E%E7%BB%AD%E5%A4%84%E7%90%86"><span class="nav-text">（5）原主节点后续处理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#6379%E8%8A%82%E7%82%B9"><span class="nav-text">6379节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6380%E8%8A%82%E7%82%B9"><span class="nav-text">6380节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sentinel-1%E8%8A%82%E7%82%B9"><span class="nav-text">sentinel-1节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sentinel-2%E8%8A%82%E7%82%B9"><span class="nav-text">sentinel-2节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sentinel-3%E8%8A%82%E7%82%B9"><span class="nav-text">sentinel-3节点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%886%EF%BC%89%E6%B3%A8%E6%84%8F"><span class="nav-text">（6）注意</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-2-%E8%8A%82%E7%82%B9%E8%BF%90%E7%BB%B4"><span class="nav-text">9.6.2 节点运维</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E8%8A%82%E7%82%B9%E4%B8%8B%E7%BA%BF"><span class="nav-text">（1）节点下线</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-text">主节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%8E%E8%8A%82%E7%82%B9%E5%92%8CSentinel%E8%8A%82%E7%82%B9"><span class="nav-text">从节点和Sentinel节点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E8%8A%82%E7%82%B9%E4%B8%8A%E7%BA%BF"><span class="nav-text">（2）节点上线</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E4%BB%8E%E8%8A%82%E7%82%B9"><span class="nav-text">添加从节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0Sentinel%E8%8A%82%E7%82%B9"><span class="nav-text">添加Sentinel节点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="nav-text">添加主节点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-text">（3）节点配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-6-3-%E9%AB%98%E5%8F%AF%E7%94%A8%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-text">9.6.3 高可用读写分离</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E4%BB%8E%E8%8A%82%E7%82%B9%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">（1）从节点的作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89Redis-Sentinel-%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-text">（2）Redis Sentinel 读写分离的设计思路</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -176,7 +234,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">330</span>
+          <span class="site-state-item-count">331</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -277,7 +335,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《Redis开发与运维》读书笔记（九）哨兵（未完成）
+          《Redis开发与运维》读书笔记（九）哨兵
         </h1>
 
         <div class="post-meta-container">
@@ -295,7 +353,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-08-08 19:00:40" itemprop="dateModified" datetime="2021-08-08T19:00:40+08:00">2021-08-08</time>
+        <time title="修改时间：2022-03-22 14:14:08" itemprop="dateModified" datetime="2022-03-22T14:14:08+08:00">2022-03-22</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,14 +373,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>338</span>
+      <span>14k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -334,12 +392,566 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="第九章-哨兵"><a href="#第九章-哨兵" class="headerlink" title="第九章 哨兵"></a>第九章 哨兵</h1><h2 id="9-1-基本概念"><a href="#9-1-基本概念" class="headerlink" title="9.1 基本概念"></a>9.1 基本概念</h2><h3 id="9-1-1-主从复制的问题"><a href="#9-1-1-主从复制的问题" class="headerlink" title="9.1.1 主从复制的问题"></a>9.1.1 主从复制的问题</h3><h3 id="9-1-2-高可用"><a href="#9-1-2-高可用" class="headerlink" title="9.1.2 高可用"></a>9.1.2 高可用</h3><h3 id="9-1-3-Redis-Sentinel的高可用性"><a href="#9-1-3-Redis-Sentinel的高可用性" class="headerlink" title="9.1.3 Redis Sentinel的高可用性"></a>9.1.3 Redis Sentinel的高可用性</h3><hr>
-<h2 id="9-2-安装和部署"><a href="#9-2-安装和部署" class="headerlink" title="9.2 安装和部署"></a>9.2 安装和部署</h2><h3 id="9-2-1-部署拓扑结构"><a href="#9-2-1-部署拓扑结构" class="headerlink" title="9.2.1 部署拓扑结构"></a>9.2.1 部署拓扑结构</h3><h3 id="9-2-2-部署Redis数据节点"><a href="#9-2-2-部署Redis数据节点" class="headerlink" title="9.2.2 部署Redis数据节点"></a>9.2.2 部署Redis数据节点</h3><h3 id="9-2-3-部署Sentinel节点"><a href="#9-2-3-部署Sentinel节点" class="headerlink" title="9.2.3 部署Sentinel节点"></a>9.2.3 部署Sentinel节点</h3><h3 id="9-2-4-配置优化"><a href="#9-2-4-配置优化" class="headerlink" title="9.2.4 配置优化"></a>9.2.4 配置优化</h3><h3 id="9-2-5-部署技巧"><a href="#9-2-5-部署技巧" class="headerlink" title="9.2.5 部署技巧"></a>9.2.5 部署技巧</h3><hr>
-<h2 id="9-3-API"><a href="#9-3-API" class="headerlink" title="9.3 API"></a>9.3 API</h2><hr>
-<h2 id="9-4-客户端连接"><a href="#9-4-客户端连接" class="headerlink" title="9.4 客户端连接"></a>9.4 客户端连接</h2><h3 id="9-4-1-Redis-Sentinel的客户端"><a href="#9-4-1-Redis-Sentinel的客户端" class="headerlink" title="9.4.1 Redis Sentinel的客户端"></a>9.4.1 Redis Sentinel的客户端</h3><h3 id="9-4-2-Redis-Sentinel客户端基本实现原理"><a href="#9-4-2-Redis-Sentinel客户端基本实现原理" class="headerlink" title="9.4.2 Redis Sentinel客户端基本实现原理"></a>9.4.2 Redis Sentinel客户端基本实现原理</h3><h3 id="9-4-3-Java操作Redis-Sentinel"><a href="#9-4-3-Java操作Redis-Sentinel" class="headerlink" title="9.4.3 Java操作Redis Sentinel"></a>9.4.3 Java操作Redis Sentinel</h3><hr>
-<h2 id="9-5-实现原理"><a href="#9-5-实现原理" class="headerlink" title="9.5 实现原理"></a>9.5 实现原理</h2><h3 id="9-5-1-三个定时监控任务"><a href="#9-5-1-三个定时监控任务" class="headerlink" title="9.5.1 三个定时监控任务"></a>9.5.1 三个定时监控任务</h3><h3 id="9-5-2-主观下线和客观下线"><a href="#9-5-2-主观下线和客观下线" class="headerlink" title="9.5.2 主观下线和客观下线"></a>9.5.2 主观下线和客观下线</h3><h3 id="9-5-3-领导者Sentinel节点选举"><a href="#9-5-3-领导者Sentinel节点选举" class="headerlink" title="9.5.3 领导者Sentinel节点选举"></a>9.5.3 领导者Sentinel节点选举</h3><h3 id="9-5-4-故障转移"><a href="#9-5-4-故障转移" class="headerlink" title="9.5.4 故障转移"></a>9.5.4 故障转移</h3><hr>
-<h2 id="9-6-开发与运维中的问题"><a href="#9-6-开发与运维中的问题" class="headerlink" title="9.6 开发与运维中的问题"></a>9.6 开发与运维中的问题</h2><h3 id="9-6-1-故障转移日志分析"><a href="#9-6-1-故障转移日志分析" class="headerlink" title="9.6.1 故障转移日志分析"></a>9.6.1 故障转移日志分析</h3><h3 id="9-6-2-节点运维"><a href="#9-6-2-节点运维" class="headerlink" title="9.6.2 节点运维"></a>9.6.2 节点运维</h3><h3 id="9-6-3-高可用读写分离"><a href="#9-6-3-高可用读写分离" class="headerlink" title="9.6.3 高可用读写分离"></a>9.6.3 高可用读写分离</h3><hr>
+        <h1 id="第九章-哨兵"><a href="#第九章-哨兵" class="headerlink" title="第九章 哨兵"></a>第九章 哨兵</h1><p>主从复制模式下，一旦主节点故障，需要手动晋升从节点，还要通知应用更新主节点地址。Redis 2.8版本提供Sentinel（哨兵）架构来解决该问题。</p>
+<h2 id="9-1-基本概念"><a href="#9-1-基本概念" class="headerlink" title="9.1 基本概念"></a>9.1 基本概念</h2><p>名称解释：</p>
+<table>
+<thead>
+<tr>
+<th>名词</th>
+<th>逻辑结构</th>
+<th>物理结构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主节点</td>
+<td>Redis主服务/数据库</td>
+<td>一个独立的Redis进程</td>
+</tr>
+<tr>
+<td>从节点</td>
+<td>Redis从服务/数据库</td>
+<td>一个独立的Redis进程</td>
+</tr>
+<tr>
+<td>Redis数据节点</td>
+<td>主节点和从节点</td>
+<td>主节点和从节点的进程</td>
+</tr>
+<tr>
+<td>Sentinel节点</td>
+<td>监控Redis数据节点</td>
+<td>一个独立的Sentinel进程</td>
+</tr>
+<tr>
+<td>Sentinel节点集合</td>
+<td>若干Sentinel节点的抽象组合</td>
+<td>若干Sentinel节点进程</td>
+</tr>
+<tr>
+<td>Redis Sentinel</td>
+<td>Redis高可用实现方案</td>
+<td>Sentinel节点集合和Redis数据节点进程</td>
+</tr>
+<tr>
+<td>应用方</td>
+<td>泛指一个或多个客户端</td>
+<td>一个或多个客户端进程或者线程</td>
+</tr>
+</tbody></table>
+<h3 id="9-1-1-主从复制的问题"><a href="#9-1-1-主从复制的问题" class="headerlink" title="9.1.1 主从复制的问题"></a>9.1.1 主从复制的问题</h3><p>主从复制的作用：</p>
+<ol>
+<li>数据一致性：在主节点故障时顶上，并保证数据不丢失。</li>
+<li>读写分离：扩展主节点的读能力，分摊并发读压力。</li>
+</ol>
+<p>问题：</p>
+<ul>
+<li>主节点故障，从节点需要手动晋升，还要修改应用方的主节点地址，还要命令其他从节点复制新的主节点。</li>
+<li>主节点的写能力受到单机限制。</li>
+<li>主节点的存储能力受到单机限制。</li>
+</ul>
+<h3 id="9-1-2-高可用"><a href="#9-1-2-高可用" class="headerlink" title="9.1.2 高可用"></a>9.1.2 高可用</h3><p>一主二从模式下如何进行故障转移：</p>
+<ol>
+<li><p>主节点故障，客户端连接失败，主从节点连接失败导致复制中断。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160101.jpg"></p>
+</li>
+<li><p>主节点无法启动，需要选出一个从节点，执行 slaveof no one 使其成为主节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160102.jpg"></p>
+</li>
+<li><p>更新应用的主节点信息，重启应用。</p>
+</li>
+<li><p>客户端命令另一个从节点复制新的主节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160103.jpg"></p>
+</li>
+<li><p>待原来的主节点恢复后，让其复制新的主节点。</p>
+</li>
+</ol>
+<p>故障转移过程需要人工介入，整理非高可用，即使将人工过程自动化，还是有问题：</p>
+<ol>
+<li>判断节点不可达机制是否健全和标准。</li>
+<li>如果多个从节点、，如何保证只有一个被晋升为主节点。</li>
+<li>通知客户端的新的主节点机制是否足够健壮。</li>
+</ol>
+<h3 id="9-1-3-Redis-Sentinel的高可用性"><a href="#9-1-3-Redis-Sentinel的高可用性" class="headerlink" title="9.1.3 Redis Sentinel的高可用性"></a>9.1.3 Redis Sentinel的高可用性</h3><ul>
+<li>Sentinel能够自动完成故障发现和故障转移，并通知应用方来实现高可用。</li>
+<li>Sentinel是一个分布式架构，包含若干Sentinel节点和Redis数据节点，每个Sentinel节点会对数据节点和其它Sentinel节点进行监控，当发现节点不可达时，会标记下线标识。如果被标识的是主节点，还会和其它Sentinel节点协商，当大部分Sentinel节点都认为主节点不可达时，会选举出一个Sentinel节点来完成自动故障转移工作，同时将变化通知给应用。</li>
+</ul>
+<p>Sentinel相比主从复制从结构上只是多了若干Sentinel节点，并没有对Redis节点做特殊处理。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160104.jpg"></p>
+<p>举例说明，1个主节点，2个从节点，3个Sentinel节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160105.jpg"></p>
+<p>故障转移处理逻辑：</p>
+<ol>
+<li><p>主节点出现故障，主从节点失去连接，主从复制失败。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160106.jpg"></p>
+</li>
+<li><p>每个Sentinel节点通过定期监控发现主节点出现故障。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160107.jpg"></p>
+</li>
+<li><p>多个Sentinel节点对主节点的故障达成一致，选举出Sentinel-3节点作为Leader负责故障转移。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160108.jpg"></p>
+</li>
+<li><p>Sentinel领导者节点执行了故障转移，转移流程与主从复制一致，只不过全程是自动化的。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160109.jpg"></p>
+</li>
+<li><p>故障转移后整个Sentinel的拓扑结构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160110.jpg"></p>
+</li>
+</ol>
+<p>Sentinel的功能：</p>
+<ul>
+<li><p>监控：Sentinel节点会定期检测数据节点、其余Sentinel节点是否可达。</p>
+</li>
+<li><p>通知：Sentinel节点会将故障转移的结果通知给应用方。</p>
+</li>
+<li><p>主节点故障转移：实现从节点晋升为主节点并维护后续正确的主从关系。</p>
+</li>
+<li><p>配置提供者：客户端初始化时连接的是Sentinel节点集合，从中获取主节点信息。</p>
+<p>多个Sentinel节点的优点：</p>
+<ul>
+<li>对于节点的故障判断是多个节点共同完成，防止误判。</li>
+<li>防止个别Sentinel节点不可用，整体集合是健壮的。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="9-2-安装和部署"><a href="#9-2-安装和部署" class="headerlink" title="9.2 安装和部署"></a>9.2 安装和部署</h2><h3 id="9-2-1-部署拓扑结构"><a href="#9-2-1-部署拓扑结构" class="headerlink" title="9.2.1 部署拓扑结构"></a>9.2.1 部署拓扑结构</h3><p>案例拓扑结构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160111.jpg"></p>
+<p>物理结构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160112.jpg"></p>
+<h3 id="9-2-2-部署Redis数据节点"><a href="#9-2-2-部署Redis数据节点" class="headerlink" title="9.2.2 部署Redis数据节点"></a>9.2.2 部署Redis数据节点</h3><p>该过程并无特殊配置。</p>
+<h4 id="（1）启动主节点"><a href="#（1）启动主节点" class="headerlink" title="（1）启动主节点"></a>（1）启动主节点</h4><p>配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">port</span> <span class="string">6379</span></span><br><span class="line"><span class="meta">daemonsize</span> <span class="string">yes</span></span><br><span class="line"><span class="attr">logfile</span> <span class="string">&quot;6379.log&quot;</span></span><br><span class="line"><span class="attr">dbfilename</span> <span class="string">&quot;dump-6379.rdb&quot;</span></span><br><span class="line"><span class="attr">dir</span> <span class="string">&quot;/opt/soft/redis/data&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-server redis-6379.conf</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 确定是否启动</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h 127.0.0.1 -p 6379 ping</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（2）启动两个从节点"><a href="#（2）启动两个从节点" class="headerlink" title="（2）启动两个从节点"></a>（2）启动两个从节点</h4><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">port</span> <span class="string">6380</span></span><br><span class="line"><span class="meta">daemonsize</span> <span class="string">yes</span></span><br><span class="line"><span class="attr">logfile</span> <span class="string">&quot;6380.log&quot;</span></span><br><span class="line"><span class="attr">dbfilename</span> <span class="string">&quot;dump-6380.rdb&quot;</span></span><br><span class="line"><span class="attr">dir</span> <span class="string">&quot;/opt/soft/redis/data&quot;</span></span><br><span class="line"><span class="meta">slaveof</span> <span class="string">127.0.0.1 6379</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-server redis-6380.conf</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> redis-server redis-6381.conf</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（3）确认主从关系"><a href="#（3）确认主从关系" class="headerlink" title="（3）确认主从关系"></a>（3）确认主从关系</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h 127.0.0.1 -p 6379 info replication</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=......</span><br><span class="line">slave1:ip=......</span><br><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h 127.0.0.1 -p 6380 info replication</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Replication</span></span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="9-2-3-部署Sentinel节点"><a href="#9-2-3-部署Sentinel节点" class="headerlink" title="9.2.3 部署Sentinel节点"></a>9.2.3 部署Sentinel节点</h3><p>三个Sentinel节点的部署方法一致。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160114.jpg"></p>
+<h4 id="（1）配置"><a href="#（1）配置" class="headerlink" title="（1）配置"></a>（1）配置</h4><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">port</span> <span class="string">26379</span></span><br><span class="line"><span class="meta">daemonsize</span> <span class="string">yes</span></span><br><span class="line"><span class="attr">logfile</span> <span class="string">&quot;26379.log&quot;</span></span><br><span class="line"><span class="attr">dbfilename</span> <span class="string">&quot;dump-26379.rdb&quot;</span></span><br><span class="line"><span class="attr">dir</span> <span class="string">&quot;/opt/soft/redis/data&quot;</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">monitor mymaster 127.0.0.1 6379 2</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">down-after-milliseconds mymaster 30000</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">parallel-syncs mymaster 1</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">failover-timeout mtmaster 180000</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>sentinel节点默认端口为26379</li>
+<li>sentinel节点监控6379主节点，2表示判断主节点失败至少需要2个sentinel节点同意</li>
+</ul>
+<h4 id="（2）启动"><a href="#（2）启动" class="headerlink" title="（2）启动"></a>（2）启动</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 两种启动方法</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> redis-sentinel redis-sentinel-26379.conf</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> redis-sentinel redis-sentinel-26379.conf --sentinel</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（3）确认"><a href="#（3）确认" class="headerlink" title="（3）确认"></a>（3）确认</h4><p>通过info命令来查看sentinel节点的信息，sentinel节点能够彼此感知到。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h 127.0.0.1 -p 26379 info Sentinel</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>生产环境建议sentinel节点分布在不同物理机。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160115.jpg"></p>
+<h3 id="9-2-4-配置优化"><a href="#9-2-4-配置优化" class="headerlink" title="9.2.4 配置优化"></a>9.2.4 配置优化</h3><p>Redis安装目录下的sentinel.conf是默认配置文件。</p>
+<h4 id="（1）配置说明和优化"><a href="#（1）配置说明和优化" class="headerlink" title="（1）配置说明和优化"></a>（1）配置说明和优化</h4><ul>
+<li><p>port：Sentinel节点端口。</p>
+</li>
+<li><p>dir：Sentinel节点工作目录。</p>
+</li>
+<li><p><code>sentinel monitor &lt;matser-name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</code> ：监控一个名字叫matser-name并配置地址的主节点，quorum表示要判定主节点不可达需要的票数（一般建议设置为Sentinel节点数一半加一）。实际上Sentinel节点会对所有节点进行监控，却没有配置其它节点，因为可以从主节点获取其余节点相关信息。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动后：</span></span><br><span class="line"><span class="comment"># 发现两个slave节点</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">known-slave mymaster 127.0.0.1 6380</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">known-slave mymaster 127.0.0.1 6381</span></span><br><span class="line"><span class="comment"># 发现两个sentinel节点</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">known-sentinel mymaster 127.0.0.1 26380 ......</span></span><br><span class="line"><span class="meta">sentinel</span> <span class="string">known-sentinel mymaster 127.0.0.1 26381 ......</span></span><br></pre></td></tr></table></figure>
+
+<p>至少有max(quorum, num(sentinels) / 2 + 1)个节点参与选举才可以选出Leader，最终完成故障转移。</p>
+</li>
+<li><p><code>sentinel down-after-milliseconds &lt;master-name&gt; &lt;times&gt;</code> ：每个sentinel节点需要定期发送ping命令来判断数据节点和其余sentinel节点是否可达，超过该配置时间没有有效回复就判定为不可达。该配置太大就会导致过于宽松，故障时间增长，过小会导致一定的误判率。</p>
+</li>
+<li><p><code>sentinel parallel-syncs &lt;master-name&gt; &lt;nums&gt;</code> ：限制在一次故障转移后，每次向新主节点发起复制操作的从节点个数。参数设置较大时，会有多个从节点同时发起复制操作，造成主节点机器一定的网络和磁盘开销。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160116.jpg"></p>
+</li>
+<li><p><code>sentinel failover-timeout &lt;master-name&gt; &lt;times&gt;</code> ：故障转移超时时间。</p>
+<p>作用阶段：</p>
+<ul>
+<li>a：选出合适从节点。</li>
+<li>b：晋升选出的从节点为主节点。</li>
+<li>c：命令其余从节点复制新的主节点。</li>
+<li>d：等待原主节点恢复后命令它去复制新的主节点。</li>
+</ul>
+<p>作用：</p>
+<ol>
+<li>如果对一个主节点的故障转移失败，下次开始的时间是该配置的2倍。</li>
+<li>b阶段，如果Sentinel节点向a阶段选出的从节点执行slaveof no one一直失败，超时则转移失败。</li>
+<li>b阶段执行成功，Sentinel节点会执行info命令来确认a阶段选出的节点是否晋升为主节点，超时则转移失败。</li>
+<li>c阶段执行时间超过failover-timeout（不包含复制时间），则转移失败。</li>
+</ol>
+</li>
+<li><p><code>sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</code> ：通过添加主节点密码防止Sentinel节点无法监控主节点。</p>
+</li>
+<li><p><code>sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</code> ：在故障转移期间，当一些警告级别的Sentinel事件发生（如-sdown：客观下线、-odown：主观下线）时，触发对应路径的脚本，并向脚本发送相应的事件参数。</p>
+<p>如在 /opt/redis/scripts 下配置了 notification.sh，脚本会接收每个Sentinel节点传过来的事件参数，利用这些可以作为邮件或短信报警的依据。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> !/bin/sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 获取所有参数</span></span><br><span class="line">msg=$*</span><br><span class="line"><span class="meta">#</span><span class="bash"> 报警脚本或接口，将msg作为参数</span></span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure>
+
+<p>如果需要此功能，可以在Sentinel节点添加如下配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel notification-script mymaster /opt/redis/scripts/notification.sh</span></span><br></pre></td></tr></table></figure></li>
+<li><p><code>sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</code> ：在故障转移结束后，触发对应路径的脚本，并向脚本发送故障转移结果相关参数。</p>
+<p>如果需要此功能，可以在Sentinel节点添加如下配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel client-reconfig-script mymaster /opt/redis/scripts/client-reconfig.sh</span></span><br></pre></td></tr></table></figure>
+
+<p>发送故障转移结果的相关参数：</p>
+<ul>
+<li>master-name：主节点名</li>
+<li>role：角色，包括Leader和Observer，前者负责了故障转移。</li>
+<li>from-ip：原主节点的ip地址。</li>
+<li>from-port：原主节点的端口。</li>
+<li>to-ip：新主节点的ip地址。</li>
+<li>to-port：新主节点的端口。</li>
+</ul>
+</li>
+</ul>
+<p>script注意：</p>
+<ul>
+<li>script-path必须有可执行权限。</li>
+<li>script-path开头必须包含shell脚本头，如 <code>#!/bin/sh</code> ，否则事件产生时，Redis将无法执行脚本产生错误 <code>-script-error /opt/sentinel/notification.sh 0 2</code> 。</li>
+<li>脚本的最大执行时间不能超过60秒，超过会被kill。</li>
+<li>若脚本以exit 1结束，那么脚本稍后重试执行。若以exit 2或更高值结束，则不会重试。正常返回值为0。</li>
+<li>如果需要运维的Sentinel较多，尽量不要以脚本形式通知，增加部署的成本。</li>
+</ul>
+<h4 id="（2）如何监控多个主节点"><a href="#（2）如何监控多个主节点" class="headerlink" title="（2）如何监控多个主节点"></a>（2）如何监控多个主节点</h4><p>Sentinel可以同时监控多个主节点，配置时指定多个masterName即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sentinel monitor master-business-1 10.10.XX.1 6379 2</span><br><span class="line">sentinel down-after-milliseconds master-business-1 60000</span><br><span class="line">sentinel parallel-syncs master-business-1 1</span><br><span class="line">sentinel failover-timeout master-business-1 180000</span><br><span class="line">sentinel monitor master-business-2 10.16.XX.2 6380 2</span><br><span class="line">sentinel down-after-milliseconds master-business-2 10000</span><br><span class="line">sentinel parallel-syncs master-business-2 1</span><br><span class="line">sentinel failover-timeout master-business-2 180000</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160117.jpg"></p>
+<h4 id="（3）调整配置"><a href="#（3）调整配置" class="headerlink" title="（3）调整配置"></a>（3）调整配置</h4><p>Sentinel支持动态设置参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel <span class="built_in">set</span> &lt;param&gt; &lt;value&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160118.jpg"></p>
+<p>注意点：</p>
+<ol>
+<li>set命令只对当前Sentinel节点有效。</li>
+<li>set命令如果执行成功会立即刷新配置文件，这与Redis普通数据节点设置配置需要执行config rewrite刷新到配置文件不同。</li>
+<li>建议所有的Sentinel节点配置尽可能一致，这样在故障发现和转移时比较容易达成一致。</li>
+<li>set支持的参数可以参考源码中sentinel.c的sentinelSetCommand函数。</li>
+<li>Sentinel对外不支持config命令。</li>
+</ol>
+<h3 id="9-2-5-部署技巧"><a href="#9-2-5-部署技巧" class="headerlink" title="9.2.5 部署技巧"></a>9.2.5 部署技巧</h3><ol>
+<li>Sentinel节点不应该部署在同一台机器上。<ul>
+<li>即使使用虚拟机或容器技术分配了不同的IP地址，会同时受硬件故障影响。</li>
+</ul>
+</li>
+<li>部署至少三个且奇数个Sentinel节点。<ul>
+<li>3个以上是为了提高故障判定的准确性。</li>
+<li>因为选举需要至少一半加1个节点，奇数个节点可以在满足该条件基础上节省一个节点。</li>
+</ul>
+</li>
+<li>只有一套Sentinel还是每个主节点都要配一套Sentinel？<ul>
+<li>方案一：降低了维护成本，但当Sentinel节点集合出现异常，可能会多个Redis数据节点造成影响。如果监控的节点个数过多，会造成Sentinel节点产生过多的网络连接。</li>
+<li>方案二：造成了资源浪费，但每套Sentinel集合彼此隔离。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160119.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160120.jpg"></p>
+<hr>
+<h2 id="9-3-API"><a href="#9-3-API" class="headerlink" title="9.3 API"></a>9.3 API</h2><h3 id="（1）sentinel-masters"><a href="#（1）sentinel-masters" class="headerlink" title="（1）sentinel masters"></a>（1）sentinel masters</h3><p>显示所有被监控的主节点状态和相关信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel masters</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160121.jpg"></p>
+<h3 id="（2）sentinel-master-lt-master-name-gt"><a href="#（2）sentinel-master-lt-master-name-gt" class="headerlink" title="（2）sentinel master &lt;master name&gt;"></a>（2）sentinel master &lt;master name&gt;</h3><p>显示指定主节点状态和相关信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel master mymaster1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="（3）sentinel-slaves-lt-master-name-gt"><a href="#（3）sentinel-slaves-lt-master-name-gt" class="headerlink" title="（3）sentinel slaves &lt;master name&gt;"></a>（3）sentinel slaves &lt;master name&gt;</h3><p>显示指定从节点状态和相关信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel slaves mymaster1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="（4）sentinel-sentinels-lt-master-name-gt"><a href="#（4）sentinel-sentinels-lt-master-name-gt" class="headerlink" title="（4）sentinel sentinels &lt;master name&gt;"></a>（4）sentinel sentinels &lt;master name&gt;</h3><p>显示指定Sentinel节点集合，不包含当前Sentinel节点：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel sentinels mymaster1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="（5）sentinel-get-master-addr-by-name-lt-master-name-gt"><a href="#（5）sentinel-get-master-addr-by-name-lt-master-name-gt" class="headerlink" title="（5）sentinel get-master-addr-by-name &lt;master name&gt;"></a>（5）sentinel get-master-addr-by-name &lt;master name&gt;</h3><p>返回指定的主节点的IP地址和端口：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel get-master-addr-by-name mymaster1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="（6）sentinel-reset-lt-pattern-gt"><a href="#（6）sentinel-reset-lt-pattern-gt" class="headerlink" title="（6）sentinel reset &lt;pattern&gt;"></a>（6）sentinel reset &lt;pattern&gt;</h3><p>当前Sentinel节点对符合pattern主节点配置进行重置，包括清除主节点状态（包括故障转移），重新发现从节点和Sentinel节点。</p>
+<h3 id="（7）sentinel-failover-lt-master-name-gt"><a href="#（7）sentinel-failover-lt-master-name-gt" class="headerlink" title="（7）sentinel failover &lt;master name&gt;"></a>（7）sentinel failover &lt;master name&gt;</h3><p>对指定主节点进行强制故障转移（不经过Sentinel协商），完成后，其他Sentinel节点按照转移结果更新自身配置。</p>
+<h3 id="（8）sentinel-ckquorum-lt-master-name-gt"><a href="#（8）sentinel-ckquorum-lt-master-name-gt" class="headerlink" title="（8）sentinel ckquorum &lt;master name&gt;"></a>（8）sentinel ckquorum &lt;master name&gt;</h3><p>检测当前可达的Sentinel节点总数是否达到quorum个数，如果节点个数小于quorum就无法进行故障转移。</p>
+<h3 id="（9）sentinel-flushconfig"><a href="#（9）sentinel-flushconfig" class="headerlink" title="（9）sentinel flushconfig"></a>（9）sentinel flushconfig</h3><p>将Sentinel节点的配置强制刷新到硬盘上，只有如磁盘损坏等外部原因导致配置文件损坏或丢失时，才会使用这个命令。</p>
+<h3 id="（10）sentinel-remove-lt-master-name-gt"><a href="#（10）sentinel-remove-lt-master-name-gt" class="headerlink" title="（10）sentinel remove &lt;master name&gt;"></a>（10）sentinel remove &lt;master name&gt;</h3><p>取消当前Sentinel节点对于指定主节点的监控。该命令仅对当前Sentinel节点有效。</p>
+<h3 id="（11）sentinel-monitor-lt-master-name-gt-lt-ip-gt-lt-port-gt-lt-quorum-gt"><a href="#（11）sentinel-monitor-lt-master-name-gt-lt-ip-gt-lt-port-gt-lt-quorum-gt" class="headerlink" title="（11）sentinel monitor &lt;master name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;"></a>（11）sentinel monitor &lt;master name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</h3><p>通过命令形式完成对主节点的监控。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel monitor mymaster1 127.0.0.1 6379 2</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="（12）sentinel-set-lt-master-name-gt"><a href="#（12）sentinel-set-lt-master-name-gt" class="headerlink" title="（12）sentinel set &lt;master name&gt;"></a>（12）sentinel set &lt;master name&gt;</h3><p>动态修改Sentinel节点配置选。</p>
+<h3 id="（13）sentinel-is-master-down-by-addr"><a href="#（13）sentinel-is-master-down-by-addr" class="headerlink" title="（13）sentinel is-master-down-by-addr"></a>（13）sentinel is-master-down-by-addr</h3><p>Sentinel节点之间用来交换对主节点是否下线的判断，根据参数不同，可以作为Sentinel领导者选举的通信方式。</p>
+<hr>
+<h2 id="9-4-客户端连接"><a href="#9-4-客户端连接" class="headerlink" title="9.4 客户端连接"></a>9.4 客户端连接</h2><p>相比主从复制，Sentinel需要各个语言的客户端显式的支持，否则无法感知到状态变化。</p>
+<h3 id="9-4-1-Redis-Sentinel的客户端"><a href="#9-4-1-Redis-Sentinel的客户端" class="headerlink" title="9.4.1 Redis Sentinel的客户端"></a>9.4.1 Redis Sentinel的客户端</h3><p>主节点通过&lt;master name&gt;进行标识，正确连接Redis Sentinel需要有Sentinel集合和masterName两个参数。</p>
+<h3 id="9-4-2-Redis-Sentinel客户端基本实现原理"><a href="#9-4-2-Redis-Sentinel客户端基本实现原理" class="headerlink" title="9.4.2 Redis Sentinel客户端基本实现原理"></a>9.4.2 Redis Sentinel客户端基本实现原理</h3><p>实现一个Sentinel客户端的基本步骤：</p>
+<ol>
+<li><p>遍历Sentinel节点集合，找到一个可用的节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160122.jpg"></p>
+</li>
+<li><p>通过sentinel get-master-addr-by-name &lt;master name&gt; 获取对应主节点相关信息。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160123.jpg"></p>
+</li>
+<li><p>验证当前获取的主节点是否是真正的主节点，防止故障转移期间主节点发生变化。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160124.jpg"></p>
+</li>
+<li><p>保持和Sentinel节点集合的联系，即刻获取有关主节点的相关信息。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160125.jpg"></p>
+</li>
+</ol>
+<p>只有初始化和主节点切换时需要进行交互，所以设计客户端时需要将Sentinel集合考虑成配置发现服务。</p>
+<h3 id="9-4-3-Java操作Redis-Sentinel"><a href="#9-4-3-Java操作Redis-Sentinel" class="headerlink" title="9.4.3 Java操作Redis Sentinel"></a>9.4.3 Java操作Redis Sentinel</h3><p>Jedis构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">JedisSentinelPool</span><span class="params">(String masterName,</span></span></span><br><span class="line"><span class="params"><span class="function">                            Set&lt;String&gt; sentinels,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">final</span> GenericObjectPoolConfig poolConfig,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">final</span> <span class="keyword">int</span> connectionTimeout,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">final</span> <span class="keyword">int</span> soTimeout,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">final</span> String password,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">final</span> <span class="keyword">int</span> database,</span></span></span><br><span class="line"><span class="params"><span class="function">                            <span class="keyword">final</span> String clientName)</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 初始化过程：</span></span><br><span class="line">       ...</span><br><span class="line">       HostAndPort master = initSentinels(sentinels, masterName);</span><br><span class="line">       initPool(master);</span><br><span class="line">       ...</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">       ......</span><br><span class="line">	Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">           jedis = jedisSentinelPool.getResource();</span><br><span class="line">           <span class="comment">// jedis command</span></span><br><span class="line">       &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">           logger.error(ex.getMessage(), ex);</span><br><span class="line">       &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">           <span class="keyword">if</span> (jedis != <span class="keyword">null</span>)</span><br><span class="line">               jedis.close();</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>masterName：主节点名。</li>
+<li>sentinels：节点集合。</li>
+<li>poolConfig：连接池配置。</li>
+<li>connectionTimeout：连接超时。</li>
+<li>soTimeout：读写超时。</li>
+<li>password：主节点密码。</li>
+<li>database：数据库索引。</li>
+<li>clientName：客户端名。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160126.jpg"></p>
+<ol>
+<li><p>遍历所有Sentinel节点集合，找到一个可用的节点，如果找不到则抛出异常 <code>new JedisException(&quot;Can connect to sentinel, but&quot; + masterName + &quot; seems to be not monitored...&quot;)</code> 。</p>
+</li>
+<li><p>找到可用的Sentinel节点，执行sentinelGetMasterAddrByName(masterName)，找到对应主节点信息。</p>
+</li>
+<li><p>JedisSentinelPool中没有发现对主节点角色验证的代码，因为get-master-addr-by-name这个API会自动获取真正的主节点。</p>
+</li>
+<li><p>为每一个Sentinel节点单独启动一个线程， 利用发布订阅功能，每个线程订阅Sentinel节点上切换master相关频道+switch-master。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (String sentinel : sentinels) &#123;</span><br><span class="line">    <span class="keyword">final</span> HostAndPort hap = toHostAndPort(Arrays.asList(sentinel.split(<span class="string">&quot;:&quot;</span>)));</span><br><span class="line">    MasterListener masterListener = <span class="keyword">new</span> MasterListener(masterName, hap.masterListener.start());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>订阅Sentinel节点的 +switch-master 频道：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Jedis sentinelJedis = <span class="keyword">new</span> Jedis(sentinelHost, sentinelPort);</span><br><span class="line"><span class="comment">// 客户端订阅Sentinel节点上+switch-master频道</span></span><br><span class="line">sentinelJedis.subscribe(<span class="keyword">new</span> JedisPubSub() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">onMessage</span><span class="params">(String channel, String message)</span> </span>&#123;</span><br><span class="line">        String[] switchMasterMsg = message.split(<span class="string">&quot; &quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (switchMasterMsg.length &gt; <span class="number">3</span>) &#123;</span><br><span class="line">            <span class="comment">// 判断是否为当前masterName</span></span><br><span class="line">            <span class="keyword">if</span> (masterName.equals(switchMasterMsg[<span class="number">0</span>])) &#123;</span><br><span class="line">                <span class="comment">// 发现当前masterName发送switch，使用initPool重新初始化连接池</span></span><br><span class="line">                initPool(toHostAndPort(switchMasterMsg[<span class="number">3</span>], switchMasterMsg[<span class="number">4</span>]));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;+switch-master&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h2 id="9-5-实现原理"><a href="#9-5-实现原理" class="headerlink" title="9.5 实现原理"></a>9.5 实现原理</h2><h3 id="9-5-1-三个定时监控任务"><a href="#9-5-1-三个定时监控任务" class="headerlink" title="9.5.1 三个定时监控任务"></a>9.5.1 三个定时监控任务</h3><p>通过三个定时监控任务来完成对每个节点的发现和监控：</p>
+<ol>
+<li><p>每隔10秒，每个Sentinel节点会向主节点和从节点发送info命令获取最新拓扑结构。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160127.jpg"></p>
+<p>作用：</p>
+<ul>
+<li>通过向主节点执行info命令，获取从节点信息，这也是为什么Sentinel节点不用显式配置从节点监控。</li>
+<li>当有新的从节点加入时可以立即感知。</li>
+<li>节点不可达或故障转移后，可以实时更新拓扑信息。</li>
+</ul>
+</li>
+<li><p>每隔2秒，每个Sentinel节点会向数据节点的 <code>_sentinel_:hello</code> 频道发送该Sentinel节点对于主节点的判断以及当前Sentinel节点信息。Sentinel节点通过该频道获取各自对主节点的判断。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160128.jpg"></p>
+<p>作用：</p>
+<ul>
+<li><p>发现新的Sentinel节点：通过订阅主节点的该频道了解其他Sentinel节点信息，如果是新加入的Sentinel节点，将其保存起来并创建连接。</p>
+</li>
+<li><p>Sentinel节点之间交换主节点状态，作为后面客观下线以及Leader选举的依据。publish的消息格式：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Sentinel节点IP&gt;</span> <span class="section">&lt;Sentinel节点端口&gt;</span> <span class="section">&lt;Sentinel节点runId&gt;</span> <span class="section">&lt;Sentinel节点配置版本&gt;</span> <span class="section">&lt;主节点名字&gt;</span> <span class="section">&lt;主节点IP&gt;</span> <span class="section">&lt;主节点端口&gt;</span> <span class="section">&lt;主节点配置版本&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>每隔1秒，每个Sentinel节点会向主节点、从节点、其余Sentinel节点发送一条ping命令做一次心跳检测，来确定这些节点当前是否可达。该任务是判断节点失败的重要依据。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160129.jpg"></p>
+</li>
+</ol>
+<h3 id="9-5-2-主观下线和客观下线"><a href="#9-5-2-主观下线和客观下线" class="headerlink" title="9.5.2 主观下线和客观下线"></a>9.5.2 主观下线和客观下线</h3><ul>
+<li><p>主观下线：当节点超时没有回复心跳检测，Sentinel节点做出失败判定。主观下线是一家之言，存在误判可能。从节点和Sentinel节点在主观下线后，没有后续的故障转移操作。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160130.jpg"></p>
+</li>
+<li><p>客观下线：当Sentinel主观下线的节点是主节点时，需要通过 sentinel is-master-down-by-addr 命令询问其他Sentinel节点的判断。超过quorum个数后就认为该主节点确实有问题。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160131.jpg"></p>
+</li>
+</ul>
+<p><code>sentinel is-master-down-by-addr &lt;ip&gt; &lt;port&gt; &lt;current_epoch&gt; &lt;runid&gt;</code> ：</p>
+<ul>
+<li>ip：主节点IP。</li>
+<li>port：主节点端口。</li>
+<li>current_epoch：当前配置纪元。</li>
+<li>runid：两种类型：<ol>
+<li>runid等于*，作用是Sentinel节点直接交换对主节点下线的判定。</li>
+<li>runid等于当前Sentinel节点的runid，作用是当前Sentinel节点希望目标Sentinel节点同意自己成为Leader的请求。</li>
+</ol>
+</li>
+</ul>
+<p>返回：</p>
+<ul>
+<li>down_state：目标Sentinel节点对于主节点的下线判定，1为下线，0为在线。</li>
+<li>leader_runid：等于*时，表示用来做主节点是否不可达；等于具体runid时，表示目标节点同意runid成为Leader。</li>
+<li>leader_epoch：领导者纪元。</li>
+</ul>
+<h3 id="9-5-3-领导者Sentinel节点选举"><a href="#9-5-3-领导者Sentinel节点选举" class="headerlink" title="9.5.3 领导者Sentinel节点选举"></a>9.5.3 领导者Sentinel节点选举</h3><p>客观下线后是否会立即进行故障转移？当然不是，故障转移工作其实只需一个Sentinel节点即可完成。Sentinel节点间会进行Leader选举，选中的节点进行故障转移工作。<strong>Redis使用Raft算法实现Leader选举</strong>（内容参考<a href="../2021042101.html" title="Title">分布式事务</a>中Paxos相关内容），大致流程：</p>
+<ol>
+<li>每个Sentinel节点都有机会成为Leader，当确认主节点客观下线时，会向其他Sentinel节点发送 is-master-down-by-addr 命令，要求将自己设置为Leader。</li>
+<li>收到命令的Sentinel节点，如果没有同意其他Sentinel节点则会同意，否则拒绝。</li>
+<li>当Sentinel节点票数大于 <code>max(quorum, num(sentinels) / 2 + 1)</code> 就会成为Leader。</li>
+<li>此过程若没有产生Leader，会进入下次选举。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160132.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160133.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160134.jpg"></p>
+<h3 id="9-5-4-故障转移"><a href="#9-5-4-故障转移" class="headerlink" title="9.5.4 故障转移"></a>9.5.4 故障转移</h3><p>Leader节点负责故障转移：</p>
+<ol>
+<li>在从节点列表中选出一个节点作为新的主节点，判断方法：<ul>
+<li>过滤不健康的节点：主观下线、断线、5秒内没有回复过PING、与主节点失联超过down-after-millseconds*10秒。</li>
+<li>选择slave-priority最高的从节点列表，存在则返回，否则继续。</li>
+<li>选择复制偏移量最大的从节点，复制的最完整，存在则返回，否则继续。</li>
+<li>选择runid最小的从节点。</li>
+</ul>
+</li>
+<li>Leader节点对第一步选出的从节点执行 slaveof no one 命令让其成为主节点。</li>
+<li>Leader节点向剩余从节点发送命令，使其成为新主节点的从节点，复制规则和parallel-syncs参数有关。</li>
+<li>Sentinel节点集合会将原来的主节点更新为从节点，并保持关注，当期恢复后命令其复制新的主节点。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160135.jpg"></p>
+<hr>
+<h2 id="9-6-开发与运维中的问题"><a href="#9-6-开发与运维中的问题" class="headerlink" title="9.6 开发与运维中的问题"></a>9.6 开发与运维中的问题</h2><h3 id="9-6-1-故障转移日志分析"><a href="#9-6-1-故障转移日志分析" class="headerlink" title="9.6.1 故障转移日志分析"></a>9.6.1 故障转移日志分析</h3><h4 id="（1）Redis-Sentinel-拓扑结构"><a href="#（1）Redis-Sentinel-拓扑结构" class="headerlink" title="（1）Redis Sentinel 拓扑结构"></a>（1）Redis Sentinel 拓扑结构</h4><p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160136.jpg"></p>
+<h4 id="（2）开始故障转移测试"><a href="#（2）开始故障转移测试" class="headerlink" title="（2）开始故障转移测试"></a>（2）开始故障转移测试</h4><p>模拟方法：</p>
+<ol>
+<li>强制kill对应节点的进程号，模拟宕机的效果。</li>
+<li>使用Redis的debug sleep命令，让节点进入睡眠状态，模拟阻塞的效果。</li>
+<li>使用Redis的shutdown命令，模拟正常停掉节点。</li>
+</ol>
+<p>使用方法一：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">kill</span> -9 19661</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（3）观察效果"><a href="#（3）观察效果" class="headerlink" title="（3）观察效果"></a>（3）观察效果</h4><p>6380晋升为主节点，6381成为6380的从节点。</p>
+<h4 id="（4）故障转移分析"><a href="#（4）故障转移分析" class="headerlink" title="（4）故障转移分析"></a>（4）故障转移分析</h4><h5 id="6379节点日志"><a href="#6379节点日志" class="headerlink" title="6379节点日志"></a>6379节点日志</h5><p>两个复制请求，分别来自6380和6381从节点。09:40:35做了kill操作，6379无法看到相关日志。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160137.jpg"></p>
+<h5 id="6380节点日志"><a href="#6380节点日志" class="headerlink" title="6380节点日志"></a>6380节点日志</h5><p>kill后已和6379失联。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160138.jpg"></p>
+<p>09:41:06时收到Sentinel节点命令，清理原来缓存的主节点状态，6380被晋升为主节点，重写配置。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160139.jpg"></p>
+<p>6381发来了复制请求：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160140.jpg"></p>
+<h5 id="6381节点日志"><a href="#6381节点日志" class="headerlink" title="6381节点日志"></a>6381节点日志</h5><p>同样与6379失联。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160141.jpg"></p>
+<p>后续操作：</p>
+<ol>
+<li><p>09:41:06时收到Sentinel节点命令，清理主节点状态，复制6380主节点。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160142.jpg"></p>
+</li>
+<li><p>向新的主节点发起复制操作。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160148.jpg"></p>
+</li>
+</ol>
+<h5 id="sentinel-1节点日志"><a href="#sentinel-1节点日志" class="headerlink" title="sentinel-1节点日志"></a>sentinel-1节点日志</h5><p>09:41:05对6379做了主观下线，正好是kill -9后的30秒，与down-after-milliseconds一致。Sentinel节点更新自己的配置纪元：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160149.jpg"></p>
+<p>后续操作：</p>
+<ol>
+<li><p>投票给sentinel-3节点：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160150.jpg"></p>
+</li>
+<li><p>更新状态：从sentinel-3节点得知，故障转移后6380变为主节点，并发现两个从节点6381和6379，并在30秒后对（09:41:07 ~ 09:41:37）6379做了主观下线。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160151.jpg"></p>
+</li>
+</ol>
+<h5 id="sentinel-2节点日志"><a href="#sentinel-2节点日志" class="headerlink" title="sentinel-2节点日志"></a>sentinel-2节点日志</h5><p>整个过程和sentinel-1节点一致。</p>
+<h5 id="sentinel-3节点日志"><a href="#sentinel-3节点日志" class="headerlink" title="sentinel-3节点日志"></a>sentinel-3节点日志</h5><ol>
+<li><p>达到了客观下线的条件：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160153.jpg"></p>
+</li>
+<li><p>sentinel-3节点被选为Leader。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160154.jpg"></p>
+<p>sentinel-3节点最先完成客观下线。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160143.jpg"></p>
+</li>
+<li><p>故障转移。每一步都可以通过发布订阅获取，寻找合适的从节点作为新的主节点：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160155.jpg"></p>
+</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160144.jpg"></p>
+<p>&lt;instance details&gt;格式如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">instance</span> <span class="attr">details</span>&gt;</span> <span class="tag">&lt;<span class="name">name</span>&gt;</span> <span class="tag">&lt;<span class="name">ip</span>&gt;</span> <span class="tag">&lt;<span class="name">port</span>&gt;</span> @ <span class="tag">&lt;<span class="name">master-name</span>&gt;</span> <span class="tag">&lt;<span class="name">master-ip</span>&gt;</span> <span class="tag">&lt;<span class="name">master-port</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="（5）原主节点后续处理"><a href="#（5）原主节点后续处理" class="headerlink" title="（5）原主节点后续处理"></a>（5）原主节点后续处理</h4><p>重新启动原来的6379节点：</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis-server redis<span class="string">-6379</span>.conf</span><br><span class="line">操作时间：2016<span class="string">-07</span><span class="string">-24</span> 09:46:21</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="6379节点"><a href="#6379节点" class="headerlink" title="6379节点"></a>6379节点</h5><p>启动后收到Sentinel节点命令，复制6380节点：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160156.jpg"></p>
+<h5 id="6380节点"><a href="#6380节点" class="headerlink" title="6380节点"></a>6380节点</h5><p>接到6379节点的复制请求，相应处理：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160158.jpg"></p>
+<h5 id="sentinel-1节点"><a href="#sentinel-1节点" class="headerlink" title="sentinel-1节点"></a>sentinel-1节点</h5><p>撤销对6379节点主观下线的决定。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160159.jpg"></p>
+<h5 id="sentinel-2节点"><a href="#sentinel-2节点" class="headerlink" title="sentinel-2节点"></a>sentinel-2节点</h5><p>撤销对6379节点主观下线的决定。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160160.jpg"></p>
+<h5 id="sentinel-3节点"><a href="#sentinel-3节点" class="headerlink" title="sentinel-3节点"></a>sentinel-3节点</h5><p>撤销对6379节点主观下线的决定，更新Sentinel节点配置。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160161.jpg"></p>
+<h4 id="（6）注意"><a href="#（6）注意" class="headerlink" title="（6）注意"></a>（6）注意</h4><p>各个节点的机器时间要尽量同步，否则日志时序性会混乱，可以给机器加NTP服务来同步时间。</p>
+<h3 id="9-6-2-节点运维"><a href="#9-6-2-节点运维" class="headerlink" title="9.6.2 节点运维"></a>9.6.2 节点运维</h3><h4 id="（1）节点下线"><a href="#（1）节点下线" class="headerlink" title="（1）节点下线"></a>（1）节点下线</h4><ul>
+<li>临时下线：暂时关掉，之后还会重新启动，继续提供服务。</li>
+<li>永久下线：节点关闭后不再使用，需要一些清理工作，如删除配置文件、持久化文件和日志文件。</li>
+</ul>
+<p>下线原因：</p>
+<ul>
+<li>节点不稳定或即将过保被回收。</li>
+<li>节点机器性能较差或内存较小，无法支撑需求。</li>
+<li>节点自身出现服务不正常情况，需要快速处理。</li>
+</ul>
+<h5 id="主节点"><a href="#主节点" class="headerlink" title="主节点"></a>主节点</h5><p>任意可用的Sentinel节点执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sentinel failover &lt;master name&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160145.jpg"></p>
+<h5 id="从节点和Sentinel节点"><a href="#从节点和Sentinel节点" class="headerlink" title="从节点和Sentinel节点"></a>从节点和Sentinel节点</h5><p>确定是临时还是永久下线并执行即可。若使用了读写分离，下线从节点需要保证应用方可以感知从节点的下线变化，从而把读取请求路由到其他节点。节点下线后，Sentinel仍会定期进行监控。</p>
+<h4 id="（2）节点上线"><a href="#（2）节点上线" class="headerlink" title="（2）节点上线"></a>（2）节点上线</h4><h5 id="添加从节点"><a href="#添加从节点" class="headerlink" title="添加从节点"></a>添加从节点</h5><p>常见场景：</p>
+<ul>
+<li>使用了读写分离，但现有从节点无法支撑应用方的流量。</li>
+<li>主节点没有可用的从节点，无法支持故障转移。</li>
+<li>添加一个更强的从节点利用failover替换主节点。</li>
+</ul>
+<p>添加 slaveof {masterIp} {masterPort} 的配置，使用redis-server启动即可，会被Sentinel自动发现。</p>
+<h5 id="添加Sentinel节点"><a href="#添加Sentinel节点" class="headerlink" title="添加Sentinel节点"></a>添加Sentinel节点</h5><p>场景：</p>
+<ul>
+<li>当前Sentinel节点数量不够，无法达到健壮性要求或者无法达到票数。</li>
+<li>原Sentinel节点所在机器需要下线。</li>
+</ul>
+<p>添加 sentinel monitor 主节点配置，使用redis-sentinel启动即可，可以使用failover节点自动发现。</p>
+<h5 id="添加主节点"><a href="#添加主节点" class="headerlink" title="添加主节点"></a>添加主节点</h5><p>因为Sentinel只能有一个主节点，所以不需要添加主节点，如果需要替换主节点，可以使用failover手动故障转移。</p>
+<h4 id="（3）节点配置"><a href="#（3）节点配置" class="headerlink" title="（3）节点配置"></a>（3）节点配置</h4><p>要注意的点：</p>
+<ul>
+<li>Sentinel节点配置尽可能一致，判断故障时更准确。</li>
+<li>Sentinel节点支持命令有限，如需修改配置，重新启动即可。</li>
+</ul>
+<h3 id="9-6-3-高可用读写分离"><a href="#9-6-3-高可用读写分离" class="headerlink" title="9.6.3 高可用读写分离"></a>9.6.3 高可用读写分离</h3><h4 id="（1）从节点的作用"><a href="#（1）从节点的作用" class="headerlink" title="（1）从节点的作用"></a>（1）从节点的作用</h4><p>作用：</p>
+<ol>
+<li>当主节点出现故障，作为备用实现故障转移，Sentinel实现了该过程的自动化，实现了真正的高可用。</li>
+<li>扩展主节点的读能力，尤其是读多写少的场景。</li>
+</ol>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160146.jpg"></p>
+<p>如图模型，从节点不是高可用，一旦发生故障，客户端会首先与其失联，其次Sentinel节点对其主观下线。因为Sentinel的故障转移是针对主节点的，从节点仅仅作为主节点一个热备，不会参与客户端的读操作，就是为了保证整体高可用性。</p>
+<p>Redis Sentinel中的从节点仅仅是作为主节点一个热备，不让它参与客户端的读操作，就是为了保证整体高可用性。但实际上这种使用方法，还是有一些浪费，尤其是在很多从节点确实需要读写分离的场景，如何实现从节点的高可用是非常有必要的。</p>
+<h4 id="（2）Redis-Sentinel-读写分离的设计思路"><a href="#（2）Redis-Sentinel-读写分离的设计思路" class="headerlink" title="（2）Redis Sentinel 读写分离的设计思路"></a>（2）Redis Sentinel 读写分离的设计思路</h4><p>Redis Sentinel 在对各个节点的监控，如果有对应事件的发生，都会发出相应的事件消息。</p>
+<ul>
+<li>+switch-master：切换主节点（原来从节点晋升主节点），说明减少了某个从节点。</li>
+<li>+convert-to-slave：切换从节点（原来的主节点降级为从节点），说明添加了某个从节点。</li>
+<li>+sdown：主观下线，说明可能某个从节点可能不可用（从节点不会做客观下线），所以在实现客户端时可以采用自身策略来实现类似主观下线的功能。</li>
+<li>+report：重新启动了某个节点，如果它的角色是slave，那么说明添加了某个从节点。</li>
+</ul>
+<p>只要掌握了从节点的状态，将所有从节点看作一个资源池，无论是上下线从节点，客户端都能感知到。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003160147.jpg"></p>
+<hr>
 <p>参考：</p>
 <p>🔗 《Redis开发与运维》</p>
 
@@ -352,6 +964,12 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020070101.html" rel="bookmark">Redis底层数据结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050501.html" rel="bookmark">面试整理——Redis</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032801.html" rel="bookmark">《Redis开发与运维》读书笔记（十四）Redis配置统计字典（未完成）</a></div>
     </li>
     <li class="popular-posts-item">
@@ -359,12 +977,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032401.html" rel="bookmark">《Redis开发与运维》读书笔记（十二）开发运维的“陷阱”（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020032101.html" rel="bookmark">《Redis开发与运维》读书笔记（十一）缓存设计（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020031801.html" rel="bookmark">《Redis开发与运维》读书笔记（十）集群（未完成）</a></div>
     </li>
   </ul>
 
@@ -379,7 +991,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://linyishui.top/2020031601.html" title="《Redis开发与运维》读书笔记（九）哨兵（未完成）">http://linyishui.top/2020031601.html</a>
+      <a href="http://linyishui.top/2020031601.html" title="《Redis开发与运维》读书笔记（九）哨兵">http://linyishui.top/2020031601.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -388,7 +1000,6 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
               <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
           </div>
 
@@ -396,8 +1007,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020031501.html" rel="prev" title="《Redis开发与运维》读书笔记（八）理解内存（未完成）">
-                  <i class="fa fa-chevron-left"></i> 《Redis开发与运维》读书笔记（八）理解内存（未完成）
+                <a href="/2020031501.html" rel="prev" title="《Redis开发与运维》读书笔记（八）理解内存">
+                  <i class="fa fa-chevron-left"></i> 《Redis开发与运维》读书笔记（八）理解内存
                 </a>
             </div>
             <div class="post-nav-item">
@@ -437,14 +1048,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">3.5m</span>
+    <span title="站点总字数">3.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:11</span>
+    <span title="站点阅读时长">54:07</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动

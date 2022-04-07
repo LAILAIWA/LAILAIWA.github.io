@@ -25,27 +25,59 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"linyishui.top","root":"/","images":"/images","scheme":"Pisces","version":"8.6.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"manual"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="《Redis开发与运维》读书笔记（八）理解内存，内容包括：内存消耗（内存使用统计、内存消耗划分、子进程内存消耗），内存管理（设置内存上限、动态调整内存上限、内存回收策略），内存优化（redisObject对象、缩减键值对象、共享对象池、字符串优化、编码优化、控制键的数量）等。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《Redis开发与运维》读书笔记（八）理解内存（未完成）">
+<meta property="og:title" content="《Redis开发与运维》读书笔记（八）理解内存">
 <meta property="og:url" content="http://linyishui.top/2020031501.html">
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="《Redis开发与运维》读书笔记（八）理解内存，内容包括：内存消耗（内存使用统计、内存消耗划分、子进程内存消耗），内存管理（设置内存上限、动态调整内存上限、内存回收策略），内存优化（redisObject对象、缩减键值对象、共享对象池、字符串优化、编码优化、控制键的数量）等。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120108.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120109.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120110.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120111.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120112.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120113.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120114.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120115.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120116.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120117.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120118.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120119.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120121.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120122.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120123.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120124.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120125.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120126.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120127.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120128.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120129.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120130.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120132.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120133.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120134.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120135.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120136.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120137.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120139.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120140.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120141.jpg">
+<meta property="og:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120142.jpg">
 <meta property="article:published_time" content="2020-03-15T08:26:07.000Z">
-<meta property="article:modified_time" content="2021-08-08T11:00:00.000Z">
+<meta property="article:modified_time" content="2022-02-25T09:11:16.000Z">
 <meta property="article:author" content="Lys">
-<meta property="article:tag" content="unfinished">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120108.jpg">
 
 
 <link rel="canonical" href="http://linyishui.top/2020031501.html">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031501.html","path":"2020031501.html","title":"《Redis开发与运维》读书笔记（八）理解内存（未完成）"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://linyishui.top/2020031501.html","path":"2020031501.html","title":"《Redis开发与运维》读书笔记（八）理解内存"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>《Redis开发与运维》读书笔记（八）理解内存（未完成） | 俺的部落格</title>
+<title>《Redis开发与运维》读书笔记（八）理解内存 | 俺的部落格</title>
   
 
 
@@ -159,7 +191,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E7%90%86%E8%A7%A3%E5%86%85%E5%AD%98"><span class="nav-text">第八章 理解内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1-%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97"><span class="nav-text">8.1 内存消耗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-1-%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E7%BB%9F%E8%AE%A1"><span class="nav-text">8.1.1 内存使用统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-2-%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97%E5%88%92%E5%88%86"><span class="nav-text">8.1.2 内存消耗划分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-3-%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97"><span class="nav-text">8.1.3 子进程内存消耗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">8.2 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-1-%E8%AE%BE%E7%BD%AE%E5%86%85%E5%AD%98%E4%B8%8A%E9%99%90"><span class="nav-text">8.2.1 设置内存上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-2-%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4%E5%86%85%E5%AD%98%E4%B8%8A%E9%99%90"><span class="nav-text">8.2.2 动态调整内存上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-3-%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="nav-text">8.2.3 内存回收策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-text">8.3 内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-1-redisObject%E5%AF%B9%E8%B1%A1"><span class="nav-text">8.3.1 redisObject对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-2-%E7%BC%A9%E5%87%8F%E9%94%AE%E5%80%BC%E5%AF%B9%E8%B1%A1"><span class="nav-text">8.3.2 缩减键值对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-3-%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="nav-text">8.3.3 共享对象池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-4-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%BC%98%E5%8C%96"><span class="nav-text">8.3.4 字符串优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-5-%E7%BC%96%E7%A0%81%E4%BC%98%E5%8C%96"><span class="nav-text">8.3.5 编码优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-6-%E6%8E%A7%E5%88%B6%E9%94%AE%E7%9A%84%E6%95%B0%E9%87%8F"><span class="nav-text">8.3.6 控制键的数量</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E7%90%86%E8%A7%A3%E5%86%85%E5%AD%98"><span class="nav-text">第八章 理解内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#8-1-%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97"><span class="nav-text">8.1 内存消耗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-1-%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E7%BB%9F%E8%AE%A1"><span class="nav-text">8.1.1 内存使用统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-2-%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97%E5%88%92%E5%88%86"><span class="nav-text">8.1.2 内存消耗划分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%AF%B9%E8%B1%A1%E5%86%85%E5%AD%98"><span class="nav-text">（1）对象内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E7%BC%93%E5%86%B2%E5%86%85%E5%AD%98"><span class="nav-text">（2）缓冲内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87"><span class="nav-text">（3）内存碎片</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-3-%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97"><span class="nav-text">8.1.3 子进程内存消耗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-2-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">8.2 内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-1-%E8%AE%BE%E7%BD%AE%E5%86%85%E5%AD%98%E4%B8%8A%E9%99%90"><span class="nav-text">8.2.1 设置内存上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-2-%E5%8A%A8%E6%80%81%E8%B0%83%E6%95%B4%E5%86%85%E5%AD%98%E4%B8%8A%E9%99%90"><span class="nav-text">8.2.2 动态调整内存上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-3-%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="nav-text">8.2.3 内存回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%88%A0%E9%99%A4%E8%BF%87%E6%9C%9F%E9%94%AE"><span class="nav-text">（1）删除过期键</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E6%8E%A7%E5%88%B6%E7%AD%96%E7%95%A5"><span class="nav-text">（2）内存溢出控制策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-3-%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-text">8.3 内存优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-1-redisObject%E5%AF%B9%E8%B1%A1"><span class="nav-text">8.3.1 redisObject对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-2-%E7%BC%A9%E5%87%8F%E9%94%AE%E5%80%BC%E5%AF%B9%E8%B1%A1"><span class="nav-text">8.3.2 缩减键值对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-3-%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="nav-text">8.3.3 共享对象池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-4-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%BC%98%E5%8C%96"><span class="nav-text">8.3.4 字符串优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BB%93%E6%9E%84"><span class="nav-text">（1）字符串结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E9%A2%84%E5%88%86%E9%85%8D%E6%9C%BA%E5%88%B6"><span class="nav-text">（2）预分配机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%87%8D%E6%9E%84"><span class="nav-text">（3）字符串重构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-5-%E7%BC%96%E7%A0%81%E4%BC%98%E5%8C%96"><span class="nav-text">8.3.5 编码优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E4%BA%86%E8%A7%A3%E7%BC%96%E7%A0%81"><span class="nav-text">（1）了解编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%8E%A7%E5%88%B6%E7%BC%96%E7%A0%81%E7%B1%BB%E5%9E%8B"><span class="nav-text">（2）控制编码类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89ziplist%E7%BC%96%E7%A0%81"><span class="nav-text">（3）ziplist编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%884%EF%BC%89intset%E7%BC%96%E7%A0%81"><span class="nav-text">（4）intset编码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-6-%E6%8E%A7%E5%88%B6%E9%94%AE%E7%9A%84%E6%95%B0%E9%87%8F"><span class="nav-text">8.3.6 控制键的数量</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -176,7 +208,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">330</span>
+          <span class="site-state-item-count">331</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -277,7 +309,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《Redis开发与运维》读书笔记（八）理解内存（未完成）
+          《Redis开发与运维》读书笔记（八）理解内存
         </h1>
 
         <div class="post-meta-container">
@@ -295,7 +327,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-08-08 19:00:00" itemprop="dateModified" datetime="2021-08-08T19:00:00+08:00">2021-08-08</time>
+        <time title="修改时间：2022-02-25 17:11:16" itemprop="dateModified" datetime="2022-02-25T17:11:16+08:00">2022-02-25</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,14 +347,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>183</span>
+      <span>9.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -334,9 +366,305 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="第八章-理解内存"><a href="#第八章-理解内存" class="headerlink" title="第八章 理解内存"></a>第八章 理解内存</h1><h2 id="8-1-内存消耗"><a href="#8-1-内存消耗" class="headerlink" title="8.1 内存消耗"></a>8.1 内存消耗</h2><h3 id="8-1-1-内存使用统计"><a href="#8-1-1-内存使用统计" class="headerlink" title="8.1.1 内存使用统计"></a>8.1.1 内存使用统计</h3><h3 id="8-1-2-内存消耗划分"><a href="#8-1-2-内存消耗划分" class="headerlink" title="8.1.2 内存消耗划分"></a>8.1.2 内存消耗划分</h3><h3 id="8-1-3-子进程内存消耗"><a href="#8-1-3-子进程内存消耗" class="headerlink" title="8.1.3 子进程内存消耗"></a>8.1.3 子进程内存消耗</h3><hr>
-<h2 id="8-2-内存管理"><a href="#8-2-内存管理" class="headerlink" title="8.2 内存管理"></a>8.2 内存管理</h2><h3 id="8-2-1-设置内存上限"><a href="#8-2-1-设置内存上限" class="headerlink" title="8.2.1 设置内存上限"></a>8.2.1 设置内存上限</h3><h3 id="8-2-2-动态调整内存上限"><a href="#8-2-2-动态调整内存上限" class="headerlink" title="8.2.2 动态调整内存上限"></a>8.2.2 动态调整内存上限</h3><h3 id="8-2-3-内存回收策略"><a href="#8-2-3-内存回收策略" class="headerlink" title="8.2.3 内存回收策略"></a>8.2.3 内存回收策略</h3><hr>
-<h2 id="8-3-内存优化"><a href="#8-3-内存优化" class="headerlink" title="8.3 内存优化"></a>8.3 内存优化</h2><h3 id="8-3-1-redisObject对象"><a href="#8-3-1-redisObject对象" class="headerlink" title="8.3.1 redisObject对象"></a>8.3.1 redisObject对象</h3><h3 id="8-3-2-缩减键值对象"><a href="#8-3-2-缩减键值对象" class="headerlink" title="8.3.2 缩减键值对象"></a>8.3.2 缩减键值对象</h3><h3 id="8-3-3-共享对象池"><a href="#8-3-3-共享对象池" class="headerlink" title="8.3.3 共享对象池"></a>8.3.3 共享对象池</h3><h3 id="8-3-4-字符串优化"><a href="#8-3-4-字符串优化" class="headerlink" title="8.3.4 字符串优化"></a>8.3.4 字符串优化</h3><h3 id="8-3-5-编码优化"><a href="#8-3-5-编码优化" class="headerlink" title="8.3.5 编码优化"></a>8.3.5 编码优化</h3><h3 id="8-3-6-控制键的数量"><a href="#8-3-6-控制键的数量" class="headerlink" title="8.3.6 控制键的数量"></a>8.3.6 控制键的数量</h3><hr>
+        <h1 id="第八章-理解内存"><a href="#第八章-理解内存" class="headerlink" title="第八章 理解内存"></a>第八章 理解内存</h1><h2 id="8-1-内存消耗"><a href="#8-1-内存消耗" class="headerlink" title="8.1 内存消耗"></a>8.1 内存消耗</h2><h3 id="8-1-1-内存使用统计"><a href="#8-1-1-内存使用统计" class="headerlink" title="8.1.1 内存使用统计"></a>8.1.1 内存使用统计</h3><table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>属性说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>used_memory</td>
+<td>Redis分配器分配的内存总量，也就是内部存储的所有数据内存占用量。</td>
+</tr>
+<tr>
+<td>used_memory_human</td>
+<td>以可读的格式返回used_memory</td>
+</tr>
+<tr>
+<td>used_memory_rss</td>
+<td>从操作系统的角度显示Redis进程占用的物理内存总量</td>
+</tr>
+<tr>
+<td>used_memory_peak</td>
+<td>内存使用的最大值，表示used_memory的峰值</td>
+</tr>
+<tr>
+<td>used_memory_peak_human</td>
+<td>以可读的格式返回used_memory_peak</td>
+</tr>
+<tr>
+<td>used_memory_lua</td>
+<td>Lua引擎所消耗的内存大小</td>
+</tr>
+<tr>
+<td>mem_fragmentation_ratio</td>
+<td>used_memory_rss/used_memory比值，表示内存碎片率</td>
+</tr>
+<tr>
+<td>mem_allocator</td>
+<td>Redis所使用的内存分配器，默认为jemalloc</td>
+</tr>
+</tbody></table>
+<ul>
+<li>mem_fragmentation_ratio &gt; 1：说明used_memory_rss - used_memory多出的内存没有用于数据存储，而是被内存碎片所消耗。</li>
+<li>mem_fragmentation_ratio &lt; 1：操作系统把内存交换到硬盘导致。</li>
+</ul>
+<h3 id="8-1-2-内存消耗划分"><a href="#8-1-2-内存消耗划分" class="headerlink" title="8.1.2 内存消耗划分"></a>8.1.2 内存消耗划分</h3><p>Redis进程内消耗主要包括：自身内存 + 对象内存 + 缓冲内存 + 内存碎片，其中Redis空进程自身内存消耗非常少，used_memory_rss在3MB左右，used_memory在800KB左右。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120108.jpg"></p>
+<h4 id="（1）对象内存"><a href="#（1）对象内存" class="headerlink" title="（1）对象内存"></a>（1）对象内存</h4><p>对象内存是Redis内存占用最大的一块，存储着用户所有的数据。每次创建键值对，至少创建两个类型对象：key对象和value对象。对象内存消耗简单理解为 sizeof(keys) + sizeof(values) 。</p>
+<p>键对象都是字符串，value对象则复杂一些，包括5种基本类型。Bitmaps和HyperLogLog使用字符串实现，GEO使用有序集合实现。</p>
+<h4 id="（2）缓冲内存"><a href="#（2）缓冲内存" class="headerlink" title="（2）缓冲内存"></a>（2）缓冲内存</h4><p>包括：</p>
+<ul>
+<li><p>客户端缓冲：所有接入到Redis服务器TCP连接的输入输出缓冲。</p>
+<p>输入缓冲无法控制，最大1G，超过则会断开连接。</p>
+<p>输出缓冲则通过参数client-output-buffer-limit控制。</p>
+<ul>
+<li>普通客户端：当有大量慢连接客户端接入时，需要设置maxclients限制。特别是使用大量数据输出的命令且数据无法及时推送给客户端，如monitor命令，容易造成Redis服务器内存飙升。默认配置 <code>client-output-buffer-limit normal 0 0 0</code> 。</li>
+<li>从客户端：主节点为每个从节点单独建立一条连接用于命令复制。默认配置 <code>client-output-buffer-limit slave 256mb 64mb 60</code> 。主从网路延迟高或主节点挂载大量从节点时会消耗大量内存。</li>
+<li>订阅客户端：使用发布订阅功能时，连接客户端使用单独的输出缓冲区。默认配置 <code>client-output-buffer-limit pubsub 32mb 8mb 60</code> 。订阅服务的消息生产大于消费速度，缓冲区积压导致内存溢出。</li>
+</ul>
+</li>
+<li><p>复制积压缓冲区：2.8版本后提供，可重用的固定大小缓冲区用于实现部分复制的功能。repl-backlog-size参数控制，默认1MB。从节点共享主节点的此区域，可以投入较大空间，从而避免全量复制。</p>
+</li>
+<li><p>AOF缓冲区：用于重写期间保存最近的写入命令，用户无法控制此空间消耗，取决于AOF重写时间和写入命令量。</p>
+</li>
+</ul>
+<h4 id="（3）内存碎片"><a href="#（3）内存碎片" class="headerlink" title="（3）内存碎片"></a>（3）内存碎片</h4><p>Redis默认内存分配器采用jemalloc，可选glibc、tcmalloc。内存分配策略一般采用固定范围的内存块进行分配，分为小、大和巨大三个范围，每个范围又划分为多个小的内存块单位。</p>
+<ul>
+<li>小：[8byte], [16byte, 32byte, 48byte, …, 128byte], [192byte, 256byte, …, 512byte], [768byte, 1024byte, …, 3840byte]</li>
+<li>大：[4KB, 8KB, 12KB, …, 4072KB]</li>
+<li>巨大：[4MB, 8MB, 12MB, …]</li>
+</ul>
+<p>保存5KB的对象可能会采用8KB的块存储，剩下3KB变为内存碎片无法分配出去，这种内存碎片问题是所有内存服务的通病。jemalloc针对这个问题做了优化，控制在 {mem_fragmentation_ratio} 在1.03左右。但当存储的数据长短差异较大时，还是会出现高内存碎片问题：</p>
+<ul>
+<li>频繁做更新操作，如对已存在的键频繁执行append、setrange等更新操作。</li>
+<li>大量过期键删除，键对象删除后释放的空间无法充分利用，导致碎片率上升。</li>
+</ul>
+<p>解决方案：</p>
+<ul>
+<li><strong>数据对齐</strong>：条件允许的话尽量做数据对齐，如数据尽量采用数字类型或固定长度字符串等。</li>
+<li><strong>安全重启</strong>：重启节点可以做到内存碎片重新整理，因此可以利用高可用架构将碎片率过高的主节点转换为从节点，进行安全重启。</li>
+</ul>
+<h3 id="8-1-3-子进程内存消耗"><a href="#8-1-3-子进程内存消耗" class="headerlink" title="8.1.3 子进程内存消耗"></a>8.1.3 子进程内存消耗</h3><p>主要指执行AOF/RDB重写时，Redis创建的子进程内存消耗。fork操作产生的子进程内存占用对外显示与父进程相同，理论上需要一倍的物理内存来完成重写操作。Linux具有写时复制技术，父子进程共享相同物理内存页，父进程处理写请求时会对需要修改的页复制出一份副本来完成写操作，子进程依旧读取fork时整个父进程的内存快照。</p>
+<p>Linux Kernel在2.6.38内核增加了Transparent Huge Pages（THP）机制，开启后会降低fork子进程的速度，但之后写时复制期间复制的内存页单位量从4KB升到2MB，若父进程有大量写命令，会加重内存拷贝量导致过度的内存消耗。</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启THP</span></span><br><span class="line">C * AOF rewrite: <span class="number">1039</span> MB <span class="keyword">of</span> memory used <span class="keyword">by</span> <span class="keyword">copy</span>-<span class="keyword">on</span>-<span class="keyword">write</span></span><br><span class="line"><span class="comment">// 关闭THP</span></span><br><span class="line">C * AOF rewrite: <span class="number">9</span> MB <span class="keyword">of</span> memory used <span class="keyword">by</span> <span class="keyword">copy</span>-<span class="keyword">on</span>-<span class="keyword">write</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>高并发场景下开启THP，子进程内存消耗可能是父进程的数倍，容易造成内存溢出，从而触发SWAP或OOM killer。</p>
+<p>总结：</p>
+<ul>
+<li>子进程不需要消耗1倍的父进程内存，实际消耗根据期间写入命令量决定，但依然会预留一部分内存防止溢出。</li>
+<li>需要设置 sysctl vm.overcommit_memory=1 允许内核分配所有的物理内存，防止fork操作时因为系统剩余内存不足而失败。</li>
+<li>排查当前系统是否开启THP，建议关闭，防止写时复制期间内存过度消耗。</li>
+</ul>
+<hr>
+<h2 id="8-2-内存管理"><a href="#8-2-内存管理" class="headerlink" title="8.2 内存管理"></a>8.2 内存管理</h2><h3 id="8-2-1-设置内存上限"><a href="#8-2-1-设置内存上限" class="headerlink" title="8.2.1 设置内存上限"></a>8.2.1 设置内存上限</h3><p>通过maxmemory参数限制最大可用内存，限制内存的目的：</p>
+<ul>
+<li>用于缓存场景，当超过上限时使用LRU等删除策略释放空间。</li>
+<li>防止所用内存超过服务器物理内存。</li>
+</ul>
+<p>maxmemory限制的是实际使用的内存量，但因为内存碎片的存在，实际消耗内存要更大。通过设置内存上限可以方便单台多实例的内存控制，如服务器内存24G，预留4G空间给其他进程和fork进程，剩下16G可以部署4个实例，不同进程间可以很好的实现CPU和内存隔离。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120109.jpg"> </p>
+<h3 id="8-2-2-动态调整内存上限"><a href="#8-2-2-动态调整内存上限" class="headerlink" title="8.2.2 动态调整内存上限"></a>8.2.2 动态调整内存上限</h3><p>通过 config set maxmemory 动态修改内存上限，假设实例1不够用需要扩容到6G，实例2则是用不到2G内存：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120110.jpg"></p>
+<p>如果超过系统物理内存限制，需要采用在线迁移数据或通过复制切换服务器来达到扩容目的。</p>
+<h3 id="8-2-3-内存回收策略"><a href="#8-2-3-内存回收策略" class="headerlink" title="8.2.3 内存回收策略"></a>8.2.3 内存回收策略</h3><p>内存回收机制体现在：</p>
+<ul>
+<li>删除到达过期时间的键对象。</li>
+<li>内存使用达到maxmemory上限时触发内存溢出控制策略。</li>
+</ul>
+<h4 id="（1）删除过期键"><a href="#（1）删除过期键" class="headerlink" title="（1）删除过期键"></a>（1）删除过期键</h4><p>所有键都可以设置过期属性，保存在过期字典中。进程内保存了大量键，精准维护各个键的过期删除机制导致消耗大量CPU，所以Redis采用惰性删除和定时任务删除机制来实现：</p>
+<ul>
+<li><strong>惰性删除</strong>：客户端读取带有超时属性的键时，若超过键设置的过期时间，会执行删除操作并返回空。该策略不需要单独维护TTL链表来处理过期键的删除，可以节省CPU成本，但存在内存泄露的问题，若过期键一直不被访问就不能被及时释放。</li>
+<li><strong>定时任务删除</strong>：Redis内部维护一个定时任务，默认每秒运行10次（可通过配置hz控制）。采用自适应算法，根据键的过期比例，使用快慢两种速率回收键。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120111.jpg"></p>
+<ol>
+<li>定时任务在每个数据库空间随机检查20个键，当发现过期时删除对应的键。</li>
+<li>如果超过检查数25%的键过期，循环执行回收逻辑直到不足25%或运行超时为止，慢模式下超时时间为25毫秒。</li>
+<li>如果之前回收键逻辑超时，则在Redis触发内部事件之前再次以快模式运行回收过期键任务，快模式下超时时间为1毫秒且2秒内只能运行1次。</li>
+<li>快慢两种模式内部删除逻辑相同，只是执行的超时时间不同。</li>
+</ol>
+<h4 id="（2）内存溢出控制策略"><a href="#（2）内存溢出控制策略" class="headerlink" title="（2）内存溢出控制策略"></a>（2）内存溢出控制策略</h4><p>内存达到maxmemory上限时会触发相应的溢出控制策略，策略受参数maxmemory-policy控制：</p>
+<ol>
+<li>noeviction：默认策略，不会删除任何数据，拒绝所有的写入操作并返回客户端错误信息 (error) OOM command not allowed when used memory，此时Redis只响应读操作。</li>
+<li>volatile-lru：根据LRU算法删除设置了超时属性的键，直到腾出足够空间为止。如果没有可删除的键对象，回退到noeviction策略。</li>
+<li>allkeys-lru：根据LRU算法删除键，不管数据有没有设置超时属性，直到腾出足够空间为止。缓存服务器的方式。</li>
+<li>allkeys-random：随机删除所有键，直到腾出足够空间为止。</li>
+<li>volatile-random：随机删除过期键，直到腾出足够空间为止。</li>
+<li>volatile-ttl：根据键值对象的ttl属性，删除最近将要过期数据。如果没有，回退到noeviction策略。</li>
+</ol>
+<p>可以通过 config set maxmemory-policy {policy} 动态配置，当Redis因为内存溢出删除键时，可以通过执行info stats命令查看evicted_keys指标找出当前服务器已删除的键数量。</p>
+<p>每次执行命令时如果设置了maxmemory参数，都会尝试执行回收内存操作。当Redis一直工作在内存溢出（used_memory）的状态下且设置非noeviction策略，会频繁的触发回收内存的操作，回收内存逻辑伪代码：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120112.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120113.jpg"></p>
+<p>从代码可以看到，频繁执行回收内存成本很高名主要包括查找可回收键和删除键的开销，如果当前Redis有从节点，回收内存操作对应的删除命令会同步到从节点，导致写放大的问题。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120114.jpg"></p>
+<p>对于需要收缩Redis内存的场景，可以通过调小maxmemory来实现快速回收，比如对实际占用6G的进程设置maxmemory=4G，之后第一次执行命令时，如果使用非noeviction策略，它会一次性回收到maxmemory指定的内存量，从而达到快速回收内存的目的。此操作会导致数据丢失和短暂的阻塞问题，一般在缓存场景下使用。</p>
+<hr>
+<h2 id="8-3-内存优化"><a href="#8-3-内存优化" class="headerlink" title="8.3 内存优化"></a>8.3 内存优化</h2><h3 id="8-3-1-redisObject对象"><a href="#8-3-1-redisObject对象" class="headerlink" title="8.3.1 redisObject对象"></a>8.3.1 redisObject对象</h3><p>所有值对象在内部定义为redisObject对象，包括string、hash、list、set、zset，内部结构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120115.jpg"></p>
+<ul>
+<li>type字段：表示当前对象使用的数据类型，可以使用 type {key} 命令查看对象所属类型，键都是string类型。</li>
+<li>encoding字段：表示Redis内部编码类型，encoding在Redis内部使用，理解内部编码方式对于优化内存非常重要，不同的编码实现对于内存占用存在明显差异。</li>
+<li>lru字段：记录对象最后一次被访问的时间，当配置了maxmemory和maxmemory-policy=volatile-lru或allkeys-lru时，用于辅助LRU算法删除键数据。可以使用 object idletime {key} 命令在不更新lru字段情况下查看当前键的空闲时间。可以使用 scan + object idletime 命令批量查询哪些键长时间未被访问。</li>
+<li>refcount字段：记录当前对象被引用的次数，用于通过引用次数回收内存，当refcount=0时可以安全回收当前对象内存空间。使用 object refcount {key} 获取当前对象引用。当对象为整数且范围在[0-999]时，Redis可以使用共享对象的方式来节省内存。</li>
+<li>*ptr字段：与对象的数据内容相关，如果是整数，直接存储数据；否则表示指向数据的指针。Redis在3.0之后对值对象是字符串且长度&lt;=39字节的数据，内部编码为embstr类型，字符串sds和redisObject一起分配，从而只要一次内存操作即可。</li>
+</ul>
+<p>高并发写入场景中，在条件允许的情况下，建议字符串长度控制在39字节以内，减少创建redisObject内存分配次数，从而提高性能。</p>
+<h3 id="8-3-2-缩减键值对象"><a href="#8-3-2-缩减键值对象" class="headerlink" title="8.3.2 缩减键值对象"></a>8.3.2 缩减键值对象</h3><p>降低Redis内存使用最直接的方式就是缩减键和值的长度：</p>
+<ul>
+<li>key长度：键越短越好，如 user:{uid}:friends:notify:{fid} 简化为 u:{uid}:fs:nt:{fid} 。</li>
+<li>value长度：常见需求是把业务对象序列化成二进制数组放入Redis。首先要从业务上精简，去掉不必要的属性。其次是选择更高效的序列化工具降低字节数组大小：</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120116.jpg"></p>
+<p>值对象除了存储二进制数据外，还会使用通用格式存储，如json、xml等，方便调试和跨语言，但不压缩的情况下会比字节数组更吃空间。推荐使用Google的Snappy压缩工具，要远优于GZIP等。</p>
+<h3 id="8-3-3-共享对象池"><a href="#8-3-3-共享对象池" class="headerlink" title="8.3.3 共享对象池"></a>8.3.3 共享对象池</h3><p>指Redis内部维护的[0-9999]的整数对象池。如果创建大量整数类型的redisObject，每个内部结构至少需要16个字节，通过整数对象池来节约内存，其他类型也可以使用。</p>
+<p>整数对象池在Redis中通过变量REDIS_SHARED_INTEGERS定义，不能通过配置修改。可以通过 object refcount 来查看对象引用数验证是否开启。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 因为直接使用共享池内整数对象所以引用数为2</span></span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> <span class="built_in">set</span> foo 100</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> object refcount foo</span></span><br><span class="line">(integer) 2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 再引用变为3</span></span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> <span class="built_in">set</span> bar 100</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> object refcount bar</span></span><br><span class="line">(integer) 3</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120117.jpg"></p>
+<p>测试使用整数对象池是否能够优化内存，结果显示大概降低30%内存使用：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120118.jpg"></p>
+<p>当设置maxmemory并启用LRU相关淘汰策略时会禁止使用共享对象池，测试命令：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120119.jpg"></p>
+<p>为什么？</p>
+<ul>
+<li>LRU算法需要获取对象最后被访问的时间，来淘汰最长未访问数据，每个对象最后访问时间存储在redis对象的lru字段。对象共享意味着多个引用共享一个对象，导致无法获取每个对象的最后访问时间。</li>
+<li>如果没有设置maxmemory，直到内存被用尽也不会触发内存回收，所以共享对象池可以正常工作。</li>
+</ul>
+<p>对于ziplist编码的值对象，即使内部数据是整数也无法使用共享对象池，因为其为压缩且内存连续的结构，对象共享导致判断成本过高。</p>
+<p>为什么只有整数对象池？</p>
+<ul>
+<li>整数复用概率最大。</li>
+<li>对象共享的关键操作是等值判断，整数比较算法时间复杂度为O(1)，字符串则为O(n)，更复杂的结构如hash、list则为O(n^2^) 。避免过度开销，并只保留1万个整数防止浪费。</li>
+</ul>
+<h3 id="8-3-4-字符串优化"><a href="#8-3-4-字符串优化" class="headerlink" title="8.3.4 字符串优化"></a>8.3.4 字符串优化</h3><p>键对象都是字符串，值对象除了整数也都是字符串。如命令 lpush cache:type “redis” “memcache” “tair” “levelDB” ：</p>
+<ul>
+<li>首先创建 “cache:type” 键字符串，</li>
+<li>然后创建链表对象，链表对象内再包含4个字符串对象。</li>
+</ul>
+<h4 id="（1）字符串结构"><a href="#（1）字符串结构" class="headerlink" title="（1）字符串结构"></a>（1）字符串结构</h4><p>Redis没有采用原生C语言的字符串结构，而是自行实现<strong>内部简单动态字符串</strong>（simple dynamic string，SDS）。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120121.jpg"></p>
+<p>SDS特性：</p>
+<ul>
+<li>O(1)时间复杂度获取：字符串长度，已用长度，未用长度。</li>
+<li>可用于保存字节数组，支持安全的二进制数据存储。</li>
+<li>内部实现空间预分配机制，降低内存再分配次数。</li>
+<li>惰性删除机制，字符串删减后的空间不释放，作为预分配空间保留。</li>
+</ul>
+<h4 id="（2）预分配机制"><a href="#（2）预分配机制" class="headerlink" title="（2）预分配机制"></a>（2）预分配机制</h4><p>预分配机制可能会导致内存浪费：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120122.jpg"></p>
+<p>相同的数据在追加后内存消耗非常严重，阶段1插入数据后，free字段保留空间为0，总占用空间=实际占用+1字节（保存 <code>&#39;\0&#39;</code> 标识结尾），忽略了int类型len和free消耗的8字节。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120123.jpg"></p>
+<p>阶段二追加60字节数据空间后， 字符串对象预分配了一倍容量作为预留空间，而且大量追加操作需要内存重新分配，造成内存碎片率上升。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120124.jpg"></p>
+<p>阶段三直接插入120字节数据，相比阶段二节省了每个对象的预分配空间，同时降低了碎片率。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120125.jpg"></p>
+<p>预分配的目的是放在修改操作需要不断的重新分配内存和字节数据拷贝。但同样会造成内存浪费。预分配不是每次都翻倍扩容，规则：</p>
+<ol>
+<li>第一次创建len属性等于数据实际大小，free等于0，不做预分配。</li>
+<li>修改后如果已有free空间不够且小于1M，每次预分配一倍容量。</li>
+<li>修改后如果已有free空间不够且大于1M，每次预分配1M容量。</li>
+</ol>
+<p><strong>尽量减少字符串频繁修改操作，如append、setrange。改为直接使用set修改字符串。</strong></p>
+<h4 id="（3）字符串重构"><a href="#（3）字符串重构" class="headerlink" title="（3）字符串重构"></a>（3）字符串重构</h4><p>指不一定把每份数据作为字符串整体存储，如json这样的数据可以使用hash结构，使用二级结构也可以节省内存。同时可以使用hmget、hmset命令来对字段部分读取修改，无需每次整体存取。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120126.jpg"></p>
+<p>测试字符串和hash内存表现：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120127.jpg"></p>
+<p>第一次默认配置的hash内存消耗不降反增，因为json的videoAlbumPic长度为65，默认hash-max-ziplist-value为64，导致Redis采用hashtable编码格式，反而大量消耗内存。调整后内部编码方式变为ziplist。</p>
+<h3 id="8-3-5-编码优化"><a href="#8-3-5-编码优化" class="headerlink" title="8.3.5 编码优化"></a>8.3.5 编码优化</h3><h4 id="（1）了解编码"><a href="#（1）了解编码" class="headerlink" title="（1）了解编码"></a>（1）了解编码</h4><p>使用 <code>object encoding &#123;key&#125;</code> 来获取编码类型：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120128.jpg"></p>
+<p>每种数据类型至少会有两种编码方式，从而通过选择不同编码方式来实现效率和空间的平衡：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120129.jpg"></p>
+<p>如存储只有10个元素的列表，使用双向链表结构时，需要维护大量的内部字段，如前置指针、后置指针、数据指针等。采用连续内存结构的压缩列表可以节省大量内存，而且因为数据长度较小，存取时间复杂度即使为 O(n^2^) 也可以满足需求。</p>
+<h4 id="（2）控制编码类型"><a href="#（2）控制编码类型" class="headerlink" title="（2）控制编码类型"></a>（2）控制编码类型</h4><p>编码类型转换在Redis写入数据时自动完成，整个过程不可逆，转换只能从小内存编码转向大内存编码：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120130.jpg"></p>
+<p>不支持编码回退的理由是，数据增删频繁时数据向压缩编码转换非常消耗CPU。</p>
+<p>控制编码的参数：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120132.jpg"></p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120133.jpg"></p>
+<p>hash类型进行编码转换的流程：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120134.jpg"></p>
+<p>可以使用 <code>config set</code> 命令设置编码转换相关参数，对于已经采用非压缩编码类型的数据，设置参数后即使满足压缩条件也不会做转换，只能重启Redis重新加载数据才能完成转换。</p>
+<h4 id="（3）ziplist编码"><a href="#（3）ziplist编码" class="headerlink" title="（3）ziplist编码"></a>（3）ziplist编码</h4><p>所有数据采用线性连续的内存结构，其编码结构如下图，一个ziplist包含多个entry，每个entry包含具体的数据：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120135.jpg"></p>
+<p>字段含义：</p>
+<ul>
+<li>zlbytes：记录整个压缩列表所占字节长度，方便重新调整ziplist空间。类型为int-32，长度为4字节。</li>
+<li>zltail：记录距离尾节点的偏移量，方便尾节点弹出操作。类型为int-32，长度为4字节。</li>
+<li>zllen：记录压缩链表节点数量，长度超过2^16^ - 2时需要遍历整个列表获取长度。类型为int-16，长度为2字节。</li>
+<li>entry：记录具体的节点，长度根据实际存储的数据而定。<ul>
+<li>prev_entry_bytes_length：记录前一个节点所占空间，用于快速定位上一个节点，可实现列表反向迭代。</li>
+<li>encoding：标识当前节点编码和长度，前两位表示编码类型：字符串/整数，其余位表示数据长度。</li>
+<li>contents：保存节点的值，针对实际数据长度做内存占用优化。</li>
+</ul>
+</li>
+<li>zlend：记录列表结尾，占用一个字节。</li>
+</ul>
+<p>ziplist特点：</p>
+<ul>
+<li>内部表现为数据紧凑排列的一块连续内存数组。</li>
+<li>可以模拟双向链表结构，以O(1)的时间复杂度入队和出队。</li>
+<li>新增删除操作涉及内存分配或释放，加大了操作的复杂性。</li>
+<li>读写操作设计复杂的指针移动，最坏时间复杂度为O(n^2^)。</li>
+<li>适合存储小对象和长度有限的数据。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120136.jpg"></p>
+<p>ziplist可以大幅降低内存占用，但相比原生结构操作要更耗时，其中耗时排序list &lt; hash &lt; zset。针对性能要求较高的场景，建议长度不要超过1000，每个元素大小控制在512字节以内。</p>
+<p>命令平均耗时使用 info Commandstats 获取，包含调用次数、总耗时、平均耗时，单位为微秒。</p>
+<h4 id="（4）intset编码"><a href="#（4）intset编码" class="headerlink" title="（4）intset编码"></a>（4）intset编码</h4><p>属于集合set的编码类型，内部表现为存储有序、不重复的整数集（<strong>只能存储整数</strong>）。当集合只包含整数且长度不超过 <code>set-max-intset-entries</code> 时被启用。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120137.jpg"></p>
+<p>intset对写入整数进行排序，通过O(log(n))时间复杂度实现查找和去重操作，内部结构：</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120139.jpg"></p>
+<ul>
+<li>encoding：整数表示类型，根据集合内最长整数值确定，包括：int-16、int-32、int-64 。</li>
+<li>length：表示集合元素个数。</li>
+<li>contents：整数数组，按从小到大顺序保存。</li>
+</ul>
+<p>intset保存的整数类型根据长度划分，保存的整数超过当前类型时会触发自动升级操作且后续不再回退。升级操作会导致重新申请内存空间，把原有数据转换类型后拷贝到新数组。</p>
+<p>测试发现intset表现良好，插入命令时间复杂度为O(n)，查询命令为O(log(n))，使用集合时可以尽量使用该编码。当集合内保存非整数类型时，可以使用ziplist-hash来模拟集合，hash的field当做集合的元素，value设置为1字节占位符即可。<strong>使用ziplist编码的hash要比使用hashtable的集合节省大量内存</strong>。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120140.jpg"></p>
+<h3 id="8-3-6-控制键的数量"><a href="#8-3-6-控制键的数量" class="headerlink" title="8.3.6 控制键的数量"></a>8.3.6 控制键的数量</h3><p>过多的键也会消耗大量内存，使用Redis不能进入一个误区，当做Memcached来用，大量的使用get/set。存储相同的数据内容利用Redis的数据结构降低外层键的数量，如图所示，在客户端预估键规模，把大量键分组映射到多个hash结构中降低键的数量。</p>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120141.jpg"></p>
+<ul>
+<li>根据键规模在客户端通过分组映射到一组hash对象中，如存在100万个键，可以映射到1000个hash中，每个hash保存1000个元素。</li>
+<li>hash的field用于记录原始的key字符串，方便hash查找。</li>
+<li>hash的value保存原始值对象，确保不要超过ziplist限制。</li>
+</ul>
+<p><img src="https://pic-1258215793.cos.ap-shanghai.myqcloud.com/content/20200301/202003120142.jpg"></p>
+<p>通过测试说明：</p>
+<ul>
+<li>同样的数据，使用ziplist编码的hash类型要比string类型节省内存。</li>
+<li>节省内存量随着value空间减少越来越明显。</li>
+<li>hash-ziplist类型比string类型写入耗时，但随着value空间减少，耗时逐渐降低。</li>
+</ul>
+<p>内存优化的关键点：</p>
+<ol>
+<li>hash类型节省内存的原理是使用ziplist，如果使用hashtable反而会增加消耗。</li>
+<li>ziplist的长度要控制在1000以内，否则因为时间复杂度较高导致CPU消耗严重。</li>
+<li>ziplist适合存储小对象，对于大对象的优化效果不明显，只会导致操作耗时增加。</li>
+<li>需要预估键的规模，从而确定每个hash结构需要存储的元素数量。</li>
+<li>根据hash长度和元素大小，调整hash-max-ziplist-entries和hash-max-ziplist-value参数，确保使用ziplist编码。</li>
+</ol>
+<p>关于hash键和field键的设计：</p>
+<ol>
+<li>当键离散度较高时，可以按字符串位截取，后三位作为哈希的field，之前部分则作为哈希的键。如key=1948480哈希 <code>key=group:hash:1948</code> ，哈希filed=480。</li>
+<li>当键离散度较低时，可以使用哈希算法打散键，如使crc32(key)&amp;10000函数将键都映射到[0-9999]范围内，哈希field存储键的原始值。</li>
+<li>尽量减少hash键和field键的长度，如使用部分键内容。</li>
+</ol>
+<p>潜在问题：</p>
+<ul>
+<li>客户端需要预估键的规模并设计hash分组规则，加重客户端开发成本。</li>
+<li>hash重构后所有键无法再使用超时和LRU淘汰机制自动删除，需要手动维护删除。</li>
+<li>对于大对象，如1KB以上的，使用hash-ziplist结构控制键数量反而得不偿失。</li>
+</ul>
+<p>如果想使用超时删除功能，开发人员可以存储每个对象的写入时间，再通过定时任务使用hscan命令扫描数据，找到超时数据并删除。</p>
+<hr>
 <p>参考：</p>
 <p>🔗 《Redis开发与运维》</p>
 
@@ -349,6 +677,12 @@
   <div class="popular-posts-header">相关文章</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020070101.html" rel="bookmark">Redis底层数据结构</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020050501.html" rel="bookmark">面试整理——Redis</a></div>
+    </li>
+    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032801.html" rel="bookmark">《Redis开发与运维》读书笔记（十四）Redis配置统计字典（未完成）</a></div>
     </li>
     <li class="popular-posts-item">
@@ -356,12 +690,6 @@
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2020032401.html" rel="bookmark">《Redis开发与运维》读书笔记（十二）开发运维的“陷阱”（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020032101.html" rel="bookmark">《Redis开发与运维》读书笔记（十一）缓存设计（未完成）</a></div>
-    </li>
-    <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2020031801.html" rel="bookmark">《Redis开发与运维》读书笔记（十）集群（未完成）</a></div>
     </li>
   </ul>
 
@@ -376,7 +704,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://linyishui.top/2020031501.html" title="《Redis开发与运维》读书笔记（八）理解内存（未完成）">http://linyishui.top/2020031501.html</a>
+      <a href="http://linyishui.top/2020031501.html" title="《Redis开发与运维》读书笔记（八）理解内存">http://linyishui.top/2020031501.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -385,7 +713,6 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/unfinished/" rel="tag"><i class="fa fa-tag"></i> unfinished</a>
               <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
           </div>
 
@@ -398,8 +725,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020031601.html" rel="next" title="《Redis开发与运维》读书笔记（九）哨兵（未完成）">
-                  《Redis开发与运维》读书笔记（九）哨兵（未完成） <i class="fa fa-chevron-right"></i>
+                <a href="/2020031601.html" rel="next" title="《Redis开发与运维》读书笔记（九）哨兵">
+                  《Redis开发与运维》读书笔记（九）哨兵 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -434,14 +761,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">3.5m</span>
+    <span title="站点总字数">3.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">53:11</span>
+    <span title="站点阅读时长">54:07</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
