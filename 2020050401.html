@@ -30,12 +30,19 @@
 <meta property="og:site_name" content="俺的部落格">
 <meta property="og:description" content="整理面试中常问的Dubbo相关问题，持续更新中。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/tag-condition-compare1.png">
+<meta property="og:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/tag-condition-compare2.png">
+<meta property="og:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/router1.png">
+<meta property="og:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/router2.png">
+<meta property="og:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/circuit-breaking/provider-rate-limit.png">
+<meta property="og:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/circuit-breaking/consumer-circuit-breaking.png">
 <meta property="article:published_time" content="2020-05-04T03:42:50.000Z">
-<meta property="article:modified_time" content="2021-04-20T06:30:22.000Z">
+<meta property="article:modified_time" content="2025-02-24T06:46:07.969Z">
 <meta property="article:author" content="Lys">
 <meta property="article:tag" content="Q&amp;A">
 <meta property="article:tag" content="updating">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/tag-condition-compare1.png">
 
 
 <link rel="canonical" href="http://linyishui.top/2020050401.html">
@@ -159,7 +166,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dubbo"><span class="nav-text">Dubbo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8A%82-%E5%BE%85%E6%95%B4%E7%90%86"><span class="nav-text">第一节 待整理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-text">问：dubbo流程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E4%BB%80%E4%B9%88%E5%BA%8F%E5%88%97%E5%8C%96%E6%A1%86%E6%9E%B6%EF%BC%8C%E8%BF%98%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问：Dubbo推荐使用什么序列化框架，还有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E9%BB%98%E8%AE%A4%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%E9%80%9A%E4%BF%A1%E6%A1%86%E6%9E%B6%EF%BC%8C%E8%BF%98%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问：Dubbo默认使用的是什么通信框架，还有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AD%96%E7%95%A5%EF%BC%8C%E9%BB%98%E8%AE%A4%E6%98%AF%E5%93%AA%E7%A7%8D%EF%BC%9F"><span class="nav-text">问：Dubbo有哪几种负载均衡策略，默认是哪种？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ARPC%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-text">问：RPC流程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2%E3%80%81%E6%9C%8D%E5%8A%A1%E5%BC%95%E7%94%A8%E3%80%81%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%EF%BC%88TODO%EF%BC%89%EF%BC%9F"><span class="nav-text">问：服务暴露、服务引用、服务调用（TODO）？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo-%E7%9A%84%E7%BB%84%E4%BB%B6%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%8C%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8%EF%BC%9F"><span class="nav-text">问：dubbo 的组件有哪些，及其作用？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo-SPI-%E6%9C%BA%E5%88%B6%EF%BC%9B%E8%BF%9C%E7%A8%8B%E6%8E%A5%E5%8F%A3%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B%EF%BC%9F"><span class="nav-text">问：dubbo SPI 机制；远程接口调用过程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo-%E6%94%AF%E6%8C%81%E7%9A%84%E5%8D%8F%E8%AE%AE%E5%8F%8A%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="nav-text">问：dubbo 支持的协议及序列化方式？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo-%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%92%8C%E5%AE%B9%E9%94%99%E7%AD%96%E7%95%A5%EF%BC%9F"><span class="nav-text">问：dubbo 的负载均衡和容错策略？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="nav-text">问：服务调用超时问题怎么解决？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E6%94%AF%E6%8C%81%E5%93%AA%E4%BA%9B%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="nav-text">问：Dubbo支持哪些序列化方式？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E5%92%8CSpringCloud%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%9F"><span class="nav-text">问：Dubbo和SpringCloud的关系？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%EF%BC%9F%E4%B8%80%E5%85%B1%E5%88%92%E5%88%86%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B1%82%EF%BC%9F"><span class="nav-text">问：Dubbo的架构设计？一共划分了哪些层？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E9%BB%98%E8%AE%A4%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="nav-text">问：Dubbo的默认集群容错方案？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%E9%80%9A%E4%BF%A1%E6%A1%86%E6%9E%B6"><span class="nav-text">问：Dubbo使用的是什么通信框架?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A-Dubbo%E7%9A%84%E4%B8%BB%E8%A6%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="nav-text">问： Dubbo的主要应用场景？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E4%B8%8E%E5%8F%91%E7%8E%B0%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9F%E6%B5%81%E7%A8%8B%E8%AF%B4%E6%98%8E%E3%80%82"><span class="nav-text">问：Dubbo服务注册与发现的流程？流程说明。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问：Dubbo的集群容错方案有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A-Dubbo%E7%9A%84%E5%9B%9B%E5%A4%A7%E7%BB%84%E4%BB%B6%EF%BC%9F"><span class="nav-text">问： Dubbo的四大组件？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E5%9C%A8%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6%E6%96%B9%E9%9D%A2%E6%98%AF%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E7%9A%84%EF%BC%9F"><span class="nav-text">问：Dubbo在安全机制方面是如何解决的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E6%94%AF%E6%8C%81%E5%93%AA%E4%BA%9B%E5%8D%8F%E8%AE%AE%EF%BC%8C%E6%AF%8F%E7%A7%8D%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%8C%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9F"><span class="nav-text">问：Dubbo支持哪些协议，每种协议的应用场景，优缺点？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99%E6%96%B9%E6%A1%88%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F-1"><span class="nav-text">问：Dubbo的集群容错方案有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问：Dubbo的核心功能有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E9%9B%86%E7%BE%A4%E6%8C%82%E6%8E%89%EF%BC%8C%E5%8F%91%E5%B8%83%E8%80%85%E5%92%8C%E8%AE%A2%E9%98%85%E8%80%85%E4%B9%8B%E9%97%B4%E8%BF%98%E8%83%BD%E9%80%9A%E4%BF%A1%E4%B9%88%EF%BC%9F"><span class="nav-text">问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E9%9B%86%E7%BE%A4%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%9C%89%E5%93%AA%E4%BA%9B%E7%AD%96%E7%95%A5"><span class="nav-text">问：Dubbo集群的负载均衡有哪些策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9F"><span class="nav-text">问：为什么需要服务治理？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4%E6%80%8E%E6%A0%B7%E8%AE%BE%E7%BD%AE%EF%BC%9F"><span class="nav-text">问：Dubbo超时时间怎样设置？</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dubbo"><span class="nav-text">Dubbo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-text">一. 基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9F%E9%97%AE%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%EF%BC%9F"><span class="nav-text">问：什么是服务治理？问：为什么需要服务治理？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AFRPC%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8RPC%EF%BC%8C%E5%AE%83%E4%B8%8EHTTP%E6%9C%89%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB%E5%90%97%EF%BC%9F"><span class="nav-text">问：什么是RPC？为什么要用RPC，它与HTTP有什么关系吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AFDubbo%EF%BC%9F%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95%EF%BC%9F%E4%B8%BB%E8%A6%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9FDubbo%E5%92%8CSpringCloud%E7%9A%84%E5%85%B3%E7%B3%BB%EF%BC%9F"><span class="nav-text">问：什么是Dubbo？基本用法？主要应用场景？Dubbo和SpringCloud的关系？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A-Dubbo%E7%9A%84%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问： Dubbo的核心功能有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%EF%BC%9F%E4%B8%80%E5%85%B1%E5%88%92%E5%88%86%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B1%82%EF%BC%9F"><span class="nav-text">问：Dubbo的架构设计？一共划分了哪些层？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-Dubbo%E7%9A%84%E6%B5%81%E7%A8%8B-%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2%E3%80%81%E6%9C%8D%E5%8A%A1%E5%BC%95%E7%94%A8%E3%80%81%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8"><span class="nav-text">二. Dubbo的流程-服务暴露、服务引用、服务调用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-text">问：dubbo流程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9FDubbo%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E6%98%AF%EF%BC%9F"><span class="nav-text">问：服务暴露的流程？Dubbo的服务注册基本原理是？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E6%9C%8D%E5%8A%A1%E5%BC%95%E5%85%A5%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-text">问：服务引入的流程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9FDubbo%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E6%98%AF%EF%BC%9F"><span class="nav-text">问：服务调用的流程？Dubbo的服务调用基本原理是？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ASPI%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9FSPI%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%EF%BC%8C%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%9FDubbo%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0SPI%EF%BC%9F"><span class="nav-text">问：SPI是什么？SPI使用场景？如何使用，如何实现？Dubbo为什么要自行实现SPI？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E6%98%AF%EF%BC%9F"><span class="nav-text">问：Dubbo的服务发现是？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9AInvoker%E3%80%81Directory%E5%92%8CCluster"><span class="nav-text">问：Invoker、Directory和Cluster</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99%E3%80%81%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%E3%80%81%E6%9C%8D%E5%8A%A1%E9%87%8D%E8%AF%95%E3%80%81%E6%B5%81%E9%87%8F%E7%AE%A1%E6%8E%A7"><span class="nav-text">三. 集群容错、服务路由、服务重试、流量管控</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99%E7%AD%96%E7%95%A5%EF%BC%9Ffailover%EF%BC%8Cfailfast%EF%BC%9FDubbo%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%AE%B9%E9%94%99%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E6%98%AF%EF%BC%9F"><span class="nav-text">问：集群容错策略？failover，failfast？Dubbo的服务容错基本原理是？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%E6%98%AF%EF%BC%9F"><span class="nav-text">问：Dubbo的服务路由是？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%98%AF%EF%BC%9FDubbo%E6%9C%89%E5%93%AA%E5%87%A0%E7%A7%8D%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AD%96%E7%95%A5%EF%BC%8C%E9%BB%98%E8%AE%A4%E6%98%AF%E5%93%AA%E7%A7%8D%EF%BC%9F"><span class="nav-text">问：Dubbo的负载均衡是？Dubbo有哪几种负载均衡策略，默认是哪种？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%B5%81%E9%87%8F%E7%AE%A1%E6%8E%A7%E6%98%AF%EF%BC%9F%E9%99%90%E6%B5%81%E5%92%8C%E7%86%94%E6%96%AD%EF%BC%9F"><span class="nav-text">问：Dubbo的流量管控是？限流和熔断？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%9C%8D%E5%8A%A1%E9%87%8D%E8%AF%95%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%E6%98%AF%EF%BC%9F"><span class="nav-text">问：Dubbo的服务重试基本原理是？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B-%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE%E3%80%81%E5%BA%8F%E5%88%97%E5%8C%96%E6%A1%86%E6%9E%B6"><span class="nav-text">四. 通信协议、序列化框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%E9%80%9A%E4%BF%A1%E6%A1%86%E6%9E%B6%EF%BC%9FDubbo%E9%BB%98%E8%AE%A4%E4%BD%BF%E7%94%A8%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%E9%80%9A%E4%BF%A1%E6%A1%86%E6%9E%B6%EF%BC%8C%E8%BF%98%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问：Dubbo使用的是什么通信框架？Dubbo默认使用的是什么通信框架，还有哪些？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9Adubbo-%E6%94%AF%E6%8C%81%E7%9A%84%E5%8D%8F%E8%AE%AE%E5%8F%8A%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E5%BC%8F%EF%BC%9FDubbo%E6%94%AF%E6%8C%81%E5%93%AA%E4%BA%9B%E5%8D%8F%E8%AE%AE%EF%BC%8C%E6%AF%8F%E7%A7%8D%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%8C%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9FDubbo%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E4%BB%80%E4%B9%88%E5%BA%8F%E5%88%97%E5%8C%96%E6%A1%86%E6%9E%B6%EF%BC%8C%E8%BF%98%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">问：dubbo 支持的协议及序列化方式？Dubbo支持哪些协议，每种协议的应用场景，优缺点？Dubbo推荐使用什么序列化框架，还有哪些？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-text">五. 常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%9FDubbo%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4%E6%80%8E%E6%A0%B7%E8%AE%BE%E7%BD%AE%EF%BC%9F"><span class="nav-text">问：服务调用超时问题怎么解决？Dubbo超时时间怎样设置？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E5%9C%A8%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6%E6%96%B9%E9%9D%A2%E6%98%AF%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E7%9A%84%EF%BC%9F"><span class="nav-text">问：Dubbo在安全机制方面是如何解决的？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9ADubbo%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E9%9B%86%E7%BE%A4%E6%8C%82%E6%8E%89%EF%BC%8C%E5%8F%91%E5%B8%83%E8%80%85%E5%92%8C%E8%AE%A2%E9%98%85%E8%80%85%E4%B9%8B%E9%97%B4%E8%BF%98%E8%83%BD%E9%80%9A%E4%BF%A1%E4%B9%88%EF%BC%9F"><span class="nav-text">问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%EF%BC%9A%E5%A6%82%E6%9E%9C%E8%AE%A9%E4%BD%A0%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA-RPC-%E6%A1%86%E6%9E%B6%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="nav-text">问：如果让你设计一个 RPC 框架，如何设计？</span></a></li></ol></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -189,7 +196,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">112</span>
+        <span class="site-state-item-count">113</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -295,7 +302,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-20 14:30:22" itemprop="dateModified" datetime="2021-04-20T14:30:22+08:00">2021-04-20</time>
+        <time title="修改时间：2025-02-24 14:46:07" itemprop="dateModified" datetime="2025-02-24T14:46:07+08:00">2025-02-24</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -315,14 +322,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1k</span>
+      <span>36k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>33 分钟</span>
     </span>
 </div>
 
@@ -334,29 +341,1556 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="Dubbo"><a href="#Dubbo" class="headerlink" title="Dubbo"></a><strong>Dubbo</strong></h1><h2 id="第一节-待整理"><a href="#第一节-待整理" class="headerlink" title="第一节 待整理"></a><strong>第一节 待整理</strong></h2><h4 id="问：dubbo流程？"><a href="#问：dubbo流程？" class="headerlink" title="问：dubbo流程？"></a><strong>问：dubbo流程？</strong></h4><p>（1）：生产者（Provider）启动，向注册中心（Register）注册</p>
-<p>（2）：消费者（Consumer）订阅，而后注册中心通知消费者</p>
-<p>（3）：消费者从生产者进行消费</p>
-<p>（4）：监控中心（Monitor）统计生产者和消费者</p>
-<h4 id="问：Dubbo推荐使用什么序列化框架，还有哪些？"><a href="#问：Dubbo推荐使用什么序列化框架，还有哪些？" class="headerlink" title="问：Dubbo推荐使用什么序列化框架，还有哪些？"></a><strong>问：Dubbo推荐使用什么序列化框架，还有哪些？</strong></h4><p>推荐使用Hessian序列化，还有Duddo、FastJson、Java自带序列化</p>
-<h4 id="问：Dubbo默认使用的是什么通信框架，还有哪些？"><a href="#问：Dubbo默认使用的是什么通信框架，还有哪些？" class="headerlink" title="问：Dubbo默认使用的是什么通信框架，还有哪些？"></a><strong>问：Dubbo默认使用的是什么通信框架，还有哪些？</strong></h4><p>默认使用 Netty 框架，也是推荐的选择，另外内容还集成有Mina、Grizzly。</p>
-<h4 id="问：Dubbo有哪几种负载均衡策略，默认是哪种？"><a href="#问：Dubbo有哪几种负载均衡策略，默认是哪种？" class="headerlink" title="问：Dubbo有哪几种负载均衡策略，默认是哪种？"></a><strong>问：Dubbo有哪几种负载均衡策略，默认是哪种？</strong></h4><p>（1）：随机调用{默认}</p>
+        <h1 id="Dubbo"><a href="#Dubbo" class="headerlink" title="Dubbo"></a>Dubbo</h1><h2 id="一-基础概念"><a href="#一-基础概念" class="headerlink" title="一. 基础概念"></a>一. 基础概念</h2><h4 id="问：什么是服务治理？问：为什么需要服务治理？"><a href="#问：什么是服务治理？问：为什么需要服务治理？" class="headerlink" title="问：什么是服务治理？问：为什么需要服务治理？"></a>问：什么是服务治理？问：为什么需要服务治理？</h4><ul>
+<li>什么是服务治理？<ul>
+<li>简单来说，就是<strong>管理微服务</strong>，确保平台整体正常、平稳地运行。服务治理是在微服务架构中，为了保证系统整体的稳定性、可靠性、高效性，对微服务进行管理和控制的一系列机制。</li>
+</ul>
+</li>
+<li>为什么需要服务治理？<ul>
+<li><strong>微服务数量庞大：</strong> 微服务架构将一个大型应用拆分成许多小的服务，这些服务之间相互依赖，管理起来非常复杂。</li>
+<li><strong>服务间通信频繁：</strong> 微服务之间通过网络进行通信，这增加了系统的不稳定性，可能出现网络故障、服务宕机等问题。</li>
+<li><strong>服务动态变化：</strong> 微服务可以独立部署、升级，这使得系统的状态变得动态多变，增加了管理难度。</li>
+</ul>
+</li>
+<li>服务治理的核心内容：<ul>
+<li><strong>服务注册与发现：</strong> 服务启动时将自己注册到服务注册中心，其他服务可以通过服务注册中心找到需要调用的服务。</li>
+<li><strong>配置中心：</strong> 集中管理所有微服务的配置信息，实现配置的动态变更和实时生效。</li>
+<li><strong>负载均衡：</strong> 将请求均衡地分发到多个服务实例上，提高系统的并发处理能力。</li>
+<li><strong>服务熔断：</strong> 当某个服务出现故障时，快速隔离该服务，防止故障扩散。</li>
+<li><strong>服务降级：</strong> 在系统负载过高时，对非核心服务进行降级，保证核心服务的可用性。</li>
+<li><strong>流量控制：</strong> 对系统流量进行限制，防止系统过载。</li>
+<li><strong>链路追踪：</strong> 追踪请求在整个系统中的调用链路，方便定位问题。</li>
+<li><strong>日志收集与分析：</strong> 收集和分析系统日志，以便监控系统运行状态。</li>
+</ul>
+</li>
+<li>常用的服务治理框架：<ul>
+<li><strong>Spring Cloud：</strong> 一个基于 Spring Boot 的微服务开发框架，提供了全面的服务治理解决方案。</li>
+<li><strong>Dubbo：</strong> 阿里巴巴开源的分布式服务框架，具有高性能、高可用性等特点。</li>
+<li><strong>Istio：</strong> 一个服务网格，提供流量管理、安全、策略执行等功能。</li>
+</ul>
+</li>
+</ul>
+<h4 id="问：什么是RPC？为什么要用RPC，它与HTTP有什么关系吗？"><a href="#问：什么是RPC？为什么要用RPC，它与HTTP有什么关系吗？" class="headerlink" title="问：什么是RPC？为什么要用RPC，它与HTTP有什么关系吗？"></a>问：什么是RPC？为什么要用RPC，它与HTTP有什么关系吗？</h4><ul>
+<li><p>什么是RPC？</p>
+<ul>
+<li><strong>RPC</strong>，全称 <strong>Remote Procedure Call</strong>，即 <strong>远程过程调用</strong>。它是一种计算机通信协议，可以让运行在一台计算机上的程序调用另一台计算机上的程序，就好像调用本地程序一样。</li>
+</ul>
+</li>
+<li><p>核心思想是 <strong>透明化远程调用</strong>。也就是说，调用方不需要关心底层的网络通信细节，只需要像调用本地方法一样调用远程方法即可。这大大简化了分布式系统的开发。</p>
+</li>
+<li><p>工作流程：</p>
+<ol>
+<li><strong>客户端发起调用：</strong> 客户端调用本地 stub（桩）上的方法。</li>
+<li><strong>stub 将调用信息打包：</strong> stub 会将方法名、参数等信息打包成一个请求。</li>
+<li><strong>网络传输：</strong> 请求通过网络发送到服务端。</li>
+<li><strong>服务端接收请求：</strong> 服务端的 stub 接收到请求，将请求解包。</li>
+<li><strong>服务端执行方法：</strong> 服务端 stub 调用实际的服务方法，并获取结果。</li>
+<li><strong>结果返回：</strong> 结果通过网络返回给客户端。</li>
+<li><strong>客户端处理结果：</strong> 客户端 stub 接收到结果，并返回给客户端调用方。</li>
+</ol>
+</li>
+<li><p>优势：</p>
+<ul>
+<li><strong>简化开发：</strong> 将分布式系统调用转化为本地调用，降低开发复杂度。</li>
+<li><strong>提高效率：</strong> RPC 框架通常会提供一些优化措施，如连接池、序列化/反序列化、异步调用等，提高系统性能。</li>
+<li><strong>促进模块化：</strong> 不同的服务可以独立开发、部署和维护，提高系统的可维护性。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>应用场景：<ul>
+<li><strong>微服务架构：</strong> RPC 是微服务架构中服务之间通信的核心技术。</li>
+<li><strong>分布式系统：</strong> RPC 可以用于构建大型分布式系统。</li>
+<li><strong>云计算：</strong> 云计算平台通常提供 RPC 服务，方便用户构建云应用。</li>
+</ul>
+</li>
+<li>RPC 框架：<ul>
+<li><strong>gRPC：</strong> 基于 Protocol Buffers 的高性能、通用开源 RPC 框架。</li>
+<li><strong>Dubbo：</strong> 阿里巴巴开源的高性能、轻量级的 Java RPC 框架。</li>
+<li><strong>Thrift：</strong> Facebook 开源的跨语言 RPC 框架。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>为什么要用RPC，它与HTTP有什么关系吗？<ul>
+<li>HTTP是传输协议，而RPC是相对于本地调用的远程调用概念，用于分布式系统之间的通信，可以用HTTP，也可以使用HTTP/2、gRPC、TCP 等所有主流通信协议。</li>
+</ul>
+</li>
+</ul>
+<h4 id="问：什么是Dubbo？基本用法？主要应用场景？Dubbo和SpringCloud的关系？"><a href="#问：什么是Dubbo？基本用法？主要应用场景？Dubbo和SpringCloud的关系？" class="headerlink" title="问：什么是Dubbo？基本用法？主要应用场景？Dubbo和SpringCloud的关系？"></a>问：什么是Dubbo？基本用法？主要应用场景？Dubbo和SpringCloud的关系？</h4><p>官网：<a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/">Apache Dubbo</a></p>
+<ul>
+<li><p>什么是Dubbo？</p>
+<ul>
+<li>Apache Dubbo 是一款易用、高性能的 WEB 和 <strong>RPC 框架</strong>，同时为构建企业级微服务提供服务发现、流量治理、可观测、认证鉴权等能力、工具与最佳实践。</li>
+</ul>
+</li>
+<li><p>Dubbo的核心特性？</p>
+<ul>
+<li>微服务编程范式和工具</li>
+<li>服务发现</li>
+<li>动态配置</li>
+<li>负载均衡</li>
+<li>流量管控：控制服务间的流量走向和 API 调用，实现在运行期动态的调整服务行为如超时时间、重试次数、限流参数等，通过控制流量分布可以实现 <strong>A/B 测试、金丝雀发布、多版本按比例流量分配、条件匹配路由、黑白名单</strong>等，提高系统稳定性。<ul>
+<li>动态调整超时时间</li>
+<li>服务重试</li>
+<li>访问日志</li>
+<li>同区域优先</li>
+<li>灰度环境隔离</li>
+<li>参数路由</li>
+<li>按权重比例分流</li>
+<li>金丝雀发布</li>
+<li>服务降级</li>
+<li>实例临时拉黑</li>
+<li>指定机器导流</li>
+</ul>
+</li>
+<li>认证鉴权</li>
+<li>通信协议</li>
+<li>扩展适配</li>
+<li>服务网格</li>
+</ul>
+</li>
+<li><p>Dubbo的角色有？</p>
+<ul>
+<li>Consumer：需要调用远程服务的服务消费方</li>
+<li>Registry：注册中心</li>
+<li>Provider：服务提供方</li>
+<li>Container：服务运行的容器</li>
+<li>Monitor：监控中心</li>
+</ul>
+</li>
+<li><p>为什么要用Dubbo？与Spring Cloud的关系？</p>
+<ul>
+<li>使用微服务架构来搭建应用时，需要解决服务拆分与定义、数据通信、地址发现、流量管理、数据一致性、系统容错能力等一系列问题。Dubbo提供了如RPC 通信<strong>解决服务之间的通信问题、服务监控和治理等功能</strong>。</li>
+<li>Dubbo与Spring Cloud提供的服务类似，二者可以理解为竞品。Dubbo 不绑定特定的通信协议，支持 HTTP、HTTP/2、gRPC、TCP 等所有主流通信协议，支持 Dubbo2、Triple 两款高性能通信协议。</li>
+</ul>
+</li>
+<li><p>基本使用：</p>
+<ul>
+<li><p>通过接口定义服务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DemoService</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">(String arg)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>服务提供者实现接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DubboService</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoServiceImpl</span> <span class="keyword">implements</span> <span class="title">DemoService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(String arg)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// put your microservice logic here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>服务提供者首先要将服务定义以 Jar 包形式发布到 Maven 中央仓库。补充 Dubbo 配置并启动 Dubbo Server。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo</span>:<span class="string"></span></span><br><span class="line">  <span class="attr">application</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">name</span>: <span class="string">dubbo-demo</span></span><br><span class="line">  <span class="attr">protocol</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">name</span>: <span class="string">dubbo</span></span><br><span class="line">    <span class="attr">port</span>: <span class="string">-1</span></span><br><span class="line">  <span class="attr">registry</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">address</span>: <span class="string">zookeeper://127.0.0.1:2181</span></span><br></pre></td></tr></table></figure></li>
+<li><p>消费方通过 Maven/Gradle 引入 <code>DemoService</code> 服务定义依赖。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.dubbo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>dubbo-demo-interface<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>编程注入远程 Dubbo 服务实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>&#123;</span><br><span class="line">    <span class="meta">@DubboReference</span></span><br><span class="line">    <span class="keyword">private</span> DemoService demoService;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h4 id="问：-Dubbo的核心功能有哪些？"><a href="#问：-Dubbo的核心功能有哪些？" class="headerlink" title="问： Dubbo的核心功能有哪些？"></a>问： Dubbo的核心功能有哪些？</h4><p>Dubbo 提供了强大的 <strong>分布式服务治理</strong> 能力，核心功能包括：</p>
+<p><strong>1. 透明化的 RPC 远程调用</strong></p>
+<ul>
+<li><p><strong>功能</strong>：让远程调用像本地调用一样简单。</p>
+</li>
+<li><p>实现方式：</p>
+<ul>
+<li>通过 <strong>动态代理</strong> 生成远程调用对象（Stub）。</li>
+<li>Consumer 调用 <code>Invoker</code>，通过 <strong>网络协议</strong> 传输请求到 Provider。</li>
+</ul>
+</li>
+<li><p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DubboReference</span></span><br><span class="line"><span class="keyword">private</span> OrderService orderService;</span><br><span class="line"></span><br><span class="line">orderService.createOrder(<span class="string">&quot;123&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>2. 负载均衡</strong></p>
+<ul>
+<li><p><strong>功能</strong>：支持多种 <strong>负载均衡算法</strong>，提升性能。</p>
+</li>
+<li><p>常见策略：</p>
+<ul>
+<li><strong>Random（随机，默认）</strong></li>
+<li><strong>RoundRobin（轮询）</strong></li>
+<li><strong>LeastActive（最少活跃）</strong></li>
+<li><strong>ConsistentHash（一致性哈希）</strong></li>
+</ul>
+</li>
+<li><p>示例</p>
+<p>（Consumer 侧配置负载均衡）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo:</span></span><br><span class="line">  <span class="attr">consumer:</span></span><br><span class="line">    <span class="attr">loadbalance:</span> <span class="string">leastactive</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>3. 服务注册与发现</strong></p>
+<ul>
+<li><p><strong>功能</strong>：支持 <strong>动态扩容、故障剔除</strong>，无需手动管理服务地址。</p>
+</li>
+<li><p>工作方式：</p>
+<ul>
+<li>Provider 启动时 <strong>自动注册服务</strong>。</li>
+<li>Consumer <strong>订阅服务</strong>，实时获取可用 Provider。</li>
+</ul>
+</li>
+<li><p>示例（Zookeeper 注册中心）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo:</span></span><br><span class="line">  <span class="attr">registry:</span></span><br><span class="line">    <span class="attr">address:</span> <span class="string">zookeeper://127.0.0.1:2181</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>4. 服务容错机制</strong></p>
+<ul>
+<li><p><strong>功能</strong>：防止单点故障，提供 <strong>多种降级策略</strong>。</p>
+</li>
+<li><p>支持的容错策略：</p>
+<ul>
+<li><strong>Failover（失败自动切换，默认）</strong></li>
+<li><strong>Failfast（快速失败）</strong></li>
+<li><strong>Failsafe（失败安全，忽略异常）</strong></li>
+<li><strong>Failback（失败自动恢复）</strong></li>
+</ul>
+</li>
+<li><p>示例（配置 Failfast 策略）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo:</span></span><br><span class="line">  <span class="attr">reference:</span></span><br><span class="line">    <span class="attr">retries:</span> <span class="number">0</span>  <span class="comment"># 失败时不重试</span></span><br><span class="line">    <span class="attr">cluster:</span> <span class="string">failfast</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>5. 服务路由与动态配置</strong></p>
+<ul>
+<li><p><strong>功能</strong>：通过 <strong>Router 规则</strong> 进行动态流量管理。</p>
+</li>
+<li><p>常见应用：</p>
+<ul>
+<li>灰度发布（部分用户使用新版本服务）。</li>
+<li>IP、区域流量限制。</li>
+</ul>
+</li>
+<li><p>示例（灰度规则：部分用户请求新服务）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">method=pay</span> <span class="string">=&gt;</span> <span class="string">tag=gray</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>6. 服务治理（监控 &amp; 统计）</strong></p>
+<ul>
+<li><p><strong>功能</strong>：提供 <strong>调用监控、流量分析</strong>，支持 Prometheus/Grafana。</p>
+</li>
+<li><p>支持的监控方式：</p>
+<ul>
+<li>Dubbo Admin（官方管理平台）。</li>
+<li>Metrics 监控（Prometheus、Grafana）。</li>
+</ul>
+</li>
+<li><p>示例（开启监控）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo:</span></span><br><span class="line">  <span class="attr">metrics:</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">prometheus</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>7. 多协议 &amp; 多语言支持</strong></p>
+<ul>
+<li><p><strong>支持多种协议（Dubbo、HTTP、gRPC 等）。</strong></p>
+</li>
+<li><p><strong>支持 Java、Go、Node.js 等多语言调用。</strong></p>
+</li>
+<li><p>示例（使用 HTTP 协议）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo:</span></span><br><span class="line">  <span class="attr">protocol:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">rest</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>Dubbo 核心功能：</strong></p>
+<ol>
+<li><strong>RPC 远程调用</strong></li>
+<li><strong>负载均衡</strong></li>
+<li><strong>服务注册 &amp; 发现</strong></li>
+<li><strong>容错机制</strong></li>
+<li><strong>服务路由 &amp; 动态配置</strong></li>
+<li><strong>监控 &amp; 统计</strong></li>
+<li><strong>多协议 &amp; 多语言支持</strong></li>
+</ol>
+<p>Dubbo <strong>通过服务治理和高性能 RPC 调用</strong>，广泛用于 <strong>互联网、电商、金融等高并发分布式系统</strong>。</p>
+<h4 id="问：Dubbo的架构设计？一共划分了哪些层？"><a href="#问：Dubbo的架构设计？一共划分了哪些层？" class="headerlink" title="问：Dubbo的架构设计？一共划分了哪些层？"></a>问：Dubbo的架构设计？一共划分了哪些层？</h4><p>Dubbo 通过 <strong>分层架构</strong> 实现了服务的 <strong>解耦、灵活性、可扩展性</strong>。每一层都有明确的职责，便于维护和扩展：</p>
+<ul>
+<li><strong>Consumer</strong> 负责调用；</li>
+<li><strong>Provider</strong> 负责实现并暴露服务；</li>
+<li><strong>Registry</strong> 负责服务发现与管理；</li>
+<li><strong>Protocol</strong> 负责数据传输；</li>
+<li><strong>Admin</strong> 提供监控与管理能力。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>用户应用层（Consumer）</strong></td>
+<td>发起远程调用，配置服务注册与发现。</td>
+</tr>
+<tr>
+<td><strong>Dubbo 客户端层（Consumer）</strong></td>
+<td>请求发送、负载均衡、容错、协议支持等功能。</td>
+</tr>
+<tr>
+<td><strong>网络传输层（Protocol）</strong></td>
+<td>实现协议通信，序列化、反序列化，数据传输等功能。</td>
+</tr>
+<tr>
+<td><strong>服务注册与发现层（Registry）</strong></td>
+<td>管理服务注册、发现、动态变更等功能。</td>
+</tr>
+<tr>
+<td><strong>服务提供者层（Provider）</strong></td>
+<td>实现服务，暴露服务，注册到注册中心。</td>
+</tr>
+<tr>
+<td><strong>服务管理层（Admin）</strong></td>
+<td>提供服务治理、监控、配置管理等功能。</td>
+</tr>
+</tbody></table>
+<p><strong>整体架构图：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">+-----------------------------------+</span><br><span class="line">|          用户应用层（Consumer）        |</span><br><span class="line">|  -----&gt; 远程调用，配置服务注册等         |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">|          Dubbo 客户端（Consumer）       |</span><br><span class="line">|  -----&gt; 请求发送，负载均衡，容错等        |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">|         网络传输层（Protocol）         |</span><br><span class="line">|  -----&gt; 实现网络传输（序列化/反序列化）  |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">|         服务注册与发现层（Registry）    |</span><br><span class="line">|  -----&gt; 服务注册，订阅，心跳，通知      |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">|         服务提供者（Provider）        |</span><br><span class="line">|  -----&gt; 业务逻辑处理，服务暴露          |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">              |</span><br><span class="line">              |</span><br><span class="line">+-----------------------------------+</span><br><span class="line">|          服务管理层（Admin）          |</span><br><span class="line">|  -----&gt; 提供管理与监控功能            |</span><br><span class="line">+-----------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>Dubbo 的主要分层</strong></p>
+<p><strong>1. 用户应用层（Consumer）</strong></p>
+<ul>
+<li><p><strong>作用</strong>：<br> 这一层是 Dubbo 的使用方，主要是消费远程服务的应用程序。</p>
+</li>
+<li><p><strong>功能</strong>：</p>
+<ul>
+<li>发起远程调用，向 Dubbo 服务注册中心请求服务。</li>
+<li>配置 <code>@DubboReference</code> 或 <code>&lt;dubbo:reference&gt;</code> 注解，实现服务引入。</li>
+<li>使用服务代理对象，进行本地方法调用，Dubbo 会自动将其转化为远程调用。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DubboReference</span></span><br><span class="line"><span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getUserInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(userService.getUserInfo(<span class="string">&quot;123&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>2. Dubbo 客户端层（Consumer）</strong></p>
+<ul>
+<li><strong>作用</strong>：<br> 这一层负责客户端的 <strong>远程调用</strong>，它将消费方请求与提供方的服务调用连接起来，处理服务请求的过程。</li>
+<li><strong>功能</strong>：<ul>
+<li><strong>请求处理</strong>：负责向服务提供者发起请求，处理请求和响应。</li>
+<li><strong>负载均衡</strong>：通过不同的负载均衡策略（如随机、轮询等），选择一个合适的服务实例进行调用。</li>
+<li><strong>容错与重试</strong>：在请求失败时，根据配置进行容错和重试。</li>
+<li><strong>协议支持</strong>：支持多种协议（如 Dubbo、HTTP、gRPC 等）。</li>
+</ul>
+</li>
+<li><strong>示例</strong>：<ul>
+<li>请求使用 <code>@DubboReference</code> 引用远程服务，客户端自动生成代理对象。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3. 网络传输层（Protocol）</strong></p>
+<ul>
+<li><strong>作用</strong>：<br> 这一层主要负责实现 <strong>RPC 协议的网络通信</strong>，包括 <strong>序列化与反序列化</strong>，请求的编解码，数据传输等。</li>
+<li><strong>功能</strong>：<ul>
+<li><strong>协议支持</strong>：支持多种协议（如 Dubbo、RMI、Hessian、HTTP、Thrift）。</li>
+<li><strong>请求序列化</strong>：客户端请求数据进行序列化，服务端接收后反序列化。</li>
+<li><strong>数据传输</strong>：通过 <code>Netty</code> 等网络库进行数据传输。</li>
+</ul>
+</li>
+<li><strong>示例</strong>：<ul>
+<li>Dubbo 协议：高性能的网络传输协议，基于 Netty。</li>
+<li>序列化：支持 JSON、Hessian 等多种序列化方式。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4. 服务注册与发现层（Registry）</strong></p>
+<ul>
+<li><p><strong>作用</strong>：<br> 这一层负责管理服务的注册与发现，确保消费者可以找到可用的服务提供者（Provider）。</p>
+</li>
+<li><p><strong>功能</strong>：</p>
+<ul>
+<li><strong>服务注册</strong>：服务提供者启动时将自己暴露的服务（如接口、地址）注册到 <strong>注册中心</strong>。</li>
+<li><strong>服务发现</strong>：服务消费者从注册中心订阅所需服务，获取可用的服务提供者列表。</li>
+<li><strong>动态管理</strong>：注册中心会根据服务的健康状态自动推送服务变化，如新增、下线、负载均衡策略等。</li>
+</ul>
+</li>
+<li><p><strong>常见注册中心</strong>：</p>
+<ul>
+<li>Zookeeper（默认）</li>
+<li>Nacos</li>
+<li>Etcd</li>
+<li>Redis</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dubbo:</span></span><br><span class="line">  <span class="attr">registry:</span></span><br><span class="line">    <span class="attr">address:</span> <span class="string">zookeeper://127.0.0.1:2181</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>5. 服务提供者层（Provider）</strong></p>
+<ul>
+<li><p><strong>作用</strong>：<br> 服务提供者实现远程服务接口，并将其注册到注册中心。</p>
+</li>
+<li><p><strong>功能</strong>：</p>
+<ul>
+<li><strong>服务实现</strong>：服务提供者实现具体的业务逻辑。</li>
+<li><strong>服务暴露</strong>：通过 <code>@DubboService</code> 或 XML 配置，将服务暴露给外部系统。</li>
+<li><strong>服务注册</strong>：将服务的信息（如接口、地址、端口）注册到 <strong>注册中心</strong>。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@DubboService</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUserInfo</span><span class="params">(String userId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;User: &quot;</span> + userId;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>6. 服务管理层（Admin）</strong></p>
+<ul>
+<li><strong>作用</strong>：<br> 这一层提供 <strong>服务治理与监控管理</strong>，包括服务的配置管理、调用监控、服务降级、流量控制等功能。</li>
+<li><strong>功能</strong>：<ul>
+<li><strong>服务治理</strong>：支持服务的版本管理、灰度发布、流量控制、限流等。</li>
+<li><strong>监控统计</strong>：实时监控服务调用状态、性能指标（如吞吐量、响应时间、错误率等）。</li>
+<li><strong>配置管理</strong>：支持动态配置、服务切换等。</li>
+</ul>
+</li>
+<li><strong>示例</strong>：<ul>
+<li>使用 <strong>Dubbo Admin</strong> 提供服务治理和监控功能。</li>
+</ul>
+</li>
+</ul>
+<p><strong>7. 其他辅助层</strong></p>
+<p>除了上述主要的架构层，Dubbo 还包括一些辅助功能组件，如 <strong>过滤器（Filter）</strong>、<strong>拦截器（Interceptor）</strong>、<strong>回调机制（Callback）</strong> 等，它们用于增强 Dubbo 的功能和灵活性。</p>
+<h2 id="二-Dubbo的流程-服务暴露、服务引用、服务调用"><a href="#二-Dubbo的流程-服务暴露、服务引用、服务调用" class="headerlink" title="二. Dubbo的流程-服务暴露、服务引用、服务调用"></a>二. Dubbo的流程-服务暴露、服务引用、服务调用</h2><h4 id="问：dubbo流程？"><a href="#问：dubbo流程？" class="headerlink" title="问：dubbo流程？"></a>问：dubbo流程？</h4><p>Dubbo 作为分布式服务框架，核心流程分为 <strong>服务暴露（服务注册）</strong>、<strong>服务引入（服务订阅）</strong> 和 <strong>服务调用</strong> 三个阶段：</p>
+<ol>
+<li><strong>服务暴露</strong>：Provider 将服务注册到注册中心，并开启本地服务。</li>
+<li><strong>服务引入</strong>：Consumer 从注册中心订阅服务，动态获取 Provider 列表，并创建代理对象。</li>
+<li><strong>服务调用</strong>：Consumer 通过代理对象发起远程调用，经过负载均衡、容错等机制最终调用 Provider。</li>
+</ol>
+<p>关键设计机制</p>
+<ol>
+<li><strong>动态代理</strong>：屏蔽远程调用细节，使 Consumer 像调用本地方法一样使用远程服务。</li>
+<li><strong>集群容错</strong>：提供 Failover（默认）、Failfast 等策略，保障调用可靠性。</li>
+<li><strong>异步调用</strong>：支持 CompletableFuture 实现非阻塞调用。</li>
+<li><strong>SPI 扩展</strong>：所有核心组件（Protocol、Cluster、LoadBalance）支持 SPI 扩展。</li>
+</ol>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Consumer 调用流程：</span><br><span class="line">P<span class="function"><span class="title">roxy</span> -&gt;</span> F<span class="function"><span class="title">ilter</span> -&gt;</span> C<span class="function"><span class="title">luster</span>(LoadBalance) -&gt;</span> I<span class="function"><span class="title">nvoker</span> -&gt;</span> N<span class="function"><span class="title">etty</span> -&gt;</span> Provider</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>dubbo的基本流程：<ol>
+<li>服务提供者 Provider 启动然后向注册中心注册自己所能提供的服务。</li>
+<li>服务消费者 Consumer 启动向注册中心订阅自己所需的服务。</li>
+<li>注册中心将提供者元信息通知给 Consumer</li>
+<li>Consumer 因为已经从注册中心获取提供者的地址，因此可以通过负载均衡选择一个 Provider 直接调用 </li>
+<li>之后服务提供方元数据变更的话注册中心会把变更推送给服务消费者</li>
+<li>服务提供者和消费者都会在内存中记录着调用的次数和时间，然后定时的发送统计数据到监控中心。</li>
+</ol>
+</li>
+<li>从角色角度来看：<ul>
+<li>Provider：<ol>
+<li>初始化服务：初始化服务并配置相关信息。</li>
+<li>Proxy -&gt; Protocol：通过 Proxy 组件根据具体的协议 Protocol 将需要暴露出去的接口封装成 Invoker</li>
+<li>Invoker：Invoker 是实际执行方法调用的对象，它将请求传递到具体的服务实现类。</li>
+<li>Export -&gt; 注册中心#Registry：将 Exporter 通过 Registry 注册到注册中心，以上为是服务暴露过程。</li>
+<li>ThreadPool：处理客户端请求时，服务提供者通过线程池管理并发请求，提供更好的性能。某个线程会根据请求找到对应的 Exporter ，而找到 Exporter 其实就是找到了 Invoker</li>
+<li>Server：负责监听客户端请求，并将请求分发给对应的 Invoker 进行处理。</li>
+<li>Exporter：Exporter 是服务的封装器，将服务暴露出去，供外部调用。</li>
+<li>Filter：过滤器链，在调用前或调用后进行请求处理，如日志记录、权限校验等。经过一层层过滤链之后最终调用实现类然后原路返回结果。</li>
+<li>Invoker</li>
+</ol>
+</li>
+<li>注册中心：<ol>
+<li>Registry：注册中心的作用是维护所有服务提供者的信息，并为消费者提供服务发现的功能。消费者通过注册中心获取服务提供者的地址和协议信息。</li>
+</ol>
+</li>
+<li>网络层：<ol>
+<li>Codec ：编解码器负责处理请求和响应的序列化与反序列化，确保数据在网络中传输时格式正确。</li>
+<li>Serialization -&gt; Provider#ThreadPool：负责将请求数据序列化，并通过网络传输到服务提供者。进行 Codec 协议处理，然后反序列化后将请求扔到线程池处理。</li>
+</ol>
+</li>
+<li>Consumer：<ol>
+<li>初始化服务：消费者初始化并配置要调用的远程服务。</li>
+<li>Proxy：消费者持有服务的 Proxy，对应具体的 Invoker，消费者通过 Proxy 调用远程服务。Proxy 持有一个 Invoker 对象</li>
+<li>Invoker：Invoker 是消费端调用远程服务的接口，消费者通过它发起请求。</li>
+<li>Cluster -&gt; Directory -&gt; Router：Cluster 会从 Directory 获取所有可用的 Invoker，并通过路由规则选择合适的 Invoker。如果有路由规则（比如分区路由），会过滤 Invoker。通过 Cluster 先从 Directory 获取所有可调用的远程服务的 Invoker 列表，如果配置了某些路由规则，比如某个接口只能调用某个节点的那就再过滤一遍 Invoker 列表。</li>
+<li>LoadBalance：负载均衡选择一个 Invoker，确保请求均匀地分配到服务提供者。剩下的 Invoker 再通过 LoadBalance 做负载均衡选取一个。</li>
+<li>Filter：过滤器链用于在服务调用之前或之后执行逻辑，比如请求日志、请求拦截等。</li>
+<li>Invoker -&gt; Client -&gt; 网络层#Codec：通过客户端发送请求，通过网络层的协议处理（如 Netty）传输数据，经过编解码器（Codec）构造请求并序列化，最终发往服务提供者。通过 Client 做数据传输，比如用 Netty 来传输。传输需要经过 Codec 接口做协议构造，再序列化。最终发往对应的服务提供者。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="问：服务暴露的流程？Dubbo的服务注册基本原理是？"><a href="#问：服务暴露的流程？Dubbo的服务注册基本原理是？" class="headerlink" title="问：服务暴露的流程？Dubbo的服务注册基本原理是？"></a>问：服务暴露的流程？Dubbo的服务注册基本原理是？</h4><ol>
+<li>检测配置，拼接URL。 Spring IOC 容器刷新完毕之后，会根据配置参数组装成 URL。若支持多注册中心、多协议，则需要分别暴露注册。</li>
+<li>暴露服务，到本地和远程。<ul>
+<li>本地暴露通过 injvm 协议，通过 <code>proxyFactory.getInvoker</code> 利用 javassist 来进行动态代理，通过protocol.export生成代理类，代理类根据Invoker获取具体协议，利用 javassist 来进行动态代理。通过 Dubbo SPI 机制选择对应的实现类进行 export，而这个方法就会调用 InjvmProtocol#export 方法。使用 <code>InjvmProtocol</code> 暴露服务，避免网络开销，仅用于同一 JVM 内的服务引用。</li>
+<li>同样封装为Invoker，若是首次暴露，则调用生成Server如默认的NettyServer，进行一些Handler处理，如心跳机制。将 export 得到的 exporter 存入一个 Map 中，供之后的远程调用查找。登记服务提供者，获取注册中心的URL，并向中心注册。使用 <code>DubboProtocol</code>（默认）或其他协议（如 HTTP），通过 <code>Netty</code> 开启端口监听，等待 Consumer 请求。</li>
+</ul>
+</li>
+<li>注册服务，到注册中心。将服务元数据（接口名、IP、端口、权重等）注册到 Zookeeper（或其他注册中心），创建临时节点（服务下线时自动删除）。</li>
+<li><strong>启动长连接</strong><ul>
+<li>启动 Netty 服务端，监听 Consumer 的请求。</li>
+</ul>
+</li>
+</ol>
+<h4 id="问：服务引入的流程？"><a href="#问：服务引入的流程？" class="headerlink" title="问：服务引入的流程？"></a>问：服务引入的流程？</h4><ul>
+<li>服务的<strong>引入时机</strong>：饿汉式和懒汉式。<ul>
+<li>饿汉式就是加载完毕就会引入，可通过配置 dubbo:reference 的 init 属性开启。通过实现 Spring 的<code>InitializingBean</code>接口中的 <code>afterPropertiesSet</code>方法，容器通过调用 <code>ReferenceBean</code>的 <code>afterPropertiesSet</code>方法时引入服务。</li>
+<li>懒汉式是只有当这个服务被注入到其他类中时启动引入流程，默认是懒汉式。会先根据配置参数组装成 URL ，一般而言我们都会配置的注册中心，所以会构建 RegistryDirectory 向注册中心注册消费者的信息，并且订阅提供者、配置、路由等节点。</li>
+</ul>
+</li>
+<li>服务的<strong>引用方式</strong>：本地引入、直连远程服务、通过注册中心引入远程服务<ul>
+<li>存在一个服务端既是 Provider 又是 Consumer 的情况，当其调用自己的服务时通过本地引用避免网络消耗。</li>
+<li>开发测试阶段使用，不需要启动注册中心，Consumer 配置写死Provider 地址直连。</li>
+<li>Consumer 通过注册中心得知 Provider 的相关信息，然后进行服务的引入，这里还包括多注册中心，同一个服务多个提供者的情况，如何抉择如何封装，如何进行负载均衡、容错并且让使用者无感知。</li>
+</ul>
+</li>
+<li>默认是懒汉式的，服务引入的入口是 ReferenceBean 的 getObject 方法。如果当前还没有这个引用那么就执行 init 方法。init检查配置将其构建成 map 。</li>
+<li>然后通过createProxy构建代理，检查是否本地引入。远程的话分析URL判断点对点直连还是注册中心。得到最终的URL。</li>
+<li>通过 URL 上的协议利用自适应扩展机制调用对应的 protocol.refer 得到相应的 invoker 。如协议是 registry 因此走的是 RegistryProtocol#refer，获取注册中心对象Registry后，生成URL对象，调用registry.register注册Consumer对象，通过RegistryDirectory#subscribe（负责注册中心的监听）订阅注册中心的Providers目录。最后通过Cluster封装成invoker。</li>
+<li>然后再构建代理，封装 invoker 返回服务引用，之后 Comsumer 调用的就是这个代理类。  </li>
+<li>期间会包含 NettyClient，来进行远程通信，最后通过 Cluster 来包装 Invoker，默认是 FailoverCluster，最终返回代理类。</li>
+</ul>
+<p>服务引入是 Consumer 从注册中心获取 Provider 地址，并创建代理对象的过程。</p>
+<ol>
+<li><strong>Spring 容器启动</strong><ul>
+<li>Consumer 通过 <code>&lt;dubbo:reference&gt;</code> 或 <code>@Reference</code> 注解引用远程服务，Spring 容器解析配置，生成 <code>ReferenceConfig</code>。</li>
+</ul>
+</li>
+<li><strong>订阅服务</strong><ul>
+<li>向注册中心订阅目标服务，获取 Provider 的地址列表，并监听变更（动态扩缩容）。</li>
+<li>注册中心返回 Provider 的 URL 列表（如 <code>dubbo://192.168.1.1:20880/service</code>）。</li>
+</ul>
+</li>
+<li><strong>生成 Invoker 链</strong><ul>
+<li>根据负载均衡策略（如 Random、RoundRobin）、集群容错模式（如 Failover、Failfast）等，将多个 Provider 地址封装为 <code>Invoker</code> 链。</li>
+<li>将 Provider URL 转换为 <strong>Invoker</strong>（如 <code>DubboInvoker</code>），每个 Provider 对应一个 Invoker。通过 <code>Cluster</code> 合并多个 Invoker，加入容错逻辑（如 <code>FailoverCluster</code>），形成单个集群容错 Invoker。</li>
+</ul>
+</li>
+<li><strong>创建动态代理</strong><ul>
+<li>通过 <code>ProxyFactory</code>（默认 <code>JavassistProxyFactory</code>）生成服务接口的代理对象，代理对象内部调用 Invoker，屏蔽远程调用细节。</li>
+<li><strong>注入代理对象</strong>：将代理对象注入到 Spring Bean 中，Consumer 像调用本地方法一样调用远程服务。</li>
+</ul>
+</li>
+<li>服务目录动态更新：监听注册中心，实时更新 Provider 列表（如 Provider 上线/下线）。触发路由规则过滤，更新可用 Invoker 列表。</li>
+</ol>
+<h4 id="问：服务调用的流程？Dubbo的服务调用基本原理是？"><a href="#问：服务调用的流程？Dubbo的服务调用基本原理是？" class="headerlink" title="问：服务调用的流程？Dubbo的服务调用基本原理是？"></a>问：服务调用的流程？Dubbo的服务调用基本原理是？</h4><p>调用某个接口的方法会调用之前生成的代理类，然后会从 cluster 中经过路由的过滤、负载均衡机制选择一个 invoker 发起远程调用，此时会记录此请求和请求的 ID 等待服务端的响应。</p>
+<p>服务端接受请求之后会通过参数找到之前暴露存储的 map，得到相应的 exporter ，然后最终调用真正的实现类，再组装好结果返回，这个响应会带上之前请求的 ID。</p>
+<p>消费者收到这个响应之后会通过 ID 去找之前记录的请求，然后找到请求之后将响应塞到对应的 Future 中，唤醒等待的线程，最后消费者得到响应，一个流程完毕。</p>
+<p>关键的就是 cluster、路由、负载均衡，然后 Dubbo 默认是异步的，所以请求和响应是如何对应上的。</p>
+<ol>
+<li><p><strong>消费者调用代理对象（Stub）</strong>，实际调用的是 <code>Invoker</code>。</p>
+<p><strong>通过 Cluster 选择 Invoker</strong>（可能有多个服务提供者）。</p>
+<p><strong>执行负载均衡策略（LoadBalance）</strong>，选取一个合适的服务提供者。</p>
+<p><strong>序列化请求</strong>，通过 <code>Codec</code> 进行编码。</p>
+<p><strong>网络传输（Netty/HTTP）</strong>，请求发送到 Provider。</p>
+<p><strong>Provider 端解码请求</strong>，查找对应的 <code>Invoker</code> 并调用目标方法。</p>
+<p><strong>执行业务逻辑</strong>，并返回结果。</p>
+<p><strong>Provider 端序列化返回结果</strong>，并通过网络传输给 Consumer。</p>
+<p><strong>Consumer 端接收并反序列化结果</strong>，返回给调用者。</p>
+</li>
+</ol>
+<ol>
+<li>代理对象发起调用</li>
+</ol>
+<ul>
+<li>Consumer 调用接口方法，触发代理对象的 <code>InvocationHandler</code>。</li>
+<li>封装调用信息为 <code>RpcInvocation</code>（方法名、参数类型、参数值等）。</li>
+</ul>
+<ol start="2">
+<li>过滤链处理（Filter Chain）</li>
+</ol>
+<ul>
+<li>经过 Consumer 端 Filter 链（如监控、日志、上下文传递等）。</li>
+</ul>
+<ol start="3">
+<li>路由与负载均衡</li>
+</ol>
+<ul>
+<li>从服务目录（<code>Directory</code>）获取所有可用 Invoker。</li>
+<li>通过 <code>Router</code> 过滤不符合条件的 Invoker（如 IP 规则、标签路由）。</li>
+<li>使用 <code>LoadBalance</code>（如随机、轮询）选择一个 Invoker。</li>
+</ul>
+<ol start="4">
+<li>远程通信（DubboProtocol）</li>
+</ol>
+<ul>
+<li>将调用请求序列化（默认 Hessian2）。</li>
+<li>通过 Netty 等网络框架发送请求到目标 Provider。</li>
+</ul>
+<ol start="5">
+<li>Provider 处理请求</li>
+</ol>
+<ul>
+<li>Provider 反序列化请求，根据接口和方法名找到本地实现类。</li>
+<li>执行本地方法，返回结果。</li>
+</ul>
+<ol start="6">
+<li>结果响应与容错</li>
+</ol>
+<ul>
+<li>结果返回 Consumer 端，反序列化后处理。</li>
+<li>若调用失败，根据集群容错策略（如 Failover）重试其他 Provider。</li>
+</ul>
+<h4 id="问：SPI是什么？SPI使用场景？如何使用，如何实现？Dubbo为什么要自行实现SPI？"><a href="#问：SPI是什么？SPI使用场景？如何使用，如何实现？Dubbo为什么要自行实现SPI？" class="headerlink" title="问：SPI是什么？SPI使用场景？如何使用，如何实现？Dubbo为什么要自行实现SPI？"></a>问：SPI是什么？SPI使用场景？如何使用，如何实现？Dubbo为什么要自行实现SPI？</h4><ul>
+<li><p>什么是SPI？</p>
+<ul>
+<li>SPI (Service Provider Interface)，是一种用于实现模块化和可插拔设计的机制，实现服务的动态加载和发现。</li>
+<li>约定在 Classpath 下的 META-INF/services/ 目录里创建一个<strong>以服务接口命名的文件</strong>，然后<strong>文件里面记录的是此 jar 包提供的具体实现类的全限定名</strong>。</li>
+</ul>
+</li>
+<li><p>使用场景？</p>
+<ul>
+<li><strong>JDBC驱动加载：</strong> 加载不同的 JDBC 驱动，通过 SPI 机制加载。</li>
+<li><strong>日志框架：</strong> 不同的日志框架（如 Log4j、Logback）实现不同的日志功能，通过 SPI 机制加载。</li>
+<li><strong>框架扩展：</strong> 许多框架（如 Spring、Dubbo）都使用 SPI 机制来扩展功能。</li>
+</ul>
+</li>
+<li><p>SPI的核心组成：核心工具类ServiceLoader</p>
+<ul>
+<li><strong>服务接口（Service Interface）</strong>：定义服务的规范或契约，其他模块提供具体实现。</li>
+<li><strong>服务提供者（Service Provider）</strong>：具体实现服务接口的类。</li>
+<li><strong>配置文件</strong>：在<code>META-INF/services</code>目录下创建一个以服务接口全限定名为文件名的配置文件，文件中列出服务提供者的全限定类名。</li>
+<li><strong>服务加载器（ServiceLoader）</strong>：Java内置的<code>ServiceLoader</code>类用于动态加载和管理服务实现。</li>
+</ul>
+</li>
+<li><p>示例：</p>
+<ol>
+<li><p>定义服务接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PaymentService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">processPayment</span><span class="params">(<span class="keyword">double</span> amount)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>实现服务提供者</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaypalPaymentService</span> <span class="keyword">implements</span> <span class="title">PaymentService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processPayment</span><span class="params">(<span class="keyword">double</span> amount)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Processing payment with PayPal: &quot;</span> + amount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// StripePaymentService.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StripePaymentService</span> <span class="keyword">implements</span> <span class="title">PaymentService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processPayment</span><span class="params">(<span class="keyword">double</span> amount)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Processing payment with Stripe: &quot;</span> + amount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>创建配置文件：在<code>META-INF/services</code>目录下，创建一个名为<code>com.example.PaymentService</code>的文件，其中列出所有实现类的全限定类名：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">com.example.PaypalPaymentService</span><br><span class="line">com.example.StripePaymentService</span><br></pre></td></tr></table></figure></li>
+<li><p>使用ServiceLoader加载服务，在代码中使用<code>ServiceLoader</code>动态加载和使用服务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ServiceLoader;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentProcessor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ServiceLoader&lt;PaymentService&gt; serviceLoader = ServiceLoader.load(PaymentService.class);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (PaymentService service : serviceLoader) &#123;</span><br><span class="line">            service.processPayment(<span class="number">100.0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>ServiceLoader如何动态加载类？</p>
+<ol>
+<li>ServiceLoader#load作为入口，首先查找当前线程绑定的ClassLoader，默认使用SystemClassLoader。并创建LazyIterator。</li>
+<li>调用ServiceLoader#iterator获取迭代器，在迭代中加载配置文件解析内容，得到实现类的全限定类名，并创建其对象实例放入到缓存中。</li>
+</ol>
+</li>
+<li><p>为什么 Dubbo 不用 JDK 的 SPI，而是要自己实现？</p>
+<ul>
+<li>SPI会遍历配置文件，<strong>将所有类实例化</strong>，当类初始化比较耗时的情况下无法按需加载。</li>
+</ul>
+</li>
+<li><p><strong>Dubbo的SPI机制是怎样的？</strong></p>
+<p>Dubbo的SPI中配置文件里面存放的是键值对，通过名字去文件里面找到对应的实现类全限定名然后加载实例化，按需加载。增加了 <strong>IOC <strong>和 <strong>AOP</strong> 的特性，还有</strong>自适应扩展机制</strong>。</p>
+<p>配置文件目录：</p>
+<ul>
+<li>META-INF/services/ 目录：该目录下的 SPI 配置文件是为了用来兼容 Java SPI 。</li>
+<li>META-INF/dubbo/ 目录：该目录存放用户自定义的 SPI 配置文件。</li>
+<li>META-INF/dubbo/internal/ 目录：该目录存放 Dubbo 内部使用的 SPI 配置文件。</li>
+</ul>
+<p>示例：</p>
+<ul>
+<li><p>配置文件：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Paypal</span> = <span class="string">com.example.PaypalPaymentService</span></span><br><span class="line"><span class="attr">Stripe</span> = <span class="string">com.example.StripePaymentService</span></span><br></pre></td></tr></table></figure></li>
+<li><p>接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SPI(FailoverCluster.NAME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PaymentService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">processPayment</span><span class="params">(<span class="keyword">double</span> amount)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentProcessorTest</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">payment</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Extensionloader&lt;PaymentService&gt; serviceLoader = Extensionloader.getExtensionloader(PaymentService.class);</span><br><span class="line">        PaymentService paypal = serviceLoader.getExtension(<span class="string">&quot;Paypal&quot;</span>);</span><br><span class="line">        paypal.processPayment();</span><br><span class="line">        PaymentService stripe = serviceLoader.getExtension(<span class="string">&quot;Stripe&quot;</span>);</span><br><span class="line">        stripe.processPayment();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>ExtensionLoader 类似 Java SPI的ServiceLoader。通过Extensionloader.getExtensionloader进行初始化，调用入口为ExtensionLoader.getExtension(name)。通过参数名来查找缓存中是否已有实例对象，没有则通过反射新建实例，执行set方法依赖注入。</p>
+</li>
+<li><p>Dubbo 为什么默认用 Javassist？引申 JDK 的动态代理、ASM、CGLIB。</p>
+<ul>
+<li>Dubbo 用 Javassist 动态代理，<strong>就是快，且字节码生成方便</strong>。ASM 比 Javassist 更快，但是没有快一个数量级，而Javassist 只需用字符串拼接就可以生成字节码，而 ASM 需要手工生成，成本较高，比较麻烦。</li>
+</ul>
+</li>
+</ul>
+<h4 id="问：Dubbo的服务发现是？"><a href="#问：Dubbo的服务发现是？" class="headerlink" title="问：Dubbo的服务发现是？"></a>问：Dubbo的服务发现是？</h4><p>Dubbo 提供的是一种 Client-Based 的服务发现机制，依赖第三方注册中心组件来协调服务发现过程，支持常用的注册中心如 Nacos、Consul、Zookeeper 等。</p>
+<ul>
+<li>服务提供者Provider：注册 URL 地址到注册中心。</li>
+<li>服务消费者Consumer：从注册中心读取地址列表并订阅变更。</li>
+<li>注册中心：负责对数据进行聚合，每当地址列表发生变化，注册中心将最新的列表通知到所有订阅的消费者实例。</li>
+</ul>
+<p>其中：</p>
+<ol>
+<li>Dubbo3提供了面向百万实例集群的服务发现机制，Dubbo3的注册中心<strong>以应用为粒度</strong>聚合实例数据，避免全量订阅带来性能损耗。每个消费服务的实例从注册中心订阅实例地址列表，相比于一些产品直接将注册中心的全量数据 (应用 + 实例地址) 加载到本地进程，Dubbo 实现了按需精准订阅地址信息。比如一个消费者应用依赖 app1、app2，则只会订阅 app1、app2 的地址列表更新，大幅减轻了冗余数据推送和解析的负担。Dubbo2 版本注册中心以服务粒度聚合实例地址，比应用粒度更细，也就意味着传输的数据量更大，因此在大规模集群下也遇到一些性能问题。注册中心负责以应用名 (dubbo.application.name) 对整个集群的实例地址进行聚合，每个对外提供服务的实例将自身的应用名、实例ip:port 地址信息 (通常还包含少量的实例元数据，如机器所在区域、环境等) 注册到注册中心。</li>
+<li>Dubbo SDK 在实现上对消费端地址列表处理过程做了大量优化，地址通知增加了<strong>异步、缓存、bitmap</strong> 等多种解析优化，避免了地址更新常出现的消费端进程资源波动。</li>
+<li>在功能丰富度和易用性上，服务发现<strong>除了同步 ip、port 等端点基本信息到消费者外</strong>，Dubbo <strong>还将服务端的 RPC/HTTP 服务及其配置的元数据信息同步到消费端</strong>，这让消费者、提供者两端的更细粒度的协作成为可能，Dubbo 基于此机制提供了很多差异化的治理能力。除了与注册中心的交互，Dubbo3 的完整地址发现过程还有一条额外的元数据通路，我们称之为<strong>元数据服务</strong> (MetadataService)，实例地址与元数据共同组成了消费者端有效的地址列表。消费者从注册中心接收到地址 (ip:port) 信息，然后与提供者建立连接并通过元数据服务读取到对端的元数据配置信息，两部分信息共同组装成 Dubbo 消费端有效的面向服务的地址列表。以上两个步骤都是在实际的 RPC 服务调用发生之前。</li>
+<li>Dubbo 服务发现扩展了多种注册中心组件支持，如 Nacos、Zookeeper、Consul、Redis、kubernetes 等，可以通过配置切换不同实现。还支持一个应用内配置多注册中心的情形如双注册、双订阅等，这对于实现不同集群地址数据互通、集群迁移等场景非常有用处。</li>
+</ol>
+<h4 id="问：Invoker、Directory和Cluster"><a href="#问：Invoker、Directory和Cluster" class="headerlink" title="问：Invoker、Directory和Cluster"></a>问：Invoker、Directory和Cluster</h4><p><strong>1. Invoker：服务调用的最小执行单元</strong></p>
+<ul>
+<li><p><strong>定义</strong><br><code>Invoker</code> 是 Dubbo 的核心模型，代表一个 <strong>可执行的服务调用对象</strong>。无论是本地调用还是远程调用，均被抽象为 <code>Invoker</code>。</p>
+</li>
+<li><p><strong>类型</strong></p>
+<ul>
+<li><strong>本地 Invoker</strong>：直接调用同一 JVM 内的服务实现类（如 <code>InjvmInvoker</code>）。</li>
+<li><strong>远程 Invoker</strong>：封装网络通信细节，调用远程服务节点（如 <code>DubboInvoker</code>）。</li>
+</ul>
+</li>
+<li><p><strong>职责</strong></p>
+<ul>
+<li>封装调用目标信息（接口、方法、参数、地址、协议等）。</li>
+<li>执行调用逻辑（通过 <code>Protocol</code> 实现具体通信，如 Dubbo、HTTP）。</li>
+</ul>
+</li>
+<li><p><strong>示例代码</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Invoker</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">Result <span class="title">invoke</span><span class="params">(Invocation invocation)</span> <span class="keyword">throws</span> RpcException</span>;</span><br><span class="line">    <span class="comment">// 其他方法（如获取接口、URL等）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>2. Directory：动态服务目录</strong></p>
+<ul>
+<li><p><strong>定义</strong><br><code>Directory</code> 维护服务的 <strong>可用提供者列表</strong>，动态监听注册中心变化，及时更新 Invoker 列表。</p>
+</li>
+<li><p><strong>核心功能</strong></p>
+<ul>
+<li><strong>服务发现</strong>：从注册中心（如 Zookeeper）订阅服务，获取 Provider 地址列表。</li>
+<li><strong>动态更新</strong>：监听注册中心节点变更（上下线），实时刷新 Invoker 列表。</li>
+<li><strong>路由过滤</strong>：结合路由规则（如标签路由），筛选符合条件的 Invoker。</li>
+</ul>
+</li>
+<li><p><strong>实现类</strong></p>
+<ul>
+<li><code>RegistryDirectory</code>：与注册中心交互，管理 Invoker 的生命周期。</li>
+</ul>
+</li>
+<li><p><strong>协作流程</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">注册中心通知 Provider 变更 → Directory 更新 <span class="keyword">Invoker</span> 列表 → <span class="keyword">Cluster</span> 获取最新列表进行调用</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>3. Cluster：集群容错与负载均衡</strong></p>
+<ul>
+<li><p><strong>定义</strong><br><code>Cluster</code> 封装了 <strong>多节点调用的容错策略</strong> 和 <strong>负载均衡逻辑</strong>，将多个 Invoker 伪装成单个 Invoker，对外暴露统一调用入口。</p>
+</li>
+<li><p><strong>核心功能</strong></p>
+<ul>
+<li><strong>负载均衡</strong>：通过 <code>LoadBalance</code> 策略（如随机、轮询）选择 Invoker。</li>
+<li><strong>容错处理</strong>：根据策略（如 Failover、Forking）处理调用失败。</li>
+<li><strong>路由增强</strong>：支持分组聚合、条件路由等高级特性。</li>
+</ul>
+</li>
+<li><p><strong>实现类</strong></p>
+<ul>
+<li><code>FailoverCluster</code>：失败自动切换（默认）。</li>
+<li><code>FailfastCluster</code>：快速失败。</li>
+<li><code>ForkingCluster</code>：并行调用多个节点。</li>
+</ul>
+</li>
+<li><p><strong>协作流程</strong></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Consumer 发起调用 → <span class="keyword">Cluster</span> 从 Directory 获取 <span class="keyword">Invoker</span> 列表 → 应用负载均衡和容错策略 → 调用目标 <span class="keyword">Invoker</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>三者的协作关系</strong></p>
+<ol>
+<li><strong>服务发现阶段</strong><ul>
+<li><code>Directory</code> 从注册中心获取 Provider 地址列表，生成对应的远程 <code>Invoker</code>。</li>
+</ul>
+</li>
+<li><strong>调用准备阶段</strong><ul>
+<li><code>Cluster</code> 将多个 <code>Invoker</code> 封装为一个集群 Invoker，集成负载均衡和容错逻辑。</li>
+</ul>
+</li>
+<li><strong>调用执行阶段</strong><ul>
+<li>消费者调用集群 Invoker 的 <code>invoke()</code> 方法。</li>
+<li><code>Cluster</code> 通过 <code>LoadBalance</code> 选择具体 <code>Invoker</code>，执行调用，处理异常。</li>
+</ul>
+</li>
+</ol>
+<p><strong>架构图示例</strong></p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">|<span class="string">   Consumer        </span>|<span class="string">       </span>|<span class="string">   Cluster         </span>|<span class="string">       </span>|<span class="string">   Directory        </span>|</span><br><span class="line">|<span class="string">                   </span>|<span class="string">       </span>|<span class="string">                   </span>|<span class="string">       </span>|<span class="string">                   </span>|</span><br><span class="line">|<span class="string">  +-------------+  </span>|<span class="string">       </span>|<span class="string">  +-------------+  </span>|<span class="string">       </span>|<span class="string">  +-------------+  </span>|</span><br><span class="line">|<span class="string">  </span>|<span class="string"> Proxy       </span>|<span class="string">  </span>|<span class="string"> 调用  </span>|<span class="string">  </span>|<span class="string"> 容错策略     </span>|<span class="string">  </span>|<span class="string"> 获取  </span>|<span class="string">  </span>|<span class="string"> Invoker列表  </span>|<span class="string">  </span>|</span><br><span class="line">|<span class="string">  </span>|<span class="string"> (代理对象)   </span>|<span class="string"> ------&gt; </span>|<span class="string">  </span>|<span class="string"> (如Failover)</span>|<span class="string">  </span>|<span class="string"> &lt;---- </span>|<span class="string">  </span>|<span class="string"> (动态更新)   </span>|<span class="string">  </span>|</span><br><span class="line">|<span class="string">  +-------------+  </span>|<span class="string">       </span>|<span class="string">  +-------------+  </span>|<span class="string">       </span>|<span class="string">  +-------------+  </span>|</span><br><span class="line">+-------------------+       +-------------------+       +-------------------+</span><br><span class="line">                                |<span class="string"> 选择 Invoker</span></span><br><span class="line"><span class="string">                                v</span></span><br><span class="line"><span class="string">                        +-------------------+</span></span><br><span class="line"><span class="string">                        </span>|<span class="string">   Invoker         </span>|</span><br><span class="line">                        |<span class="string"> (执行远程/本地调用) </span>|</span><br><span class="line">                        +-------------------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>总结</strong></p>
+<ul>
+<li><strong>Invoker</strong>：服务调用的执行者，屏蔽底层通信细节。</li>
+<li><strong>Directory</strong>：动态维护服务提供者列表，保证调用目标的实时性。</li>
+<li><strong>Cluster</strong>：集成容错与负载均衡策略，提升服务调用的可靠性和效率。</li>
+</ul>
+<p>整个过程发生在Cluster中：服务引入时，将多个远程调用都塞入服务目录Directory中，然后通过Cluster封装该目录同时提供各种容错功能，如FailOver、FailFast等，最终只暴漏给Consumer一个Invoker。消费者调用时得到目录中的Invoker列表，通过路由的过滤，得到这些Invokers后再由loadBalance来进行负载均衡选择一个Invoker最终发起调用。</p>
+<p>Dubbo 将能<strong>调用的服务的对象都封装成 invoker</strong>。有ClusterInvoker ，封装了服务引入生成的 invoker 们，赋予其集群容错等能力，这个 invoker 就是暴露给消费者调用的。</p>
+<p>集群容错是<strong>消费者端实现</strong>的。</p>
+<p>服务目录是什么？Directory，是一群invoker的集合。可以通过目录来查找远程服务，集群新增一个Provider时，对应目录会添加一个invoker。所以目录实现了监听功能RegistryDirectory 。</p>
+<p>RegistryDirectory 的三个作用：</p>
+<ol>
+<li>获取invoker列表：通过doList方法，对方法名进行过滤，找到方法名对应的invokers。</li>
+<li>监听注册中心的变化：通过实现NotifyListener接口感知注册中心的数据变更。</li>
+<li>刷新invokers：监听变更的invokerUrls，调用refreshInvoker(invokerUrls)，根据配置更新invokers。</li>
+</ol>
+<p>还有一个StaticDirectory是用于<strong>多注册中心</strong>的时候，它是一个静态目录，即固定的不会增减的，所有 Invoker 是通过构造器来传入。</p>
+<ul>
+<li>单注册中心时，一条reference可能对应多个provider，生成多个invoker，将其存入RegistryDirectory中管理，对外通过一个invoker封装代替多invoker的情况。</li>
+<li>多注册中心时，会有多个已封装的invoker，通过StaticDirectory存入这些invoker，再封装起来只对外暴露一个invoker。<strong>之所以是静态的是因为多注册中心是写在配置里面的，不像服务可以动态变更。</strong></li>
+</ul>
+<p>服务目录经过路由规则过滤后，Consumer如何选择调用哪个invoker，若invoker调用失败怎么办？</p>
+<ul>
+<li>Cluster会将一群invoker封装为一个clusterInovker，对于内部的invoker调用失败时还可以切换另一个。<ul>
+<li>Dubbo内部有多种Cluster实现，比如FailoverCluster，返回的是FailoverClusterInvoker，实现了失败自动切换功能，有一定的重试次数。</li>
+<li>FailfastClusterInvoker则只会进行一次远程调用，失败后立即抛出异常，即快速失败。</li>
+<li>FailsafeClusterInvoker是一种失败安全的cluster，调用出错只会记录日志，返回一个空结果，适合于写入审计日志等操作。</li>
+<li>FailbackClusterInvoker会在调用失败后，记录下此次调用，返回一个空结果，并通过定时任务对失败的调用重试。适合于执行消息通知等最大努力场景。</li>
+<li>ForkingClusterInvoker会在运行时把所有invoker通过线程池并发调用，只要有一个provider成功返回了结果就会立即停止。适用于对实时性要求比较高的场景。</li>
+<li>BroadcastClusterInvoker会在运行时将所有invoker逐个调用，在最后判断只要有一个调用出错就抛出异常。适合通知所有提供者更新缓存或日志等本地资源信息的场景。</li>
+<li>AbstractClusterInvoker是其余ClusterInvoker的父类，对应AvailableCluster，比较简单，适用于多注册中心场景。</li>
+</ul>
+</li>
+</ul>
+<h2 id="三-集群容错、服务路由、服务重试、流量管控"><a href="#三-集群容错、服务路由、服务重试、流量管控" class="headerlink" title="三. 集群容错、服务路由、服务重试、流量管控"></a>三. 集群容错、服务路由、服务重试、流量管控</h2><h4 id="问：集群容错策略？failover，failfast？Dubbo的服务容错基本原理是？"><a href="#问：集群容错策略？failover，failfast？Dubbo的服务容错基本原理是？" class="headerlink" title="问：集群容错策略？failover，failfast？Dubbo的服务容错基本原理是？"></a>问：集群容错策略？failover，failfast？Dubbo的服务容错基本原理是？</h4><p><strong>1. Failover（失败自动切换）</strong></p>
+<ul>
+<li><p><strong>定义</strong>：默认策略。调用失败后，自动切换到其他 Provider 节点重试（可配置重试次数）。</p>
+</li>
+<li><p><strong>适用场景</strong>：<strong>读操作</strong>（天然幂等）或 <strong>对数据一致性要求不敏感</strong> 的场景。</p>
+</li>
+<li><p><strong>配置示例</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.UserService&quot;</span> <span class="attribute">retries</span>=<span class="string">&quot;2&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;failover&quot;</span>/&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>流程</strong>：</p>
+<ol>
+<li>调用 Provider A 失败（如超时、异常）。</li>
+<li>自动选择下一个 Provider B 重试，直到成功或达到最大重试次数。</li>
+</ol>
+</li>
+</ul>
+<p><strong>2. Failfast（快速失败）</strong></p>
+<ul>
+<li><p><strong>定义</strong>：调用失败后立即报错，不进行重试。</p>
+</li>
+<li><p><strong>适用场景</strong>：<strong>非幂等操作</strong>（如写操作），避免重复提交导致数据不一致。</p>
+</li>
+<li><p><strong>配置示例</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.OrderService&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;failfast&quot;</span>/&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>流程</strong>：</p>
+<ol>
+<li>调用 Provider A 失败。</li>
+<li>直接抛出异常，由业务代码处理。</li>
+</ol>
+</li>
+</ul>
+<p><strong>3. Failsafe（失败安全）</strong></p>
+<ul>
+<li><p><strong>定义</strong>：调用失败后忽略异常，仅打印日志，返回空结果。</p>
+</li>
+<li><p><strong>适用场景</strong>：<strong>日志记录</strong>、<strong>监控上报</strong> 等可容忍失败的场景。</p>
+</li>
+<li><p><strong>配置示例</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.LogService&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;failsafe&quot;</span>/&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>流程</strong>：</p>
+<ol>
+<li>调用 Provider A 失败。</li>
+<li>记录错误日志，返回 <code>null</code> 或默认值，不中断主流程。</li>
+</ol>
+</li>
+</ul>
+<p><strong>4. Failback（失败自动恢复）</strong></p>
+<ul>
+<li><p><strong>定义</strong>：调用失败后记录请求，后台定时重试（直到成功）。</p>
+</li>
+<li><p><strong>适用场景</strong>：<strong>消息通知</strong>、<strong>异步任务</strong> 等允许延迟处理的场景。</p>
+</li>
+<li><p><strong>配置示例</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.NotificationService&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;failback&quot;</span>/&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>流程</strong>：</p>
+<ol>
+<li>调用 Provider A 失败。</li>
+<li>将请求加入重试队列，定时（默认 5s）重试。</li>
+<li>重试成功则移除队列，失败则持续重试。</li>
+</ol>
+</li>
+</ul>
+<p><strong>5. Forking（并行调用）</strong></p>
+<ul>
+<li><p><strong>定义</strong>：同时调用多个 Provider 节点，只要有一个成功即返回结果。</p>
+</li>
+<li><p><strong>适用场景</strong>：<strong>实时性要求高</strong> 且 <strong>资源充足</strong> 的场景（如金融交易验证）。</p>
+</li>
+<li><p><strong>配置示例</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.PaymentService&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;forking&quot;</span> <span class="attribute">forks</span>=<span class="string">&quot;2&quot;</span>/&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>流程</strong>：</p>
+<ol>
+<li>并行调用 Provider A、Provider B。</li>
+<li>任一节点返回成功结果，立即返回给 Consumer。</li>
+<li>其他未完成的调用自动取消。</li>
+</ol>
+</li>
+</ul>
+<p><strong>6. Broadcast（广播调用）</strong></p>
+<ul>
+<li><p><strong>定义</strong>：广播调用所有 Provider 节点，任意一个节点失败则整体失败。</p>
+</li>
+<li><p><strong>适用场景</strong>：<strong>批量通知</strong>（如更新本地缓存、刷新配置）。</p>
+</li>
+<li><p><strong>配置示例</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.CacheService&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;broadcast&quot;</span>/&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>流程</strong>：</p>
+<ol>
+<li>调用所有 Provider 节点。</li>
+<li>若任一节点失败，抛出异常。</li>
+</ol>
+</li>
+</ul>
+<p><strong>策略对比与选型建议</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>策略</strong></th>
+<th align="left"><strong>重试机制</strong></th>
+<th align="left"><strong>适用场景</strong></th>
+<th align="left"><strong>资源消耗</strong></th>
+<th align="left"><strong>数据一致性</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Failover</strong></td>
+<td align="left">自动切换重试</td>
+<td align="left">读操作、幂等操作</td>
+<td align="left">中</td>
+<td align="left">最终一致</td>
+</tr>
+<tr>
+<td align="left"><strong>Failfast</strong></td>
+<td align="left">不重试</td>
+<td align="left">非幂等写操作</td>
+<td align="left">低</td>
+<td align="left">强一致</td>
+</tr>
+<tr>
+<td align="left"><strong>Failsafe</strong></td>
+<td align="left">不重试，忽略异常</td>
+<td align="left">日志、监控等旁路操作</td>
+<td align="left">低</td>
+<td align="left">不保证</td>
+</tr>
+<tr>
+<td align="left"><strong>Failback</strong></td>
+<td align="left">后台定时重试</td>
+<td align="left">异步任务、消息通知</td>
+<td align="left">高</td>
+<td align="left">最终一致</td>
+</tr>
+<tr>
+<td align="left"><strong>Forking</strong></td>
+<td align="left">并行调用，取最先成功</td>
+<td align="left">高实时性场景（如交易验证）</td>
+<td align="left">高</td>
+<td align="left">强一致</td>
+</tr>
+<tr>
+<td align="left"><strong>Broadcast</strong></td>
+<td align="left">全部调用，任一失败即失败</td>
+<td align="left">批量通知（如刷新缓存）</td>
+<td align="left">高</td>
+<td align="left">强一致</td>
+</tr>
+</tbody></table>
+<p><strong>配置方式</strong></p>
+<p><strong>1. 全局配置（服务提供方或消费方）</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 服务提供方默认容错策略 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:provider</span> <span class="attr">cluster</span>=<span class="string">&quot;failover&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 服务消费方默认容错策略 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:consumer</span> <span class="attr">cluster</span>=<span class="string">&quot;failover&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 单个服务指定</strong></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:reference <span class="attribute">interface</span>=<span class="string">&quot;com.example.UserService&quot;</span> <span class="attribute">cluster</span>=<span class="string">&quot;failfast&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 注解配置</strong></p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Reference(cluster = <span class="meta-string">&quot;failover&quot;</span>)</span></span><br><span class="line"><span class="keyword">private</span> UserService userService;</span><br></pre></td></tr></table></figure>
+
+<p><strong>源码实现要点</strong></p>
+<p>Dubbo 的容错策略通过 <code>Cluster</code> 接口实现，核心类为 <code>AbstractClusterInvoker</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Cluster</span> </span>&#123;</span><br><span class="line">    &lt;T&gt; <span class="function">Invoker&lt;T&gt; <span class="title">join</span><span class="params">(Directory&lt;T&gt; directory)</span> <span class="keyword">throws</span> RpcException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>策略入口</strong>：<code>Cluster</code> 实现类（如 <code>FailoverCluster</code>）将多个 <code>Invoker</code> 封装为一个集群容错的 <code>Invoker</code>。</li>
+<li><strong>负载均衡</strong>：容错策略通常与 <code>LoadBalance</code> 策略（如随机、轮询）结合使用。</li>
+</ul>
+<p><strong>实际应用案例</strong></p>
+<ol>
+<li><strong>支付交易验证（Forking）</strong><br>调用多个风控服务节点，任一节点通过即放行交易。</li>
+<li><strong>订单创建（Failfast）</strong><br>避免因重试导致重复创建订单。</li>
+<li><strong>缓存刷新（Broadcast）</strong><br>通知所有服务节点刷新本地缓存。</li>
+</ol>
+<h4 id="问：Dubbo的服务路由是？"><a href="#问：Dubbo的服务路由是？" class="headerlink" title="问：Dubbo的服务路由是？"></a>问：Dubbo的服务路由是？</h4><ol>
+<li><p>什么是服务路由？</p>
+<ul>
+<li>服务路由就是根据特定的路由规则，将请求定向到适当的服务实例，即consumer调用哪个provider。</li>
+</ul>
+</li>
+<li><p>路由规则有哪些？</p>
+<ul>
+<li><p><strong>条件路由 ConditionRouter</strong>：使用表达式来选择路由。格式为[服务消费者匹配条件] =&gt; [服务提供者匹配条件]，比如 host = 10.20.153.10 =&gt; host = 10.20.153.11</p>
+</li>
+<li><p><strong>脚本路由 ScriptRouter</strong>：使用动态脚本来定义路由规则，支持如Groovy、JavaScript等脚本语言。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义路由逻辑，根据方法名和参数进行路由。只有在调用getUser方法且参数为&quot;admin&quot;时，才会进行特定的路由。</span></span><br><span class="line">rule = <span class="string">&#x27;&#x27;&#x27;function route() &#123;</span></span><br><span class="line"><span class="string">    return invocation.methodName == &quot;getUser&quot; &amp;&amp; invocation.arguments[0] == &quot;admin&quot;;</span></span><br><span class="line"><span class="string">&#125;&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>标签路由 TagRouter</strong>：基于标签（Tag）进行流量控制，允许将服务实例打上标签，然后根据这些标签来路由流量。</p>
+<p>假设某服务有两个标签：<code>stable</code>和<code>beta</code>，想要将流量按照一定比例分配：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">//</span> <span class="string">标签路由配置示例</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">consumer.label:</span> <span class="string">stable</span></span><br><span class="line">  <span class="attr">provider.label:</span> <span class="string">stable</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">consumer.label:</span> <span class="string">beta</span></span><br><span class="line">  <span class="attr">provider.label:</span> <span class="string">beta</span></span><br></pre></td></tr></table></figure>
+
+<p>在上述配置中，稳定版本的消费者将被路由到稳定版本的提供者，而测试版本的消费者将被路由到测试版本的提供者。</p>
+</li>
+</ul>
+</li>
+<li><p>路由的配置一样是通过 RegistryDirectory 的 notify 更新和构造的，然后路由的调用在是刷新 invoker 的时候，具体是在调用 <code>toMethodInvokers</code> 的时候会进行服务级别的路由和方法级别的路由。</p>
+</li>
+</ol>
+<h4 id="问：Dubbo的负载均衡是？Dubbo有哪几种负载均衡策略，默认是哪种？"><a href="#问：Dubbo的负载均衡是？Dubbo有哪几种负载均衡策略，默认是哪种？" class="headerlink" title="问：Dubbo的负载均衡是？Dubbo有哪几种负载均衡策略，默认是哪种？"></a>问：Dubbo的负载均衡是？Dubbo有哪几种负载均衡策略，默认是哪种？</h4><p>（1）：随机调用{默认}</p>
 <p>（2）：权重轮询</p>
 <p>（3）：最少活跃数</p>
 <p>（4）：一致性Hash</p>
-<h4 id="问：RPC流程？"><a href="#问：RPC流程？" class="headerlink" title="问：RPC流程？"></a><strong>问：RPC流程？</strong></h4><p>（1）消费者调用需要消费的服务，</p>
-<p>（2）：客户端存根将方法、入参等信息序列化发送给服务端存根</p>
-<p>（3）：服务端存根反序列化操作根据解码结果调用本地的服务进行相关处理</p>
-<p>（4）：本地服务执行具体业务逻辑并将处理结果返回给服务端存根</p>
-<p>（5）：服务端存根序列化</p>
-<p>（6）：客户端存根反序列化</p>
-<p>（7）：服务消费方得到最终结果</p>
-<p>RPC框架的实现目标PC框架的实现目标是把调用、编码/解码的过程给封装起来，让用户感觉上像调用本地服务一样的调用远程服务</p>
-<h4 id="问：服务暴露、服务引用、服务调用（TODO）？"><a href="#问：服务暴露、服务引用、服务调用（TODO）？" class="headerlink" title="问：服务暴露、服务引用、服务调用（TODO）？"></a><strong>问：服务暴露、服务引用、服务调用（TODO）？</strong></h4><h4 id="问：dubbo-的组件有哪些，及其作用？"><a href="#问：dubbo-的组件有哪些，及其作用？" class="headerlink" title="问：dubbo 的组件有哪些，及其作用？"></a><strong>问：dubbo 的组件有哪些，及其作用？</strong></h4><h4 id="问：dubbo-SPI-机制；远程接口调用过程？"><a href="#问：dubbo-SPI-机制；远程接口调用过程？" class="headerlink" title="问：dubbo SPI 机制；远程接口调用过程？"></a><strong>问：dubbo SPI 机制；远程接口调用过程？</strong></h4><h4 id="问：dubbo-支持的协议及序列化方式？"><a href="#问：dubbo-支持的协议及序列化方式？" class="headerlink" title="问：dubbo 支持的协议及序列化方式？"></a><strong>问：dubbo 支持的协议及序列化方式？</strong></h4><h4 id="问：dubbo-的负载均衡和容错策略？"><a href="#问：dubbo-的负载均衡和容错策略？" class="headerlink" title="问：dubbo 的负载均衡和容错策略？"></a><strong>问：dubbo 的负载均衡和容错策略？</strong></h4><h4 id="问：服务调用超时问题怎么解决？"><a href="#问：服务调用超时问题怎么解决？" class="headerlink" title="问：服务调用超时问题怎么解决？"></a><strong>问：服务调用超时问题怎么解决？</strong></h4><h4 id="问：Dubbo支持哪些序列化方式？"><a href="#问：Dubbo支持哪些序列化方式？" class="headerlink" title="问：Dubbo支持哪些序列化方式？"></a><strong>问：Dubbo支持哪些序列化方式？</strong></h4><h4 id="问：Dubbo和SpringCloud的关系？"><a href="#问：Dubbo和SpringCloud的关系？" class="headerlink" title="问：Dubbo和SpringCloud的关系？"></a><strong>问：Dubbo和SpringCloud的关系？</strong></h4><h4 id="问：Dubbo的架构设计？一共划分了哪些层？"><a href="#问：Dubbo的架构设计？一共划分了哪些层？" class="headerlink" title="问：Dubbo的架构设计？一共划分了哪些层？"></a><strong>问：Dubbo的架构设计？一共划分了哪些层？</strong></h4><h4 id="问：Dubbo的默认集群容错方案？"><a href="#问：Dubbo的默认集群容错方案？" class="headerlink" title="问：Dubbo的默认集群容错方案？"></a><strong>问：Dubbo的默认集群容错方案？</strong></h4><h4 id="问：Dubbo使用的是什么通信框架"><a href="#问：Dubbo使用的是什么通信框架" class="headerlink" title="问：Dubbo使用的是什么通信框架?"></a><strong>问：Dubbo使用的是什么通信框架?</strong></h4><h4 id="问：-Dubbo的主要应用场景？"><a href="#问：-Dubbo的主要应用场景？" class="headerlink" title="问： Dubbo的主要应用场景？"></a><strong>问： Dubbo的主要应用场景？</strong></h4><h4 id="问：Dubbo服务注册与发现的流程？流程说明。"><a href="#问：Dubbo服务注册与发现的流程？流程说明。" class="headerlink" title="问：Dubbo服务注册与发现的流程？流程说明。"></a><strong>问：Dubbo服务注册与发现的流程？流程说明。</strong></h4><h4 id="问：Dubbo的集群容错方案有哪些？"><a href="#问：Dubbo的集群容错方案有哪些？" class="headerlink" title="问：Dubbo的集群容错方案有哪些？"></a><strong>问：Dubbo的集群容错方案有哪些？</strong></h4><h4 id="问：-Dubbo的四大组件？"><a href="#问：-Dubbo的四大组件？" class="headerlink" title="问： Dubbo的四大组件？"></a><strong>问： Dubbo的四大组件？</strong></h4><h4 id="问：Dubbo在安全机制方面是如何解决的？"><a href="#问：Dubbo在安全机制方面是如何解决的？" class="headerlink" title="问：Dubbo在安全机制方面是如何解决的？"></a><strong>问：Dubbo在安全机制方面是如何解决的？</strong></h4><h4 id="问：Dubbo支持哪些协议，每种协议的应用场景，优缺点？"><a href="#问：Dubbo支持哪些协议，每种协议的应用场景，优缺点？" class="headerlink" title="问：Dubbo支持哪些协议，每种协议的应用场景，优缺点？"></a><strong>问：Dubbo支持哪些协议，每种协议的应用场景，优缺点？</strong></h4><h4 id="问：Dubbo的集群容错方案有哪些？-1"><a href="#问：Dubbo的集群容错方案有哪些？-1" class="headerlink" title="问：Dubbo的集群容错方案有哪些？"></a><strong>问：Dubbo的集群容错方案有哪些？</strong></h4><h4 id="问：Dubbo的核心功能有哪些？"><a href="#问：Dubbo的核心功能有哪些？" class="headerlink" title="问：Dubbo的核心功能有哪些？"></a><strong>问：Dubbo的核心功能有哪些？</strong></h4><h4 id="问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？"><a href="#问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？" class="headerlink" title="问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？"></a><strong>问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？</strong></h4><h4 id="问：Dubbo集群的负载均衡有哪些策略"><a href="#问：Dubbo集群的负载均衡有哪些策略" class="headerlink" title="问：Dubbo集群的负载均衡有哪些策略"></a><strong>问：Dubbo集群的负载均衡有哪些策略</strong></h4><h4 id="问：为什么需要服务治理？"><a href="#问：为什么需要服务治理？" class="headerlink" title="问：为什么需要服务治理？"></a><strong>问：为什么需要服务治理？</strong></h4><h4 id="问：Dubbo超时时间怎样设置？"><a href="#问：Dubbo超时时间怎样设置？" class="headerlink" title="问：Dubbo超时时间怎样设置？"></a><strong>问：Dubbo超时时间怎样设置？</strong></h4><hr>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/138951555">后端面试的所有知识点</a></p>
-</blockquote>
-<p><em>参考内容均来自网络中网友分享，若内容涉及侵权请及时告知，我会尽快修改和删除相关内容</em></p>
+<ol>
+<li><p>什么是负载均衡？与服务路由的关系是？</p>
+<ul>
+<li><strong>负载均衡</strong>是指在多个服务实例之间分配请求，以实现负载的均衡分布。它主要关注的是<strong>“如何将请求均匀地分配到多个实例”</strong>的问题。负载均衡确保了系统的高可用性和高性能。</li>
+<li>负载均衡分为硬件和软件两类，软件如Nginx，Dubbo的负载均衡为LoadBalance。负载均衡是用来选择出合适的服务提供者给消费者调用的。</li>
+<li><strong>服务路由</strong>是指根据特定的路由规则，将请求定向到适当的服务实例或服务集群。它主要关注的是<strong>“将请求发送到哪个服务或实例”</strong>的问题。服务路由在请求路径、服务发现、版本控制等场景中起作用。</li>
+<li>二者经常组合使用，根据收到请求后由路由规则匹配到合适的服务集群，再通过负载均衡算法将请求分配到一个具体的实例。</li>
+</ul>
+</li>
+<li><p>Dubbo有哪些负载均衡策略？Dubbo 提供的是客户端负载均衡，即由 Consumer 通过负载均衡算法得出需要将请求提交到哪个 Provider 实例。默认为（weighted random） <strong>基于权重的随机负载均衡</strong></p>
+<p>包括：</p>
+<table>
+<thead>
+<tr>
+<th align="left">算法</th>
+<th align="left">特性</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Weighted Random LoadBalance</td>
+<td align="left">加权随机</td>
+<td align="left">默认算法，默认权重相同</td>
+</tr>
+<tr>
+<td align="left">RoundRobin LoadBalance</td>
+<td align="left">加权轮询</td>
+<td align="left">借鉴于 Nginx 的平滑加权轮询算法，默认权重相同，</td>
+</tr>
+<tr>
+<td align="left">LeastActive LoadBalance</td>
+<td align="left">最少活跃优先 + 加权随机</td>
+<td align="left">背后是能者多劳的思想</td>
+</tr>
+<tr>
+<td align="left">Shortest-Response LoadBalance</td>
+<td align="left">最短响应优先 + 加权随机</td>
+<td align="left">更加关注响应速度</td>
+</tr>
+<tr>
+<td align="left">ConsistentHash LoadBalance</td>
+<td align="left">一致性哈希</td>
+<td align="left">确定的入参，确定的提供者，适用于有状态请求</td>
+</tr>
+<tr>
+<td align="left">P2C LoadBalance</td>
+<td align="left">Power of Two Choice</td>
+<td align="left">随机选择两个节点后，继续选择“连接数”较小的那个节点。</td>
+</tr>
+<tr>
+<td align="left">Adaptive LoadBalance</td>
+<td align="left">自适应负载均衡</td>
+<td align="left">在 P2C 算法基础上，选择二者中 load 最小的那个节点</td>
+</tr>
+</tbody></table>
+<p>具体为：</p>
+<ul>
+<li>Weighted Random<ul>
+<li><strong>加权随机</strong>，按权重设置随机概率。在一个截面上碰撞的概率高，但调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重。</li>
+<li>缺点：存在慢的提供者累积请求的问题，比如：集群有多台机器，别的机器能正常处理请求，但第二台机器很慢，当请求调到第二台时就卡在那，久而久之，所有请求都卡在调到第二台上。轮询、随机的负载均衡策略都会遇到该问题。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>RoundRobin</p>
+<ul>
+<li><strong>加权轮询</strong>，按公约后的权重设置轮询比率，循环调用节点</li>
+<li>缺点：同样存在慢的提供者累积请求的问题。</li>
+</ul>
+<p>加权轮询过程中，如果某节点权重过大，会存在某段时间内调用过于集中的问题。 例如 ABC 三节点有如下权重：<code>&#123;A: 3, B: 2, C: 1&#125;</code> 那么按照最原始的轮询算法，调用过程将变成：<code>A A A B B C</code></p>
+<p>对此，Dubbo 借鉴 Nginx 的平滑加权轮询算法，对此做了优化，调用过程可抽象成下表:</p>
+<table>
+<thead>
+<tr>
+<th align="left">轮前加和权重</th>
+<th align="left">本轮胜者</th>
+<th align="left">合计权重</th>
+<th align="left">轮后权重（胜者减去合计权重）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">起始轮</td>
+<td align="left">\</td>
+<td align="left">\</td>
+<td align="left"><code>A(0), B(0), C(0)</code></td>
+</tr>
+<tr>
+<td align="left"><code>A(3), B(2), C(1)</code></td>
+<td align="left">A</td>
+<td align="left">6</td>
+<td align="left"><code>A(-3), B(2), C(1)</code></td>
+</tr>
+<tr>
+<td align="left"><code>A(0), B(4), C(2)</code></td>
+<td align="left">B</td>
+<td align="left">6</td>
+<td align="left"><code>A(0), B(-2), C(2)</code></td>
+</tr>
+<tr>
+<td align="left"><code>A(3), B(0), C(3)</code></td>
+<td align="left">A</td>
+<td align="left">6</td>
+<td align="left"><code>A(-3), B(0), C(3)</code></td>
+</tr>
+<tr>
+<td align="left"><code>A(0), B(2), C(4)</code></td>
+<td align="left">C</td>
+<td align="left">6</td>
+<td align="left"><code>A(0), B(2), C(-2)</code></td>
+</tr>
+<tr>
+<td align="left"><code>A(3), B(4), C(-1)</code></td>
+<td align="left">B</td>
+<td align="left">6</td>
+<td align="left"><code>A(3), B(-2), C(-1)</code></td>
+</tr>
+<tr>
+<td align="left"><code>A(6), B(0), C(0)</code></td>
+<td align="left">A</td>
+<td align="left">6</td>
+<td align="left"><code>A(0), B(0), C(0)</code></td>
+</tr>
+</tbody></table>
+<p>我们发现经过合计权重（3+2+1）轮次后，循环又回到了起点，整个过程中节点流量是平滑的，且哪怕在很短的时间周期内，概率都是按期望分布的。</p>
+<p>如果用户有加权轮询的需求，可放心使用该算法。</p>
+</li>
+<li><p>LeastActive</p>
+<ul>
+<li><strong>加权最少活跃调用优先</strong>，活跃数越低，越优先调用，相同活跃数的进行加权随机。活跃数指调用前后计数差（针对特定提供者：请求发送数 - 响应返回数），表示特定提供者的任务堆积量，活跃数越低，代表该提供者处理能力越强。</li>
+<li>使慢的提供者收到更少请求，因为越慢的提供者的调用前后计数差会越大；相对的，处理能力越强的节点，处理更多的请求。</li>
+</ul>
+</li>
+<li><p>ShortestResponse</p>
+<ul>
+<li><strong>加权最短响应优先</strong>，在最近一个滑动窗口中，响应时间越短，越优先调用。相同响应时间的进行加权随机。</li>
+<li>使得响应时间越快的提供者，处理更多的请求。</li>
+<li>缺点：可能会造成流量过于集中于高性能节点的问题。</li>
+</ul>
+<p>这里的响应时间 = 某个提供者在窗口时间内的平均响应时间，窗口时间默认是 30s。</p>
+</li>
+<li><p>ConsistentHash</p>
+<ul>
+<li><strong>一致性 Hash</strong>，相同参数的请求总是发到同一提供者。</li>
+<li>当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。</li>
+<li>算法参见：<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Consistent_hashing">Consistent Hashing | WIKIPEDIA</a> 通过TreeMap实现哈希圆环， 通过哈希值查找大于等于的invoker，若没有则返回第一个。</li>
+<li>缺省只对第一个参数 Hash，如果要修改，请配置 <code>&lt;dubbo:parameter key=&quot;hash.arguments&quot; value=&quot;0,1&quot; /&gt;</code></li>
+<li>缺省用 160 份虚拟节点，如果要修改，请配置 <code>&lt;dubbo:parameter key=&quot;hash.nodes&quot; value=&quot;320&quot; /&gt;</code></li>
+</ul>
+</li>
+<li><p>P2C Load Balance</p>
+<p>Power of Two Choice 算法简单但是经典，主要思路如下：</p>
+<ol>
+<li>对于每次调用，从可用的provider列表中做两次随机选择，选出两个节点providerA和providerB。</li>
+<li>比较providerA和providerB两个节点，选择其“当前正在处理的连接数”较小的那个节点。</li>
+</ol>
+<p>以下是 <a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/reference/proposals/heuristic-flow-control/#p2c%E7%AE%97%E6%B3%95">Dubbo P2C 算法实现提案</a></p>
+</li>
+<li><p>Adaptive Load Balance</p>
+<p>Adaptive 即自适应负载均衡，是一种能根据后端实例负载自动调整流量分布的算法实现，它总是尝试将请求转发到负载最小的节点。</p>
+<p>以下是 <a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/reference/proposals/heuristic-flow-control/#adaptive%E7%AE%97%E6%B3%95">Dubbo Adaptive 算法实现提案</a></p>
+</li>
+</ul>
+</li>
+<li></li>
+</ol>
+<h4 id="问：Dubbo的流量管控是？限流和熔断？"><a href="#问：Dubbo的流量管控是？限流和熔断？" class="headerlink" title="问：Dubbo的流量管控是？限流和熔断？"></a>问：Dubbo的流量管控是？限流和熔断？</h4><p>Dubbo 提供的流量管控策略：</p>
+<ul>
+<li><strong>地址发现与负载均衡</strong>，地址发现支持服务实例动态上下线，负载均衡确保流量均匀的分布到每个实例上。</li>
+<li><strong>基于路由规则的流量管控</strong>，路由规则对每次请求进行条件匹配，并将符合条件的请求路由到特定的地址子集。</li>
+</ul>
+<p>Dubbo 的流量管控规则可以基于应用、服务、方法、参数等粒度精准的控制流量走向，根据请求的目标服务、方法以及请求体中的其他附加参数进行匹配，符合匹配条件的流量会进一步的按照特定规则转发到一个地址子集。流量管控规则有以下几种：</p>
+<ul>
+<li><p><strong>标签路由规则</strong>：通过将某一个服务的实例划分到不同的分组，约束具有特定标签的流量只能在指定分组中流转，不同分组为不同的流量场景服务，从而实现流量隔离的目的。标签路由可以作为蓝绿发布、灰度发布等场景能力的基础。</p>
+<p>标签路由规则是一个非此即彼的流量隔离方案，也就是匹配<code>标签</code>的请求会 100% 转发到有相同<code>标签</code>的实例，没有匹配<code>标签</code>的请求会 100% 转发到其余未匹配的实例。如果您需要按比例的流量调度方案，请参考示例 <a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/tasks/traffic-management/weight/">基于权重的按比例流量路由</a>。</p>
+<p><code>标签</code>主要是指对 Provider 端应用实例的分组，目前有两种方式可以完成实例分组，分别是<code>动态规则打标</code>和<code>静态规则打标</code>。<code>动态规则打标</code> 可以在运行时动态的圈住一组机器实例，而 <code>静态规则打标</code> 则需要实例重启后才能生效，其中，动态规则相较于静态规则优先级更高，而当两种规则同时存在且出现冲突时，将以动态规则为准。</p>
+<p>示例：</p>
+<ol>
+<li><p>静态打标：需要在服务提供者实例启动前确定，并且必须通过特定的参数 <code>tag</code> 指定。</p>
+<p>Provider</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在 Dubbo 实例启动前，指定当前实例的标签，如部署在杭州区域的实例，指定 tag=gray。</span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:provider</span> <span class="attr">tag</span>=<span class="string">&quot;gray&quot;</span>/&gt;</span></span><br><span class="line">or</span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:service</span> <span class="attr">tag</span>=<span class="string">&quot;gray&quot;</span>/&gt;</span></span><br><span class="line">or</span><br><span class="line">java -jar xxx-provider.jar -Ddubbo.provider.tag=gray</span><br></pre></td></tr></table></figure>
+
+<p>Consumer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">发起调用的一方，在每次请求前通过 tag 设置流量标签，确保流量被调度到带有同样标签的服务提供方。</span><br><span class="line">RpcContext.getContext().setAttachment(Constants.TAG_KEY, <span class="string">&quot;gray&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+<li><p>动态打标：相比于静态打标只能通过 <code>tag</code> 属性设置，且在启动阶段就已经固定下来，动态标签可以匹配任意多个属性，根据指定的匹配条件将 Provider 实例动态的划分到不同的流量分组中。</p>
+<p>Provider</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下规则对 shop-detail 应用进行了动态归组，匹配 env: gray 的实例被划分到 gray 分组，其余不匹配 env: gray 继续留在默认分组 (无 tag)。</span></span><br><span class="line"><span class="attr">configVersion:</span> <span class="string">v3.0</span></span><br><span class="line"><span class="attr">force:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">shop-detail</span></span><br><span class="line"><span class="attr">tags:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">gray</span></span><br><span class="line">    <span class="attr">match:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">env</span></span><br><span class="line">        <span class="attr">value:</span></span><br><span class="line">          <span class="attr">exact:</span> <span class="string">gray</span></span><br></pre></td></tr></table></figure>
+
+<p>Consumer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">服务发起方的设置方式和之前静态打标规则保持一致，只需要在每次请求前通过 tag 设置流量标签，确保流量被调度到带有同样标签的服务提供方。</span><br><span class="line">RpcContext.getContext().setAttachment(Constants.TAG_KEY, <span class="string">&quot;Hangzhou&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>设置了以上标签的流量，将全部导流到 <code>hangzhou-region</code> 划分的实例上。请求标签的作用域仅为一次点对点的 RPC 请求。比如，在一个 A -&gt; B -&gt; C 调用链路上，如果 A -&gt; B 调用通过 <code>setAttachment</code> 设置了 <code>tag</code> 参数，则该参数不会在 B -&gt; C 的调用中生效，同样的，在完成了 A -&gt; B -&gt; C 的整个调用同时 A 收到调用结果后，如果想要相同的 <code>tag</code> 参数，则在发起其他调用前仍需要单独设置 <code>setAttachment</code>。</p>
+</li>
+<li><p><strong>条件路由规则</strong>：</p>
+<p>条件路由与标签路由的工作模式非常相似，也是首先对请求中的参数进行匹配，符合匹配条件的请求将被转发到包含特定实例地址列表的子集。相比于标签路由，条件路由的匹配方式更灵活：</p>
+<ul>
+<li>在标签路由中，一旦给某一台或几台机器实例打了标签，则这部分实例就会被立马从通用流量集合中移除，不同标签之间不会再有交集。有点类似下图，地址集合在输入阶段就已经划分明确。</li>
+</ul>
+<p><img src="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/tag-condition-compare1.png" alt="tag-condition-compare"></p>
+<ul>
+<li>而从条件路由的视角，所有的实例都是一致的，路由过程中不存在分组隔离的问题，每次路由过滤都是基于全量地址中执行</li>
+</ul>
+<p><img src="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/tag-condition-compare2.png" alt="tag-condition-compare"></p>
+<p>条件路由规则的主体 <code>conditions</code> 主要包含两部分内容：</p>
+<ul>
+<li>=&gt; 之前的为请求参数匹配条件，指定的 <code>匹配条件指定的参数</code> 将与 <code>消费者的请求上下文 (URL)、甚至方法参数</code> 进行对比，当消费者满足匹配条件时，对该消费者执行后面的地址子集过滤规则。</li>
+<li>=&gt; 之后的为地址子集过滤条件，指定的 <code>过滤条件指定的参数</code> 将与 <code>提供者实例地址 (URL)</code> 进行对比，消费者最终只能拿到符合过滤条件的实例列表，从而确保流量只会发送到符合条件的地址子集。<ul>
+<li>如果匹配条件为空，表示对所有请求生效，如：<code>=&gt; status != staging</code></li>
+<li>如果过滤条件为空，表示禁止来自相应请求的访问，如：<code>application = product =&gt;</code></li>
+</ul>
+</li>
+</ul>
+<p>示例：</p>
+<p>基于以下示例规则，所有 <code>org.apache.dubbo.demo.CommentService</code> 服务调用都将被转发到与当前消费端机器具有相同 <code>region</code> 标记的地址子集。<code>$region</code> 是特殊引用符号，执行过程中将读取消费端机器的实际的 <code>region</code> 值替代。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">configVersion:</span> <span class="string">v3.0</span></span><br><span class="line"><span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">force:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">org.apache.dubbo.samples.CommentService</span></span><br><span class="line"><span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;=&gt; region = $region&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>条件路由规则还支持设置具体的机器地址如 ip 或 port，这种情况下使用条件路由可以处理一些开发或线上机器的临时状况，实现<strong>黑名单、白名单、实例临时摘除</strong>等运维效果，如以下规则可以将机器 <code>172.22.3.91</code> 从服务的可用列表中排除 <code>=&gt; host != 172.22.3.91</code>。条件路由还支持基于请求参数的匹配：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">method=getDetail&amp;arguments[0]=dubbo</span> <span class="string">=&gt;</span> <span class="string">port=20880</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>动态配置规则</strong>：</p>
+<p>通过 Dubbo 提供的动态配置规则，您可以动态的修改 Dubbo 服务进程的运行时行为，整个过程不需要重启，配置参数实时生效。基于这个强大的功能，基本上所有运行期参数都可以动态调整，比如超时时间、临时开启 Access Log、修改 Tracing 采样率、调整限流降级参数、负载均衡、线程池配置、日志等级、给机器实例动态打标签等。与上文讲到的流量管控规则类似，动态配置规则支持应用、服务两个粒度，也就是说您一次可以选择只调整应用中的某一个或几个服务的参数配置。</p>
+<p>当然，出于系统稳定性、安全性的考量，有些特定的参数是不允许动态修改的，但除此之外，基本上所有参数都允许动态修改，很多强大的运行态能力都可以通过这个规则实现，您可以找个示例应用去尝试一下。通常 URL 地址中的参数均可以修改，这在每个语言实现的参考手册里也记录了一些更详细的说明。</p>
+<p>示例：</p>
+<p>将 <code>org.apache.dubbo.samples.UserService</code> 服务的超时参数调整为 2000ms</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">configVersion:</span> <span class="string">v3.0</span></span><br><span class="line"><span class="attr">scope:</span> <span class="string">service</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">org.apache.dubbo.samples.UserService</span></span><br><span class="line"><span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">side:</span> <span class="string">provider</span></span><br><span class="line">    <span class="attr">parameters:</span></span><br><span class="line">      <span class="attr">timeout:</span> <span class="number">2000</span></span><br></pre></td></tr></table></figure>
+
+<p>以下部分指定这个配置是服务粒度，具体变更的服务名为 <code>org.apache.dubbo.samples.UserService</code>。<code>scope</code> 支持 <code>service</code>、<code>application</code> 两个可选值，如果 <code>scope: service</code>，则 <code>key</code> 应该配置为 <code>version/service:group</code> 格式。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scope:</span> <span class="string">service</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">org.apache.dubbo.samples.UserService</span></span><br></pre></td></tr></table></figure>
+
+<p><code>parameters</code> 参数指定了新的修改值，这里将通过 <code>timeout: 2000</code> 将超时时间设置为 2000ms。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">parameters:</span></span><br><span class="line"> <span class="attr">timeout:</span> <span class="number">2000</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>脚本路由规则</strong>：</p>
+<p>脚本路由是最直观的路由方式，同时它也是当前最灵活的路由规则，因为你可以在脚本中定义任意的地址筛选规则。如果我们为某个服务定义一条脚本规则，则后续所有请求都会先执行一遍这个脚本，脚本过滤出来的地址即为请求允许发送到的、有效的地址集合。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">configVersion:</span> <span class="string">v3.0</span></span><br><span class="line"><span class="attr">key:</span> <span class="string">demo-provider</span></span><br><span class="line"><span class="attr">type:</span> <span class="string">javascript</span></span><br><span class="line"><span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">script:</span> <span class="string">|</span></span><br><span class="line"><span class="string">  (function route(invokers,invocation,context) &#123;</span></span><br><span class="line"><span class="string">      var result = new java.util.ArrayList(invokers.size());</span></span><br><span class="line"><span class="string">      for (i = 0; i &lt; invokers.size(); i ++) &#123;</span></span><br><span class="line"><span class="string">          if (&quot;10.20.3.3&quot;.equals(invokers.get(i).getUrl().getHost())) &#123;</span></span><br><span class="line"><span class="string">              result.add(invokers.get(i));</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">      return result;</span></span><br><span class="line"><span class="string">  &#125; (invokers, invocation, context)); // 表示立即执行方法  </span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>如果底层用的是基于 HTTP 的 RPC 协议 (如 REST、gRPC、Triple 等)，则服务和方法等就统一映射为 HTTP 路径 (path)，此时 Dubbo 路由规则相当于是基于 HTTP path 和 headers 的流量分发机制。</p>
+<p>工作原理：</p>
+<p>以下是 Dubbo 单个路由器的工作过程：路由器接收一个服务的实例地址集合作为输入，基于请求上下文 (Request Context) 和 (Router Rule) 实际的路由规则定义对输入地址进行匹配，所有匹配成功的实例组成一个地址子集，最终地址子集作为输出结果继续交给下一个路由器或者负载均衡组件处理。</p>
+<p><img src="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/router1.png" alt="Router"></p>
+<p>在 Dubbo 中，多个路由器组成一条路由链共同协作，前一个路由器的输出作为另一个路由器的输入，经过层层路由规则筛选后，最终生成有效的地址集合。</p>
+<ul>
+<li>Dubbo 中的每个服务都有一条完全独立的路由链，每个服务的路由链组成可能不同，处理的规则各异，各个服务间互不影响。</li>
+<li>对单条路由链而言，即使每次输入的地址集合相同，根据每次请求上下文的不同，生成的地址子集结果也可能不同。</li>
+</ul>
+<p><img src="https://cn.dubbo.apache.org/imgs/v3/feature/traffic/router2.png" alt="Router"></p>
+<p>限流 &amp; 熔断？</p>
+<ul>
+<li><p>流量控制 (Rate Limiting)：<strong>流量控制更多的是站在 Dubbo 服务提供者视角来保证服务稳定性</strong>，通过明确的为 Dubbo 服务设置请求上限阈值，确保服务所处理的请求数始终在一个合理范围之内，从而确保系统整体的稳定性。</p>
+<p><img src="https://cn.dubbo.apache.org/imgs/v3/feature/circuit-breaking/provider-rate-limit.png" alt="provider-rate-limit"></p>
+<p>根据服务的具体部署情况，服务所能处理的流量上限是一定的，当对服务的请求数量保持在合理的范围时，系统运行正常；而当请求数量严重超过服务处理能力时，如大促期间的流量洪峰等场景，就可能造成服务提供者端的资源过度消耗、负载过高，进而出现响应延迟、请求无应答、系统假死等情况。</p>
+<p>流量控制解决的问题和工作方式比较容易理解，而其使用的难点就是如何确定服务所能处理的流量最大值？</p>
+<ul>
+<li>一种模式是由用户预先设定一个固定的限流值，如 Dubbo 通过集成 Sentinel 等产品实现的限流能力即是这种模式<ul>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/tasks/rate-limit/sentinel/">Dubbo Sentinel 流量控制</a></li>
+</ul>
+</li>
+<li>另一种方式是 Dubbo 框架自动根据系统或集群负载情况执行限流，相比用户预先设置限流值更加灵活方便，Dubbo 目前内置了自适应限流模式，具体可参见：<ul>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/mannual/java-sdk/advanced-features-and-usage/performance/adaptive-concurrency-control/">Java 自适应限流使用方式</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/reference/proposals/heuristic-flow-control/">Go 自适应限流使用方式</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/reference/proposals/heuristic-flow-control/">自适应限流设计原理</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>熔断降级 (Circuit Breaking)：<strong>熔断降级则是更多的从 Dubbo 服务消费者视角来保障系统稳定性的重要手段</strong>。一个服务往往需要调用更多的下游 Dubbo 服务来完成业务逻辑，这时下游服务的稳定性就会影响当前服务甚至整个系统的稳定性，熔断（Circuit Breaking）即是面向不稳定服务场景设计的，它能最大限度避免下游服务不稳定对上游服务带来的影响。</p>
+<p>而相比于熔断后直接返回调用失败信息，配合服务降级能力，我们可以继续调用预先设置好的服务降级逻辑，以降级逻辑的结果作为最终调用结果，以更优雅的返回给服务调用方。</p>
+<p><img src="https://cn.dubbo.apache.org/imgs/v3/feature/circuit-breaking/consumer-circuit-breaking.png" alt="consumer-circuit-breaking"></p>
+<p>如上图所示，Dubbo Consumer 依赖的下游的三个 Dubbo 服务，当 Service 3 出现不稳定的情况时（如响应时间变长、错误率增加等），从而 Consumer 调用 Service 3 的线程等资源就会产生堆积，如果此时我们不在 Consumer 侧做任何限制，则 Service 1 与 Service 2 的调用都会受到稳定性影响。通过熔断 Service 3 我们就能保证整个 Dubbo Consumer 服务的稳定性，不拖垮整个 Consumer 服务，熔断 Service 3 的方式可以有很多种实现，包括线程数、信号量、错误率等。</p>
+<p>Dubbo 通过集成业界主流的框架实现了服务熔断降级能力</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/tasks/rate-limit/sentinel/">Sentinel</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/tasks/rate-limit/hystrix/">Hystrix</a></li>
+<li><a target="_blank" rel="noopener" href="https://cn.dubbo.apache.org/zh-cn/overview/tasks/rate-limit/resilience4j/">Resilience4J</a></li>
+</ul>
+</li>
+</ul>
+<h4 id="问：Dubbo的服务重试基本原理是？"><a href="#问：Dubbo的服务重试基本原理是？" class="headerlink" title="问：Dubbo的服务重试基本原理是？"></a>问：Dubbo的服务重试基本原理是？</h4><p><strong>服务重试机制</strong> 是 Dubbo 中的另一个关键功能，确保在调用失败或超时的情况下，能够通过重试机制提高服务调用的成功率。重试机制通常与容错机制结合使用。</p>
+<ol>
+<li>失败重试：<ul>
+<li>当服务调用出现异常（如超时、网络异常等）时，Dubbo 会根据配置的容错策略进行重试。对于一些失败可以被恢复的操作（如网络故障），Dubbo 会尝试重新发起请求。</li>
+</ul>
+</li>
+<li>重试次数：<ul>
+<li>重试次数可以通过 <code>retries</code> 参数进行配置。<code>retries</code> 指定了最大重试次数，默认为 2 次（即总共 3 次尝试：1 次原始调用 + 2 次重试）。</li>
+<li>在 <strong>Failover</strong> 策略下，Dubbo 会在服务调用失败时，自动切换到其他的可用服务提供者，并进行重试，直到重试次数用尽或者成功。</li>
+</ul>
+</li>
+<li>重试间隔：<ul>
+<li>重试的间隔时间也可以进行配置，Dubbo 支持 <strong>固定间隔</strong> 或 <strong>随机间隔</strong> 进行重试。</li>
+</ul>
+</li>
+<li>调用超时与重试：<ul>
+<li>如果服务调用超过设定的 <strong>超时时间</strong>，Dubbo 会视为超时异常，并根据容错策略进行重试。对于 <strong>Failover</strong> 和 <strong>Failback</strong> 策略，会尝试不同的服务提供者；对于 <strong>Failfast</strong> 策略，则不会进行重试。</li>
+</ul>
+</li>
+</ol>
+<p><strong>服务重试的实现机制</strong>：</p>
+<ul>
+<li><strong>Proxy 代理</strong>：在 Consumer 调用 Provider 时，Dubbo 会通过动态代理生成代理对象。代理对象会拦截调用请求，检查是否需要重试。如果需要重试，代理对象会重新发起请求。</li>
+<li><strong>异步请求</strong>：Dubbo 也支持异步调用模式，在异步模式下，重试请求会在后台执行，并通过回调处理最终结果。</li>
+</ul>
+<h3 id="四-通信协议、序列化框架"><a href="#四-通信协议、序列化框架" class="headerlink" title="四. 通信协议、序列化框架"></a>四. 通信协议、序列化框架</h3><h4 id="问：Dubbo使用的是什么通信框架？Dubbo默认使用的是什么通信框架，还有哪些？"><a href="#问：Dubbo使用的是什么通信框架？Dubbo默认使用的是什么通信框架，还有哪些？" class="headerlink" title="问：Dubbo使用的是什么通信框架？Dubbo默认使用的是什么通信框架，还有哪些？"></a>问：Dubbo使用的是什么通信框架？Dubbo默认使用的是什么通信框架，还有哪些？</h4><p>默认使用 Netty 框架，也是推荐的选择，另外内容还集成有Mina、Grizzly。</p>
+<h4 id="问：dubbo-支持的协议及序列化方式？Dubbo支持哪些协议，每种协议的应用场景，优缺点？Dubbo推荐使用什么序列化框架，还有哪些？"><a href="#问：dubbo-支持的协议及序列化方式？Dubbo支持哪些协议，每种协议的应用场景，优缺点？Dubbo推荐使用什么序列化框架，还有哪些？" class="headerlink" title="问：dubbo 支持的协议及序列化方式？Dubbo支持哪些协议，每种协议的应用场景，优缺点？Dubbo推荐使用什么序列化框架，还有哪些？"></a>问：dubbo 支持的协议及序列化方式？Dubbo支持哪些协议，每种协议的应用场景，优缺点？Dubbo推荐使用什么序列化框架，还有哪些？</h4><p>推荐使用Hessian序列化，还有Duddo、FastJson、Java自带序列化</p>
+<p><strong>1. Dubbo 协议（默认协议）</strong></p>
+<ul>
+<li><strong>特点</strong>：基于 Netty 的 NIO 通信框架，采用单一长连接和异步调用。</li>
+<li><strong>默认端口</strong>：<code>20880</code></li>
+<li><strong>序列化</strong>：Hessian2（默认）、Kryo、FST 等。</li>
+<li><strong>应用场景</strong>：<ul>
+<li><strong>内部服务调用</strong>：适用于高并发、低延迟的内部服务间通信。</li>
+<li><strong>长连接复用</strong>：适合服务提供者与消费者数量差异较大的场景（如 Provider 少，Consumer 多）。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>高性能</strong>：基于 Netty 的异步非阻塞模型，传输效率高。</li>
+<li><strong>轻量级</strong>：协议头小（16字节），适合高频调用。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>跨语言支持弱</strong>：默认依赖 Java 生态，非 Java 语言需通过网关或 Sidecar 接入。</li>
+<li><strong>穿透防火墙难</strong>：使用自定义端口（如 20880），可能被企业防火墙拦截。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. HTTP 协议</strong></p>
+<ul>
+<li><strong>特点</strong>：基于 HTTP/1.1 协议，兼容 Spring Cloud 等标准 HTTP 服务。</li>
+<li><strong>默认端口</strong>：<code>80</code> 或 <code>8080</code></li>
+<li><strong>序列化</strong>：JSON、XML 等文本格式。</li>
+<li><strong>应用场景</strong>：<ul>
+<li><strong>跨语言调用</strong>：需要与非 Java 服务（如 Node.js、Python）交互。</li>
+<li><strong>穿透防火墙</strong>：HTTP 协议通常被企业防火墙放行。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>通用性强</strong>：广泛支持各类语言和框架。</li>
+<li><strong>调试方便</strong>：可通过浏览器或 Postman 直接调试接口。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>性能较低</strong>：文本协议传输效率低于二进制协议（如 Dubbo 协议）。</li>
+<li><strong>无长连接复用</strong>：每次请求需重新建立连接（可通过 HTTP/2 优化）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3. Hessian 协议</strong></p>
+<ul>
+<li><strong>特点</strong>：基于 HTTP 的二进制协议，支持跨语言。</li>
+<li><strong>默认端口</strong>：<code>80</code></li>
+<li><strong>序列化</strong>：Hessian 序列化。</li>
+<li><strong>应用场景</strong>：<ul>
+<li><strong>跨语言服务调用</strong>：需与 PHP、.NET 等语言互通。</li>
+<li><strong>替代原生 HTTP 协议</strong>：追求比 JSON/XML 更高的性能。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>跨语言支持</strong>：Hessian 协议天然支持多语言。</li>
+<li><strong>性能优于 HTTP</strong>：二进制协议传输效率更高。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>兼容性问题</strong>：不同语言的 Hessian 实现可能存在差异。</li>
+<li><strong>扩展性弱</strong>：协议升级需各语言同步支持。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4. gRPC 协议</strong></p>
+<ul>
+<li><strong>特点</strong>：基于 HTTP/2 和 Protobuf 的高性能协议。</li>
+<li><strong>默认端口</strong>：<code>50051</code></li>
+<li><strong>序列化</strong>：Protobuf（默认）。</li>
+<li><strong>应用场景</strong>：<ul>
+<li><strong>微服务跨语言通信</strong>：需与 Go、Python 等语言交互。</li>
+<li><strong>流式通信</strong>：支持双向流、客户端流、服务端流。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>高性能</strong>：HTTP/2 多路复用 + Protobuf 高效序列化。</li>
+<li><strong>强类型约束</strong>：Protobuf 定义接口，减少通信错误。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>生态依赖</strong>：需依赖 Protobuf 定义 IDL 文件。</li>
+<li><strong>调试复杂度高</strong>：需工具生成和解析二进制数据。</li>
+</ul>
+</li>
+</ul>
+<p><strong>5. Thrift 协议</strong></p>
+<ul>
+<li><strong>特点</strong>：Facebook 开源的跨语言 RPC 框架。</li>
+<li><strong>默认端口</strong>：<code>9090</code></li>
+<li><strong>序列化</strong>：Thrift 二进制格式。</li>
+<li><strong>应用场景</strong>：<ul>
+<li><strong>多语言混合架构</strong>：需与 C++、Ruby 等语言互通。</li>
+<li><strong>高性能场景</strong>：追求极致传输效率。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>跨语言支持完善</strong>：官方提供多语言 SDK。</li>
+<li><strong>协议紧凑</strong>：传输体积小，性能高。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>维护成本高</strong>：需维护 Thrift IDL 文件。</li>
+<li><strong>社区活跃度下降</strong>：逐渐被 gRPC 取代。</li>
+</ul>
+</li>
+</ul>
+<p><strong>6. WebService (SOAP) 协议</strong></p>
+<ul>
+<li><strong>特点</strong>：基于 XML 的 SOAP 协议，支持 WSDL 描述。</li>
+<li><strong>默认端口</strong>：<code>80</code></li>
+<li><strong>序列化</strong>：XML。</li>
+<li><strong>应用场景</strong>：<ul>
+<li><strong>遗留系统集成</strong>：与老旧 SOAP 服务交互。</li>
+<li><strong>需要 WSDL 的场景</strong>：通过 WSDL 生成客户端代码。</li>
+</ul>
+</li>
+<li><strong>优点</strong>：<ul>
+<li><strong>标准化</strong>：协议规范严格，适合企业级集成。</li>
+<li><strong>工具链成熟</strong>：支持 WSDL 生成和解析。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>性能差</strong>：XML 序列化体积大，解析耗资源。</li>
+<li><strong>复杂性高</strong>：SOAP 协议头冗余，开发效率低。</li>
+</ul>
+</li>
+</ul>
+<p><strong>Dubbo 支持的序列化方式</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>序列化方式</strong></th>
+<th align="left"><strong>特点</strong></th>
+<th align="left"><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Hessian2</strong></td>
+<td align="left">跨语言、二进制序列化，性能较好（Dubbo 默认）</td>
+<td align="left">跨语言调用或默认场景</td>
+</tr>
+<tr>
+<td align="left"><strong>Kryo</strong></td>
+<td align="left">高性能二进制序列化，仅限 Java，需注册类</td>
+<td align="left">纯 Java 高性能场景</td>
+</tr>
+<tr>
+<td align="left"><strong>FST</strong></td>
+<td align="left">比 Kryo 更快的序列化，同样需注册类</td>
+<td align="left">极致性能优化的 Java 服务</td>
+</tr>
+<tr>
+<td align="left"><strong>JSON</strong></td>
+<td align="left">文本格式，跨语言支持强，性能较低</td>
+<td align="left">调试、与非 Java 服务交互</td>
+</tr>
+<tr>
+<td align="left"><strong>Protobuf</strong></td>
+<td align="left">高效二进制协议，需定义 IDL，跨语言支持好（gRPC 协议默认）</td>
+<td align="left">跨语言高性能通信</td>
+</tr>
+<tr>
+<td align="left"><strong>Java 原生</strong></td>
+<td align="left">JDK 自带，兼容性好，性能差</td>
+<td align="left">兼容旧系统或简单测试</td>
+</tr>
+</tbody></table>
+<p><strong>协议选型建议</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>场景</strong></th>
+<th align="left"><strong>推荐协议</strong></th>
+<th align="left"><strong>理由</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>纯 Java 高性能内部调用</strong></td>
+<td align="left">Dubbo 协议</td>
+<td align="left">默认协议，基于 Netty 的异步高性能模型，适合高并发场景。</td>
+</tr>
+<tr>
+<td align="left"><strong>跨语言调用</strong></td>
+<td align="left">gRPC/HTTP</td>
+<td align="left">gRPC 提供高性能跨语言支持，HTTP 适合简单 RESTful 交互。</td>
+</tr>
+<tr>
+<td align="left"><strong>穿透企业防火墙</strong></td>
+<td align="left">HTTP</td>
+<td align="left">80/443 端口通常开放，避免被拦截。</td>
+</tr>
+<tr>
+<td align="left"><strong>流式通信需求</strong></td>
+<td align="left">gRPC</td>
+<td align="left">支持双向流、客户端流、服务端流，适合实时数据传输。</td>
+</tr>
+<tr>
+<td align="left"><strong>遗留系统集成</strong></td>
+<td align="left">WebService</td>
+<td align="left">兼容 SOAP 协议，适合与老旧系统交互。</td>
+</tr>
+</tbody></table>
+<p><strong>配置示例（XML 方式）</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 使用 Dubbo 协议 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="attr">port</span>=<span class="string">&quot;20880&quot;</span> <span class="attr">serialization</span>=<span class="string">&quot;kryo&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 使用 HTTP 协议 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;http&quot;</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 使用 gRPC 协议 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dubbo:protocol</span> <span class="attr">name</span>=<span class="string">&quot;grpc&quot;</span> <span class="attr">port</span>=<span class="string">&quot;50051&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>总结</strong></p>
+<p>Dubbo 的多协议支持使其能够灵活适配不同场景，开发者可根据 <strong>性能需求</strong>、<strong>跨语言要求</strong> 和 <strong>网络环境</strong> 选择合适的协议。对于内部 Java 服务，默认的 Dubbo 协议是最优选择；若需跨语言或穿透防火墙，可选用 HTTP/gRPC；而 Thrift 和 WebService 则适用于特定遗留系统集成场景。</p>
+<h3 id="五-常见问题"><a href="#五-常见问题" class="headerlink" title="五. 常见问题"></a>五. 常见问题</h3><h4 id="问：服务调用超时问题怎么解决？Dubbo超时时间怎样设置？"><a href="#问：服务调用超时问题怎么解决？Dubbo超时时间怎样设置？" class="headerlink" title="问：服务调用超时问题怎么解决？Dubbo超时时间怎样设置？"></a>问：服务调用超时问题怎么解决？Dubbo超时时间怎样设置？</h4><p><strong>服务调用超时问题解决方案：</strong></p>
+<p>服务调用超时通常是由于网络不稳定、服务端处理慢、资源压力过大等原因引起的。在 Dubbo 中，可以通过以下方式来解决服务调用超时问题：</p>
+<ol>
+<li><strong>合理设置超时时间</strong>：<ul>
+<li>如果超时时间设置过短，可能导致正常的服务调用也被视为超时，从而产生不必要的重试和异常。</li>
+<li>如果设置过长，则可能导致长时间等待，影响系统性能和用户体验。</li>
+<li>一般来说，超时时间应根据实际业务场景和服务的响应时间进行调整。</li>
+</ul>
+</li>
+<li><strong>服务端优化</strong>：<ul>
+<li>服务端的性能优化是解决超时问题的根本，确保服务端有足够的资源来处理请求。</li>
+<li>可以通过优化代码、增加缓存、分布式限流等方式来提高服务的处理速度。</li>
+</ul>
+</li>
+<li><strong>客户端优化</strong>：<ul>
+<li>客户端可以通过 <strong>重试机制</strong> 来容忍偶尔的超时，避免请求失败。</li>
+<li>配置 <strong>超时重试策略</strong>，比如设置重试次数和间隔时间。</li>
+</ul>
+</li>
+</ol>
+<p><strong>Dubbo超时时间的设置</strong>：</p>
+<ul>
+<li><p>在 Dubbo 中，<strong>超时时间</strong>是通过 <code>timeout</code> 配置项来设置的，单位为 <strong>毫秒</strong>。可以在消费者（Consumer）和服务提供者（Provider）端分别设置。</p>
+</li>
+<li><p><strong>Consumer 端设置</strong>：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xml</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CopyEdit</span><br><span class="line">&lt;dubbo:<span class="keyword">reference</span> <span class="built_in">id</span>=<span class="string">&quot;userService&quot;</span> interface=<span class="string">&quot;com.example.UserService&quot;</span> <span class="keyword">timeout</span>=<span class="string">&quot;3000&quot;</span> /&gt;</span><br></pre></td></tr></table></figure>
+
+<p>或者通过注解的方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javaCopyEdit<span class="meta">@DubboReference(timeout = 3000)</span></span><br><span class="line"><span class="keyword">private</span> UserService userService;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>Provider 端设置</strong>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xml</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CopyEdit</span><br><span class="line">&lt;dubbo:service <span class="attribute">id</span>=<span class="string">&quot;userService&quot;</span> <span class="attribute">interface</span>=<span class="string">&quot;com.example.UserService&quot;</span> <span class="attribute">timeout</span>=<span class="string">&quot;5000&quot;</span> /&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>全局设置</strong>： 在 Dubbo 的全局配置中设置超时时间：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xml</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">CopyEdit</span><br><span class="line">&lt;dubbo:protocol <span class="built_in">name</span>=<span class="string">&quot;dubbo&quot;</span> <span class="keyword">timeout</span>=<span class="string">&quot;5000&quot;</span> /&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>超时配置的注意事项</strong>：</p>
+<ul>
+<li><strong>consumer.timeout</strong>：消费者端的超时时间，控制请求发出后等待服务端响应的最大时间。</li>
+<li><strong>provider.timeout</strong>：服务提供者端的超时时间，控制服务端处理请求的最大时间。如果超时，服务提供者将直接返回错误。</li>
+</ul>
+<h4 id="问：Dubbo在安全机制方面是如何解决的？"><a href="#问：Dubbo在安全机制方面是如何解决的？" class="headerlink" title="问：Dubbo在安全机制方面是如何解决的？"></a>问：Dubbo在安全机制方面是如何解决的？</h4><p>Dubbo 提供了以下几种安全机制来确保分布式服务调用的安全性：</p>
+<ol>
+<li><strong>身份认证与授权</strong>：<ul>
+<li><strong>身份认证</strong>：确保客户端和服务端的身份合法。Dubbo 支持通过 <strong>token、证书等方式</strong> 进行身份验证，防止未经授权的访问。</li>
+<li><strong>授权管理</strong>：对不同的服务提供不同的访问权限，确保只有有权限的客户端能够调用服务。</li>
+</ul>
+</li>
+<li><strong>数据加密</strong>：<ul>
+<li>Dubbo 支持对数据进行加密，避免敏感数据在传输过程中被窃取。</li>
+<li>Dubbo 提供了 <strong>SSL/TLS 加密</strong> 来保护数据的机密性，防止信息泄漏。</li>
+</ul>
+</li>
+<li><strong>安全协议</strong>：<ul>
+<li>Dubbo 支持多种安全协议，如 <strong>SSL/TLS</strong> 加密协议，可以用于保护客户端和服务端之间的通信。</li>
+<li>使用安全的协议（如 <strong>HTTPS</strong>）来保证通信的加密性。</li>
+</ul>
+</li>
+<li><strong>访问控制与流量控制</strong>：<ul>
+<li><strong>访问控制</strong>：对服务的访问进行控制，只有符合条件的客户端才能访问服务。可以通过 <strong>IP 白名单</strong>、<strong>黑名单</strong> 来限制服务的访问。</li>
+<li><strong>流量控制</strong>：对访问进行流量限制和限速，防止恶意请求导致系统崩溃。</li>
+</ul>
+</li>
+<li><strong>认证机制（基于 Token 或加密）</strong>：<ul>
+<li>Dubbo 通过<strong>身份认证</strong>（例如基于 Token 的认证）和 <strong>加密机制</strong>（如使用公私钥对进行加密）来保证数据在网络传输中的安全性。</li>
+</ul>
+</li>
+</ol>
+<h4 id="问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？"><a href="#问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？" class="headerlink" title="问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？"></a>问：Dubbo的注册中心集群挂掉，发布者和订阅者之间还能通信么？</h4><p>在 Dubbo 中，注册中心的作用是负责服务的注册与发现。当注册中心出现故障时，会对服务的发现和路由产生影响。具体影响如下：</p>
+<ol>
+<li><strong>注册中心挂掉对服务发现的影响</strong>：<ul>
+<li>如果 <strong>注册中心挂掉</strong>，服务消费者无法从注册中心获取到服务提供者的地址，<strong>导致服务发现失败</strong>，消费者无法调用服务。</li>
+<li>但是，已缓存的服务地址可能仍然有效，消费者可以通过缓存的服务地址进行调用，直到缓存失效。</li>
+</ul>
+</li>
+<li><strong>服务的持续通信</strong>：<ul>
+<li><strong>服务提供者与消费者</strong>之间的通信依赖于注册中心来进行服务的动态发现和更新。如果注册中心宕机，已建立的连接仍然可以继续通信，但是无法获取到新的服务地址或者注册的新服务。</li>
+<li><strong>已缓存的服务信息</strong>：如果消费者和提供者在注册中心宕机前已经获取了服务信息（如服务地址、端口等），并且没有新的服务提供者加入或变更，通信可以继续进行，直到缓存过期。</li>
+</ul>
+</li>
+<li><strong>Dubbo的容错机制</strong>：<ul>
+<li>如果注册中心不可用，Dubbo 会尝试通过 <strong>failover、failback</strong> 等容错策略进行处理，尽量保证服务的可用性。</li>
+<li>例如，Dubbo 支持的 <strong>Failback</strong> 策略会在注册中心恢复后，自动进行服务重新注册和发现。</li>
+</ul>
+</li>
+</ol>
+<p><strong>总结</strong>：</p>
+<ul>
+<li>如果 <strong>注册中心挂掉</strong>，已经建立连接的消费者和服务提供者可以继续通信，但无法获取新的服务信息，直到注册中心恢复。Dubbo 提供了容错策略来减少注册中心不可用对服务的影响。</li>
+</ul>
+<h4 id="问：如果让你设计一个-RPC-框架，如何设计？"><a href="#问：如果让你设计一个-RPC-框架，如何设计？" class="headerlink" title="问：如果让你设计一个 RPC 框架，如何设计？"></a>问：如果让你设计一个 RPC 框架，如何设计？</h4><p><strong>可以从底层向上开始说起</strong>。</p>
+<p>首先需要实现高性能的网络传输，可以采用 Netty 来实现，不用自己重复造轮子，然后需要自定义协议，毕竟远程交互都需要遵循一定的协议，然后还需要定义好序列化协议，网络的传输毕竟都是二进制流传输的。</p>
+<p>然后可以搞一套描述服务的语言，即 IDL（Interface description language），让所有的服务都用 IDL 定义，再由框架转换为特定编程语言的接口，这样就能跨语言了。</p>
+<p>此时最近基本的功能已经有了，但是只是最基础的，工业级的话首先得易用，所以框架需要把上述的细节对使用者进行屏蔽，让他们感觉不到本地调用和远程调用的区别，所以需要代理实现。</p>
+<p>然后还需要实现集群功能，因此的要服务发现、注册等功能，所以需要注册中心，当然细节还是需要屏蔽的。</p>
+<p>最后还需要一个完善的监控机制，埋点上报调用情况等等，便于运维。</p>
 
     </div>
 
@@ -420,7 +1954,7 @@
 
 <div class="copyright">
   &copy; 2018 – 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -432,14 +1966,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">4.1m</span>
+    <span title="站点总字数">5.4m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">62:09</span>
+    <span title="站点阅读时长">82:05</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
